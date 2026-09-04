@@ -12,14 +12,14 @@
 <body>
 <div class="app">
   <aside class="side" id="side">
-    <div class="brand"><img id="logoImg" src="{{ url_for('static', filename='logo.png') }}" alt="ITIE-RDC"><div class="bt"><b>TransparenceRDC</b><span>Entrepôt de données ITIE</span></div></div>
+    <div class="brand"><img id="logoImg" src="{{ url_for('static', filename='logo.png') }}" alt="ITIE-RDC"><div class="bt"><b id="sideBrandName">TransparenceRDC</b><span id="sideBrandTag">Entrepôt de données ITIE</span></div></div>
     <nav id="sidenav"></nav>
-    <div class="foot">Données publiques ITIE · 2007–2024</div>
+    <div class="foot" id="sideFooterNote">Données publiques ITIE · 2007–2024</div>
   </aside>
   <div class="main">
     <div class="top">
       <button class="icon-btn burger" id="burger" aria-label="Menu">☰</button>
-      <div class="brandbox"><img id="logoImgTop" src="{{ url_for('static', filename='logo.png') }}" alt="ITIE-RDC"><div class="brandttl"><b>TransparenceRDC</b><span>Initiative pour la Transparence des Industries Extractives</span></div></div>
+      <div class="brandbox"><img id="logoImgTop" src="{{ url_for('static', filename='logo.png') }}" alt="ITIE-RDC"><div class="brandttl"><b id="topBrandName">TransparenceRDC</b><span id="topBrandTag">Initiative pour la Transparence des Industries Extractives</span></div></div>
       <div class="sep"></div>
       <div class="mtitle" id="mtitle">Vue d'ensemble</div>
       <div class="grow"></div>
@@ -49,6 +49,13 @@
   <div style="display:flex;gap:10px"><button class="btn" id="rmAdd">+ Ajouter</button><button class="btn primary" id="rmDone">Valider</button></div>
 </div></div>
 
+<div class="modal-bg" id="navModal"><div class="modal wide">
+  <h3>Gérer les rubriques</h3>
+  <p>Choisissez les rubriques visibles dans le menu, pour vous et pour les visiteurs du site. « Vue d'ensemble » reste toujours accessible (page d'accueil).</p>
+  <div class="rm-list" id="navList" style="display:flex;flex-direction:column;gap:8px"></div>
+  <div style="display:flex;gap:10px;margin-top:14px"><button class="btn primary" id="navDone">Valider</button></div>
+</div></div>
+
 <div class="modal-bg" id="enrichModal"><div class="modal wide">
   <h3>Enrichir les données</h3>
   <p>Ajoutez les données d'une nouvelle année (ou corrigez une table) en important un fichier <b>CSV</b> ou <b>JSON</b>. Téléchargez d'abord le modèle de la table pour respecter exactement les colonnes attendues.</p>
@@ -72,6 +79,7 @@
 <div class="adminbar" id="adminBar">
   <span class="st"><span class="dot"></span> Mode administrateur — cliquez un texte pour l'éditer</span>
   <span class="grow"></span>
+  <button class="gh" id="navMgrBtn">Gérer les rubriques</button>
   <button class="gh" id="repMgrBtn">Gérer les rapports</button>
   <button class="gh" id="enrichBtn">Enrichir les données</button>
   <button class="gh" id="exitBtn">Quitter</button>

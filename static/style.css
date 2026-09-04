@@ -51,6 +51,10 @@ button{cursor:pointer}
 .side a.item:hover{background:rgba(255,255,255,.07);color:#fff}
 .side a.item.active{background:var(--sky);color:#fff;box-shadow:0 4px 14px rgba(0,157,224,.4)}
 .side .foot{padding:12px 16px;border-top:1px solid rgba(255,255,255,.08);font-size:11px;color:#6d8598}
+.side a.item.hiddenrub{opacity:.55}
+.side a.item.hiddenrub .badge{font-size:9px;font-weight:700;color:#c0d0dd;background:rgba(255,255,255,.12);padding:2px 7px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em}
+body.editing td[contenteditable]{outline:1px dashed var(--sky2);outline-offset:-1px;cursor:text}
+body.editing td[contenteditable]:focus{outline:2px solid var(--sky);background:var(--panel-2)}
 
 /* Topbar */
 .main{display:flex;flex-direction:column;min-width:0}

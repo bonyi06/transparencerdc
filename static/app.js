@@ -22,6 +22,24 @@ try{
   throw err;
 }
 let C=RAW.content;
+/* ===== Valeurs par défaut du contenu éditorial =====
+   Ces champs peuvent ne pas exister encore dans la base (contenu importé
+   avant l'ajout de cette fonctionnalité) : on les complète ici en mémoire
+   pour que (a) l'affichage ne soit jamais vide et (b) ces champs deviennent
+   éditables comme les autres dès la première sauvegarde (elle enverra la
+   version complétée au serveur). */
+C.brand=Object.assign({name:'TransparenceRDC',full:"Initiative pour la Transparence des Industries Extractives",tagline:'',tagline_short:'Entrepôt de données ITIE'},C.brand||{});
+C.footer=Object.assign({note:'',note_short:'Données publiques ITIE · 2007–2024'},C.footer||{});
+C.nav_hidden=Array.isArray(C.nav_hidden)?C.nav_hidden:[];
+C.intros=Object.assign({
+  explorer:"Filtrez chaque table sur autant de colonnes que voulu simultanément (année, entreprise, flux, régie, entité perceptrice, province, état, produit…), combinez les critères, triez, et lisez les totaux exacts de la sélection.",
+  viz:"Choisissez une table, une dimension, une mesure et un type de graphique. Idéal pour explorer visuellement n'importe quelle donnée de l'entrepôt.",
+  geo:"Explorez les données ITIE par province et territoire de la République Démocratique du Congo.",
+  model:"L'entrepôt suit un schéma en étoile : des tables de faits (mesures) reliées à des tables de dimensions (contexte).",
+  dict:"Description complète de chaque table et de chaque colonne de l'entrepôt de données.",
+  qualite:"Complétude, doublons et anomalies détectées et traitées lors de l'intégration.",
+  reports:"Rapports annuels, thématiques, contextuels, forestiers, d'avancement et de validation publiés par l'ITIE-RDC.",
+},C.intros||{});
 const DS=WH.datasets, AGG=WH.agg, O=WH.officiel2023, STATS=WH.stats;
 const $=(s,r)=>(r||document).querySelector(s),$$=(s,r)=>[...(r||document).querySelectorAll(s)];
 const NS='http://www.w3.org/2000/svg';
@@ -204,7 +222,7 @@ function mExplorer(){
   const list=cat=>(groups[cat]||[]).map(([k,d])=>`<div class="dsitem ${exState.ds===k?'on':''}" data-ds="${k}" role="button" tabindex="0" aria-pressed="${exState.ds===k}"><span>${esc(d.label)}</span><span class="n">${fmtN(d.rows.length)}</span></div>`).join('');
   const grp=(cat,title)=>groups[cat]&&groups[cat].length?`<div class="dg">${title} <span style="opacity:.5">(${groups[cat].length})</span></div>${list(cat)}`:'';
   const nT=Object.keys(DS).filter(k=>!k.startsWith('_')).length, nR=Object.entries(DS).filter(([k])=>!k.startsWith('_')).reduce((a,[,d])=>a+d.rows.length,0);
-  return `<div class="phead"><div class="eyebrow">Explorateur</div><h1>Explorateur de données</h1><p>Filtrez chaque table sur <b>autant de colonnes que voulu simultanément</b> (année, entreprise, flux, régie, entité perceptrice, province, état, produit…), combinez les critères, triez, et lisez les totaux exacts de la sélection. <b>${nT} tables</b> dont les <b>annexes complètes ITIE 2022 & 2023</b> · ${fmtN(nR)} lignes.</p></div>
+  return `<div class="phead"><div class="eyebrow">Explorateur</div><h1>Explorateur de données</h1><p data-edit="intros.explorer">${esc(C.intros.explorer)}</p><p><b>${nT} tables</b> dont les <b>annexes complètes ITIE 2022 & 2023</b> · ${fmtN(nR)} lignes.</p></div>
   <div class="expl">
     <div class="dslist">
       <div class="dstsearch"><input id="exTableQ" placeholder="🔍 Trouver une table / annexe…" value="${esc(exTableQ)}"></div>
@@ -245,8 +263,11 @@ function renderExplorer(){
   if(exState.sort!=null){const si=exState.sort,ty=d.types[si];rows=rows.slice().sort((a,b)=>{let x=a[si],y=b[si];if(ty==='num'){x=Number(x);y=Number(y);if(isNaN(x))x=-Infinity;if(isNaN(y))y=-Infinity;return (x-y)*exState.dir;}return String(x==null?'':x).localeCompare(String(y==null?'':y),'fr')*exState.dir;});}
   const per=25,tot=rows.length,pages=Math.max(1,Math.ceil(tot/per));if(exState.page>=pages)exState.page=0;
   const pageRows=rows.slice(exState.page*per,exState.page*per+per);
-  const th=d.cols.map((c,i)=>`<th scope="col" data-si="${i}" tabindex="0" role="button" aria-sort="${exState.sort===i?(exState.dir>0?'ascending':'descending'):'none'}" title="Trier">${esc(c)}${exState.sort===i?`<span class="ar" aria-hidden="true">${exState.dir>0?'▲':'▼'}</span>`:''}</th>`).join('');
-  const body=pageRows.map(r=>`<tr>${r.map((v,i)=>`<td class="${d.types[i]==='num'?'num':''}" title="${esc(v)}">${esc(fmtCell(v,d.types[i]))}</td>`).join('')}</tr>`).join('');
+  const canEdit=editing;
+  const th=d.cols.map((c,i)=>`<th scope="col" data-si="${i}" tabindex="0" role="button" aria-sort="${exState.sort===i?(exState.dir>0?'ascending':'descending'):'none'}" title="Trier">${esc(c)}${exState.sort===i?`<span class="ar" aria-hidden="true">${exState.dir>0?'▲':'▼'}</span>`:''}</th>`).join('')+(canEdit?'<th scope="col">—</th>':'');
+  const body=pageRows.map(r=>{const ridx=d.rows.indexOf(r);
+    return `<tr data-rowidx="${ridx}">${r.map((v,i)=>`<td class="${d.types[i]==='num'?'num':''}" ${canEdit?`contenteditable="true" data-ecol="${i}"`:''} title="${esc(v)}">${esc(fmtCell(v,d.types[i]))}</td>`).join('')}${canEdit?`<td><button class="rm-del" data-erowdel="${ridx}" title="Supprimer cette ligne">✕</button></td>`:''}</tr>`;
+  }).join('');
   // live aggregates over filtered rows: sum of each numeric column
   const numCols=d.cols.map((c,i)=>({c,i})).filter(o=>d.types[o.i]==='num' && !/^id$|_id$/i.test(o.c));
   const sums=numCols.map(o=>{let s=0,n=0;for(const r of rows){const v=Number(r[o.i]);if(!isNaN(v)){s+=v;n++;}}return {c:o.c,s,n};}).filter(o=>o.n>0).slice(0,6);
@@ -258,13 +279,16 @@ function renderExplorer(){
       <button class="btn ${exState.panel?'primary':''}" id="exToggle">⚙ Filtres par colonne${nActive?` (${nActive})`:''}</button>
       <button class="btn" id="exReset">Réinitialiser</button>
       <button class="btn" id="exCsv">↓ Export CSV (sélection)</button>
+      ${canEdit?`<button class="btn" id="exAddRow">+ Ligne</button><button class="btn primary" id="exSaveTable">💾 Enregistrer cette table en base</button>`:''}
     </div>
+    ${canEdit?`<div style="font-size:12px;color:var(--ink-soft);margin:-6px 0 10px">Mode édition : cliquez une cellule pour la modifier, <b>✕</b> pour supprimer une ligne, <b>+ Ligne</b> pour en ajouter une, puis <b>Enregistrer cette table en base</b> pour publier ces changements sur le serveur.</div>`:''}
     <div id="exFilters" class="exfilters" style="display:${exState.panel?'grid':'none'}"></div>
     <div class="exsummary" id="exSummary"></div>
-    <div class="gridwrap"><div class="gridscroll"><table class="dg"><thead><tr>${th}</tr></thead><tbody>${body||`<tr><td colspan="${d.cols.length}"><div class="empty">Aucune ligne pour cette combinaison de filtres.</div></td></tr>`}</tbody></table></div>
+    <div class="gridwrap"><div class="gridscroll"><table class="dg"><thead><tr>${th}</tr></thead><tbody>${body||`<tr><td colspan="${d.cols.length+(canEdit?1:0)}"><div class="empty">Aucune ligne pour cette combinaison de filtres.</div></td></tr>`}</tbody></table></div>
       <div class="gridfoot"><div>${fmtN(tot)} ligne(s)${nActive||exState.q||(globalYear&&yc)?' filtrée(s) sur '+fmtN(d.rows.length):''} · ${d.cols.length} colonnes</div>
       <div class="pager"><button id="exFirst" ${exState.page===0?'disabled':''}>«</button><button id="exPrev" ${exState.page===0?'disabled':''}>‹</button><span>Page ${exState.page+1} / ${pages}</span><button id="exNext" ${exState.page>=pages-1?'disabled':''}>›</button><button id="exLast" ${exState.page>=pages-1?'disabled':''}>»</button></div></div>
     </div>`;
+  if(canEdit)bindExplorerEdit(d);
   // summary
   const sum=$('#exSummary');
   sum.innerHTML=`<span class="sm-c">${fmtN(tot)} ligne(s) sélectionnée(s)</span>`+sums.map(o=>`<span class="sm-s"><span>Σ ${esc(o.c)}</span><b>${fmtSmart(o.s)}</b></span>`).join('');
@@ -272,7 +296,7 @@ function renderExplorer(){
   if(exState.panel)renderExFilters();
   // sort/pager/search events
   const doSort=th=>{const i=+th.dataset.si;if(exState.sort===i)exState.dir*=-1;else{exState.sort=i;exState.dir=1;}renderExplorer();};
-  $$('#exMain thead th').forEach(th=>{th.addEventListener('click',()=>doSort(th));th.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();doSort(th);}});});
+  $$('#exMain thead th[data-si]').forEach(th=>{th.addEventListener('click',()=>doSort(th));th.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();doSort(th);}});});
   $('#exQ').addEventListener('input',e=>{exState.q=e.target.value;exState.page=0;const v=e.target.value;renderExplorer();const inp=$('#exQ');if(inp){inp.focus();inp.setSelectionRange(v.length,v.length);}});
   $('#exToggle').onclick=()=>{exState.panel=!exState.panel;renderExplorer();};
   $('#exReset').onclick=()=>{exState.filters={};exState.q='';exState.page=0;renderExplorer();};
@@ -283,6 +307,45 @@ function renderExplorer(){
   $('#exCsv').onclick=()=>exportCSV(exState.ds,rows);
   const tqi=$('#exTableQ');if(tqi&&!tqi._bound){tqi._bound=true;tqi.addEventListener('input',e=>{exTableQ=e.target.value;const v=e.target.value;$('#app').innerHTML=mExplorer();renderExplorer();const t=$('#exTableQ');if(t){t.focus();t.setSelectionRange(v.length,v.length);}});}
   if(editing)markEditable(true);
+}
+
+/* ===== Édition des données en mode admin (Explorateur) =====
+   Chaque cellule devient éditable (contenteditable), les lignes peuvent
+   être ajoutées/supprimées, et « Enregistrer cette table en base » publie
+   la table complète via PUT /api/datasets/<nom> (déjà exposé par le
+   back-end). C'est la voie recommandée pour « mettre à jour les données »
+   depuis l'interface plutôt qu'en appelant l'API à la main. */
+async function saveDatasetToServer(name,btn){
+  const d=DS[name];const old=btn?btn.textContent:null;
+  if(btn){btn.disabled=true;btn.textContent='Enregistrement…';}
+  try{
+    const r=await fetch('/api/datasets/'+encodeURIComponent(name),{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({label:d.label,cat:d.cat,desc:d.desc,cols:d.cols,types:d.types,rows:d.rows})});
+    if(r.status===401){alert('Votre session administrateur a expiré : veuillez vous reconnecter.');return false;}
+    if(!r.ok){const j=await r.json().catch(()=>({}));alert("Échec de l'enregistrement : "+(j.error||r.status));return false;}
+    if(btn){btn.textContent='Enregistré ✓';setTimeout(()=>{btn.textContent=old;btn.disabled=false;},1400);}
+    return true;
+  }catch(e){alert("Échec de l'enregistrement : connexion au serveur impossible.");return false;}
+  finally{if(btn&&btn.disabled&&btn.textContent==='Enregistrement…'){btn.disabled=false;btn.textContent=old;}}
+}
+function bindExplorerEdit(d){
+  const host=$('#exMain');if(!host)return;
+  host.querySelectorAll('td[contenteditable]').forEach(td=>{
+    td.addEventListener('blur',()=>{
+      const tr=td.closest('tr');const ridx=+tr.dataset.rowidx,ci=+td.dataset.ecol;
+      if(ridx<0||!d.rows[ridx])return;
+      let raw=td.textContent.trim();
+      if(d.types[ci]==='num'){if(raw===''){d.rows[ridx][ci]=null;}else{const n=Number(raw.replace(/\s/g,'').replace(',','.'));d.rows[ridx][ci]=isNaN(n)?raw:n;}}
+      else d.rows[ridx][ci]=raw===''?null:raw;
+    });
+    td.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();td.blur();}});
+  });
+  const addBtn=$('#exAddRow');if(addBtn)addBtn.onclick=()=>{d.rows.push(d.cols.map(()=>null));exState.sort=null;exState.page=Math.max(0,Math.ceil(d.rows.length/25)-1);renderExplorer();};
+  host.querySelectorAll('[data-erowdel]').forEach(b=>b.addEventListener('click',()=>{
+    const ridx=+b.dataset.erowdel;if(ridx<0||!d.rows[ridx])return;
+    if(confirm('Supprimer définitivement cette ligne de « '+(d.label||exState.ds)+' » ?')){d.rows.splice(ridx,1);renderExplorer();}
+  }));
+  const saveBtn=$('#exSaveTable');if(saveBtn)saveBtn.onclick=()=>saveDatasetToServer(exState.ds,saveBtn);
 }
 
 function renderExFilters(){const host=$('#exFilters');if(!host)return;const d=DS[exState.ds];
@@ -339,7 +402,7 @@ function exportCSV(name,rows){
 let vizState={ds:'fait_reconciliation_entreprise',dim:'',measure:'',agg:'sum',type:'bar'};
 function mViz(){
   const dsOpts=Object.entries(DS).map(([k,d])=>`<option value="${k}" ${vizState.ds===k?'selected':''}>${esc(d.label)}</option>`).join('');
-  return `<div class="phead"><div class="eyebrow">Visualisations</div><h1>Générateur de visualisations</h1><p>Choisissez une table, une dimension, une mesure et un type de graphique. Idéal pour explorer visuellement n'importe quelle donnée de l'entrepôt.</p></div>
+  return `<div class="phead"><div class="eyebrow">Visualisations</div><h1>Générateur de visualisations</h1><p data-edit="intros.viz">${esc(C.intros.viz)}</p></div>
     <div class="vizbar">
       <div class="vf"><label>Table</label><select id="vzDs">${dsOpts}</select></div>
       <div class="vf"><label>Dimension (axe)</label><select id="vzDim"></select></div>
@@ -443,7 +506,7 @@ function mModel(){
     <div class="tn">${esc(k)} · ${fmtN(d.rows.length)} lignes · ${d.cols.length} colonnes</div><p>${esc(d.desc)}</p>
     <div class="open" data-openex="${k}">Explorer cette table →</div></div>`).join('');
   const nT=Object.keys(DS).filter(k=>!k.startsWith('_')).length,nR=Object.entries(DS).filter(([k])=>!k.startsWith('_')).reduce((a,[,d])=>a+d.rows.length,0);
-  return `<div class="phead"><div class="eyebrow">Architecture</div><h1>Modèle de données</h1><p>L'entrepôt suit un schéma en étoile : des tables de faits (mesures) reliées à des tables de dimensions (contexte). ${fmtN(nR)} lignes réparties sur ${nT} tables.</p></div>
+  return `<div class="phead"><div class="eyebrow">Architecture</div><h1>Modèle de données</h1><p data-edit="intros.model">${esc(C.intros.model)}</p><p>${fmtN(nR)} lignes réparties sur ${nT} tables.</p></div>
     <div class="schema" id="schemaSvg"></div>
     <div class="tablecat">${cards}</div>`;}
 function drawSchema(){
@@ -467,15 +530,25 @@ const CATS={rapport_itie:'Rapport annuel',thematique:'Thématique',forestier:'Se
 let repFilter='all';
 function mReports(){const cats=[...new Set(C.reports.map(r=>r.categorie))];
   const chips=`<div class="filters"><button class="chip ${repFilter==='all'?'on':''}" data-f="all">Tous</button>`+cats.map(c=>`<button class="chip ${repFilter===c?'on':''}" data-f="${c}">${esc(CATS[c]||c)}</button>`).join('')+`</div>`;
-  return `<div class="phead"><div class="eyebrow">Documents</div><h1>Rapports &amp; publications</h1><p>Rapports annuels, thématiques, contextuels, forestiers, d'avancement et de validation publiés par l'ITIE-RDC.</p></div>${chips}<div class="reports" id="repList"></div>`;}
+  return `<div class="phead"><div class="eyebrow">Documents</div><h1>Rapports &amp; publications</h1><p data-edit="intros.reports">${esc(C.intros.reports)}</p></div>${chips}<div class="reports" id="repList"></div>`;}
 function renderReports(){const list=$('#repList');if(!list)return;
   const rs=C.reports.filter(r=>repFilter==='all'||r.categorie===repFilter).sort((a,b)=>String(b.annees_couvertes).localeCompare(String(a.annees_couvertes)));
   list.innerHTML=rs.map(r=>{const url=r.url&&r.url!=='#'?r.url:null;return `<div class="rep"><div class="yr">${esc(r.annees_couvertes||'')}</div><div><div class="t">${esc(r.titre)}</div><span class="cat">${esc(CATS[r.categorie]||r.categorie)}</span>${url?`<br><a class="dl" href="${esc(url)}" target="_blank" rel="noopener">↓ Télécharger (${esc((r.format||'pdf').toUpperCase())})</a>`:''}</div></div>`;}).join('')||`<div class="empty">Aucun rapport dans cette catégorie.</div>`;}
 
 /* About */
-function mAbout(){const A=C.about;return `<div class="phead"><div class="eyebrow">Informations</div><h1 data-edit="about.titre">${esc(A.titre)}</h1></div>
+function mAbout(){const A=C.about,B=C.brand,F=C.footer;return `<div class="phead"><div class="eyebrow">Informations</div><h1 data-edit="about.titre">${esc(A.titre)}</h1></div>
   <div class="about-grid">
-    <div class="prose"><p data-edit="about.mission">${esc(A.mission)}</p><p data-edit="about.gouvernance">${esc(A.gouvernance)}</p><p data-edit="about.methodo">${esc(A.methodo)}</p></div>
+    <div class="prose"><p data-edit="about.mission">${esc(A.mission)}</p><p data-edit="about.gouvernance">${esc(A.gouvernance)}</p><p data-edit="about.methodo">${esc(A.methodo)}</p>
+      ${editing?`<div class="card" style="margin-top:16px"><h3 style="margin-bottom:10px">Identité du site (menu, en-tête, pied de page)</h3>
+        <div style="font-size:14px;color:var(--ink-soft);line-height:2.1">
+          <div>Nom court du site : <b data-edit="brand.name">${esc(B.name)}</b></div>
+          <div>Nom complet (en-tête) : <b data-edit="brand.full">${esc(B.full)}</b></div>
+          <div>Sous-titre du menu latéral : <b data-edit="brand.tagline_short">${esc(B.tagline_short)}</b></div>
+          <div>Mention du pied de menu : <b data-edit="footer.note_short">${esc(F.note_short)}</b></div>
+          <div>Note de bas de page (longue) : <b data-edit="footer.note">${esc(F.note)}</b></div>
+        </div>
+        <div style="font-size:11.5px;color:var(--ink-soft);margin-top:8px">Ces textes s'appliquent immédiatement après « Enregistrer &amp; publier » (menu, en-tête et pied de page).</div></div>`:''}
+    </div>
     <div>
       <div class="card" style="margin-bottom:16px"><h3 style="margin-bottom:10px">Contact</h3>
         <div style="font-size:14px;color:var(--ink-soft);line-height:2"><div data-edit="contact.org"></div><div data-edit="contact.tel"></div><div data-edit="contact.email"></div><div data-edit="contact.adresse"></div></div></div>
@@ -512,7 +585,7 @@ function mQualite(){
   const dupTot=Object.values(cl.dedup||{}).reduce((a,b)=>a+b,0);
   const sentTot=Object.values(cl.sentinels||{}).reduce((a,s)=>a+(String(s).match(/\d+/g)||[]).reduce((x,y)=>x+ +y,0),0);
   const negExp=countNeg('ctx_exportation',['Valeur_totale','Quantite_totale']), negProd=countNeg('ctx_production',['Valeur_totale','Quantite_totale']);
-  return `<div class="phead"><div class="eyebrow">Gouvernance</div><h1>Qualité des données</h1><p>Complétude, doublons et anomalies détectées et traitées lors de l'intégration. Dernière actualisation : <b>${esc(WH.generated||'2026')}</b>.</p></div>
+  return `<div class="phead"><div class="eyebrow">Gouvernance</div><h1>Qualité des données</h1><p data-edit="intros.qualite">${esc(C.intros.qualite)}</p><p>Dernière actualisation : <b>${esc(WH.generated||'2026')}</b>.</p></div>
   <div class="kpis">
     <div class="kpi"><div class="v">${Object.keys(DS).filter(k=>!k.startsWith('_')).length}</div><div class="l">Tables</div></div>
     <div class="kpi"><div class="v">${fmtN(totRows)}</div><div class="l">Lignes</div></div>
@@ -557,7 +630,7 @@ function drawQualite(){
 /* Dictionnaire de données */
 let dictQ='';
 function mDict(){
-  return `<div class="phead"><div class="eyebrow">Métadonnées</div><h1>Dictionnaire de données</h1><p>Catalogue de toutes les tables et colonnes de l'entrepôt : ${fmtN(DS._dictionnaire.rows.length)} colonnes documentées sur ${Object.keys(DS).filter(k=>!k.startsWith('_')).length} tables.</p></div>
+  return `<div class="phead"><div class="eyebrow">Métadonnées</div><h1>Dictionnaire de données</h1><p data-edit="intros.dict">${esc(C.intros.dict)}</p><p>${fmtN(DS._dictionnaire.rows.length)} colonnes documentées sur ${Object.keys(DS).filter(k=>!k.startsWith('_')).length} tables.</p></div>
     <div class="extoolbar"><div class="exsearch"><span class="si">⌕</span><input id="dictQ" placeholder="Rechercher une table ou une colonne…" value="${esc(dictQ)}"></div><button class="btn" id="dictCsv">↓ Export CSV</button></div>
     <div class="gridwrap"><div class="gridscroll"><table class="dg" id="dictTable"></table></div></div>`;}
 function renderDict(){
@@ -615,7 +688,7 @@ function mGeo(){
     ['Cadastre minier',['permis_cami']]];
   const chipHtml=GROUPS.map(([g,keys])=>{const av=keys.filter(k=>GEO.layers[k]);if(!av.length)return '';
     return `<div class="lgroup"><div class="lgttl">${g}</div><div class="lgchips">${av.map(k=>`<button class="lchip ${mapInd===k?'on':''}" data-ind="${k}">${esc(SHORT[k]||GEO.layers[k].label)}</button>`).join('')}</div></div>`;}).join('');
-  return `<div class="phead"><div class="eyebrow">Territoire</div><h1>Géographie de l'extraction</h1><p>Choisissez une <b>couche</b> ci-dessous (recettes, paiements infranationaux, cahiers de charge, permis du cadastre…), puis l'<b>année</b>, la <b>vue</b> et le <b>niveau</b> (national / province / territoire / ETD). Sur les couches ETD et Dotations OS DOT, chaque bénéficiaire apparaît en <b>point géolocalisé</b>. Survolez, zoomez, cliquez.</p>
+  return `<div class="phead"><div class="eyebrow">Territoire</div><h1>Géographie de l'extraction</h1><p data-edit="intros.geo">${esc(C.intros.geo)}</p><p>Choisissez une <b>couche</b> ci-dessous (recettes, paiements infranationaux, cahiers de charge, permis du cadastre…), puis l'<b>année</b>, la <b>vue</b> et le <b>niveau</b> (national / province / territoire / ETD). Sur les couches ETD et Dotations OS DOT, chaque bénéficiaire apparaît en <b>point géolocalisé</b>. Survolez, zoomez, cliquez.</p>
     <p style="font-size:12.5px;color:var(--ink-soft);margin-top:-6px"><b>Note ITIE :</b> les <b>Paiements infranationaux (Exigence 4.6)</b> sont les paiements <b>directs</b> des entreprises aux entités locales — régies provinciales (DRP), ETD (secteurs, chefferies, communes) et dotations OS DOT (0,3 %). Ils se distinguent des <b>Transferts infranationaux (Exigence 5.2)</b>, qui sont des recettes perçues au niveau central puis rétrocédées aux provinces/ETD — et des dépenses sociales/environnementales (section 6.1).</p></div>
     ${hasGeo?`<div class="card" style="margin-bottom:18px">
       <div class="ch" style="flex-wrap:wrap;gap:10px"><h3 id="mapTitle">Carte</h3></div>
@@ -975,8 +1048,22 @@ const NAV=[
 
 /* ===== router / shell ===== */
 let current='overview', globalYear='';
+function isNavHidden(id){return id!=='overview'&&(C.nav_hidden||[]).includes(id);}
+function firstVisibleModule(){for(const sec of NAV)for(const [id] of sec.items)if(!isNavHidden(id))return id;return 'overview';}
 function buildSidebar(){
-  $('#sidenav').innerHTML=NAV.map(sec=>`${sec.g?`<div class="grp">${sec.g}</div>`:''}`+sec.items.map(([id,ico,lab])=>`<a class="item" href="#${id}" data-go="${id}"><span class="ico">${ico}</span>${lab}</a>`).join('')).join('');
+  $('#sidenav').innerHTML=NAV.map(sec=>{const items=sec.items.filter(([id])=>editing||!isNavHidden(id));if(!items.length)return '';
+    return `${sec.g?`<div class="grp">${sec.g}</div>`:''}`+items.map(([id,ico,lab])=>`<a class="item ${isNavHidden(id)?'hiddenrub':''}" href="#${id}" data-go="${id}"><span class="ico">${ico}</span>${lab}${isNavHidden(id)?' <span class="badge" style="margin-left:auto">masquée</span>':''}</a>`).join('');
+  }).join('');
+  $$('#sidenav a.item').forEach(a=>a.classList.toggle('active',a.dataset.go===current));
+}
+function syncBrandDom(){
+  const b=C.brand||{},f=C.footer||{};
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val||'';};
+  set('sideBrandName',b.name||'TransparenceRDC');
+  set('sideBrandTag',b.tagline_short||'Entrepôt de données ITIE');
+  set('topBrandName',b.name||'TransparenceRDC');
+  set('topBrandTag',b.full||'');
+  set('sideFooterNote',f.note_short||'Données publiques ITIE · 2007–2024');
 }
 function fillYears(){
   const ys=new Set();['fait_total_annuel','fait_reconciliation_flux','fait_reconciliation_entreprise','fait_depense_sociale'].forEach(t=>{const yc=yearCol(t);if(!yc)return;const yi=DS[t].cols.indexOf(yc);DS[t].rows.forEach(r=>{const y=yearVal(r[yi]);if(y)ys.add(y);});});
@@ -985,7 +1072,9 @@ function fillYears(){
 }
 function go(id){
   if(editing)collectEdits();
-  if(!MODULES[id])id='overview';current=id;
+  if(!MODULES[id])id='overview';
+  if(isNavHidden(id)&&!editing)id=firstVisibleModule();
+  current=id;
   $('#mtitle').textContent=MODULES[id].t;
   $('#app').innerHTML=MODULES[id].f();
   $$('#sidenav a.item').forEach(a=>a.classList.toggle('active',a.dataset.go===id));
@@ -1002,7 +1091,7 @@ function mountStatic(){
   // Le logo est servi directement en tant que fichier statique par Flask
   // (src="/static/logo.png" défini dans templates/index.html) : plus besoin
   // de l'injecter en base64 depuis le JS.
-  buildSidebar();fillYears();
+  buildSidebar();fillYears();syncBrandDom();
   // static editable (contact/kpi labels appear in modules; topbar none). fill contact placeholders handled in module render.
 }
 
@@ -1043,7 +1132,7 @@ try{const stx=localStorage.getItem('trdc-theme');if(stx)document.documentElement
 let editing=false;
 function markEditable(on){$$('[data-edit]').forEach(el=>{if(on){el.setAttribute('contenteditable','true');el.setAttribute('spellcheck','false');if(!el.textContent.trim()){const v=getPath(C,el.getAttribute('data-edit'));if(v!=null)el.textContent=v;}}else el.removeAttribute('contenteditable');});document.body.classList.toggle('editing',on);}
 function collectEdits(){$$('[data-edit]').forEach(el=>{const p=el.getAttribute('data-edit');if(getPath(C,p)!==undefined)assignPath(C,p,el.textContent.trim());});}
-function enterAdminMode(){editing=true;$('#adminBar').classList.add('on');$('#adminFab').style.display='none';document.body.style.paddingBottom='64px';markEditable(true);}
+function enterAdminMode(){editing=true;$('#adminBar').classList.add('on');$('#adminFab').style.display='none';document.body.style.paddingBottom='64px';markEditable(true);buildSidebar();}
 // Si une session admin est déjà active côté serveur (cookie valide), on
 // rouvre directement le mode édition sans redemander le mot de passe.
 getJSON('/api/me').then(me=>{if(me&&me.authenticated)enterAdminMode();}).catch(()=>{});
@@ -1061,8 +1150,8 @@ async function tryLogin(){
 }
 $('#loginBtn').onclick=tryLogin;$('#pw').addEventListener('keydown',e=>{if(e.key==='Enter')tryLogin();});
 // close modals with Escape
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('#loginModal').classList.remove('on');$('#repModal').classList.remove('on');$('#enrichModal').classList.remove('on');}});
-$('#exitBtn').onclick=async()=>{try{await fetch('/api/logout',{method:'POST',credentials:'same-origin'});}catch(e){}editing=false;$('#adminBar').classList.remove('on');$('#adminFab').style.display='';document.body.style.paddingBottom='';markEditable(false);};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('#loginModal').classList.remove('on');$('#repModal').classList.remove('on');$('#enrichModal').classList.remove('on');$('#navModal').classList.remove('on');}});
+$('#exitBtn').onclick=async()=>{try{await fetch('/api/logout',{method:'POST',credentials:'same-origin'});}catch(e){}editing=false;$('#adminBar').classList.remove('on');$('#adminFab').style.display='';document.body.style.paddingBottom='';markEditable(false);buildSidebar();if(isNavHidden(current))go(firstVisibleModule());};
 
 async function saveAndPublish(){
   collectEdits();RAW.content=C;
@@ -1072,11 +1161,30 @@ async function saveAndPublish(){
     if(r.status===401){alert('Votre session administrateur a expiré : veuillez vous reconnecter.');editing=false;$('#adminBar').classList.remove('on');$('#adminFab').style.display='';markEditable(false);return;}
     if(!r.ok){const j=await r.json().catch(()=>({}));alert('Échec de la publication : '+(j.error||r.status));return;}
     btn.textContent='Publié ✓';setTimeout(()=>{btn.textContent=old;},1500);
+    buildSidebar();syncBrandDom();
   }catch(err){alert("Échec de la publication : connexion au serveur impossible.");}
   finally{btn.disabled=false;}
 }
 $('#saveBtn').onclick=saveAndPublish;
 $('#repMgrBtn').onclick=()=>{renderRM();$('#repModal').classList.add('on');};
+
+/* ===== Gestion des rubriques (menu) ===== */
+function renderNavMgr(){
+  const host=$('#navList');if(!host)return;
+  const flat=NAV.flatMap(sec=>sec.items);
+  host.innerHTML=flat.map(([id,ico,lab])=>`<label style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel-2);cursor:${id==='overview'?'default':'pointer'}">
+    <input type="checkbox" data-nav="${id}" ${id==='overview'?'checked disabled':(isNavHidden(id)?'':'checked')}>
+    <span>${ico} ${esc(lab)}</span>${id==='overview'?'<span style="margin-left:auto;font-size:11px;color:var(--ink-soft)">toujours visible</span>':''}
+  </label>`).join('');
+}
+$('#navMgrBtn').onclick=()=>{renderNavMgr();$('#navModal').classList.add('on');};
+$('#navModal').onclick=e=>{if(e.target.id==='navModal')$('#navModal').classList.remove('on');};
+$('#navList').addEventListener('change',e=>{const cb=e.target.closest('[data-nav]');if(!cb)return;const id=cb.dataset.nav;
+  C.nav_hidden=C.nav_hidden||[];
+  if(cb.checked)C.nav_hidden=C.nav_hidden.filter(x=>x!==id);
+  else if(!C.nav_hidden.includes(id))C.nav_hidden.push(id);
+  buildSidebar();});
+$('#navDone').onclick=()=>{$('#navModal').classList.remove('on');buildSidebar();if(isNavHidden(current))go(firstVisibleModule());};
 
 /* ===== ENRICHISSEMENT DES DONNÉES ===== */
 let enParsed=null;
@@ -1120,12 +1228,20 @@ $('#enFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new Fi
     catch(err){enParsed=null;$('#enAppend').disabled=true;const m=$('#enMsg');m.className='msg err';m.textContent='Échec de lecture : '+err.message;$('#enPreview').style.display='none';}
     e.target.value='';};
   rd.readAsText(f);};
-$('#enAppend').onclick=()=>{if(!enParsed)return;const t=$('#enTable').value,d=DS[t];d.rows.push(...enParsed);
+$('#enAppend').onclick=async()=>{if(!enParsed)return;const t=$('#enTable').value,d=DS[t];d.rows.push(...enParsed);
   const n=enParsed.length,tot=d.rows.length;enParsed=null;
   if(current==='explorer')renderExplorer();else if(current==='overview')drawOverview();else if(current==='viz')drawViz();
   const sel=$('#enTable');sel.innerHTML=enTables().map(k=>`<option value="${k}" ${k===t?'selected':''}>${esc(DS[k].label||k)} — ${DS[k].rows.length} lignes</option>`).join('');
   $('#enPreview').style.display='none';$('#enAppend').disabled=true;
-  const m=$('#enMsg');m.className='msg ok';m.textContent=n+' ligne(s) ajoutée(s). Total : '+tot+' lignes. Aperçu local uniquement : la publication persistante ne fonctionne que dans l’environnement d’édition ; sur un hébergement web ordinaire, utilisez « Exporter » (les modifications ne sont pas sauvegardées côté navigateur).';};
+  const m=$('#enMsg');
+  if(editing){
+    m.className='msg';m.textContent=n+" ligne(s) ajoutée(s) — enregistrement sur le serveur…";
+    const ok=await saveDatasetToServer(t,null);
+    m.className='msg '+(ok?'ok':'err');
+    m.textContent=ok?(n+' ligne(s) ajoutée(s) et enregistrée(s) en base de données. Total : '+tot+' lignes.'):(n+" ligne(s) ajoutée(s) localement, mais l'enregistrement côté serveur a échoué — réessayez depuis l'Explorateur (« Enregistrer cette table en base »).");
+  }else{
+    m.className='msg ok';m.textContent=n+' ligne(s) ajoutée(s) localement (aperçu). Connectez-vous en administrateur pour les enregistrer en base.';
+  }};
 $('#enExport').onclick=()=>{saveFile('transparencerdc_donnees_enrichies.json',JSON.stringify(WH,null,1));};
 $('#enExportCsv').onclick=()=>{const t=$('#enTable').value,d=DS[t];const esc2=v=>v==null?'':/[",;\n]/.test(''+v)?'"'+(''+v).replace(/"/g,'""')+'"':''+v;
   const csv=[d.cols.join(';')].concat(d.rows.map(r=>r.map(esc2).join(';'))).join('\n');saveFile(t+'_enrichi.csv',csv);};
