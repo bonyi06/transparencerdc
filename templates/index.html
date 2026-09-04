@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TransparenceRDC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="app">
+  <aside class="side" id="side">
+    <div class="brand"><img id="logoImg" src="{{ url_for('static', filename='logo.png') }}" alt="ITIE-RDC"><div class="bt"><b>TransparenceRDC</b><span>Entrepôt de données ITIE</span></div></div>
+    <nav id="sidenav"></nav>
+    <div class="foot">Données publiques ITIE · 2007–2024</div>
+  </aside>
+  <div class="main">
+    <div class="top">
+      <button class="icon-btn burger" id="burger" aria-label="Menu">☰</button>
+      <div class="brandbox"><img id="logoImgTop" src="{{ url_for('static', filename='logo.png') }}" alt="ITIE-RDC"><div class="brandttl"><b>TransparenceRDC</b><span>Initiative pour la Transparence des Industries Extractives</span></div></div>
+      <div class="sep"></div>
+      <div class="mtitle" id="mtitle">Vue d'ensemble</div>
+      <div class="grow"></div>
+      <div class="searchbox" id="globalSearchBox"><span class="si">⌕</span><input id="globalSearch" placeholder="Rechercher dans les données…" autocomplete="off"></div>
+      <div class="tsel">Exercice <select id="yearFilter"><option value="">Tous</option></select></div>
+      <button class="icon-btn" id="themeBtn" title="Thème">◐</button>
+    </div>
+    <div class="content" id="app"></div>
+  </div>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<button class="admin-fab" id="adminFab" title="Espace administrateur">⚙ Admin</button>
+
+<div class="modal-bg" id="loginModal"><div class="modal">
+  <h3>Espace administrateur</h3>
+  <p>Saisissez le mot de passe pour modifier les contenus publics.</p>
+  <div class="msg" id="loginMsg"></div>
+  <div class="field"><label for="pw">Mot de passe</label><input type="password" id="pw" autocomplete="off"></div>
+  <div style="display:flex;gap:10px"><button class="btn primary" id="loginBtn">Se connecter</button><button class="btn" id="loginCancel">Annuler</button></div>
+</div></div>
+
+<div class="modal-bg" id="repModal"><div class="modal wide">
+  <h3>Gérer les rapports</h3>
+  <p>Ajoutez, modifiez ou supprimez les rapports affichés au public.</p>
+  <div class="rm-list" id="rmList"></div>
+  <div style="display:flex;gap:10px"><button class="btn" id="rmAdd">+ Ajouter</button><button class="btn primary" id="rmDone">Valider</button></div>
+</div></div>
+
+<div class="modal-bg" id="enrichModal"><div class="modal wide">
+  <h3>Enrichir les données</h3>
+  <p>Ajoutez les données d'une nouvelle année (ou corrigez une table) en important un fichier <b>CSV</b> ou <b>JSON</b>. Téléchargez d'abord le modèle de la table pour respecter exactement les colonnes attendues.</p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px">
+    <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600">Table cible
+      <select id="enTable" style="min-width:280px"></select></label>
+    <button class="btn" id="enTemplate">⬇ Modèle CSV</button>
+    <label class="btn" style="cursor:pointer">📄 Importer un fichier<input type="file" id="enFile" accept=".csv,.json,.tsv" style="display:none"></label>
+  </div>
+  <div id="enInfo" style="font-size:12px;color:var(--ink-soft);margin-bottom:8px"></div>
+  <div id="enPreview" style="max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:8px;display:none;margin-bottom:12px"></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn primary" id="enAppend" disabled>Ajouter au jeu de données</button>
+    <button class="btn" id="enExport">⬇ Exporter le jeu enrichi (JSON)</button>
+    <button class="btn" id="enExportCsv">⬇ Exporter la table (CSV)</button>
+    <button class="btn" id="enDone">Fermer</button>
+  </div>
+  <div id="enMsg" class="msg" style="margin-top:10px"></div>
+</div></div>
+
+<div class="adminbar" id="adminBar">
+  <span class="st"><span class="dot"></span> Mode administrateur — cliquez un texte pour l'éditer</span>
+  <span class="grow"></span>
+  <button class="gh" id="repMgrBtn">Gérer les rapports</button>
+  <button class="gh" id="enrichBtn">Enrichir les données</button>
+  <button class="gh" id="exitBtn">Quitter</button>
+  <button class="save" id="saveBtn">Enregistrer &amp; publier</button>
+</div>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
