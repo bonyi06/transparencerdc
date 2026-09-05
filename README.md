@@ -358,23 +358,37 @@ traitées différemment :
   Render) : c'est un comportement d'infrastructure, pas du code applicatif
   — la seule parade est de passer à un plan qui ne met pas le service en
   veille, ou d'ajouter un ping périodique externe pour le garder éveillé.
-- **Poids du premier chargement des données** : `/api/warehouse`,
-  `/api/geo` et les fichiers `static/*` (dont `app.js`) renvoient désormais
-  un en-tête `Cache-Control` (`public, max-age=120` pour l'entrepôt,
-  `max-age=300` pour la géographie, `max-age=600` — configurable via
-  `STATIC_CACHE_SECONDS` — pour les fichiers statiques). Cela évite de
-  retélécharger l'intégralité des ~19 Mo de données à chaque navigation
-  (retour en arrière, nouvel onglet) pendant la fenêtre de cache, sans
-  risquer de servir une version trop obsolète après qu'un admin ait publié
-  un changement. C'est une amélioration mesurable mais partielle : le tout
-  premier chargement d'une session reste soumis au poids réel de
-  l'entrepôt. Une refonte plus ambitieuse — charger uniquement les tables
-  de faits/dimensions/contextuelles au démarrage et ne charger les 117
-  annexes brutes qu'à la demande via `/api/datasets/<nom>` (déjà exposé
-  côté API) — apporterait un gain plus net, mais touche à la façon dont
-  `static/app.js`, le Dictionnaire et la Qualité des données comptent les
-  lignes de chaque table ; à traiter comme un chantier dédié plutôt que d'y
-  toucher au milieu d'un lot de changements déjà large.
+- **Poids du premier chargement des données** : `/api/warehouse` et
+  `/api/geo` renvoient désormais un en-tête `Cache-Control`
+  (`public, max-age=120` pour l'entrepôt, `max-age=300` pour la
+  géographie). Cela évite de retélécharger l'intégralité des ~19 Mo de
+  données à chaque navigation (retour en arrière, nouvel onglet) pendant la
+  fenêtre de cache, sans risquer de servir une version trop obsolète après
+  qu'un admin ait publié un changement. C'est une amélioration mesurable
+  mais partielle : le tout premier chargement d'une session reste soumis au
+  poids réel de l'entrepôt. Une refonte plus ambitieuse — charger
+  uniquement les tables de faits/dimensions/contextuelles au démarrage et
+  ne charger les 117 annexes brutes qu'à la demande via
+  `/api/datasets/<nom>` (déjà exposé côté API) — apporterait un gain plus
+  net, mais touche à la façon dont `static/app.js`, le Dictionnaire et la
+  Qualité des données comptent les lignes de chaque table ; à traiter comme
+  un chantier dédié plutôt que d'y toucher au milieu d'un lot de
+  changements déjà large.
+- **Fichiers statiques versionnés** : `app.js` et `style.css` sont servis
+  avec un cache navigateur long (`STATIC_CACHE_SECONDS`, 1 jour par défaut)
+  **et** un paramètre `?v=<horodatage>` (`ASSET_VERSION`, calculé une fois
+  au démarrage du processus) ajouté à leur URL dans `templates/index.html`.
+  Sans ce paramètre, un cache long ferait tourner certains visiteurs sur
+  une version JS obsolète pendant toute la durée du cache après chaque
+  déploiement — c'est exactement ce qui s'est produit en sept. 2026 : le
+  correctif de sécurité admin restait invisible pour des navigateurs ayant
+  mis en cache l'ancien `app.js` avant le déploiement. Comme
+  `ASSET_VERSION` change à chaque redémarrage du processus (donc à chaque
+  déploiement Render), l'URL change et le navigateur retélécharge
+  systématiquement la bonne version, sans perdre le bénéfice du cache long
+  entre deux déploiements. Si un visiteur voit un comportement qui ne
+  correspond pas au code déployé, un rechargement forcé (Ctrl+Maj+R /
+  Cmd+Maj+R) élimine cette hypothèse.
 
 ## Limites connues / pistes d'évolution
 

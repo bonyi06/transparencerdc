@@ -53,7 +53,10 @@ class Config:
 
     JSON_SORT_KEYS = False
 
-    # Fichiers statiques (app.js/style.css/logo.png) : mise en cache courte
-    # côté navigateur pour accélérer les visites répétées sans risquer de
-    # servir une version obsolète trop longtemps après un déploiement.
-    SEND_FILE_MAX_AGE_DEFAULT = int(os.environ.get("STATIC_CACHE_SECONDS", 600))
+    # Fichiers statiques (app.js/style.css/logo.png) : mise en cache longue
+    # côté navigateur pour accélérer les visites répétées. Sans danger de
+    # servir une version obsolète après un déploiement : app.js et
+    # style.css sont chargés avec un paramètre "?v=<version>" qui change à
+    # chaque redémarrage du processus (voir app.py: ASSET_VERSION), donc un
+    # déploiement force toujours le rechargement même avec un cache long.
+    SEND_FILE_MAX_AGE_DEFAULT = int(os.environ.get("STATIC_CACHE_SECONDS", 86400))

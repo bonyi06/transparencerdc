@@ -21,6 +21,7 @@ Lancer en production (voir README) :
 """
 from __future__ import annotations
 
+import time
 from datetime import datetime, timezone
 from functools import wraps
 
@@ -47,6 +48,19 @@ compress = Compress()
 def create_app(config_object: type[Config] = Config) -> Flask:
     app = Flask(__name__)
     app.config.from_object(config_object)
+
+    # Identifiant de version des fichiers statiques (app.js/style.css),
+    # utilisé comme paramètre "?v=" dans templates/index.html. Comme ces
+    # fichiers n'ont pas de nom versionné, les servir avec un long cache
+    # navigateur (SEND_FILE_MAX_AGE_DEFAULT) sans ce paramètre ferait
+    # tourner certains visiteurs sur une version JS obsolète pendant toute
+    # la durée du cache après chaque déploiement (vécu en sept. 2026 : le
+    # correctif de sécurité admin restait invisible pour des navigateurs
+    # ayant mis en cache l'ancien app.js). Ce timestamp change à chaque
+    # redémarrage du processus (donc à chaque déploiement Render), ce qui
+    # force le navigateur à retélécharger les fichiers dès qu'ils changent,
+    # tout en gardant le bénéfice du cache long entre deux déploiements.
+    app.config["ASSET_VERSION"] = str(int(time.time()))
 
     db.init_app(app)
     compress.init_app(app)
@@ -151,11 +165,13 @@ def register_routes(app: Flask) -> None:
         # d'administration existe (l'authentification côté serveur reste
         # de toute façon la vraie protection, mais on évite d'exhiber
         # inutilement un point d'entrée public à un mot de passe).
-        return render_template("index.html", show_admin_ui=bool(session.get("admin_id")))
+        return render_template(
+            "index.html", show_admin_ui=bool(session.get("admin_id")), asset_v=app.config["ASSET_VERSION"]
+        )
 
     @app.get(f"/{app.config['ADMIN_ENTRY_PATH']}")
     def admin_entry():
-        return render_template("index.html", show_admin_ui=True)
+        return render_template("index.html", show_admin_ui=True, asset_v=app.config["ASSET_VERSION"])
 
     # ------------------------------------------------------------------ #
     # Authentification
