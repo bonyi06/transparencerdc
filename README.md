@@ -308,6 +308,23 @@ Pour élargir la couverture :
 - **Une nouvelle colonne à canonicaliser** : ajoutez l'entrée
   `"nom_table.nom_colonne":"dimension"` dans `CANON_COLS`.
 
+Cette correspondance est appliquée de façon cohérente à **tous** les
+endroits de l'interface qui filtrent, regroupent ou comptent par province,
+entreprise, flux ou entité perceptrice : l'Explorateur (filtres, sommes) et
+le module Géographie (filtres et tableau « Paiements infranationaux
+détaillés » de `drawInfraTable()`) partagent le même moteur de
+canonicalisation (`canonDimFor`/`canonicalize`) — une correction apportée
+à `ref_canoniques` ou `PROVINCE_ALIASES` se répercute donc automatiquement
+partout, sans code dupliqué à maintenir à deux endroits.
+
+Limite connue : certaines abréviations (ex. « DRLU » vs « Direction des
+recettes de Lualaba (DRLU) », « Drhkat » vs « Direction des recettes du
+Haut Katanga (DRHKAT) ») n'ont pas encore d'entrée correspondante dans
+`ref_canoniques` et restent donc affichées comme des entités perceptrices
+distinctes, conformément au principe ci-dessus (ne jamais fusionner une
+variante non répertoriée). Pour les regrouper, ajoutez la paire
+`libelle_brut` → `nom_canonique` correspondante dans `ref_canoniques`.
+
 ## Comment exploiter et faire évoluer ce code
 
 Ce projet est volontairement structuré en couches simples, chacune

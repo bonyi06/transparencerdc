@@ -1005,24 +1005,33 @@ function drawGeo(){
 // détail infranational : ventilation par entité perceptrice depuis les annexes 2022/2023
 let infraF={annee:'',type:'',prov:'',perc:'',ent:'',flux:'',group:'perc'};
 function drawInfraTable(){const host=$('#geoInfra');if(!host)return;
-  const t=DS['ctx_paiement_infranational_detail'];
+  const TNAME='ctx_paiement_infranational_detail';
+  const t=DS[TNAME];
   if(!t){host.innerHTML='<div class="empty" style="padding:16px">Données détaillées indisponibles.</div>';return;}
   const ci={};t.cols.forEach((c,i)=>ci[c]=i);
+  // Province / entité perceptrice / entreprise / flux sont canonicalisées ici
+  // exactement comme dans l'Explorateur (mêmes référentiels `ref_canoniques`
+  // et `GEO.prov_ref`), afin que cette table de la page Géographie ne réaffiche
+  // pas les variantes brutes de casse/accents déjà nettoyées ailleurs
+  // (audit qualité, sept. 2026).
+  const dimProv=canonDimFor(TNAME,'province'),dimPerc=canonDimFor(TNAME,'percepteur'),dimEnt=canonDimFor(TNAME,'entreprise'),dimFlux=canonDimFor(TNAME,'flux');
+  const cv=(r,col,dim)=>{const raw=r[ci[col]];return dim?canonicalize(dim,raw):raw;};
   const F=infraF;
   const match=(r,except)=>{
     return (except==='annee'||!F.annee||String(r[ci.annee])===F.annee)
       &&(except==='type'||!F.type||r[ci.type_percepteur]===F.type)
-      &&(except==='prov'||!F.prov||r[ci.province]===F.prov)
-      &&(except==='perc'||!F.perc||r[ci.percepteur]===F.perc)
-      &&(except==='ent'||!F.ent||r[ci.entreprise]===F.ent)
-      &&(except==='flux'||!F.flux||r[ci.flux]===F.flux);};
+      &&(except==='prov'||!F.prov||cv(r,'province',dimProv)===F.prov)
+      &&(except==='perc'||!F.perc||cv(r,'percepteur',dimPerc)===F.perc)
+      &&(except==='ent'||!F.ent||cv(r,'entreprise',dimEnt)===F.ent)
+      &&(except==='flux'||!F.flux||cv(r,'flux',dimFlux)===F.flux);};
   const opts=(field,col)=>[...new Set(t.rows.filter(r=>match(r,field)).map(r=>r[ci[col]]))].filter(v=>v!=null&&v!=='').sort();
+  const optsCanon=(field,col,dim)=>[...new Set(t.rows.filter(r=>match(r,field)).map(r=>cv(r,col,dim)))].filter(v=>v!=null&&v!=='').sort();
   const anneeOpts=opts('annee','annee').map(String);
   const typeOpts=opts('type','type_percepteur');
-  const provOpts=opts('prov','province');
-  const percOpts=opts('perc','percepteur');
-  const entOpts=opts('ent','entreprise');
-  const fluxOpts=opts('flux','flux');
+  const provOpts=optsCanon('prov','province',dimProv);
+  const percOpts=optsCanon('perc','percepteur',dimPerc);
+  const entOpts=optsCanon('ent','entreprise',dimEnt);
+  const fluxOpts=optsCanon('flux','flux',dimFlux);
   const rows=t.rows.filter(r=>match(r,null));
   // grouping
   const G=F.group||'perc';
@@ -1033,10 +1042,13 @@ function drawInfraTable(){const host=$('#geoInfra');if(!host)return;
             etd:['province','percepteur'],
             full:['annee','province','type_percepteur','percepteur','entreprise','flux']};
   const keys=GK[G]||GK.perc;
+  const canonVals=r=>({annee:r[ci.annee],type_percepteur:r[ci.type_percepteur],
+    province:cv(r,'province',dimProv),percepteur:cv(r,'percepteur',dimPerc),
+    entreprise:cv(r,'entreprise',dimEnt),flux:cv(r,'flux',dimFlux)});
   const agg={};
-  for(const r of rows){const k=keys.map(c=>r[ci[c]]).join('¦');
-    if(!agg[k]){agg[k]={mt:0,ent:new Set(),perc:new Set(),flux:new Set(),vals:{}};keys.forEach(c=>agg[k].vals[c]=r[ci[c]]);}
-    agg[k].mt+=Number(r[ci.montant_usd])||0;agg[k].ent.add(r[ci.entreprise]);agg[k].perc.add(r[ci.percepteur]);agg[k].flux.add(r[ci.flux]);}
+  for(const r of rows){const vals=canonVals(r);const k=keys.map(c=>vals[c]).join('¦');
+    if(!agg[k]){agg[k]={mt:0,ent:new Set(),perc:new Set(),flux:new Set(),vals:{}};keys.forEach(c=>agg[k].vals[c]=vals[c]);}
+    agg[k].mt+=Number(r[ci.montant_usd])||0;agg[k].ent.add(vals.entreprise);agg[k].perc.add(vals.percepteur);agg[k].flux.add(vals.flux);}
   const list=Object.values(agg).sort((a,b)=>b.mt-a.mt);
   const tot=list.reduce((a,x)=>a+x.mt,0);
   const bytype={};for(const r of rows){const ty=r[ci.type_percepteur];bytype[ty]=(bytype[ty]||0)+(Number(r[ci.montant_usd])||0);}
