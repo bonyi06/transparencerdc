@@ -21,13 +21,24 @@ Lancer en production (voir README) :
 """
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from functools import wraps
 
+import click
 from flask import Flask, abort, jsonify, render_template, request, session
 from flask_compress import Compress
 
 from config import Config
-from models import AdminUser, ContentRevision, Dataset, GeoLayer, SiteContent, WarehouseMeta, db
+from models import (
+    AdminUser,
+    AuditLog,
+    ContentRevision,
+    Dataset,
+    GeoLayer,
+    SiteContent,
+    WarehouseMeta,
+    db,
+)
 
 compress = Compress()
 
@@ -69,6 +80,52 @@ def login_required(view):
     return wrapped
 
 
+def current_admin() -> "AdminUser | None":
+    uid = session.get("admin_id")
+    if not uid:
+        return None
+    return AdminUser.query.get(uid)
+
+
+def admin_role_required(view):
+    """Réservé aux comptes de rôle 'admin' (gestion des comptes, journal
+    d'audit complet). Un compte 'editor' reçoit un 403 (authentifié mais
+    pas autorisé), à distinguer du 401 (pas authentifié du tout)."""
+
+    @wraps(view)
+    def wrapped(*args, **kwargs):
+        user = current_admin()
+        if user is None:
+            abort(401)
+        if user.role != "admin":
+            abort(403)
+        return view(*args, **kwargs)
+
+    return wrapped
+
+
+def log_audit(action: str, target: str = "", detail: str = "") -> None:
+    """Consigne une action dans le journal d'audit. Best-effort : une
+    erreur d'écriture du journal ne doit jamais faire échouer l'action
+    métier elle-même (cohérent avec le reste de l'appli : la fiabilité de
+    l'audit ne doit pas être un point de défaillance)."""
+    try:
+        user = current_admin()
+        username = user.username if user else (session.get("audit_username") or "?")
+        db.session.add(
+            AuditLog(
+                username=username,
+                action=action,
+                target=str(target)[:255],
+                detail=str(detail)[:2000],
+                ip=(request.headers.get("X-Forwarded-For", request.remote_addr) or "")[:64],
+            )
+        )
+        db.session.commit()
+    except Exception:  # pragma: no cover - l'audit ne doit jamais bloquer
+        db.session.rollback()
+
+
 def register_routes(app: Flask) -> None:
 
     # ------------------------------------------------------------------ #
@@ -76,7 +133,18 @@ def register_routes(app: Flask) -> None:
     # ------------------------------------------------------------------ #
     @app.get("/")
     def index():
-        return render_template("index.html")
+        # Le bouton "⚙ Admin" et les modales associées ne sont rendus que
+        # si le visiteur arrive par le lien d'accès admin (voir plus bas)
+        # OU dispose déjà d'une session admin valide (cookie) : un visiteur
+        # ordinaire tombant sur "/" ne voit donc jamais qu'un espace
+        # d'administration existe (l'authentification côté serveur reste
+        # de toute façon la vraie protection, mais on évite d'exhiber
+        # inutilement un point d'entrée public à un mot de passe).
+        return render_template("index.html", show_admin_ui=bool(session.get("admin_id")))
+
+    @app.get(f"/{app.config['ADMIN_ENTRY_PATH']}")
+    def admin_entry():
+        return render_template("index.html", show_admin_ui=True)
 
     # ------------------------------------------------------------------ #
     # Authentification
@@ -87,23 +155,111 @@ def register_routes(app: Flask) -> None:
         username = (data.get("username") or app.config["ADMIN_USERNAME"]).strip()
         password = data.get("password") or ""
         user = AdminUser.query.filter_by(username=username).first()
-        if user is None or not user.check_password(password):
+        session["audit_username"] = username
+        if user is None or not user.active or not user.check_password(password):
+            log_audit("login.failed", target=username)
             return jsonify({"ok": False, "error": "invalid_credentials"}), 401
         session.permanent = True
         session["admin_id"] = user.id
-        return jsonify({"ok": True, "username": user.username})
+        user.last_login_at = datetime.now(timezone.utc)
+        db.session.commit()
+        log_audit("login.success")
+        return jsonify({"ok": True, "username": user.username, "role": user.role})
 
     @app.post("/api/logout")
     def logout():
+        if session.get("admin_id"):
+            log_audit("logout")
         session.pop("admin_id", None)
         return jsonify({"ok": True})
 
     @app.get("/api/me")
     def me():
-        if not session.get("admin_id"):
+        user = current_admin()
+        if not user:
             return jsonify({"authenticated": False})
-        user = AdminUser.query.get(session["admin_id"])
-        return jsonify({"authenticated": bool(user), "username": user.username if user else None})
+        return jsonify({"authenticated": True, "username": user.username, "role": user.role})
+
+    # ------------------------------------------------------------------ #
+    # Comptes administrateur (réservé au rôle "admin")
+    # ------------------------------------------------------------------ #
+    @app.get("/api/users")
+    @admin_role_required
+    def list_users():
+        return jsonify([u.to_dict() for u in AdminUser.query.order_by(AdminUser.created_at).all()])
+
+    @app.post("/api/users")
+    @admin_role_required
+    def create_user():
+        data = request.get_json(silent=True) or {}
+        username = (data.get("username") or "").strip()
+        password = data.get("password") or ""
+        role = data.get("role") if data.get("role") in ("admin", "editor") else "editor"
+        if not username or len(password) < 8:
+            return jsonify({"ok": False, "error": "identifiant requis, mot de passe de 8 caractères minimum"}), 400
+        if AdminUser.query.filter_by(username=username).first():
+            return jsonify({"ok": False, "error": "ce nom d'utilisateur existe déjà"}), 409
+        user = AdminUser(username=username, role=role)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        log_audit("user.create", target=username, detail=f"role={role}")
+        return jsonify({"ok": True, "user": user.to_dict()})
+
+    @app.put("/api/users/<int:user_id>")
+    @admin_role_required
+    def update_user(user_id: int):
+        user = AdminUser.query.get(user_id)
+        if user is None:
+            abort(404)
+        data = request.get_json(silent=True) or {}
+        changes = []
+        if "role" in data and data["role"] in ("admin", "editor"):
+            if user.role != data["role"]:
+                changes.append(f"role: {user.role} -> {data['role']}")
+                user.role = data["role"]
+        if "active" in data:
+            new_active = bool(data["active"])
+            if user.id == session.get("admin_id") and not new_active:
+                return jsonify({"ok": False, "error": "vous ne pouvez pas désactiver votre propre compte"}), 400
+            if user.active != new_active:
+                changes.append(f"active: {user.active} -> {new_active}")
+                user.active = new_active
+        if data.get("password"):
+            if len(data["password"]) < 8:
+                return jsonify({"ok": False, "error": "mot de passe de 8 caractères minimum"}), 400
+            user.set_password(data["password"])
+            changes.append("password reset")
+        db.session.commit()
+        if changes:
+            log_audit("user.update", target=user.username, detail="; ".join(changes))
+        return jsonify({"ok": True, "user": user.to_dict()})
+
+    @app.delete("/api/users/<int:user_id>")
+    @admin_role_required
+    def delete_user(user_id: int):
+        user = AdminUser.query.get(user_id)
+        if user is None:
+            abort(404)
+        if user.id == session.get("admin_id"):
+            return jsonify({"ok": False, "error": "vous ne pouvez pas supprimer votre propre compte"}), 400
+        if user.role == "admin" and AdminUser.query.filter_by(role="admin", active=True).count() <= 1:
+            return jsonify({"ok": False, "error": "impossible de supprimer le dernier compte admin actif"}), 400
+        username = user.username
+        db.session.delete(user)
+        db.session.commit()
+        log_audit("user.delete", target=username)
+        return jsonify({"ok": True})
+
+    # ------------------------------------------------------------------ #
+    # Journal d'audit
+    # ------------------------------------------------------------------ #
+    @app.get("/api/audit-log")
+    @login_required
+    def audit_log():
+        limit = min(int(request.args.get("limit", 200)), 500)
+        rows = AuditLog.query.order_by(AuditLog.created_at.desc()).limit(limit).all()
+        return jsonify([r.to_dict() for r in rows])
 
     # ------------------------------------------------------------------ #
     # Entrepôt de données (lecture publique)
@@ -115,7 +271,7 @@ def register_routes(app: Flask) -> None:
         front-end existant (réponse compressée gzip automatiquement)."""
         meta = WarehouseMeta.singleton()
         datasets = {d.name: d.to_dict(with_rows=True) for d in Dataset.query.all()}
-        return jsonify(
+        resp = jsonify(
             {
                 "datasets": datasets,
                 "agg": meta.agg or {},
@@ -125,6 +281,13 @@ def register_routes(app: Flask) -> None:
                 "generated": meta.generated or "",
             }
         )
+        # Mise en cache courte côté navigateur : l'entrepôt ne change qu'à
+        # la publication d'un admin, donc une réponse de quelques minutes
+        # évite de retélécharger l'intégralité des données à chaque
+        # navigation (ex. retour en arrière) sans risquer de servir une
+        # version trop obsolète après une modification.
+        resp.headers["Cache-Control"] = "public, max-age=120"
+        return resp
 
     @app.get("/api/datasets")
     def list_datasets():
@@ -160,6 +323,7 @@ def register_routes(app: Flask) -> None:
         d.rows = data["rows"]
         db.session.add(d)
         db.session.commit()
+        log_audit("dataset.save", target=name, detail=f"{len(d.rows)} lignes")
         return jsonify({"ok": True, "name": name, "nb_lignes": len(d.rows)})
 
     @app.delete("/api/datasets/<name>")
@@ -170,6 +334,7 @@ def register_routes(app: Flask) -> None:
             abort(404)
         db.session.delete(d)
         db.session.commit()
+        log_audit("dataset.delete", target=name)
         return jsonify({"ok": True})
 
     # ------------------------------------------------------------------ #
@@ -202,9 +367,12 @@ def register_routes(app: Flask) -> None:
         if reports is not None:
             sc.reports = reports
         sc.version += 1
+        editor = current_admin()
+        editor_name = editor.username if editor else "?"
         db.session.add(sc)
-        db.session.add(ContentRevision(content=sc.content, reports=sc.reports, editor="admin"))
+        db.session.add(ContentRevision(content=sc.content, reports=sc.reports, editor=editor_name))
         db.session.commit()
+        log_audit("content.publish", target=f"v{sc.version}")
         return jsonify({"ok": True, "version": sc.version})
 
     @app.get("/api/content/history")
@@ -229,6 +397,7 @@ def register_routes(app: Flask) -> None:
         sc.version += 1
         db.session.add(sc)
         db.session.commit()
+        log_audit("content.restore", target=f"rev#{rev_id} -> v{sc.version}")
         return jsonify({"ok": True, "version": sc.version})
 
     # ------------------------------------------------------------------ #
@@ -239,7 +408,9 @@ def register_routes(app: Flask) -> None:
         """Renvoie l'objet géographique complet (geometry, layers, provinces,
         terr_geom, prov_ref) tel qu'attendu par le front-end (variable GEO)."""
         gl = GeoLayer.singleton()
-        return jsonify(gl.geometry)  # None si aucune couche n'a encore été importée
+        resp = jsonify(gl.geometry)  # None si aucune couche n'a encore été importée
+        resp.headers["Cache-Control"] = "public, max-age=300"
+        return resp
 
     # ------------------------------------------------------------------ #
     # Santé (utile pour les sondes de déploiement / load balancer)
@@ -262,16 +433,58 @@ def register_cli(app: Flask) -> None:
     @app.cli.command("reset-admin-password")
     def reset_admin_password_command():
         """Réinitialise le mot de passe admin depuis ADMIN_PASSWORD (.env)."""
-        import click
-
         with app.app_context():
             user = AdminUser.query.filter_by(username=app.config["ADMIN_USERNAME"]).first()
             if user is None:
-                user = AdminUser(username=app.config["ADMIN_USERNAME"])
+                user = AdminUser(username=app.config["ADMIN_USERNAME"], role="admin")
                 db.session.add(user)
             user.set_password(app.config["ADMIN_PASSWORD"])
             db.session.commit()
             click.echo(f"Mot de passe réinitialisé pour {user.username}.")
+
+    @app.cli.command("create-admin")
+    @click.argument("username")
+    @click.argument("password")
+    @click.option(
+        "--role", default="editor",
+        type=click.Choice(["admin", "editor"]),
+        help="Rôle du compte (défaut: editor).",
+    )
+    def create_admin_command(username: str, password: str, role: str) -> None:
+        """Crée (ou met à jour) un compte administrateur nominatif.
+
+        Exemple :
+            flask create-admin jkayembe "un mot de passe solide" --role admin
+
+        C'est la façon recommandée d'ajouter des comptes individuels plutôt
+        que de partager un seul mot de passe (voir README, « Sécurité
+        admin »). Un compte 'admin' peut ensuite créer/gérer les autres
+        comptes directement depuis l'interface (« Gérer les comptes »)."""
+        if len(password) < 8:
+            raise click.ClickException("Le mot de passe doit faire au moins 8 caractères.")
+        with app.app_context():
+            user = AdminUser.query.filter_by(username=username).first()
+            created = user is None
+            if user is None:
+                user = AdminUser(username=username)
+            user.role = role
+            user.active = True
+            user.set_password(password)
+            db.session.add(user)
+            db.session.commit()
+            click.echo(f"Compte {'créé' if created else 'mis à jour'} : {username} (rôle: {role}).")
+
+    @app.cli.command("list-admins")
+    def list_admins_command() -> None:
+        """Liste les comptes administrateur existants (sans les mots de passe)."""
+        with app.app_context():
+            users = AdminUser.query.order_by(AdminUser.created_at).all()
+            if not users:
+                click.echo("Aucun compte administrateur.")
+                return
+            for u in users:
+                statut = "actif" if u.active else "désactivé"
+                click.echo(f"- {u.username} · rôle: {u.role} · {statut} · créé le {u.created_at}")
 
 
 app = create_app()

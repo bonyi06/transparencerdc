@@ -32,14 +32,37 @@
 </div>
 <div class="scrim" id="scrim"></div>
 
-<button class="admin-fab" id="adminFab" title="Espace administrateur">⚙ Admin</button>
+<script>window.ADMIN_ENTRY_PAGE = {{ 'true' if show_admin_ui else 'false' }};</script>
+<button class="admin-fab" id="adminFab" title="Espace administrateur" style="display:none">⚙ Admin</button>
 
 <div class="modal-bg" id="loginModal"><div class="modal">
   <h3>Espace administrateur</h3>
-  <p>Saisissez le mot de passe pour modifier les contenus publics.</p>
+  <p>Saisissez vos identifiants nominatifs pour modifier les contenus publics.</p>
   <div class="msg" id="loginMsg"></div>
-  <div class="field"><label for="pw">Mot de passe</label><input type="password" id="pw" autocomplete="off"></div>
+  <div class="field"><label for="user">Identifiant</label><input type="text" id="user" autocomplete="username"></div>
+  <div class="field"><label for="pw">Mot de passe</label><input type="password" id="pw" autocomplete="current-password"></div>
   <div style="display:flex;gap:10px"><button class="btn primary" id="loginBtn">Se connecter</button><button class="btn" id="loginCancel">Annuler</button></div>
+</div></div>
+
+<div class="modal-bg" id="userModal"><div class="modal wide">
+  <h3>Gérer les comptes administrateur</h3>
+  <p>Chaque personne doit avoir son propre compte nominatif (traçabilité des modifications). Réservé au rôle « admin ».</p>
+  <div class="rm-list" id="userList" style="display:flex;flex-direction:column;gap:8px"></div>
+  <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;align-items:flex-end">
+    <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600">Identifiant<input id="uNewName" style="min-width:160px"></label>
+    <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600">Mot de passe<input id="uNewPw" type="password" style="min-width:160px"></label>
+    <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600">Rôle<select id="uNewRole"><option value="editor">editor</option><option value="admin">admin</option></select></label>
+    <button class="btn primary" id="uAdd">+ Ajouter</button>
+  </div>
+  <div id="userMsg" class="msg" style="margin-top:10px"></div>
+  <div style="display:flex;gap:10px;margin-top:14px"><button class="btn" id="userDone">Fermer</button></div>
+</div></div>
+
+<div class="modal-bg" id="auditModal"><div class="modal wide">
+  <h3>Journal d'activité</h3>
+  <p>Historique des connexions et modifications (200 dernières entrées).</p>
+  <div style="max-height:420px;overflow:auto" id="auditList"></div>
+  <div style="display:flex;gap:10px;margin-top:14px"><button class="btn" id="auditDone">Fermer</button></div>
 </div></div>
 
 <div class="modal-bg" id="repModal"><div class="modal wide">
@@ -82,6 +105,8 @@
   <button class="gh" id="navMgrBtn">Gérer les rubriques</button>
   <button class="gh" id="repMgrBtn">Gérer les rapports</button>
   <button class="gh" id="enrichBtn">Enrichir les données</button>
+  <button class="gh" id="userMgrBtn" style="display:none">Gérer les comptes</button>
+  <button class="gh" id="auditBtn">Journal d'activité</button>
   <button class="gh" id="exitBtn">Quitter</button>
   <button class="save" id="saveBtn">Enregistrer &amp; publier</button>
 </div>

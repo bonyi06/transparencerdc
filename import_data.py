@@ -169,13 +169,14 @@ def sync_database(warehouse: dict, content: dict, logo: str, geo: dict | None) -
 def ensure_admin_user(app) -> None:
     with app.app_context():
         if AdminUser.query.count() == 0:
-            user = AdminUser(username=app.config["ADMIN_USERNAME"])
+            user = AdminUser(username=app.config["ADMIN_USERNAME"], role="admin")
             user.set_password(app.config["ADMIN_PASSWORD"])
             db.session.add(user)
             db.session.commit()
             print(
-                f"Compte admin créé : {user.username} "
-                f"(mot de passe défini via ADMIN_PASSWORD, voir .env)"
+                f"Compte admin créé : {user.username} (rôle: admin, mot de passe "
+                f"défini via ADMIN_PASSWORD, voir .env). Utilisez ensuite "
+                f"'flask create-admin' pour ajouter des comptes nominatifs."
             )
 
 

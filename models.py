@@ -138,17 +138,63 @@ class GeoLayer(db.Model):
 
 
 class AdminUser(db.Model):
-    """Compte(s) administrateur autorisés à éditer le contenu public."""
+    """Comptes administrateur nominatifs autorisés à éditer le contenu
+    public. Chaque compte a un rôle :
+      - "admin"  : peut tout faire, y compris gérer les autres comptes ;
+      - "editor" : peut éditer les contenus/données mais pas gérer les
+                   comptes ni consulter le journal d'audit dans son
+                   intégralité (voir app.py: admin_role_required)."""
 
     __tablename__ = "admin_user"
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
+    role = db.Column(db.String(20), nullable=False, default="editor")
+    active = db.Column(db.Boolean, nullable=False, default=True)
     created_at = db.Column(db.DateTime, default=utcnow)
+    last_login_at = db.Column(db.DateTime, nullable=True)
 
     def set_password(self, raw_password: str) -> None:
         self.password_hash = generate_password_hash(raw_password)
 
     def check_password(self, raw_password: str) -> bool:
         return check_password_hash(self.password_hash, raw_password)
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "username": self.username,
+            "role": self.role,
+            "active": self.active,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "last_login_at": self.last_login_at.isoformat() if self.last_login_at else None,
+        }
+
+
+class AuditLog(db.Model):
+    """Journal d'audit : qui a fait quoi, quand. Alimenté par app.py à
+    chaque connexion et à chaque action de modification (contenu, jeux de
+    données, rapports, comptes). Consultable en mode admin via
+    « Journal d'activité ». Une entrée conservée même si le compte auteur
+    est supprimé par la suite (on garde le nom d'utilisateur en texte)."""
+
+    __tablename__ = "audit_log"
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), nullable=False)
+    action = db.Column(db.String(60), nullable=False)   # ex: "content.publish"
+    target = db.Column(db.String(255), default="")       # ex: nom de table, id de rapport
+    detail = db.Column(db.Text, default="")
+    ip = db.Column(db.String(64), default="")
+    created_at = db.Column(db.DateTime, default=utcnow)
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "username": self.username,
+            "action": self.action,
+            "target": self.target or "",
+            "detail": self.detail or "",
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }

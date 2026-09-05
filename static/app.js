@@ -30,6 +30,14 @@ let C=RAW.content;
    version complétée au serveur). */
 C.brand=Object.assign({name:'TransparenceRDC',full:"Initiative pour la Transparence des Industries Extractives",tagline:'',tagline_short:'Entrepôt de données ITIE'},C.brand||{});
 C.footer=Object.assign({note:'',note_short:'Données publiques ITIE · 2007–2024'},C.footer||{});
+// Métadonnées de gouvernance (page À propos) : date de rafraîchissement,
+// licence de réutilisation, version de l'entrepôt — signalées absentes par
+// le second audit qualité (sept. 2026). Éditables comme le reste du contenu
+// ; la date se réplie sur WH.generated (déjà suivi côté import) tant
+// qu'aucune valeur n'a été saisie explicitement par un admin.
+C.about=Object.assign({titre:"À propos de l'entrepôt",mission:'',gouvernance:'',methodo:'',
+  derniere_maj:'',licence:"Licence ouverte — réutilisation libre à des fins non commerciales, avec mention de la source (ITIE-RDC / TransparenceRDC)",
+  version_entrepot:''},C.about||{});
 C.nav_hidden=Array.isArray(C.nav_hidden)?C.nav_hidden:[];
 C.intros=Object.assign({
   explorer:"Filtrez chaque table sur autant de colonnes que voulu simultanément (année, entreprise, flux, régie, entité perceptrice, province, état, produit…), combinez les critères, triez, et lisez les totaux exacts de la sélection.",
@@ -322,6 +330,13 @@ function exApply(){const d=DS[exState.ds];let rows=d.rows;
 
 function exActiveCount(){let n=0;const F=exState.filters;for(const k in F){const f=F[k];if(!f)continue;if(f.type==='cat'&&((f.vals&&f.vals.length)||f.q))n++;if(f.type==='num'&&(f.min!=null||f.max!=null))n++;}return n;}
 
+// Colonnes de `exState.ds` couvertes par la canonicalisation (référentiel
+// province/entreprise/flux/entité perceptrice) : pour chacune, l'Explorateur
+// affiche une colonne "canonique" juste après la colonne source, plutôt que
+// de remplacer silencieusement la valeur affichée (audit qualité, sept.
+// 2026 : « il faut présenter deux colonnes clairement séparées »). La
+// valeur brute stockée reste inchangée dans l'export CSV / l'édition.
+function canonColIdxs(ds){const d=DS[ds];if(!d)return [];return d.cols.map((c,i)=>canonDimFor(ds,c)?i:-1).filter(i=>i>=0);}
 function renderExplorer(){
   const host=$('#exMain');if(!host)return;const d=DS[exState.ds];
   const yc=yearCol(exState.ds);
@@ -330,9 +345,15 @@ function renderExplorer(){
   const per=25,tot=rows.length,pages=Math.max(1,Math.ceil(tot/per));if(exState.page>=pages)exState.page=0;
   const pageRows=rows.slice(exState.page*per,exState.page*per+per);
   const canEdit=editing;
-  const th=d.cols.map((c,i)=>`<th scope="col" data-si="${i}" tabindex="0" role="button" aria-sort="${exState.sort===i?(exState.dir>0?'ascending':'descending'):'none'}" title="Trier">${esc(c)}${exState.sort===i?`<span class="ar" aria-hidden="true">${exState.dir>0?'▲':'▼'}</span>`:''}</th>`).join('')+(canEdit?'<th scope="col">—</th>':'');
+  const canonIdx=canonColIdxs(exState.ds);
+  const th=d.cols.map((c,i)=>`<th scope="col" data-si="${i}" tabindex="0" role="button" aria-sort="${exState.sort===i?(exState.dir>0?'ascending':'descending'):'none'}" title="Trier">${esc(c)}${exState.sort===i?`<span class="ar" aria-hidden="true">${exState.dir>0?'▲':'▼'}</span>`:''}</th>`+(canonIdx.includes(i)?`<th scope="col" class="canoncol" title="Valeur normalisée utilisée pour les filtres et les agrégations">${esc(c)} <span class="ftag">canonique</span></th>`:'')).join('')+(canEdit?'<th scope="col">—</th>':'');
   const body=pageRows.map(r=>{const ridx=d.rows.indexOf(r);
-    return `<tr data-rowidx="${ridx}">${r.map((v,i)=>`<td class="${d.types[i]==='num'?'num':''}" ${canEdit?`contenteditable="true" data-ecol="${i}"`:''} title="${esc(v)}">${esc(fmtCell(v,d.types[i]))}</td>`).join('')}${canEdit?`<td><button class="rm-del" data-erowdel="${ridx}" title="Supprimer cette ligne">✕</button></td>`:''}</tr>`;
+    return `<tr data-rowidx="${ridx}">${r.map((v,i)=>{
+      const cell=`<td class="${d.types[i]==='num'?'num':''}" ${canEdit?`contenteditable="true" data-ecol="${i}"`:''} title="${esc(v)}">${esc(fmtCell(v,d.types[i]))}</td>`;
+      const dim=canonIdx.includes(i)?canonDimFor(exState.ds,d.cols[i]):null;
+      const canonCell=dim?`<td class="canoncol" title="Valeur canonique">${esc(canonicalize(dim,v)||'')}</td>`:'';
+      return cell+canonCell;
+    }).join('')}${canEdit?`<td><button class="rm-del" data-erowdel="${ridx}" title="Supprimer cette ligne">✕</button></td>`:''}</tr>`;
   }).join('');
   // live aggregates over filtered rows: sum of each numeric column
   const numCols=d.cols.map((c,i)=>({c,i})).filter(o=>d.types[o.i]==='num' && isSummableNumCol(exState.ds,o.c));
@@ -345,13 +366,14 @@ function renderExplorer(){
       <button class="btn ${exState.panel?'primary':''}" id="exToggle">⚙ Filtres par colonne${nActive?` (${nActive})`:''}</button>
       <button class="btn" id="exReset">Réinitialiser</button>
       <button class="btn" id="exCsv">↓ Export CSV (sélection)</button>
+      <button class="btn" id="exShare" title="Copier un lien reproduisant cette vue (table, filtres, tri, recherche)">🔗 Copier le lien</button>
       ${canEdit?`<button class="btn" id="exAddRow">+ Ligne</button><button class="btn primary" id="exSaveTable">💾 Enregistrer cette table en base</button>`:''}
     </div>
     ${canEdit?`<div style="font-size:12px;color:var(--ink-soft);margin:-6px 0 10px">Mode édition : cliquez une cellule pour la modifier, <b>✕</b> pour supprimer une ligne, <b>+ Ligne</b> pour en ajouter une, puis <b>Enregistrer cette table en base</b> pour publier ces changements sur le serveur.</div>`:''}
     <div id="exFilters" class="exfilters" style="display:${exState.panel?'grid':'none'}"></div>
     <div class="exsummary" id="exSummary"></div>
-    <div class="gridwrap"><div class="gridscroll"><table class="dg"><thead><tr>${th}</tr></thead><tbody>${body||`<tr><td colspan="${d.cols.length+(canEdit?1:0)}"><div class="empty">Aucune ligne pour cette combinaison de filtres.</div></td></tr>`}</tbody></table></div>
-      <div class="gridfoot"><div>${fmtN(tot)} ligne(s)${nActive||exState.q||(globalYear&&yc)?' filtrée(s) sur '+fmtN(d.rows.length):''} · ${d.cols.length} colonnes</div>
+    <div class="gridwrap"><div class="gridscroll"><table class="dg"><thead><tr>${th}</tr></thead><tbody>${body||`<tr><td colspan="${d.cols.length+canonIdx.length+(canEdit?1:0)}"><div class="empty">Aucune ligne pour cette combinaison de filtres.</div></td></tr>`}</tbody></table></div>
+      <div class="gridfoot"><div>${fmtN(tot)} ligne(s)${nActive||exState.q||(globalYear&&yc)?' filtrée(s) sur '+fmtN(d.rows.length):''} · ${d.cols.length} colonnes${canonIdx.length?` (+${canonIdx.length} canonique${canonIdx.length>1?'s':''})`:''}</div>
       <div class="pager"><button id="exFirst" ${exState.page===0?'disabled':''}>«</button><button id="exPrev" ${exState.page===0?'disabled':''}>‹</button><span>Page ${exState.page+1} / ${pages}</span><button id="exNext" ${exState.page>=pages-1?'disabled':''}>›</button><button id="exLast" ${exState.page>=pages-1?'disabled':''}>»</button></div></div>
     </div>`;
   if(canEdit)bindExplorerEdit(d);
@@ -371,8 +393,10 @@ function renderExplorer(){
   $('#exNext').onclick=()=>{exState.page++;renderExplorer();};
   $('#exLast').onclick=()=>{exState.page=pages-1;renderExplorer();};
   $('#exCsv').onclick=()=>exportCSV(exState.ds,rows);
+  const exShareBtn=$('#exShare');if(exShareBtn)exShareBtn.onclick=()=>copyShareLink(exShareBtn);
   const tqi=$('#exTableQ');if(tqi&&!tqi._bound){tqi._bound=true;tqi.addEventListener('input',e=>{exTableQ=e.target.value;const v=e.target.value;$('#app').innerHTML=mExplorer();renderExplorer();const t=$('#exTableQ');if(t){t.focus();t.setSelectionRange(v.length,v.length);}});}
   if(editing)markEditable(true);
+  syncURL();
 }
 
 /* ===== Édition des données en mode admin (Explorateur) =====
@@ -441,13 +465,20 @@ function refreshExResult(){const d=DS[exState.ds];let rows=exApply();
   if(exState.sort!=null){const si=exState.sort,ty=d.types[si];rows=rows.slice().sort((a,b)=>{let x=a[si],y=b[si];if(ty==='num'){x=Number(x);y=Number(y);if(isNaN(x))x=-Infinity;if(isNaN(y))y=-Infinity;return (x-y)*exState.dir;}return String(x==null?'':x).localeCompare(String(y==null?'':y),'fr')*exState.dir;});}
   const per=25,tot=rows.length,pages=Math.max(1,Math.ceil(tot/per));if(exState.page>=pages)exState.page=0;
   const pageRows=rows.slice(exState.page*per,exState.page*per+per);
-  const tb=$('#exMain tbody');if(tb)tb.innerHTML=pageRows.map(r=>`<tr>${r.map((v,i)=>`<td class="${d.types[i]==='num'?'num':''}" title="${esc(v)}">${esc(fmtCell(v,d.types[i]))}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="${d.cols.length}"><div class="empty">Aucune ligne pour cette combinaison de filtres.</div></td></tr>`;
+  const canonIdx=canonColIdxs(exState.ds);
+  const tb=$('#exMain tbody');if(tb)tb.innerHTML=pageRows.map(r=>`<tr>${r.map((v,i)=>{
+    const cell=`<td class="${d.types[i]==='num'?'num':''}" title="${esc(v)}">${esc(fmtCell(v,d.types[i]))}</td>`;
+    const dim=canonIdx.includes(i)?canonDimFor(exState.ds,d.cols[i]):null;
+    const canonCell=dim?`<td class="canoncol" title="Valeur canonique">${esc(canonicalize(dim,v)||'')}</td>`:'';
+    return cell+canonCell;
+  }).join('')}</tr>`).join('')||`<tr><td colspan="${d.cols.length+canonIdx.length}"><div class="empty">Aucune ligne pour cette combinaison de filtres.</div></td></tr>`;
   const numCols=d.cols.map((c,i)=>({c,i})).filter(o=>d.types[o.i]==='num' && isSummableNumCol(exState.ds,o.c));
   const sums=numCols.map(o=>{let s=0,n=0;for(const r of rows){const v=Number(r[o.i]);if(!isNaN(v)){s+=v;n++;}}return {c:o.c,s,n};}).filter(o=>o.n>0).slice(0,6);
   const sum=$('#exSummary');if(sum)sum.innerHTML=`<span class="sm-c">${fmtN(tot)} ligne(s) sélectionnée(s)</span>`+sums.map(o=>`<span class="sm-s"><span>Σ ${esc(o.c)}</span><b>${fmtSmart(o.s)}</b></span>`).join('');
   const foot=$('#exMain .gridfoot > div:first-child');if(foot)foot.innerHTML=`${fmtN(tot)} ligne(s)${nActive||exState.q?' filtrée(s) sur '+fmtN(d.rows.length):''} · ${d.cols.length} colonnes`;
   const pg=$('#exMain .pager');if(pg)pg.innerHTML=`<button id="exFirst" ${exState.page===0?'disabled':''}>«</button><button id="exPrev" ${exState.page===0?'disabled':''}>‹</button><span>Page ${exState.page+1} / ${pages}</span><button id="exNext" ${exState.page>=pages-1?'disabled':''}>›</button><button id="exLast" ${exState.page>=pages-1?'disabled':''}>»</button>`;
   if(pg){$('#exFirst').onclick=()=>{exState.page=0;refreshExResult();};$('#exPrev').onclick=()=>{exState.page--;refreshExResult();};$('#exNext').onclick=()=>{exState.page++;refreshExResult();};$('#exLast').onclick=()=>{exState.page=pages-1;refreshExResult();};}
+  syncURL();
 }
 let downloadsNS=undefined;
 async function saveFile(filename,text){
@@ -476,6 +507,7 @@ function mViz(){
       <div class="vf"><label>Agrégation</label><select id="vzAgg">
         <option value="sum">Somme</option><option value="avg">Moyenne</option><option value="count">Nombre</option><option value="min">Minimum</option><option value="max">Maximum</option></select></div>
       <div class="vf"><label>&nbsp;</label><button class="btn" id="vzCsv">↓ Export</button></div>
+      <div class="vf"><label>&nbsp;</label><button class="btn" id="vzShare" title="Copier un lien reproduisant cette vue">🔗 Copier le lien</button></div>
     </div>
     <div class="chiptypes" id="vzTypes"></div>
     <div id="vzHint" style="font-size:12.5px;color:var(--amber);margin:-6px 0 12px;font-weight:600"></div>
@@ -530,6 +562,7 @@ function renderVizTypes(){
 }
 function drawViz(){
   const host=$('#vzChart');if(!host)return;const d=DS[vizState.ds];
+  syncURL();
   const measure=vizState.measure==='__count__'?null:vizState.measure;
   const agg=vizState.measure==='__count__'?'count':vizState.agg;
   $('#vzTitle').textContent=`${d.label} — ${agg==='count'?'nombre':agg} ${measure?'de '+measure:''} par ${vizState.dim}`;
@@ -563,6 +596,7 @@ function bindViz(){
   $('#vzMeasure').onchange=e=>{vizState.measure=e.target.value;applyMeasureSemantics();renderVizTypes();};
   $('#vzAgg').onchange=e=>{vizState.agg=e.target.value;drawViz();};
   $('#vzCsv').onclick=()=>{const measure=vizState.measure==='__count__'?null:vizState.measure;const agg=vizState.measure==='__count__'?'count':vizState.agg;const data=aggregate(vizState.ds,vizState.dim,measure,agg,globalYear);const csv=[[vizState.dim,agg].join(';')].concat(data.map(r=>[r.label,r.value].join(';'))).join('\n');saveFile('visualisation.csv',csv);};
+  const vzShareBtn=$('#vzShare');if(vzShareBtn)vzShareBtn.onclick=()=>copyShareLink(vzShareBtn);
   fillViz();drawGallery();
 }
 
@@ -618,6 +652,14 @@ function mAbout(){const A=C.about,B=C.brand,F=C.footer,CT=C.contact;return `<div
     <div>
       <div class="card" style="margin-bottom:16px"><h3 style="margin-bottom:10px">Contact</h3>
         <div style="font-size:14px;color:var(--ink-soft);line-height:2"><div data-edit="contact.org">${esc(CT.org)}</div><div data-edit="contact.tel">${esc(CT.tel)}</div><div data-edit="contact.email">${esc(CT.email)}</div><div data-edit="contact.adresse">${esc(CT.adresse)}</div></div></div>
+      <div class="card" style="margin-bottom:16px"><h3 style="margin-bottom:10px">Gouvernance des données</h3>
+        <div style="font-size:13px;color:var(--ink-soft);line-height:2">
+          <div>Dernière actualisation : <b data-edit="about.derniere_maj">${esc(A.derniere_maj||WH.generated||'à renseigner')}</b></div>
+          <div>Version de l'entrepôt : <b data-edit="about.version_entrepot">${esc(A.version_entrepot||'à renseigner')}</b></div>
+          <div>Licence de réutilisation : <span data-edit="about.licence">${esc(A.licence)}</span></div>
+        </div>
+        ${editing?'<div style="font-size:11.5px;color:var(--ink-soft);margin-top:8px">Ces champs sont visibles publiquement — à tenir à jour à chaque nouvel import de données.</div>':''}
+      </div>
       <h3 style="font-size:15px;margin:0 0 10px">Sources des données</h3>
       <div class="srcs">${C.sources.map(s=>`<div class="src"><span class="d"></span><div><b>${esc(s.libelle)}</b><br><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url)}</a></div></div>`).join('')}</div>
     </div>
@@ -1045,25 +1087,41 @@ function drawInfraTable(){const host=$('#geoInfra');if(!host)return;
   const canonVals=r=>({annee:r[ci.annee],type_percepteur:r[ci.type_percepteur],
     province:cv(r,'province',dimProv),percepteur:cv(r,'percepteur',dimPerc),
     entreprise:cv(r,'entreprise',dimEnt),flux:cv(r,'flux',dimFlux)});
+  // Valeurs brutes (telles que déclarées) conservées à part, pour affichage
+  // côte à côte avec la valeur canonique (audit qualité, sept. 2026 :
+  // « il faut présenter deux colonnes clairement séparées »). Un groupe
+  // canonique peut réunir plusieurs libellés bruts (ex. « DRLU » et
+  // « Direction des recettes de Lualaba (DRLU) ») : on les liste tous.
+  const CANON_KEYS=['province','percepteur','entreprise','flux'];
   const agg={};
   for(const r of rows){const vals=canonVals(r);const k=keys.map(c=>vals[c]).join('¦');
-    if(!agg[k]){agg[k]={mt:0,ent:new Set(),perc:new Set(),flux:new Set(),vals:{}};keys.forEach(c=>agg[k].vals[c]=vals[c]);}
-    agg[k].mt+=Number(r[ci.montant_usd])||0;agg[k].ent.add(vals.entreprise);agg[k].perc.add(vals.percepteur);agg[k].flux.add(vals.flux);}
+    if(!agg[k]){agg[k]={mt:0,ent:new Set(),perc:new Set(),flux:new Set(),vals:{},raws:{}};keys.forEach(c=>agg[k].vals[c]=vals[c]);CANON_KEYS.forEach(c=>agg[k].raws[c]=new Set());}
+    agg[k].mt+=Number(r[ci.montant_usd])||0;agg[k].ent.add(vals.entreprise);agg[k].perc.add(vals.percepteur);agg[k].flux.add(vals.flux);
+    CANON_KEYS.forEach(c=>{const raw=r[ci[c]];if(raw!=null&&raw!=='')agg[k].raws[c].add(String(raw));});}
   const list=Object.values(agg).sort((a,b)=>b.mt-a.mt);
   const tot=list.reduce((a,x)=>a+x.mt,0);
   const bytype={};for(const r of rows){const ty=r[ci.type_percepteur];bytype[ty]=(bytype[ty]||0)+(Number(r[ci.montant_usd])||0);}
   const typeChips=Object.entries(bytype).sort((a,b)=>b[1]-a[1]).map(([ty,v])=>`<span class="itc" style="display:inline-flex;flex-direction:column;padding:6px 12px;background:var(--panel);border:1px solid var(--line);border-radius:8px"><span style="font-size:10px;color:var(--ink-soft)">${esc(ty)}</span><b style="font-family:'IBM Plex Mono';font-size:13px;color:var(--sky)">${fmtUSD(v)}</b></span>`).join('');
   const tc=v=>`<span style="display:inline-block;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600;background:${/Dotation/.test(v)?'rgba(244,197,24,.18)':/ETD/.test(v)?'rgba(0,101,175,.12)':'var(--panel)'};color:${/Dotation/.test(v)?'var(--amber)':/ETD/.test(v)?'var(--sky)':'var(--ink-soft)'};border:1px solid var(--line)">${esc(v)}</span>`;
-  // column model per grouping
+  // column model per grouping — chaque colonne "canonique" (province,
+  // percepteur, entreprise, flux) est suivie d'une colonne "brute" listant
+  // le·s libellé·s original·aux réunis dans ce regroupement, pour que la
+  // traçabilité avec les annexes déclarées reste visible (jamais de
+  // fusion silencieuse — voir README, « Référentiels canoniques »).
+  const CANON_SET=new Set(CANON_KEYS);
+  const withRaw=arr=>arr.reduce((out,c)=>{out.push(c);if(CANON_SET.has(c[1]))out.push([c[0]+' (brute)','_raw_'+c[1]]);return out;},[]);
   const COLS={
-    perc:[['Année','annee'],['Province','province'],['Type','type_percepteur',tc],['Entité perceptrice','percepteur'],['Entrep.','_nent'],['Montant (USD)','mt']],
-    ent:[['Année','annee'],['Entreprise','entreprise'],['Entités perç.','_nperc'],['Flux','_nflux'],['Montant (USD)','mt']],
-    flux:[['Année','annee'],['Flux','flux'],['Entrep.','_nent'],['Montant (USD)','mt']],
-    entflux:[['Année','annee'],['Entreprise','entreprise'],['Flux','flux'],['Montant (USD)','mt']],
-    etd:[['Province','province'],['Entité perceptrice','percepteur'],['Entrep.','_nent'],['Flux','_nflux'],['Montant (USD)','mt']],
-    full:[['Année','annee'],['Province','province'],['Type','type_percepteur',tc],['Entité perceptrice','percepteur'],['Entreprise','entreprise'],['Flux','flux'],['Montant (USD)','mt']]};
+    perc:withRaw([['Année','annee'],['Province','province'],['Type','type_percepteur',tc],['Entité perceptrice','percepteur'],['Entrep.','_nent'],['Montant (USD)','mt']]),
+    ent:withRaw([['Année','annee'],['Entreprise','entreprise'],['Entités perç.','_nperc'],['Flux','_nflux'],['Montant (USD)','mt']]),
+    flux:withRaw([['Année','annee'],['Flux','flux'],['Entrep.','_nent'],['Montant (USD)','mt']]),
+    entflux:withRaw([['Année','annee'],['Entreprise','entreprise'],['Flux','flux'],['Montant (USD)','mt']]),
+    etd:withRaw([['Province','province'],['Entité perceptrice','percepteur'],['Entrep.','_nent'],['Flux','_nflux'],['Montant (USD)','mt']]),
+    full:withRaw([['Année','annee'],['Province','province'],['Type','type_percepteur',tc],['Entité perceptrice','percepteur'],['Entreprise','entreprise'],['Flux','flux'],['Montant (USD)','mt']])};
   const cols=COLS[G]||COLS.perc;
-  const cellVal=(x,key)=>{if(key==='mt')return fmtUSD(x.mt);if(key==='_nent')return x.ent.size;if(key==='_nperc')return x.perc.size;if(key==='_nflux')return x.flux.size;return x.vals[key];};
+  const cellVal=(x,key)=>{
+    if(key==='mt')return fmtUSD(x.mt);if(key==='_nent')return x.ent.size;if(key==='_nperc')return x.perc.size;if(key==='_nflux')return x.flux.size;
+    if(key.startsWith('_raw_')){const c=key.slice(5);const s=x.raws&&x.raws[c];if(!s||!s.size)return '';const arr=[...s];return arr.length>1?arr.slice(0,3).join(' / ')+(arr.length>3?'…':''):arr[0];}
+    return x.vals[key];};
   const cap=250,shown=list.slice(0,cap);
   const sel=(id,val,options,allLabel)=>`<select id="${id}" style="min-width:120px"><option value="">${allLabel}</option>${options.map(o=>`<option value="${esc(String(o))}" ${String(val)===String(o)?'selected':''}>${esc(String(o))}</option>`).join('')}</select>`;
   const lab=(txt,inner)=>`<label style="display:flex;flex-direction:column;gap:3px;font-size:10px;font-weight:600;color:var(--ink-soft);text-transform:uppercase">${txt}${inner}</label>`;
@@ -1084,12 +1142,13 @@ function drawInfraTable(){const host=$('#geoInfra');if(!host)return;
       ${lab('Flux',sel('ifFlux',F.flux,fluxOpts,'Tous'))}
       <button class="btn" id="ifReset" style="padding:6px 10px">Réinitialiser</button>
       <button class="btn" id="ifCsv">↓ Export CSV</button>
+      <button class="btn" id="ifShare" title="Copier un lien reproduisant cette vue">🔗 Copier le lien</button>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">${typeChips||'<span style="font-size:12px;color:var(--ink-faint)">Aucune ligne pour ces filtres.</span>'}</div>
     <div style="max-height:440px;overflow:auto;border:1px solid var(--line);border-radius:8px">
     <table style="width:100%;border-collapse:collapse;font-size:12px">
-    <thead><tr>${cols.map((c,i)=>`<th style="position:sticky;top:0;background:var(--panel-2);text-align:${c[1]==='mt'||/^_n/.test(c[1])?'right':'left'};padding:7px 9px;border-bottom:1px solid var(--line);font-size:11px;color:var(--navy);white-space:nowrap">${c[0]}</th>`).join('')}</tr></thead>
-    <tbody>${shown.map(x=>`<tr>${cols.map(c=>{const raw=cellVal(x,c[1]);const disp=c[2]?c[2](raw):(c[1]==='mt'?raw:esc(String(raw==null?'':raw)));const right=c[1]==='mt'||/^_n/.test(c[1]);return `<td style="padding:5px 9px;border-bottom:1px solid var(--line);text-align:${right?'right':'left'};${c[1]==='mt'?"font-family:'IBM Plex Mono';font-weight:600":''}${/^_n/.test(c[1])?';color:var(--ink-faint)':''}">${disp}</td>`;}).join('')}</tr>`).join('')}
+    <thead><tr>${cols.map((c,i)=>`<th class="${/^_raw_/.test(c[1])?'canoncol':''}" style="position:sticky;top:0;background:var(--panel-2);text-align:${c[1]==='mt'||/^_n/.test(c[1])?'right':'left'};padding:7px 9px;border-bottom:1px solid var(--line);font-size:11px;color:var(--navy);white-space:nowrap">${c[0]}</th>`).join('')}</tr></thead>
+    <tbody>${shown.map(x=>`<tr>${cols.map(c=>{const raw=cellVal(x,c[1]);const disp=c[2]?c[2](raw):(c[1]==='mt'?raw:esc(String(raw==null?'':raw)));const right=c[1]==='mt'||/^_n/.test(c[1]);const isRaw=/^_raw_/.test(c[1]);return `<td class="${isRaw?'canoncol':''}" style="padding:5px 9px;border-bottom:1px solid var(--line);text-align:${right?'right':'left'};${c[1]==='mt'?"font-family:'IBM Plex Mono';font-weight:600":''}${/^_n/.test(c[1])?';color:var(--ink-faint)':''}">${disp}</td>`;}).join('')}</tr>`).join('')}
     </tbody>
     <tfoot><tr><td colspan="${cols.length-1}" style="padding:8px 9px;text-align:right;font-weight:700;color:var(--navy);border-top:2px solid var(--line)">Total de la sélection (${fmtN(list.length)} ligne(s))</td><td style="padding:8px 9px;text-align:right;font-family:'IBM Plex Mono';font-weight:700;color:var(--sky);border-top:2px solid var(--line)">${fmtUSD(tot)}</td></tr></tfoot>
     </table></div>
@@ -1106,6 +1165,8 @@ function drawInfraTable(){const host=$('#geoInfra');if(!host)return;
   $('#ifCsv').onclick=()=>{const hdr=cols.map(c=>c[0].replace(/\s*\(USD\)/,'').replace('.','').trim());
     const csv=[hdr.join(';')].concat(list.map(x=>cols.map(c=>{const v=cellVal(x,c[1]);return c[1]==='mt'?Math.round(x.mt):String(v==null?'':v);}).join(';'))).join('\n');
     saveFile('paiements_infranationaux_detail.csv',csv);};
+  const ifShareBtn=$('#ifShare');if(ifShareBtn)ifShareBtn.onclick=()=>copyShareLink(ifShareBtn);
+  syncURL();
 }
 const MODULES={
   overview:{t:"Vue d'ensemble",f:mOverview,d:drawOverview},
@@ -1148,6 +1209,50 @@ function fillYears(){
   const opts=['<option value="">Tous</option>'].concat([...ys].sort().map(y=>`<option value="${y}">${y}</option>`));
   $('#yearFilter').innerHTML=opts.join('');
 }
+/* ===== URLs partageables =====
+   Le module courant, ainsi que l'état de l'Explorateur / des Visualisations
+   / du tableau détaillé de la Géographie (table, filtres, tri, recherche…),
+   sont encodés dans le fragment d'adresse (#module?param=valeur…). Un lien
+   copié depuis la barre d'adresse reproduit donc exactement la même vue —
+   utile pour partager une analyse précise avec un collègue ou un
+   journaliste (audit qualité, sept. 2026 : « les URL ne sont pas
+   partageables »). On utilise history.replaceState (pas pushState) pour ne
+   pas polluer l'historique de navigation à chaque frappe/filtre. */
+function b64(s){try{return btoa(unescape(encodeURIComponent(s)));}catch(e){return '';}}
+function unb64(s){try{return decodeURIComponent(escape(atob(s)));}catch(e){return '';}}
+function currentStateParams(){
+  const p=new URLSearchParams();
+  if(current==='explorer'){
+    if(exState.ds)p.set('table',exState.ds);
+    if(exState.q)p.set('q',exState.q);
+    if(exState.sort!=null){p.set('sort',exState.sort);p.set('dir',exState.dir);}
+    if(exState.page)p.set('page',exState.page);
+    if(globalYear)p.set('annee',globalYear);
+    if(exState.filters&&Object.keys(exState.filters).length)p.set('f',b64(JSON.stringify(exState.filters)));
+  }else if(current==='viz'){
+    ['ds','dim','measure','agg','type'].forEach(k=>{if(vizState[k])p.set(k,vizState[k]);});
+  }else if(current==='geo'&&typeof infraF==='object'){
+    Object.entries(infraF).forEach(([k,v])=>{if(v)p.set(k,v);});
+  }
+  return p;
+}
+function syncURL(){
+  try{
+    const qs=currentStateParams().toString();
+    const newHash='#'+current+(qs?'?'+qs:'');
+    if(location.hash!==newHash)history.replaceState(null,'',newHash);
+  }catch(e){}
+}
+function parseHash(){
+  const h=(location.hash||'').replace('#','');
+  const qi=h.indexOf('?');
+  const id=qi>=0?h.slice(0,qi):h;
+  return {id,params:new URLSearchParams(qi>=0?h.slice(qi+1):'')};
+}
+async function copyShareLink(btn){
+  try{await navigator.clipboard.writeText(location.href);}catch(e){}
+  if(btn){const old=btn.textContent;btn.textContent='Lien copié ✓';setTimeout(()=>{btn.textContent=old;},1400);}
+}
 function go(id){
   if(editing)collectEdits();
   if(!MODULES[id])id='overview';
@@ -1160,10 +1265,11 @@ function go(id){
   const yf=$('#yearFilter'),scoped=(id==='explorer'||id==='viz');
   yf.disabled=!scoped;yf.style.opacity=scoped?'1':'.45';
   yf.title=scoped?'Filtrer par exercice':"Le filtre par exercice s'applique à l'Explorateur et aux Visualisations";
-  requestAnimationFrame(()=>{try{MODULES[id].d();}catch(e){console.error(e);}});
+  requestAnimationFrame(()=>{try{MODULES[id].d();}catch(e){console.error(e);}syncURL();});
   window.scrollTo({top:0});
   $('#side').classList.remove('open');$('#scrim').classList.remove('on');
   if(editing)markEditable(true);
+  syncURL();
 }
 function mountStatic(){
   // Le logo est servi directement en tant que fichier statique par Flask
@@ -1208,28 +1314,106 @@ try{const stx=localStorage.getItem('trdc-theme');if(stx)document.documentElement
    Le mot de passe n'est plus jamais comparé côté navigateur (l'ancien
    hash SHA-256 en clair dans le JS était visible par n'importe qui). */
 let editing=false;
+let ME=null; // {username, role} de l'admin actuellement connecté
 function markEditable(on){$$('[data-edit]').forEach(el=>{if(on){el.setAttribute('contenteditable','true');el.setAttribute('spellcheck','false');if(!el.textContent.trim()){const v=getPath(C,el.getAttribute('data-edit'));if(v!=null)el.textContent=v;}}else el.removeAttribute('contenteditable');});document.body.classList.toggle('editing',on);}
 function collectEdits(){$$('[data-edit]').forEach(el=>{const p=el.getAttribute('data-edit');if(getPath(C,p)!==undefined)assignPath(C,p,el.textContent.trim());});}
-function enterAdminMode(){editing=true;$('#adminBar').classList.add('on');$('#adminFab').style.display='none';document.body.style.paddingBottom='64px';markEditable(true);buildSidebar();}
+function enterAdminMode(me){editing=true;if(me)ME=me;$('#adminBar').classList.add('on');$('#adminFab').style.display='none';document.body.style.paddingBottom='64px';markEditable(true);buildSidebar();
+  const um=$('#userMgrBtn');if(um)um.style.display=(ME&&ME.role==='admin')?'':'none';}
 // Si une session admin est déjà active côté serveur (cookie valide), on
 // rouvre directement le mode édition sans redemander le mot de passe.
-getJSON('/api/me').then(me=>{if(me&&me.authenticated)enterAdminMode();}).catch(()=>{});
-$('#adminFab').onclick=()=>{if(editing)return;$('#loginModal').classList.add('on');$('#pw').value='';$('#loginMsg').className='msg';setTimeout(()=>$('#pw').focus(),50);};
+// Le bouton "⚙ Admin" lui-même ne s'affiche que sur le lien d'accès dédié
+// (voir README, « Sécurité admin ») — jamais sur la page d'accueil publique,
+// pour ne pas exposer inutilement l'existence d'un espace protégé par
+// mot de passe à n'importe quel visiteur.
+getJSON('/api/me').then(me=>{
+  if(me&&me.authenticated)enterAdminMode(me);
+  else if(window.ADMIN_ENTRY_PAGE)$('#adminFab').style.display='';
+}).catch(()=>{if(window.ADMIN_ENTRY_PAGE)$('#adminFab').style.display='';});
+$('#adminFab').onclick=()=>{if(editing)return;$('#loginModal').classList.add('on');$('#user').value='';$('#pw').value='';$('#loginMsg').className='msg';setTimeout(()=>$('#user').focus(),50);};
 $('#loginCancel').onclick=()=>$('#loginModal').classList.remove('on');
 $('#loginModal').onclick=e=>{if(e.target.id==='loginModal')$('#loginModal').classList.remove('on');};
 async function tryLogin(){
   const btn=$('#loginBtn'),old=btn.textContent;btn.disabled=true;btn.textContent='Connexion…';
   try{
-    const r=await fetch('/api/login',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:$('#pw').value})});
-    if(r.ok){$('#loginModal').classList.remove('on');enterAdminMode();}
-    else{const m=$('#loginMsg');m.className='msg err';m.textContent='Mot de passe incorrect.';}
+    const r=await fetch('/api/login',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:$('#user').value,password:$('#pw').value})});
+    if(r.ok){const me=await r.json();$('#loginModal').classList.remove('on');enterAdminMode(me);}
+    else{const m=$('#loginMsg');m.className='msg err';m.textContent='Identifiant ou mot de passe incorrect.';}
   }catch(e){const m=$('#loginMsg');m.className='msg err';m.textContent="Connexion au serveur impossible.";}
   finally{btn.disabled=false;btn.textContent=old;}
 }
 $('#loginBtn').onclick=tryLogin;$('#pw').addEventListener('keydown',e=>{if(e.key==='Enter')tryLogin();});
+$('#user').addEventListener('keydown',e=>{if(e.key==='Enter')tryLogin();});
 // close modals with Escape
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('#loginModal').classList.remove('on');$('#repModal').classList.remove('on');$('#enrichModal').classList.remove('on');$('#navModal').classList.remove('on');}});
-$('#exitBtn').onclick=async()=>{try{await fetch('/api/logout',{method:'POST',credentials:'same-origin'});}catch(e){}editing=false;$('#adminBar').classList.remove('on');$('#adminFab').style.display='';document.body.style.paddingBottom='';markEditable(false);buildSidebar();if(isNavHidden(current))go(firstVisibleModule());};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('#loginModal').classList.remove('on');$('#repModal').classList.remove('on');$('#enrichModal').classList.remove('on');$('#navModal').classList.remove('on');$('#userModal').classList.remove('on');$('#auditModal').classList.remove('on');}});
+$('#exitBtn').onclick=async()=>{try{await fetch('/api/logout',{method:'POST',credentials:'same-origin'});}catch(e){}editing=false;ME=null;$('#adminBar').classList.remove('on');$('#adminFab').style.display=window.ADMIN_ENTRY_PAGE?'':'none';document.body.style.paddingBottom='';markEditable(false);buildSidebar();if(isNavHidden(current))go(firstVisibleModule());};
+
+/* ===== Gestion des comptes administrateur (rôle "admin" uniquement) ===== */
+async function loadUsers(){
+  const r=await fetch('/api/users',{credentials:'same-origin'});
+  if(!r.ok)return [];
+  return r.json();
+}
+function renderUserRow(u){
+  const isSelf=ME&&u.username===ME.username;
+  return `<div class="rm-item" data-uid="${u.id}" style="display:grid;grid-template-columns:1.4fr .8fr auto auto auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)">
+    <span><b>${esc(u.username)}</b>${isSelf?' <i style="color:var(--ink-faint)">(vous)</i>':''}</span>
+    <select data-urole="${u.id}" ${isSelf?'disabled title="Vous ne pouvez pas changer votre propre rôle"':''}><option value="editor" ${u.role==='editor'?'selected':''}>editor</option><option value="admin" ${u.role==='admin'?'selected':''}>admin</option></select>
+    <label style="display:flex;align-items:center;gap:4px;font-size:12px"><input type="checkbox" data-uactive="${u.id}" ${u.active?'checked':''} ${isSelf?'disabled':''}> actif</label>
+    <button class="btn" data-upw="${u.id}" style="font-size:11px;padding:4px 8px">Réinit. mot de passe</button>
+    <button class="rm-del" data-udel="${u.id}" ${isSelf?'disabled title="Vous ne pouvez pas supprimer votre propre compte"':''} title="Supprimer">✕</button>
+  </div>`;
+}
+async function renderUM(){
+  const list=$('#userList');if(!list)return;
+  const users=await loadUsers();
+  list.innerHTML=users.map(renderUserRow).join('')||'<div class="empty">Aucun compte.</div>';
+  list.querySelectorAll('[data-urole]').forEach(sel=>sel.addEventListener('change',async e=>{
+    const id=+e.target.dataset.urole;
+    const r=await fetch('/api/users/'+id,{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({role:e.target.value})});
+    if(!r.ok){alert('Échec de la mise à jour du rôle.');renderUM();}
+  }));
+  list.querySelectorAll('[data-uactive]').forEach(cb=>cb.addEventListener('change',async e=>{
+    const id=+e.target.dataset.uactive;
+    const r=await fetch('/api/users/'+id,{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({active:e.target.checked})});
+    if(!r.ok){const j=await r.json().catch(()=>({}));alert(j.error||'Échec de la mise à jour.');renderUM();}
+  }));
+  list.querySelectorAll('[data-upw]').forEach(b=>b.addEventListener('click',async()=>{
+    const id=+b.dataset.upw;const pw=prompt('Nouveau mot de passe (8 caractères minimum) :');
+    if(!pw)return;
+    const r=await fetch('/api/users/'+id,{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});
+    if(!r.ok){const j=await r.json().catch(()=>({}));alert(j.error||'Échec de la réinitialisation.');}else alert('Mot de passe réinitialisé.');
+  }));
+  list.querySelectorAll('[data-udel]').forEach(b=>b.addEventListener('click',async()=>{
+    const id=+b.dataset.udel;const row=b.closest('[data-uid]');const name=row.querySelector('b').textContent;
+    if(!confirm('Supprimer définitivement le compte « '+name+' » ?'))return;
+    const r=await fetch('/api/users/'+id,{method:'DELETE',credentials:'same-origin'});
+    if(!r.ok){const j=await r.json().catch(()=>({}));alert(j.error||'Échec de la suppression.');}
+    renderUM();
+  }));
+}
+const userMgrBtn=$('#userMgrBtn');if(userMgrBtn)userMgrBtn.onclick=()=>{renderUM();$('#userModal').classList.add('on');};
+const userDoneBtn=$('#userDone');if(userDoneBtn)userDoneBtn.onclick=()=>$('#userModal').classList.remove('on');
+const uAddBtn=$('#uAdd');if(uAddBtn)uAddBtn.onclick=async()=>{
+  const username=$('#uNewName').value.trim(),password=$('#uNewPw').value,role=$('#uNewRole').value;
+  const msg=$('#userMsg');msg.className='msg';msg.textContent='';
+  if(!username||password.length<8){msg.className='msg err';msg.textContent='Identifiant requis, mot de passe de 8 caractères minimum.';return;}
+  const r=await fetch('/api/users',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password,role})});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok){msg.className='msg err';msg.textContent=j.error||'Échec de la création.';return;}
+  $('#uNewName').value='';$('#uNewPw').value='';renderUM();
+};
+
+/* ===== Journal d'activité ===== */
+async function renderAudit(){
+  const host=$('#auditList');if(!host)return;host.innerHTML='<div class="empty">Chargement…</div>';
+  const r=await fetch('/api/audit-log',{credentials:'same-origin'});
+  if(!r.ok){host.innerHTML='<div class="empty">Impossible de charger le journal.</div>';return;}
+  const rows=await r.json();
+  if(!rows.length){host.innerHTML='<div class="empty">Aucune activité enregistrée.</div>';return;}
+  host.innerHTML=`<table class="dg" style="width:100%"><thead><tr><th>Date</th><th>Utilisateur</th><th>Action</th><th>Cible</th><th>Détail</th></tr></thead><tbody>${rows.map(a=>`<tr><td style="white-space:nowrap;font-size:11px">${esc(new Date(a.created_at).toLocaleString('fr-FR'))}</td><td>${esc(a.username)}</td><td><code>${esc(a.action)}</code></td><td>${esc(a.target)}</td><td style="font-size:11px;color:var(--ink-soft)">${esc(a.detail)}</td></tr>`).join('')}</tbody></table>`;
+}
+const auditBtn=$('#auditBtn');if(auditBtn)auditBtn.onclick=()=>{renderAudit();$('#auditModal').classList.add('on');};
+const auditDoneBtn=$('#auditDone');if(auditDoneBtn)auditDoneBtn.onclick=()=>$('#auditModal').classList.remove('on');
 
 async function saveAndPublish(){
   collectEdits();RAW.content=C;
@@ -1403,7 +1587,28 @@ function recomputeAll(){try{
 recomputeAll();
 
 mountStatic();
-const initial=(location.hash||'').replace('#','');
+// Restaure l'état (table/filtres/tri pour l'Explorateur, ds/dim/mesure pour
+// les Visualisations, filtres pour la Géographie) depuis un lien partagé,
+// avant le premier rendu du module concerné.
+(function restoreFromHash(){
+  const {id,params}=parseHash();
+  if(!MODULES[id])return;
+  if(id==='explorer'){
+    const t=params.get('table');if(t&&DS[t])exState.ds=t;
+    if(params.has('q'))exState.q=params.get('q');
+    if(params.has('sort'))exState.sort=+params.get('sort');
+    if(params.has('dir'))exState.dir=+params.get('dir')||1;
+    if(params.has('page'))exState.page=+params.get('page')||0;
+    if(params.has('annee'))globalYear=params.get('annee');
+    if(params.has('f')){try{const f=JSON.parse(unb64(params.get('f')));if(f&&typeof f==='object')exState.filters=f;}catch(e){}}
+  }else if(id==='viz'){
+    ['ds','dim','measure','agg','type'].forEach(k=>{if(params.has(k))vizState[k]=params.get(k);});
+  }else if(id==='geo'){
+    infraF=infraF||{};
+    ['annee','type','prov','perc','ent','flux','group'].forEach(k=>{if(params.has(k))infraF[k]=params.get(k);});
+  }
+})();
+const initial=parseHash().id;
 go(MODULES[initial]?initial:'overview');
-window.addEventListener('hashchange',()=>{const h=location.hash.replace('#','');if(MODULES[h]&&h!==current)go(h);});
+window.addEventListener('hashchange',()=>{const {id}=parseHash();if(MODULES[id]&&id!==current)go(id);});
 })();

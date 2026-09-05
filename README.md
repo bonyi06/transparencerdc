@@ -111,10 +111,27 @@ session admin n'est envoyé que sur HTTPS).
 
 ## Espace administrateur
 
-Cliquez sur **⚙ Admin** en bas à droite, saisissez le mot de passe défini
-dans `.env` (`ADMIN_PASSWORD`). En mode édition, vous pouvez désormais
-modifier **tous les aspects du site** : les textes, les données, et les
-rubriques visibles au menu.
+L'espace administrateur n'est **plus accessible depuis la page d'accueil
+publique** : aucun bouton « Admin » n'y apparaît, pour ne pas signaler
+l'existence d'un accès protégé à n'importe quel visiteur (audit qualité,
+sept. 2026). Pour vous connecter, ouvrez le lien dédié :
+
+```
+https://votre-site.example/gestion-admin
+```
+
+(le chemin exact est configurable via `ADMIN_ENTRY_PATH` dans `.env` — à
+changer en production pour une valeur non devinable, et à ne partager que
+via un canal privé, ex. le gestionnaire de mots de passe de l'équipe). Sur
+cette page, le bouton **⚙ Admin** apparaît en bas à droite ; saisissez
+votre identifiant et votre mot de passe nominatifs (voir § « Sécurité admin
+: comptes, rôles, journal d'audit » ci-dessous — il n'y a plus un seul mot
+de passe partagé). Une fois connecté, la session reste active même en
+revenant sur la page d'accueil normale : seul le bouton de découverte est
+caché, pas votre session.
+
+En mode édition, vous pouvez modifier **tous les aspects du site** : les
+textes, les données, et les rubriques visibles au menu.
 
 ### 1. Modifier n'importe quel texte
 
@@ -127,7 +144,12 @@ données, Rapports), les libellés des indicateurs-clés (KPI), la page
 du site** (nom du site, nom complet affiché en en-tête, sous-titre du menu
 latéral, mention du pied de menu et note de bas de page) via la nouvelle
 carte **« Identité du site »** visible en bas de la page « À propos »
-lorsque vous êtes connecté. Ces textes sont stockés dans `SiteContent` et
+lorsque vous êtes connecté. La page « À propos » affiche désormais aussi
+une carte **« Gouvernance des données »** (dernière actualisation, version
+de l'entrepôt, licence de réutilisation — demandée par l'audit qualité de
+sept. 2026), éditable de la même façon ; pensez à mettre à jour la date et
+la version à chaque nouvel import de données (`python import_data.py`).
+Ces textes sont stockés dans `SiteContent` et
 n'importe lequel peut être étendu de la même façon (voir § « Ajouter un
 nouveau texte éditable » plus bas).
 
@@ -177,12 +199,50 @@ un autre système), l'API `PUT /api/datasets/<nom>` reste disponible
 directement (voir § API plus bas) — c'est ce que les deux mécanismes
 ci-dessus utilisent en coulisses.
 
-Pour changer le mot de passe admin après coup :
+### 4. Sécurité admin : comptes nominatifs, rôles, journal d'audit
 
-```bash
-# éditez ADMIN_PASSWORD dans .env, puis :
-flask --app app reset-admin-password
-```
+Un audit qualité (sept. 2026) relevait qu'un unique mot de passe partagé ne
+permet pas de savoir qui a modifié quoi, ni quand. Ce n'est plus le cas :
+
+- **Comptes nominatifs** : chaque personne a son propre identifiant/mot de
+  passe (table `AdminUser`). Pour créer un compte :
+  ```bash
+  flask --app app create-admin jkayembe "un mot de passe d'au moins 8 caractères" --role admin
+  # --role editor (par défaut) pour un compte qui édite sans pouvoir gérer les autres comptes
+  flask --app app list-admins   # liste les comptes existants
+  ```
+  Un compte de rôle **admin** peut ensuite créer/gérer les autres comptes
+  directement depuis l'interface, bouton **Gérer les comptes** dans la
+  barre d'administration (rôle, activation/désactivation, réinitialisation
+  de mot de passe, suppression — jamais de son propre compte, et jamais le
+  dernier compte admin actif, pour ne pas se retrouver bloqué dehors).
+  Un compte **editor** peut modifier les contenus/données mais pas gérer
+  les comptes ni voir/gérer plus que le journal d'audit en lecture.
+- **Journal d'audit** : bouton **Journal d'activité** — historique des 200
+  dernières actions (connexions réussies/échouées, publication de contenu,
+  restauration d'une version, enregistrement/suppression d'un jeu de
+  données, création/modification/suppression d'un compte), chacune horodatée
+  et attribuée au compte qui l'a effectuée (table `AuditLog`, API
+  `GET /api/audit-log`). L'historique de publication de contenu existant
+  (`GET /api/content/history`) attribue désormais lui aussi chaque révision
+  au bon compte (auparavant, tout était enregistré sous le libellé
+  générique `"admin"`).
+- **Migration depuis l'ancien mot de passe unique** : le compte
+  `ADMIN_USERNAME`/`ADMIN_PASSWORD` de `.env` continue de fonctionner (créé
+  automatiquement avec le rôle `admin` au premier import) — pour le
+  réinitialiser :
+  ```bash
+  # éditez ADMIN_PASSWORD dans .env, puis :
+  flask --app app reset-admin-password
+  ```
+  mais il est recommandé de créer un compte nominatif par personne avec
+  `create-admin` et de réserver le compte partagé à la récupération
+  d'urgence uniquement.
+
+Ce système reste volontairement simple (pas de MFA, pas de SSO) : pour un
+usage à enjeu plus élevé, les points d'extension naturels sont l'ajout d'un
+TOTP (bibliothèque `pyotp`) sur `POST /api/login`, ou un fournisseur
+d'identité externe (OAuth/SSO) devant les mêmes routes.
 
 ## API disponible
 
@@ -202,8 +262,17 @@ Toutes les routes de données sont en JSON.
 | GET     | `/api/geo`                         | Objet géographique complet (carte des provinces)                | non |
 | POST    | `/api/login`                       | `{username, password}` -> session admin                        | non |
 | POST    | `/api/logout`                      | Termine la session admin                                        | non |
-| GET     | `/api/me`                          | Session admin active ou non                                     | non |
+| GET     | `/api/me`                          | Session admin active ou non (+ rôle)                            | non |
+| GET     | `/api/users`                       | Liste des comptes admin                                          | oui (rôle admin) |
+| POST    | `/api/users`                       | Créer un compte `{username, password, role}`                    | oui (rôle admin) |
+| PUT     | `/api/users/<id>`                  | Modifier rôle/activation/mot de passe d'un compte                | oui (rôle admin) |
+| DELETE  | `/api/users/<id>`                  | Supprimer un compte                                              | oui (rôle admin) |
+| GET     | `/api/audit-log`                   | Journal d'audit (200 dernières entrées)                          | oui |
 | GET     | `/healthz`                         | Sonde de santé (pour load balancer / supervision)                | non |
+
+`/gestion-admin` (chemin configurable via `ADMIN_ENTRY_PATH`) sert la même
+page que `/` mais avec le bouton **⚙ Admin** visible — c'est le seul moyen
+d'atteindre l'écran de connexion (voir § « Espace administrateur »).
 
 Exemple : mettre à jour un jeu de données précis sans toucher aux autres
 (pratique pour un script de mise à jour automatisé, un cron, etc.) :
@@ -211,7 +280,7 @@ Exemple : mettre à jour un jeu de données précis sans toucher aux autres
 ```bash
 curl -X POST http://localhost:5000/api/login \
   -H 'Content-Type: application/json' \
-  -d '{"password":"votre-mot-de-passe"}' -c cookies.txt
+  -d '{"username":"votre-identifiant","password":"votre-mot-de-passe"}' -c cookies.txt
 
 curl -X PUT http://localhost:5000/api/datasets/fait_total_annuel \
   -H 'Content-Type: application/json' -b cookies.txt \
@@ -228,20 +297,26 @@ curl -X PUT http://localhost:5000/api/datasets/fait_total_annuel \
 ## Pourquoi cette architecture est "optimale" et facile à faire évoluer
 
 - **Performance** : l'entrepôt pèse ~19 Mo en JSON brut. La compression
-  gzip (Flask-Compress) le ramène à ~2 Mo sur le réseau, et le logo est
-  servi comme fichier statique mis en cache par le navigateur (au lieu
-  d'être ré-encodé en base64 à chaque chargement de page).
+  gzip (Flask-Compress) le ramène à ~2 Mo sur le réseau, le logo est servi
+  comme fichier statique mis en cache par le navigateur (au lieu d'être
+  ré-encodé en base64 à chaque chargement de page), et `/api/warehouse`,
+  `/api/geo` ainsi que tous les fichiers `static/*` renvoient désormais un
+  en-tête `Cache-Control` (voir § « Performance : mise en cache HTTP »
+  ci-dessous) pour accélérer les visites répétées.
 - **Souplesse** : chaque jeu de données est une ligne indépendante en base
   (table `dataset`). Vous pouvez ajouter, remplacer ou supprimer UN SEUL
   jeu de données via l'API `PUT/DELETE /api/datasets/<nom>` sans jamais
   re-générer l'ensemble de l'entrepôt.
-- **Sécurité** : le mot de passe administrateur n'est plus jamais comparé
-  côté navigateur (l'ancienne version stockait un hash SHA-256 visible
-  dans le code source JS, qu'il suffisait de casser hors-ligne). Il est
-  désormais haché avec Werkzeug et vérifié côté serveur, dans une session
-  signée par `SECRET_KEY`.
+- **Sécurité** : les mots de passe administrateur ne sont plus jamais
+  comparés côté navigateur (l'ancienne version stockait un hash SHA-256
+  visible dans le code source JS, qu'il suffisait de casser hors-ligne).
+  Ils sont désormais hachés avec Werkzeug et vérifiés côté serveur, dans
+  une session signée par `SECRET_KEY` — avec des comptes nominatifs, des
+  rôles et un journal d'audit (voir § « Sécurité admin » plus haut), et un
+  point d'entrée non exposé publiquement (voir § « Espace administrateur »).
 - **Historique** : chaque publication de contenu est conservée
-  (`content_revision`), avec possibilité de restauration.
+  (`content_revision`), avec possibilité de restauration, attribuée au bon
+  compte.
 - **Portabilité** : SQLite par défaut (zéro configuration), mais il suffit
   de changer `DATABASE_URL` dans `.env` pour passer à PostgreSQL ou MySQL
   sans changer une ligne de code (SQLAlchemy).
@@ -249,21 +324,73 @@ curl -X PUT http://localhost:5000/api/datasets/fait_total_annuel \
   (nginx/Caddy) fonctionnent sur n'importe quel serveur Linux, VPS, ou
   service PaaS (Render, Railway, Fly.io, PythonAnywhere...).
 
+## URLs partageables
+
+Un audit qualité (sept. 2026) relevait qu'une vue précise de l'Explorateur,
+des Visualisations ou de la Géographie ne pouvait pas être partagée : deux
+personnes voyant la même chose devaient reproduire manuellement les mêmes
+clics. Ce n'est plus le cas : l'adresse du navigateur reflète maintenant en
+permanence le module affiché et son état (table sélectionnée, recherche,
+tri, filtres pour l'Explorateur ; table/dimension/mesure/agrégation/type
+pour les Visualisations ; regroupement et filtres pour le tableau détaillé
+de la Géographie), par ex. :
+
+```
+#explorer?table=ctx_paiement_infranational_detail&q=KAMOA&annee=2023
+```
+
+Un bouton **🔗 Copier le lien** (Explorateur, Visualisations, Géographie)
+copie l'adresse actuelle dans le presse-papiers ; coller ce lien dans un
+nouvel onglet reproduit exactement la même vue. Techniquement, l'état est
+encodé dans le fragment d'adresse (`history.replaceState`, sans polluer
+l'historique de navigation à chaque frappe) ; les filtres de colonne de
+l'Explorateur (potentiellement nombreux) sont encodés en base64 dans le
+paramètre `f` pour rester compacts, tandis que la table, la recherche,
+l'année et le tri restent lisibles directement dans l'URL.
+
+## Performance : mise en cache HTTP
+
+Deux audits qualité (sept. 2026) ont relevé un premier chargement lent
+(~11-12 s « à froid » contre ~3 s « à chaud »). Deux causes distinctes,
+traitées différemment :
+
+- **Mise en veille du service d'hébergement** (offres gratuites/basiques
+  Render) : c'est un comportement d'infrastructure, pas du code applicatif
+  — la seule parade est de passer à un plan qui ne met pas le service en
+  veille, ou d'ajouter un ping périodique externe pour le garder éveillé.
+- **Poids du premier chargement des données** : `/api/warehouse`,
+  `/api/geo` et les fichiers `static/*` (dont `app.js`) renvoient désormais
+  un en-tête `Cache-Control` (`public, max-age=120` pour l'entrepôt,
+  `max-age=300` pour la géographie, `max-age=600` — configurable via
+  `STATIC_CACHE_SECONDS` — pour les fichiers statiques). Cela évite de
+  retélécharger l'intégralité des ~19 Mo de données à chaque navigation
+  (retour en arrière, nouvel onglet) pendant la fenêtre de cache, sans
+  risquer de servir une version trop obsolète après qu'un admin ait publié
+  un changement. C'est une amélioration mesurable mais partielle : le tout
+  premier chargement d'une session reste soumis au poids réel de
+  l'entrepôt. Une refonte plus ambitieuse — charger uniquement les tables
+  de faits/dimensions/contextuelles au démarrage et ne charger les 117
+  annexes brutes qu'à la demande via `/api/datasets/<nom>` (déjà exposé
+  côté API) — apporterait un gain plus net, mais touche à la façon dont
+  `static/app.js`, le Dictionnaire et la Qualité des données comptent les
+  lignes de chaque table ; à traiter comme un chantier dédié plutôt que d'y
+  toucher au milieu d'un lot de changements déjà large.
+
 ## Limites connues / pistes d'évolution
 
 - Le générateur de visualisations et l'explorateur de tables chargent
   aujourd'hui l'entrepôt complet en une fois (`/api/warehouse`), comme le
-  faisait la version originale. Pour des volumes encore plus importants,
-  il est possible de faire évoluer `static/app.js` afin qu'il charge les
-  jeux de données à la demande via `/api/datasets/<nom>` (déjà disponible
-  côté API) plutôt que tout d'un coup.
-- Un seul compte administrateur est géré par défaut ; le modèle
-  `AdminUser` permet cependant d'en créer plusieurs si nécessaire.
+  faisait la version originale (voir § « Performance : mise en cache HTTP »
+  ci-dessus pour la mitigation actuelle et la piste de refonte complète).
 - L'édition de cellule dans l'Explorateur remplace la table entière côté
   serveur à chaque « Enregistrer cette table en base » (pas de diff ligne
   par ligne) : pour une table de plusieurs dizaines de milliers de lignes,
   préférez l'import CSV ciblé (« Enrichir les données ») pour de gros
   volumes de changements plutôt que l'édition cellule par cellule.
+- Le système de comptes n'a pas de MFA ni de SSO (voir § « Sécurité admin »).
+- Les doublons de la liste des rapports (ex. « Annexes 2022 » apparaissant
+  deux fois) se corrigent directement dans l'interface, bouton **Gérer les
+  rapports**, sans changement de code nécessaire.
 
 ## Référentiels canoniques (provinces, entreprises, flux, entités perceptrices)
 
@@ -324,6 +451,28 @@ Haut Katanga (DRHKAT) ») n'ont pas encore d'entrée correspondante dans
 distinctes, conformément au principe ci-dessus (ne jamais fusionner une
 variante non répertoriée). Pour les regrouper, ajoutez la paire
 `libelle_brut` → `nom_canonique` correspondante dans `ref_canoniques`.
+
+### Valeur source et valeur canonique affichées côte à côte
+
+Un audit qualité (sept. 2026) demandait de ne pas se contenter de
+normaliser les *filtres* : « il faut présenter deux colonnes clairement
+séparées ». C'est fait des deux côtés :
+
+- **Explorateur** : toute colonne couverte par `CANON_COLS` affiche, juste
+  à droite de la colonne source (jamais modifiée), une colonne
+  supplémentaire grisée « *(colonne)* canonique » avec la valeur normalisée
+  — le nombre de colonnes canoniques ajoutées est indiqué dans le pied de
+  tableau.
+- **Géographie** (tableau « Paiements infranationaux détaillés ») : chaque
+  colonne canonique (Province, Entité perceptrice, Entreprise, Flux)
+  affichée dans le regroupement choisi est suivie d'une colonne « *(brute)*
+  » qui liste le·s libellé·s original·aux réunis dans ce regroupement (par
+  ex. « DRLU / Direction des recettes de Lualaba (DRLU) » quand les deux
+  variantes existent pour la même ligne canonique).
+
+Dans les deux cas, la colonne source/brute reste la référence de
+traçabilité avec les annexes déclarées ; seule la colonne canonique sert de
+base aux filtres et aux agrégations.
 
 ## Comment exploiter et faire évoluer ce code
 

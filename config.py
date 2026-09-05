@@ -28,6 +28,14 @@ class Config:
     ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "admin")
     ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "change-me-now")
 
+    # Chemin (sans le "/" initial) donnant accès à l'espace administrateur.
+    # Ce lien n'est affiché nulle part dans l'interface publique : seuls les
+    # administrateurs qui le connaissent (à partager de façon confidentielle,
+    # par ex. dans un gestionnaire de mots de passe d'équipe) peuvent
+    # atteindre l'écran de connexion. À changer en production pour une
+    # valeur non devinable (voir README, section "Sécurité admin").
+    ADMIN_ENTRY_PATH = os.environ.get("ADMIN_ENTRY_PATH", "gestion-admin")
+
     # Cookies de session : True en production derrière HTTPS.
     SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "0") == "1"
     SESSION_COOKIE_HTTPONLY = True
@@ -44,3 +52,8 @@ class Config:
     COMPRESS_MIN_SIZE = 500
 
     JSON_SORT_KEYS = False
+
+    # Fichiers statiques (app.js/style.css/logo.png) : mise en cache courte
+    # côté navigateur pour accélérer les visites répétées sans risquer de
+    # servir une version obsolète trop longtemps après un déploiement.
+    SEND_FILE_MAX_AGE_DEFAULT = int(os.environ.get("STATIC_CACHE_SECONDS", 600))
