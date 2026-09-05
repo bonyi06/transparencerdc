@@ -38,6 +38,7 @@ from models import (
     SiteContent,
     WarehouseMeta,
     db,
+    run_light_migrations,
 )
 
 compress = Compress()
@@ -52,6 +53,16 @@ def create_app(config_object: type[Config] = Config) -> Flask:
 
     register_routes(app)
     register_cli(app)
+    # Filet de sécurité : ajoute automatiquement les tables/colonnes que le
+    # code attend mais qui manquent encore sur une base existante (voir
+    # models.run_light_migrations — évite de revivre l'incident de
+    # sept. 2026 où l'ajout des rôles/comptes multiples avait fait planter
+    # la production faute de migration). Idempotent, sans danger à chaque
+    # démarrage.
+    try:
+        run_light_migrations(app)
+    except Exception:  # pragma: no cover - ne doit jamais empêcher le démarrage
+        app.logger.exception("Échec de la migration légère au démarrage.")
     return app
 
 

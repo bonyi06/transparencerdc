@@ -532,6 +532,29 @@ Trois étapes, à l'image de ce qui existe déjà pour `about.*` ou `intros.*` :
   utilisez `cat` = `"faits"`, `"contextuel"`, `"dimensions"` ou `"annexe"`
   (voir le regroupement dans `mExplorer()` côté `static/app.js`).
 
+### Mises à jour de schéma (migrations légères)
+
+Quand une nouvelle version du code ajoute une colonne à un modèle déjà
+existant en production (ex. `AdminUser.role` ajouté en sept. 2026), une
+base de données déjà peuplée ne la possède pas automatiquement : SQLite ne
+modifie jamais une table existante tout seul, seul `db.create_all()` crée
+les tables *manquantes*. Sans précaution, le nouveau code plante avec une
+erreur `no such column`.
+
+Pour éviter de revivre cet incident, `models.run_light_migrations()`
+s'exécute automatiquement à **chaque démarrage** de l'application (appelé
+depuis `create_app()`) : elle crée les tables manquantes, puis ajoute les
+colonnes manquantes sur les tables déjà existantes, à partir de la liste
+`_ADDED_COLUMNS` en haut de `models.py`. C'est idempotent (ne fait rien si
+tout est déjà à jour) et sans danger à chaque redémarrage — y compris sur
+Render, où le service redémarre à chaque déploiement.
+
+Si vous ajoutez vous-même une colonne à un modèle existant, ajoutez une
+entrée à `_ADDED_COLUMNS` dans `models.py` en même temps : le prochain
+déploiement l'appliquera automatiquement, sans étape manuelle. (Ajouter une
+toute nouvelle *table* ne nécessite rien de plus : `db.create_all()` s'en
+charge seul.)
+
 ### Changer de base de données (SQLite → PostgreSQL/MySQL)
 
 Aucune ligne de code à changer : `DATABASE_URL` dans `.env` pilote tout

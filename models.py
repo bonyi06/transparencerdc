@@ -22,9 +22,61 @@ tout passe par SQLAlchemy.
 from datetime import datetime, timezone
 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import inspect, text
 from werkzeug.security import check_password_hash, generate_password_hash
 
 db = SQLAlchemy()
+
+
+# Colonnes ajoutées à des tables existantes après leur création initiale en
+# production (SQLite ne supporte pas "CREATE TABLE IF NOT EXISTS" au niveau
+# colonne : `db.create_all()` crée les tables manquantes mais ne modifie
+# jamais une table déjà existante). Sans ce filet de sécurité, déployer une
+# nouvelle version du code qui ajoute une colonne à un modèle existant
+# (ex: AdminUser.role) plante immédiatement sur une base de production déjà
+# peuplée avec l'erreur "no such column" — vécu en sept. 2026 lors de
+# l'ajout des rôles/comptes multiples. Cette liste s'étend à chaque futur
+# ajout de colonne à un modèle existant (les nouvelles TABLES, elles,
+# n'ont besoin de rien de plus que `db.create_all()`).
+_ADDED_COLUMNS = {
+    "admin_user": [
+        ("role", "VARCHAR(20) DEFAULT 'editor'"),
+        ("active", "BOOLEAN DEFAULT 1"),
+        ("last_login_at", "DATETIME"),
+    ],
+}
+
+
+def run_light_migrations(app) -> None:
+    """Filet de sécurité exécuté à chaque démarrage : crée les tables
+    manquantes (`db.create_all()`, sans danger, n'écrase jamais l'existant)
+    puis ajoute les colonnes manquantes sur les tables déjà existantes
+    (`_ADDED_COLUMNS` ci-dessus). Idempotent : ne fait rien si tout est déjà
+    à jour, donc sans risque de le laisser s'exécuter à chaque déploiement."""
+    with app.app_context():
+        db.create_all()
+        inspector = inspect(db.engine)
+        existing_tables = set(inspector.get_table_names())
+        with db.engine.begin() as conn:
+            for table, columns in _ADDED_COLUMNS.items():
+                if table not in existing_tables:
+                    continue  # table toute neuve : db.create_all() l'a déjà créée complète
+                existing_cols = {c["name"] for c in inspector.get_columns(table)}
+                for name, ddl_type in columns:
+                    if name not in existing_cols:
+                        conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {name} {ddl_type}"))
+                        app.logger.info("Migration légère : colonne %s.%s ajoutée.", table, name)
+                        if table == "admin_user" and name == "role":
+                            # Les comptes déjà existants avant cette migration
+                            # étaient, par définition, l'unique compte admin
+                            # de l'ancien système à mot de passe partagé : ils
+                            # gardent le plein rôle "admin" plutôt que de
+                            # basculer sur la valeur par défaut "editor"
+                            # (qui, elle, ne s'applique qu'aux comptes créés
+                            # après coup) — sans quoi plus personne n'aurait
+                            # les droits pour gérer les comptes après la mise
+                            # à jour.
+                            conn.execute(text("UPDATE admin_user SET role='admin'"))
 
 
 def utcnow():
