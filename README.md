@@ -390,6 +390,103 @@ traitées différemment :
   correspond pas au code déployé, un rechargement forcé (Ctrl+Maj+R /
   Cmd+Maj+R) élimine cette hypothèse.
 
+## Fiabilité des tableaux (audit qualité de sept. 2026)
+
+Un second audit (`Audit_presentation_tableaux_TransparenceRDC.xlsx`, 168
+tables passées en revue) a été reçu et vérifié table par table plutôt que
+pris pour argent comptant. Ce qui suit a été confirmé et corrigé dans le
+code :
+
+- **Sommes sur des champs non additifs.** `isSummableNumCol()` (static/app.js)
+  excluait déjà les identifiants et les colonnes d'année/exercice, mais pas
+  les taux/pourcentages (`Part`, `Écart %`…), ni les numéros de page
+  (`Page`), ni certains identifiants métier qui ne suivent aucun motif
+  générique (ex. `PERMIS` dans `cami_droits_miniers`, un numéro de titre
+  minier que le site additionnait en `Σ PERMIS 37,0 M`). Corrigé : exclusion
+  des taux/pourcentages et des pages, plus une liste d'exceptions
+  `NON_SUMMABLE_OVERRIDES` pour les cas particuliers constatés. La colonne
+  `Exercice` (présente sous ce nom exact dans les tables `ent_*`) est
+  désormais aussi reconnue comme une année, donc jamais sommée.
+- **En-têtes d'import décalés — corrigé.** Confirmé sur A17.1, A18.1, A38 et
+  A41 (les 4 annexes citées par l'audit) : la ligne d'en-tête stockée était
+  en réalité la première ligne de données du tableau ITIE d'origine. Un
+  balayage automatique de toutes les annexes avait trouvé 27 tables
+  présentant un symptôme de ce type (l'audit n'en avait vérifié que 4 en
+  détail). Après vérification table par table contre les classeurs
+  officiels ITIE RDC 2022 et 2023 fournis par l'ITIE-RDC, il s'est avéré que
+  5 de ces 27 avaient en réalité déjà des en-têtes corrects (faux positifs
+  du balayage automatique, déclenchés par du texte légitimement long) ; les
+  22 restantes ont été corrigées :
+  - **13 tables** avaient bien un en-tête entièrement décalé : intitulés
+    reconstruits à partir des vraies lignes d'en-tête (parfois sur 2 ou 3
+    niveaux fusionnés) du classeur source, et la ligne de donnée perdue
+    dans le décalage a été récupérée et réinsérée (`annexe_2022_9`,
+    `annexe_2022_15`, `annexe_2022_26`, `annexe_2022_31`, `annexe_2022_36`,
+    `annexe_2022_55`, `annexe_2023_11`, `annexe_2023_12`,
+    `annexe_2023_17_1`, `annexe_2023_18_1`, `annexe_2023_18_2`,
+    `annexe_2023_38`, `annexe_2023_39`, `annexe_2023_40`, `annexe_2023_41`,
+    `annexe_2023_56`, `annexe_2023_57`, `annexe_2023_60_1` — 18 au total).
+    Pour `annexe_2023_17_1` et `annexe_2023_18_1`, une deuxième ligne
+    (l'entreprise KAMOTO COPPER COMPANY, non déclarée) manquait carrément
+    avant celle piégée dans l'en-tête ; les deux ont été récupérées
+    directement depuis le classeur source.
+  - **4 tables** avaient déjà des intitulés corrects pour l'essentiel, mais
+    quelques cellules d'en-tête vides (colonnes fusionnées dans Excel)
+    avaient été remplacées par un espace réservé (`col12`, `col17`…) : ces
+    espaces réservés ont été remplacés par le vrai sous-intitulé
+    (`annexe_2022_33`, `annexe_2022_49`, `annexe_2023_37`,
+    `annexe_2023_59`).
+  - **5 tables** n'avaient en fait rien de cassé (`annexe_2023_13`,
+    `annexe_2023_14`, `annexe_2022_51`, `annexe_2022_52`, `annexe_2023_43`).
+  Le bandeau d'avertissement (`UNRELIABLE_HEADER_TABLES` dans
+  static/app.js) reste dans le code, prêt à resservir si un futur import
+  révèle un nouveau cas, mais l'ensemble est vide : plus aucune table n'est
+  actuellement signalée.
+  **Important : ce correctif ne prend effet qu'après avoir relancé
+  `python import_data.py` en production** (voir § « Mettre à jour les
+  données après une correction » ci-dessous) — republier le code seul ne
+  suffit pas, car les en-têtes sont stockés en base, pas seulement dans le
+  fichier de départ.
+- **Valeurs manquantes non distinguées de zéro.** Les jetons `N/c`, `Néant`,
+  `ND`, `N/A`, `NAP` (utilisés tels quels dans les rapports sources) sont
+  désormais affichés de façon lisible (« · non déclaré ») au lieu du texte
+  brut, pour ne jamais être confondus avec un vrai zéro déclaré
+  (`isNonDeclareToken()` / `fmtCell()`).
+- **Unités et devises mélangées dans une même somme.** Quand une table a une
+  colonne `Devise` ou `Unité` et que la sélection filtrée contient plusieurs
+  valeurs différentes, un avertissement « ⚠ Devise mixte (n) » apparaît à
+  côté des totaux affichés (`mixedUnitWarning()`), pour signaler qu'additionner
+  des montants dans des unités différentes n'a pas de sens.
+- **Données personnelles potentiellement sensibles.** Un balayage des noms
+  de colonnes avait identifié des champs à examiner dans les annexes de
+  bénéficiaire effectif et de sous-traitance (ex. `Numéro d'identification
+  national` dans A13/A14 ; une ligne y porte la mention `<EXCLURE>` sur un
+  nom, laissée telle quelle dans la donnée source). L'ITIE-RDC a confirmé
+  que l'intégralité de ces données est publique (déclarations officielles
+  du rapport ITIE) : aucun masquage n'a donc été appliqué, conformément à
+  cette confirmation explicite.
+- **Refonte à 3 niveaux (Synthèse / Détail / Données brutes) proposée pour
+  les 168 tables.** Reste à faire, en cours de scoping — un chantier de
+  cette ampleur est mené table par table plutôt que d'un bloc.
+
+### Mettre à jour les données après une correction
+
+Les corrections d'en-têtes/lignes ci-dessus modifient `data/warehouse.seed.json`
+(le fichier de départ), pas directement la base de production. Comme
+`import_data.py` est **idempotent et écrase chaque jeu de données par son
+nom** (voir sa docstring), il suffit de le relancer une fois après le
+déploiement du code pour que les nouvelles données prennent effet :
+
+```bash
+python import_data.py
+```
+
+**Attention** : cette commande réécrit entièrement le contenu de chaque
+table présente dans `data/warehouse.seed.json` — toute modification faite
+depuis l'interface d'administration (édition de cellule, enrichissement de
+données) sur une table du même nom serait alors perdue. À n'utiliser que
+juste après un déploiement de correctif comme celui-ci, pas en routine.
+
 ## Limites connues / pistes d'évolution
 
 - Le générateur de visualisations et l'explorateur de tables chargent

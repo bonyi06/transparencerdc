@@ -118,7 +118,14 @@ function fmtUSD(n){if(n==null||isNaN(n))return '—';const a=Math.abs(n);
   if(a>=1e6)return (n/1e6).toFixed(a>=1e8?0:1).replace('.',',')+' M$';
   if(a>=1e3)return Math.round(n/1e3)+' k$';return String(Math.round(n));}
 const fmtN=n=>(typeof n==='number'?n:Number(n)).toLocaleString('fr-FR');
-function fmtCell(v,type){if(v==null||v==='')return '';if(type==='num'&&typeof v==='number')return Number.isInteger(v)?fmtN(v):v.toLocaleString('fr-FR',{maximumFractionDigits:2});return String(v);}
+// Jetons utilisés dans les rapports source pour indiquer une valeur non
+// communiquée, sans objet ou non applicable — distincts d'un véritable zéro
+// déclaré. Affichés de façon lisible plutôt que tels quels (ex. "N/c" brut)
+// pour que l'absence de donnée ne soit jamais confondue avec 0 (audit
+// qualité, sept. 2026 : « distinguer zéro confirmé, non déclaré, non
+// applicable et non disponible »).
+function isNonDeclareToken(v){if(v==null||v==='')return false;return /^(n\/?c|n[eé]ant|nd|n\/a|nap|non[\s-]?d[ée]clar[ée]|non[\s-]?disponible|non[\s-]?applicable)$/i.test(String(v).trim());}
+function fmtCell(v,type){if(v==null||v==='')return '';if(isNonDeclareToken(v))return '· non déclaré';if(type==='num'&&typeof v==='number')return Number.isInteger(v)?fmtN(v):v.toLocaleString('fr-FR',{maximumFractionDigits:2});return String(v);}
 function getPath(o,p){return p.split('.').reduce((a,k)=>a==null?a:a[k],o);}
 function assignPath(o,p,v){const ks=p.split('.');let x=o;for(let i=0;i<ks.length-1;i++){if(x[ks[i]]==null)x[ks[i]]={};x=x[ks[i]];}x[ks[ks.length-1]]=v;}
 
@@ -127,14 +134,47 @@ function colIndex(name,col){return DS[name].cols.indexOf(col);}
 function yearCol(name){const cs=DS[name].cols;
   let c=cs.find(x=>/^ann[eé]es?$/i.test(x));if(c)return c;         // Année / Années / annee
   if(cs.includes('exercice_id'))return 'exercice_id';
+  c=cs.find(x=>/^exercice$/i.test(x));if(c)return c;               // colonne "Exercice" (entrepôt consolidé)
   c=cs.find(x=>/ann[eé]e/i.test(x));return c||null;}
 function yearVal(v){if(v==null)return null;const m=String(v).match(/(19|20)\d{2}/);return m?+m[0]:null;}
 function isPct(col){return /pourcent|%|taux|pct|part/i.test(col);}
-function isIdCol(col){return /^(rid|id)$|_id$|identifi|code|numero|n°|register|iso\d/i.test(col);}
-function isYearLikeCol(name,col){if(/^ann[eé]es?$/i.test(col))return true;const yc=yearCol(name);return !!yc&&yc===col;}
-// colonnes numériques qu'il est licite de sommer : ni identifiant, ni année/exercice
-// (additionner une année ou un code n'a pas de sens analytique — cf. audit qualité)
-function isSummableNumCol(name,col){return !isIdCol(col)&&!isYearLikeCol(name,col);}
+function isIdCol(col){return /^(rid|id)$|_id$|identifi|code|numero|n°|register|iso\d|p[ée]rim[eè]tre|^num[eé]ro?\b/i.test(col);}
+function isYearLikeCol(name,col){if(/^ann[eé]es?$|^exercice$/i.test(col))return true;const yc=yearCol(name);return !!yc&&yc===col;}
+// Colonnes contenant un numéro de page / renvoi de document source : jamais
+// additives (ex. « Page » dans les tables consolidées ent_revenus_*), même
+// si stockées en type "num".
+function isPageLikeCol(col){return /(^|_)page(s)?$/i.test(col);}
+// Certaines colonnes-identifiants métier ne suivent aucun des motifs
+// génériques ci-dessus (ex. « PERMIS » dans le registre CAMI, qui est un
+// numéro de titre minier, pas une quantité) : liste d'exceptions constatées
+// lors de l'audit qualité de sept. 2026, à compléter au fil des futurs
+// constats plutôt que de deviner une regex trop large qui exclurait des
+// mesures légitimes.
+const NON_SUMMABLE_OVERRIDES={cami_droits_miniers:['PERMIS']};
+// colonnes numériques qu'il est licite de sommer : ni identifiant, ni
+// année/exercice, ni pourcentage/taux, ni numéro de page — additionner un
+// code, une année, un taux ou une page n'a pas de sens analytique (audit
+// qualité, sept. 2026).
+function isSummableNumCol(name,col){
+  if(isIdCol(col)||isYearLikeCol(name,col)||isPct(col)||isPageLikeCol(col))return false;
+  const ov=NON_SUMMABLE_OVERRIDES[name];
+  if(ov&&ov.includes(col))return false;
+  return true;
+}
+// Avertit quand une somme affichée mélange plusieurs unités/devises (ex.
+// USD + CDF, ou tonnes + kg) sur la sélection courante : additionner des
+// montants dans des unités différentes produit un total sans signification
+// (audit qualité, sept. 2026 : « afficher l'unité … et filtrer avant
+// agrégation »). Ne bloque rien : signale seulement, pour laisser
+// l'utilisateur affiner ses filtres.
+function mixedUnitWarning(name,rows){
+  const d=DS[name];if(!d)return '';
+  const uCol=d.cols.findIndex(c=>/^(devise|unit[eé])$/i.test(c));
+  if(uCol<0||!rows.length)return '';
+  const vals=new Set();for(const r of rows){const v=r[uCol];if(v!=null&&v!=='')vals.add(String(v));}
+  if(vals.size<=1)return '';
+  return `<span class="sm-s" style="color:#b3261e" title="${esc([...vals].join(', '))}">⚠ ${esc(d.cols[uCol])} mixte (${vals.size})</span>`;
+}
 function aggregate(name,groupCol,measureCol,agg,filterYear){
   const d=DS[name],gi=d.cols.indexOf(groupCol),mi=measureCol?d.cols.indexOf(measureCol):-1,yc=yearCol(name),yi=yc?d.cols.indexOf(yc):-1;
   const gdim=canonDimFor(name,groupCol);
@@ -337,6 +377,15 @@ function exActiveCount(){let n=0;const F=exState.filters;for(const k in F){const
 // 2026 : « il faut présenter deux colonnes clairement séparées »). La
 // valeur brute stockée reste inchangée dans l'export CSV / l'édition.
 function canonColIdxs(ds){const d=DS[ds];if(!d)return [];return d.cols.map((c,i)=>canonDimFor(ds,c)?i:-1).filter(i=>i>=0);}
+// Annexes dont l'import initial avait décalé l'en-tête d'une ligne (les noms
+// de colonnes affichés étaient en réalité des valeurs de données) : signalé
+// par l'audit qualité de sept. 2026, puis corrigé pour les 27 tables
+// concernées à partir des classeurs officiels ITIE RDC 2022 et 2023 fournis
+// par l'utilisateur (en-têtes reconstruits, lignes perdues récupérées).
+// Cet ensemble reste vide tant qu'aucune nouvelle table cassée n'est
+// détectée ; si un futur import révèle un nouveau cas, ajouter sa clé ici
+// en attendant sa correction.
+const UNRELIABLE_HEADER_TABLES=new Set([]);
 function renderExplorer(){
   const host=$('#exMain');if(!host)return;const d=DS[exState.ds];
   const yc=yearCol(exState.ds);
@@ -359,7 +408,9 @@ function renderExplorer(){
   const numCols=d.cols.map((c,i)=>({c,i})).filter(o=>d.types[o.i]==='num' && isSummableNumCol(exState.ds,o.c));
   const sums=numCols.map(o=>{let s=0,n=0;for(const r of rows){const v=Number(r[o.i]);if(!isNaN(v)){s+=v;n++;}}return {c:o.c,s,n};}).filter(o=>o.n>0).slice(0,6);
   const nActive=exActiveCount();
+  const headerWarning=UNRELIABLE_HEADER_TABLES.has(exState.ds)?`<div class="msg warn" style="margin-bottom:10px">⚠ En-têtes de colonnes non fiables : l'import initial de cette annexe a décalé la première ligne de données à la place des noms de colonnes réels. Les intitulés affichés ci-dessous ne sont donc pas ceux du rapport ITIE d'origine — à corriger dès que les intitulés officiels seront fournis.</div>`:'';
   host.innerHTML=`
+    ${headerWarning}
     <div class="extoolbar">
       <div class="desc">${esc(d.desc)}</div>
       <div class="exsearch"><span class="si">⌕</span><input id="exQ" placeholder="Recherche plein-texte…" value="${esc(exState.q)}"></div>
@@ -379,7 +430,7 @@ function renderExplorer(){
   if(canEdit)bindExplorerEdit(d);
   // summary
   const sum=$('#exSummary');
-  sum.innerHTML=`<span class="sm-c">${fmtN(tot)} ligne(s) sélectionnée(s)</span>`+sums.map(o=>`<span class="sm-s"><span>Σ ${esc(o.c)}</span><b>${fmtSmart(o.s)}</b></span>`).join('');
+  sum.innerHTML=`<span class="sm-c">${fmtN(tot)} ligne(s) sélectionnée(s)</span>`+sums.map(o=>`<span class="sm-s"><span>Σ ${esc(o.c)}</span><b>${fmtSmart(o.s)}</b></span>`).join('')+mixedUnitWarning(exState.ds,rows);
   // filter panel
   if(exState.panel)renderExFilters();
   // sort/pager/search events
@@ -474,7 +525,7 @@ function refreshExResult(){const d=DS[exState.ds];let rows=exApply();
   }).join('')}</tr>`).join('')||`<tr><td colspan="${d.cols.length+canonIdx.length}"><div class="empty">Aucune ligne pour cette combinaison de filtres.</div></td></tr>`;
   const numCols=d.cols.map((c,i)=>({c,i})).filter(o=>d.types[o.i]==='num' && isSummableNumCol(exState.ds,o.c));
   const sums=numCols.map(o=>{let s=0,n=0;for(const r of rows){const v=Number(r[o.i]);if(!isNaN(v)){s+=v;n++;}}return {c:o.c,s,n};}).filter(o=>o.n>0).slice(0,6);
-  const sum=$('#exSummary');if(sum)sum.innerHTML=`<span class="sm-c">${fmtN(tot)} ligne(s) sélectionnée(s)</span>`+sums.map(o=>`<span class="sm-s"><span>Σ ${esc(o.c)}</span><b>${fmtSmart(o.s)}</b></span>`).join('');
+  const sum=$('#exSummary');if(sum)sum.innerHTML=`<span class="sm-c">${fmtN(tot)} ligne(s) sélectionnée(s)</span>`+sums.map(o=>`<span class="sm-s"><span>Σ ${esc(o.c)}</span><b>${fmtSmart(o.s)}</b></span>`).join('')+mixedUnitWarning(exState.ds,rows);
   const foot=$('#exMain .gridfoot > div:first-child');if(foot)foot.innerHTML=`${fmtN(tot)} ligne(s)${nActive||exState.q?' filtrée(s) sur '+fmtN(d.rows.length):''} · ${d.cols.length} colonnes`;
   const pg=$('#exMain .pager');if(pg)pg.innerHTML=`<button id="exFirst" ${exState.page===0?'disabled':''}>«</button><button id="exPrev" ${exState.page===0?'disabled':''}>‹</button><span>Page ${exState.page+1} / ${pages}</span><button id="exNext" ${exState.page>=pages-1?'disabled':''}>›</button><button id="exLast" ${exState.page>=pages-1?'disabled':''}>»</button>`;
   if(pg){$('#exFirst').onclick=()=>{exState.page=0;refreshExResult();};$('#exPrev').onclick=()=>{exState.page--;refreshExResult();};$('#exNext').onclick=()=>{exState.page++;refreshExResult();};$('#exLast').onclick=()=>{exState.page=pages-1;refreshExResult();};}

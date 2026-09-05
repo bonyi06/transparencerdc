@@ -263,6 +263,8 @@ table.dg tr:hover td{background:var(--panel-2)}
 .msg{font-size:13px;font-weight:600;padding:9px 12px;border-radius:8px;display:none;margin-bottom:12px}
 .msg.err{display:block;background:#fdecea;color:#b3261e;border:1px solid #f6c9c4}
 :root[data-theme="dark"] .msg.err{background:#3a1714;color:#f0a89f}
+.msg.warn{display:block;background:#fff6e0;color:#8a5a00;border:1px solid #f2d98a}
+:root[data-theme="dark"] .msg.warn{background:#3a2f0f;color:#f0cf7a}
 .adminbar{position:fixed;left:0;right:0;bottom:0;z-index:85;background:var(--navy);color:#fff;padding:12px 18px;display:none;gap:12px;align-items:center;flex-wrap:wrap;box-shadow:0 -6px 24px rgba(0,0,0,.3)}
 .adminbar.on{display:flex}
 .adminbar .st{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}
