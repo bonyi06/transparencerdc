@@ -41,6 +41,64 @@ C.intros=Object.assign({
   reports:"Rapports annuels, thématiques, contextuels, forestiers, d'avancement et de validation publiés par l'ITIE-RDC.",
 },C.intros||{});
 const DS=WH.datasets, AGG=WH.agg, O=WH.officiel2023, STATS=WH.stats;
+
+/* ===== Référentiels canoniques (provinces / entreprises / flux / entités
+   perceptrices) =====
+   L'entrepôt contient de nombreuses variantes d'un même libellé (casse,
+   accents, tirets, codes ISO, anciennes orthographes) : ex. « HAUT KATANGA »,
+   « Haut-Katanga » et « CD-HK » désignent la même province, ce qui
+   fragmentait les filtres et faussait les agrégations (audit qualité,
+   sept. 2026). L'entrepôt contient déjà un référentiel de correspondance
+   pour entreprises/flux/entités perceptrices (table `ref_canoniques`,
+   6 166 lignes) qui n'était simplement pas branché à l'interface ; les
+   provinces sont canonicalisées à partir de la même liste que la carte
+   (`GEO.prov_ref`, source unique des 26 provinces de la RDC).
+   Principe : on ne réécrit JAMAIS la valeur brute stockée (traçabilité des
+   déclarations officielles) — seules les vues d'agrégation et les listes de
+   filtres regroupent les variantes sous leur libellé canonique. */
+function stripAccents(s){return String(s==null?'':s).normalize('NFD').replace(/[̀-ͯ]/g,'');}
+function normKey(s){return stripAccents(s).toUpperCase().replace(/[-_]/g,' ').replace(/\s+/g,' ').trim();}
+// Corrections ponctuelles de fautes de frappe à fort volume, non couvertes
+// par la simple normalisation casse/accents/tirets ci-dessus.
+const PROVINCE_ALIASES={'Tanganyka':'Tanganyika'};
+// colonne "table.colonne" -> dimension du référentiel à appliquer. Limité
+// aux tables de faits/dimensions/contextuelles bien identifiées (pas aux
+// annexes brutes, dont les en-têtes de colonnes sont trop hétérogènes pour
+// un rattachement fiable et automatique).
+const CANON_COLS={
+  'fait_reconciliation_flux.flux_libelle':'flux','fait_reconciliation_flux.regie_libelle':'entité perceptrice',
+  'fait_reconciliation_entreprise.entreprise':'entreprise','fait_depense_sociale.entreprise':'entreprise',
+  'ctx_depense_environnementale.SOCIETE':'entreprise','ctx_effectif.Société':'entreprise','ctx_depense_sociale.SOCIETE':'entreprise',
+  'ctx_pret_subvention.SOCIETE':'entreprise','ctx_participation_publique.entreprise':'entreprise','ctx_structure_capital.SOCIETE':'entreprise',
+  'ctx_transaction_troc.SOCIETE':'entreprise','ctx_paiement_infranational.Régie':'entité perceptrice','ctx_paiement_infranational.Flux':'flux',
+  'ctx_exportation.SOCIETE':'entreprise','ctx_production.SOCIETE':'entreprise','ctx_propriete.SOCIETE':'entreprise',
+  'ctx_paiement_infranational_detail.entreprise':'entreprise','ctx_paiement_infranational_detail.flux':'flux',
+  'ctx_paiement_infranational_detail.percepteur':'entité perceptrice','ctx_paiement_infranational_detail.province':'province',
+  'cadrage_2024_paiements.entreprise':'entreprise','cadrage_2024_paiements.percepteur':'entité perceptrice',
+  'ref_entites_infranationales.province':'province',
+  'ent_revenus_flux.Flux harmonisé':'flux','ent_revenus_flux.Entité perceptrice harmonisée':'entité perceptrice',
+  'ent_revenus_entite.Entité perceptrice harmonisée':'entité perceptrice','ent_production.Entreprise':'entreprise',
+  'ent_exportations.Entreprise':'entreprise','ent_depenses_sociales.Entreprise':'entreprise',
+};
+function canonDimFor(tableName,col){return CANON_COLS[tableName+'.'+col]||null;}
+const CANON_LOOKUP={entreprise:new Map(),'entité perceptrice':new Map(),flux:new Map(),province:new Map()};
+(function buildCanon(){
+  const rc=DS.ref_canoniques;
+  if(rc){
+    const di=rc.cols.indexOf('dimension'),bi=rc.cols.indexOf('libelle_brut'),ci=rc.cols.indexOf('nom_canonique');
+    if(di>=0&&bi>=0&&ci>=0)rc.rows.forEach(r=>{const map=CANON_LOOKUP[r[di]];if(map)map.set(normKey(r[bi]),r[ci]);});
+  }
+  if(GEO&&GEO.prov_ref){
+    Object.entries(GEO.prov_ref).forEach(([iso,name])=>{CANON_LOOKUP.province.set(normKey(iso),name);CANON_LOOKUP.province.set(normKey(name),name);});
+  }
+  Object.entries(PROVINCE_ALIASES).forEach(([raw,can])=>CANON_LOOKUP.province.set(normKey(raw),can));
+})();
+function canonicalize(dim,raw){
+  const map=CANON_LOOKUP[dim];if(!map||raw==null||raw==='')return raw;
+  const hit=map.get(normKey(raw));
+  return hit!=null?hit:raw; // variante non référencée : conservée telle quelle (traçabilité de la déclaration d'origine)
+}
+
 const $=(s,r)=>(r||document).querySelector(s),$$=(s,r)=>[...(r||document).querySelectorAll(s)];
 const NS='http://www.w3.org/2000/svg';
 const svgEl=(n,a)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;};
@@ -65,12 +123,18 @@ function yearCol(name){const cs=DS[name].cols;
 function yearVal(v){if(v==null)return null;const m=String(v).match(/(19|20)\d{2}/);return m?+m[0]:null;}
 function isPct(col){return /pourcent|%|taux|pct|part/i.test(col);}
 function isIdCol(col){return /^(rid|id)$|_id$|identifi|code|numero|n°|register|iso\d/i.test(col);}
+function isYearLikeCol(name,col){if(/^ann[eé]es?$/i.test(col))return true;const yc=yearCol(name);return !!yc&&yc===col;}
+// colonnes numériques qu'il est licite de sommer : ni identifiant, ni année/exercice
+// (additionner une année ou un code n'a pas de sens analytique — cf. audit qualité)
+function isSummableNumCol(name,col){return !isIdCol(col)&&!isYearLikeCol(name,col);}
 function aggregate(name,groupCol,measureCol,agg,filterYear){
   const d=DS[name],gi=d.cols.indexOf(groupCol),mi=measureCol?d.cols.indexOf(measureCol):-1,yc=yearCol(name),yi=yc?d.cols.indexOf(yc):-1;
+  const gdim=canonDimFor(name,groupCol);
   const map=new Map();
   for(const r of d.rows){
     if(filterYear&&yi>=0&&yearVal(r[yi])!==+filterYear)continue;
-    const k=r[gi]==null||r[gi]===''?'(vide)':String(r[gi]);
+    const gv=r[gi];
+    const k=(gv==null||gv==='')?'(vide)':String(gdim?canonicalize(gdim,gv):gv);
     let a=map.get(k);if(!a){a={sum:0,count:0,n:0,min:Infinity,max:-Infinity};map.set(k,a);}
     a.count++;                                   // total rows in group
     if(mi>=0){const raw=r[mi];if(raw!==null&&raw!==''){const v=Number(raw);if(!isNaN(v)){a.sum+=v;a.n++;if(v<a.min)a.min=v;if(v>a.max)a.max=v;}}}
@@ -238,7 +302,8 @@ function mExplorer(){
 // distinct values of a column (cached)
 const _distinctCache={};
 function exDistinct(ds,i){const key=ds+'#'+i;if(_distinctCache[key])return _distinctCache[key];
-  const d=DS[ds];const m=new Map();for(const r of d.rows){const v=r[i]==null||r[i]===''?'∅':String(r[i]);m.set(v,(m.get(v)||0)+1);}
+  const d=DS[ds];const dim=canonDimFor(ds,d.cols[i]);
+  const m=new Map();for(const r of d.rows){const raw=r[i];const v=(raw==null||raw==='')?'∅':String(dim?canonicalize(dim,raw):raw);m.set(v,(m.get(v)||0)+1);}
   const arr=[...m.entries()].sort((a,b)=>b[1]-a[1]);_distinctCache[key]=arr;return arr;}
 
 function exApply(){const d=DS[exState.ds];let rows=d.rows;
@@ -248,7 +313,8 @@ function exApply(){const d=DS[exState.ds];let rows=d.rows;
   if(q)rows=rows.filter(r=>r.some(v=>String(v==null?'':v).toLowerCase().includes(q)));
   const F=exState.filters;
   for(const k in F){const i=+k,f=F[k];if(!f)continue;
-    if(f.type==='cat'){if(f.vals&&f.vals.length){const set=new Set(f.vals);rows=rows.filter(r=>set.has(r[i]==null||r[i]===''?'∅':String(r[i])));}
+    if(f.type==='cat'){const dim=canonDimFor(exState.ds,d.cols[i]);
+      if(f.vals&&f.vals.length){const set=new Set(f.vals);rows=rows.filter(r=>{const raw=r[i];const v=(raw==null||raw==='')?'∅':String(dim?canonicalize(dim,raw):raw);return set.has(v);});}
       if(f.q){const qq=f.q.toLowerCase();rows=rows.filter(r=>String(r[i]==null?'':r[i]).toLowerCase().includes(qq));}}
     else if(f.type==='num'){if(f.min!=null)rows=rows.filter(r=>{const v=Number(r[i]);return !isNaN(v)&&v>=f.min;});
       if(f.max!=null)rows=rows.filter(r=>{const v=Number(r[i]);return !isNaN(v)&&v<=f.max;});}}
@@ -269,7 +335,7 @@ function renderExplorer(){
     return `<tr data-rowidx="${ridx}">${r.map((v,i)=>`<td class="${d.types[i]==='num'?'num':''}" ${canEdit?`contenteditable="true" data-ecol="${i}"`:''} title="${esc(v)}">${esc(fmtCell(v,d.types[i]))}</td>`).join('')}${canEdit?`<td><button class="rm-del" data-erowdel="${ridx}" title="Supprimer cette ligne">✕</button></td>`:''}</tr>`;
   }).join('');
   // live aggregates over filtered rows: sum of each numeric column
-  const numCols=d.cols.map((c,i)=>({c,i})).filter(o=>d.types[o.i]==='num' && !/^id$|_id$/i.test(o.c));
+  const numCols=d.cols.map((c,i)=>({c,i})).filter(o=>d.types[o.i]==='num' && isSummableNumCol(exState.ds,o.c));
   const sums=numCols.map(o=>{let s=0,n=0;for(const r of rows){const v=Number(r[o.i]);if(!isNaN(v)){s+=v;n++;}}return {c:o.c,s,n};}).filter(o=>o.n>0).slice(0,6);
   const nActive=exActiveCount();
   host.innerHTML=`
@@ -376,7 +442,7 @@ function refreshExResult(){const d=DS[exState.ds];let rows=exApply();
   const per=25,tot=rows.length,pages=Math.max(1,Math.ceil(tot/per));if(exState.page>=pages)exState.page=0;
   const pageRows=rows.slice(exState.page*per,exState.page*per+per);
   const tb=$('#exMain tbody');if(tb)tb.innerHTML=pageRows.map(r=>`<tr>${r.map((v,i)=>`<td class="${d.types[i]==='num'?'num':''}" title="${esc(v)}">${esc(fmtCell(v,d.types[i]))}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="${d.cols.length}"><div class="empty">Aucune ligne pour cette combinaison de filtres.</div></td></tr>`;
-  const numCols=d.cols.map((c,i)=>({c,i})).filter(o=>d.types[o.i]==='num' && !/^id$|_id$/i.test(o.c));
+  const numCols=d.cols.map((c,i)=>({c,i})).filter(o=>d.types[o.i]==='num' && isSummableNumCol(exState.ds,o.c));
   const sums=numCols.map(o=>{let s=0,n=0;for(const r of rows){const v=Number(r[o.i]);if(!isNaN(v)){s+=v;n++;}}return {c:o.c,s,n};}).filter(o=>o.n>0).slice(0,6);
   const sum=$('#exSummary');if(sum)sum.innerHTML=`<span class="sm-c">${fmtN(tot)} ligne(s) sélectionnée(s)</span>`+sums.map(o=>`<span class="sm-s"><span>Σ ${esc(o.c)}</span><b>${fmtSmart(o.s)}</b></span>`).join('');
   const foot=$('#exMain .gridfoot > div:first-child');if(foot)foot.innerHTML=`${fmtN(tot)} ligne(s)${nActive||exState.q?' filtrée(s) sur '+fmtN(d.rows.length):''} · ${d.cols.length} colonnes`;
@@ -536,7 +602,7 @@ function renderReports(){const list=$('#repList');if(!list)return;
   list.innerHTML=rs.map(r=>{const url=r.url&&r.url!=='#'?r.url:null;return `<div class="rep"><div class="yr">${esc(r.annees_couvertes||'')}</div><div><div class="t">${esc(r.titre)}</div><span class="cat">${esc(CATS[r.categorie]||r.categorie)}</span>${url?`<br><a class="dl" href="${esc(url)}" target="_blank" rel="noopener">↓ Télécharger (${esc((r.format||'pdf').toUpperCase())})</a>`:''}</div></div>`;}).join('')||`<div class="empty">Aucun rapport dans cette catégorie.</div>`;}
 
 /* About */
-function mAbout(){const A=C.about,B=C.brand,F=C.footer;return `<div class="phead"><div class="eyebrow">Informations</div><h1 data-edit="about.titre">${esc(A.titre)}</h1></div>
+function mAbout(){const A=C.about,B=C.brand,F=C.footer,CT=C.contact;return `<div class="phead"><div class="eyebrow">Informations</div><h1 data-edit="about.titre">${esc(A.titre)}</h1></div>
   <div class="about-grid">
     <div class="prose"><p data-edit="about.mission">${esc(A.mission)}</p><p data-edit="about.gouvernance">${esc(A.gouvernance)}</p><p data-edit="about.methodo">${esc(A.methodo)}</p>
       ${editing?`<div class="card" style="margin-top:16px"><h3 style="margin-bottom:10px">Identité du site (menu, en-tête, pied de page)</h3>
@@ -551,7 +617,7 @@ function mAbout(){const A=C.about,B=C.brand,F=C.footer;return `<div class="phead
     </div>
     <div>
       <div class="card" style="margin-bottom:16px"><h3 style="margin-bottom:10px">Contact</h3>
-        <div style="font-size:14px;color:var(--ink-soft);line-height:2"><div data-edit="contact.org"></div><div data-edit="contact.tel"></div><div data-edit="contact.email"></div><div data-edit="contact.adresse"></div></div></div>
+        <div style="font-size:14px;color:var(--ink-soft);line-height:2"><div data-edit="contact.org">${esc(CT.org)}</div><div data-edit="contact.tel">${esc(CT.tel)}</div><div data-edit="contact.email">${esc(CT.email)}</div><div data-edit="contact.adresse">${esc(CT.adresse)}</div></div></div>
       <h3 style="font-size:15px;margin:0 0 10px">Sources des données</h3>
       <div class="srcs">${C.sources.map(s=>`<div class="src"><span class="d"></span><div><b>${esc(s.libelle)}</b><br><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url)}</a></div></div>`).join('')}</div>
     </div>
@@ -1311,6 +1377,15 @@ function recomputeAll(){try{
     const cells=nc*nr;totCells+=cells;totMiss+=miss;
     qrows.push([k,d.label||k,d.cat||'',nr,nc,cells?+(miss/cells*100).toFixed(1):0]);});
   if(DS._qualite)DS._qualite.rows=qrows;
+  // Dictionnaire de données : le nombre de lignes par table était figé au
+  // moment de la génération initiale de l'entrepôt et pouvait se
+  // désynchroniser des tables réelles après un nettoyage, un enrichissement
+  // ou une édition (audit qualité, sept. 2026). On le recalcule ici à
+  // chaque chargement à partir des tables effectivement en base.
+  if(DS._dictionnaire){
+    const dd=DS._dictionnaire,ti=dd.cols.indexOf('table'),ni=dd.cols.indexOf('nb_lignes');
+    if(ti>=0&&ni>=0)dd.rows.forEach(r=>{const t=DS[r[ti]];if(t)r[ni]=t.rows.length;});
+  }
   window.__missWeighted=totCells?+(totMiss/totCells*100).toFixed(1):0;
 }catch(e){if(window.console)console.error('recomputeAll',e);}}
 recomputeAll();

@@ -265,6 +265,49 @@ curl -X PUT http://localhost:5000/api/datasets/fait_total_annuel \
   préférez l'import CSV ciblé (« Enrichir les données ») pour de gros
   volumes de changements plutôt que l'édition cellule par cellule.
 
+## Référentiels canoniques (provinces, entreprises, flux, entités perceptrices)
+
+Un audit qualité (septembre 2026) a relevé que les mêmes provinces,
+entreprises, flux ou régies apparaissent sous plusieurs variantes dans les
+données brutes (casse, accents, tirets, codes ISO, anciennes orthographes —
+ex. « HAUT KATANGA », « Haut-Katanga » et « CD-HK » pour la même province),
+ce qui fragmentait les filtres de l'Explorateur et les agrégations des
+Visualisations. L'entrepôt contenait déjà un référentiel de correspondance
+(table `ref_canoniques`, 6 166 lignes, colonnes `dimension` / `libelle_brut`
+/ `nom_canonique`) mais il n'était pas branché à l'interface.
+
+`static/app.js` construit maintenant, au chargement, une table de
+correspondance à partir de `ref_canoniques` (entreprises, flux, entités
+perceptrices) et de `GEO.prov_ref` (les 26 provinces de la RDC, même source
+que la carte). Cette correspondance est appliquée uniquement aux colonnes
+explicitement identifiées comme portant ce type de libellé, dans les tables
+de faits/dimensions/contextuelles bien définies (liste `CANON_COLS` en haut
+de `static/app.js`) — **jamais** aux annexes brutes, dont les en-têtes de
+colonnes sont trop hétérogènes pour un rattachement fiable.
+
+Principe important : **la valeur brute stockée en base n'est jamais
+réécrite** (traçabilité des déclarations officielles, un principe central
+pour une plateforme ITIE). Seules les listes de filtres de l'Explorateur et
+les agrégations (Visualisations, regroupements) affichent et comptent sous
+le libellé canonique ; les cellules du tableau et les exports CSV
+continuent d'afficher exactement la valeur telle que déclarée à l'origine.
+Une variante non répertoriée dans `ref_canoniques`/`GEO.prov_ref` (ou une
+faute de frappe non couverte) reste affichée telle quelle plutôt que d'être
+fusionnée à tort — mieux vaut un doublon visible qu'un faux regroupement.
+
+Pour élargir la couverture :
+
+- **Provinces** : ajoutez une entrée dans `PROVINCE_ALIASES` (haut de
+  `static/app.js`) pour une faute de frappe à fort volume (ex. déjà fait
+  pour « Tanganyka » → « Tanganyika »). Les variantes de casse/accents/
+  tirets sont déjà couvertes automatiquement.
+- **Entreprises / flux / entités perceptrices** : complétez la table
+  `ref_canoniques` (via l'Explorateur en mode admin, ou par import
+  CSV/JSON — voir « Mettre à jour les données ») avec de nouvelles paires
+  `libelle_brut` → `nom_canonique`.
+- **Une nouvelle colonne à canonicaliser** : ajoutez l'entrée
+  `"nom_table.nom_colonne":"dimension"` dans `CANON_COLS`.
+
 ## Comment exploiter et faire évoluer ce code
 
 Ce projet est volontairement structuré en couches simples, chacune
