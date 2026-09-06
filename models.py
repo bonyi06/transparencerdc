@@ -44,6 +44,9 @@ _ADDED_COLUMNS = {
         ("active", "BOOLEAN DEFAULT 1"),
         ("last_login_at", "DATETIME"),
     ],
+    "dataset": [
+        ("visible", "BOOLEAN DEFAULT 1"),
+    ],
 }
 
 
@@ -95,6 +98,11 @@ class Dataset(db.Model):
     cols = db.Column(db.JSON, nullable=False, default=list)   # ["id", "exercice_id", ...]
     types = db.Column(db.JSON, nullable=False, default=list)  # ["num", "str", ...]
     rows = db.Column(db.JSON, nullable=False, default=list)   # [[...], [...], ...]
+    # Visibilité publique de la table (choisie par un compte de rôle "admin"
+    # depuis « Gérer les tables »). Par défaut visible=True : ajouter cette
+    # colonne à une base déjà peuplée (migration légère ci-dessus) ne masque
+    # donc rien de ce qui était déjà publié.
+    visible = db.Column(db.Boolean, nullable=False, default=True)
     updated_at = db.Column(db.DateTime, default=utcnow, onupdate=utcnow)
 
     def to_dict(self, with_rows: bool = True) -> dict:
@@ -104,6 +112,7 @@ class Dataset(db.Model):
             "desc": self.desc or "",
             "cols": self.cols or [],
             "types": self.types or [],
+            "visible": bool(self.visible) if self.visible is not None else True,
         }
         if with_rows:
             d["rows"] = self.rows or []

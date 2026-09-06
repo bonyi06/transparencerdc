@@ -244,6 +244,29 @@ usage à enjeu plus élevé, les points d'extension naturels sont l'ajout d'un
 TOTP (bibliothèque `pyotp`) sur `POST /api/login`, ou un fournisseur
 d'identité externe (OAuth/SSO) devant les mêmes routes.
 
+### 5. Afficher / masquer une table (rôle admin uniquement)
+
+Demande de sept. 2026 : le compte « super admin » (rôle `admin`) doit
+pouvoir décider quelles tables restent visibles pour le public, sans avoir
+à en supprimer le contenu. Bouton **Gérer les tables** dans la barre
+d'administration (visible uniquement pour un compte de rôle `admin`,
+comme **Gérer les comptes**) :
+
+- Chaque table de l'entrepôt a désormais un indicateur `visible`
+  (colonne `Dataset.visible`, `true` par défaut — une table déjà publiée
+  avant cette fonctionnalité reste donc visible sans action).
+- Décocher une table dans **Gérer les tables** la masque immédiatement :
+  elle disparaît de `/api/warehouse` et `/api/datasets` pour un visiteur
+  non connecté (donc du menu, de l'Explorateur, des Visualisations, du
+  Modèle de données et de la Géographie côté public), mais **rien n'est
+  supprimé** — un compte admin ou editor connecté continue de la voir et
+  peut la réactiver à tout moment.
+- API : `PATCH /api/datasets/<nom>/visibility` avec `{"visible": true|false}`,
+  réservé au rôle `admin` (même garde que la gestion des comptes).
+- `python import_data.py` ne touche jamais à cet indicateur : relancer
+  l'import après une correction de données ne réaffiche pas une table que
+  vous aviez masquée.
+
 ## API disponible
 
 Toutes les routes de données sont en JSON.
@@ -255,6 +278,7 @@ Toutes les routes de données sont en JSON.
 | GET     | `/api/datasets/<nom>`              | Un jeu de données complet (colonnes, types, lignes)             | non |
 | PUT     | `/api/datasets/<nom>`              | Créer / remplacer un jeu de données                             | oui |
 | DELETE  | `/api/datasets/<nom>`              | Supprimer un jeu de données                                     | oui |
+| PATCH   | `/api/datasets/<nom>/visibility`   | Afficher/masquer une table pour le public `{visible}`            | oui (rôle admin) |
 | GET     | `/api/content`                     | Textes du site + liste des rapports                             | non |
 | PUT     | `/api/content`                     | Enregistrer & publier les textes (fusion, historisé)            | oui |
 | GET     | `/api/content/history`             | Les 20 dernières publications                                   | oui |
@@ -417,6 +441,35 @@ client (le même filtre a corrigé, au passage, une ligne "Total" qui
 s'était glissée dans le classement « Principales entreprises » de la Vue
 d'ensemble, calculé sur `ent_revenus_entreprise`).
 
+**Suite (sept. 2026)** : retour utilisateur que les régies nationales
+« n'apparaissaient pas dans la Géographie » et restaient peu visibles
+« partout » (CAMI, FOMIN, SGH, FONAREV en particulier). Deux compléments :
+
+- **Géographie** : une carte n'a de sens que pour une donnée géolocalisée,
+  or les recettes nationales n'ont par nature aucune province associée —
+  la page **Territoire** affiche donc désormais une carte « Recettes
+  nationales par régie perceptrice » indépendante de la couche
+  cartographique choisie, juste au-dessus de la carte, qui suit le même
+  sélecteur Année/Évolution (`nationalRegieBreakdown(year)`, appelée
+  depuis `drawGeo()`).
+- **Une table par régie dans le générateur de visualisations** : 11
+  nouveaux jeux de données ont été dérivés de `ent_revenus_entite`
+  (`regie_dgi`, `regie_dgrad`, `regie_dgda`, `regie_tresor_public`,
+  `regie_sgh`, `regie_cami`, `regie_fomin`, `regie_fonarev`, `regie_occ`,
+  `regie_ceec`, `regie_bcc` — cat. « Entrepôt consolidé 2007-2023 »),
+  chacun regroupant toutes les lignes (toutes années, tous niveaux
+  ITIE) d'une régie donnée. Choix délibéré : **une table par régie**
+  plutôt qu'une table par (régie × année) — un tel produit cartésien
+  aurait ajouté jusqu'à une centaine de tables, dont beaucoup avec une
+  seule ligne (ex. FONAREV n'a que 2 lignes au total, toutes années
+  confondues) ; filtrer par année se fait déjà, dans chaque table
+  régie, via la colonne `Exercice` (dimension du générateur) ou le
+  sélecteur d'année global — cohérent avec le fonctionnement de toutes
+  les autres tables pluriannuelles de l'entrepôt. Ces tables sont
+  générées automatiquement à partir de `ent_revenus_entite` : pour
+  corriger une valeur, modifier la table source puis relancer
+  `python import_data.py` (voir § « Mettre à jour les données »).
+
 ## Fiabilité des tableaux (audit qualité de sept. 2026)
 
 Un second audit (`Audit_presentation_tableaux_TransparenceRDC.xlsx`, 168
@@ -495,6 +548,16 @@ code :
 - **Refonte à 3 niveaux (Synthèse / Détail / Données brutes) proposée pour
   les 168 tables.** Reste à faire, en cours de scoping — un chantier de
   cette ampleur est mené table par table plutôt que d'un bloc.
+- **Catégorie « (vide) » écrasant le graphique dans le générateur de
+  visualisations** (repéré sept. 2026 sur `annexe_2022_25` / Localisation,
+  et `annexe_2022_40` / Flux : un bâton « (vide) » à 2,3 Md / 7 Md USD
+  dominait tout le reste). Cause : `aggregate()` (static/app.js) sommait
+  les lignes dont la dimension choisie est vide dans un unique bâton
+  « (vide) », alors que ces lignes sont en réalité des sous-totaux ou des
+  notes de bas de tableau plutôt qu'une vraie catégorie. Ces lignes sont
+  désormais exclues du graphique ; un message discret sous les filtres
+  indique combien de lignes ont été exclues et la masse concernée, pour
+  que rien ne disparaisse silencieusement.
 
 ### Mettre à jour les données après une correction
 

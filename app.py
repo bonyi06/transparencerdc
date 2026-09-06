@@ -295,9 +295,20 @@ def register_routes(app: Flask) -> None:
     def get_warehouse():
         """Renvoie l'entrepôt complet, au même format que l'ancien bloc
         <script id="warehouse">, pour une compatibilité totale avec le
-        front-end existant (réponse compressée gzip automatiquement)."""
+        front-end existant (réponse compressée gzip automatiquement).
+
+        Une table dont `visible=False` (masquée par un compte "admin" via
+        « Gérer les tables ») est retirée de la réponse pour un visiteur non
+        connecté, mais reste incluse pour un compte admin/editor authentifié
+        — pour qu'il puisse continuer à la consulter/la réactiver sans avoir
+        à la deviner par son nom technique."""
+        is_admin_session = current_admin() is not None
         meta = WarehouseMeta.singleton()
-        datasets = {d.name: d.to_dict(with_rows=True) for d in Dataset.query.all()}
+        datasets = {
+            d.name: d.to_dict(with_rows=True)
+            for d in Dataset.query.all()
+            if is_admin_session or d.visible
+        }
         resp = jsonify(
             {
                 "datasets": datasets,
@@ -312,8 +323,13 @@ def register_routes(app: Flask) -> None:
         # la publication d'un admin, donc une réponse de quelques minutes
         # évite de retélécharger l'intégralité des données à chaque
         # navigation (ex. retour en arrière) sans risquer de servir une
-        # version trop obsolète après une modification.
-        resp.headers["Cache-Control"] = "public, max-age=120"
+        # version trop obsolète après une modification. La réponse variant
+        # désormais selon l'état d'authentification (tables masquées ou
+        # non), on la marque "private" pour une session admin afin qu'un
+        # éventuel cache partagé (proxy/CDN) ne la resserve jamais à un
+        # visiteur non connecté.
+        resp.headers["Cache-Control"] = ("private, max-age=120" if is_admin_session else "public, max-age=120")
+        resp.headers["Vary"] = "Cookie"
         return resp
 
     @app.get("/api/datasets")
@@ -321,12 +337,21 @@ def register_routes(app: Flask) -> None:
         """Métadonnées seules (sans les lignes) : utile pour un futur
         chargement paresseux (lazy-loading) ou une intégration externe,
         sans payer le coût des 18 Mo de données à chaque appel."""
-        return jsonify({d.name: d.to_dict(with_rows=False) for d in Dataset.query.all()})
+        is_admin_session = current_admin() is not None
+        return jsonify(
+            {
+                d.name: d.to_dict(with_rows=False)
+                for d in Dataset.query.all()
+                if is_admin_session or d.visible
+            }
+        )
 
     @app.get("/api/datasets/<name>")
     def get_dataset(name: str):
         d = Dataset.query.get(name)
         if d is None:
+            abort(404)
+        if not d.visible and current_admin() is None:
             abort(404)
         return jsonify(d.to_dict(with_rows=True))
 
@@ -363,6 +388,25 @@ def register_routes(app: Flask) -> None:
         db.session.commit()
         log_audit("dataset.delete", target=name)
         return jsonify({"ok": True})
+
+    @app.patch("/api/datasets/<name>/visibility")
+    @admin_role_required
+    def set_dataset_visibility(name: str):
+        """Afficher/masquer une table pour le public, sans toucher à son
+        contenu. Réservé au rôle "admin" (le compte "super admin" évoqué
+        dans l'espace d'administration) — un compte "editor" ne peut pas
+        décider de ce que le public voit ou non, seulement en éditer le
+        contenu (cohérent avec admin_role_required ailleurs)."""
+        data = request.get_json(silent=True) or {}
+        if "visible" not in data:
+            return jsonify({"ok": False, "error": "champ manquant: visible"}), 400
+        d = Dataset.query.get(name)
+        if d is None:
+            abort(404)
+        d.visible = bool(data["visible"])
+        db.session.commit()
+        log_audit("dataset.visibility", target=name, detail=f"visible={d.visible}")
+        return jsonify({"ok": True, "name": name, "visible": d.visible})
 
     # ------------------------------------------------------------------ #
     # Contenus éditoriaux (textes du site)

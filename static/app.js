@@ -175,20 +175,35 @@ function mixedUnitWarning(name,rows){
   if(vals.size<=1)return '';
   return `<span class="sm-s" style="color:#b3261e" title="${esc([...vals].join(', '))}">⚠ ${esc(d.cols[uCol])} mixte (${vals.size})</span>`;
 }
+// Les lignes dont la dimension choisie est vide/nulle sont le plus souvent des
+// sous-totaux, notes de bas de tableau ou lignes récapitulatives (mêmes causes
+// que isRollupEntityLabel plus haut) plutôt qu'une vraie catégorie « (vide) » :
+// les sommer sous cette étiquette produit un bâton qui écrase le reste du
+// graphique (ex. 2,3 Md / 7 Md USD sur des annexes 2022). On les exclut donc du
+// graphique et on remonte leur nombre/masse via `_excluded` pour que
+// l'utilisateur en soit informé plutôt que de les voir disparaître en silence.
 function aggregate(name,groupCol,measureCol,agg,filterYear){
   const d=DS[name],gi=d.cols.indexOf(groupCol),mi=measureCol?d.cols.indexOf(measureCol):-1,yc=yearCol(name),yi=yc?d.cols.indexOf(yc):-1;
   const gdim=canonDimFor(name,groupCol);
   const map=new Map();
+  let excCount=0,excSum=0;
   for(const r of d.rows){
     if(filterYear&&yi>=0&&yearVal(r[yi])!==+filterYear)continue;
     const gv=r[gi];
-    const k=(gv==null||gv==='')?'(vide)':String(gdim?canonicalize(gdim,gv):gv);
+    if(gv==null||gv===''){
+      excCount++;
+      if(mi>=0){const raw=r[mi];if(raw!==null&&raw!==''){const v=Number(raw);if(!isNaN(v))excSum+=v;}}
+      continue;
+    }
+    const k=String(gdim?canonicalize(gdim,gv):gv);
     let a=map.get(k);if(!a){a={sum:0,count:0,n:0,min:Infinity,max:-Infinity};map.set(k,a);}
     a.count++;                                   // total rows in group
     if(mi>=0){const raw=r[mi];if(raw!==null&&raw!==''){const v=Number(raw);if(!isNaN(v)){a.sum+=v;a.n++;if(v<a.min)a.min=v;if(v>a.max)a.max=v;}}}
   }
   // avg divides by count of NON-NULL measured values (a.n), not all rows
-  return [...map.entries()].map(([label,a])=>({label,value:agg==='count'?a.count:agg==='avg'?(a.n?a.sum/a.n:0):agg==='min'?(a.min===Infinity?0:a.min):agg==='max'?(a.max===-Infinity?0:a.max):a.sum,n:a.n}));
+  const out=[...map.entries()].map(([label,a])=>({label,value:agg==='count'?a.count:agg==='avg'?(a.n?a.sum/a.n:0):agg==='min'?(a.min===Infinity?0:a.min):agg==='max'?(a.max===-Infinity?0:a.max):a.sum,n:a.n}));
+  out._excluded={count:excCount,sum:excSum};
+  return out;
 }
 function numericStats(name,col){const i=colIndex(name,col);let sum=0,n=0,min=Infinity,max=-Infinity,nn=0;const seen=new Set();
   for(const r of DS[name].rows){const v=r[i];if(v!=null&&v!=='')seen.add(String(v));const x=Number(v);if(v!=null&&v!==''&&!isNaN(x)){sum+=x;n++;if(x<min)min=x;if(x>max)max=x;}else if(v==null||v==='')nn++;}
@@ -332,6 +347,28 @@ function nationalRegieTop(n){
     map.set(k,(map.get(k)||0)+v);
   }
   return [...map.entries()].map(([label,value])=>({label,value})).sort((a,b)=>b.value-a.value).slice(0,n);
+}
+// Variante année-par-année de nationalRegieTop(), utilisée par la Géographie
+// (page Territoire) pour que les recettes nationales par régie (DGI, DGRAD,
+// DGDA, CAMI, FOMIN, SGH, FONAREV…) suivent le même sélecteur Année/Évolution
+// que la carte, plutôt que de n'apparaître qu'en cumul « toutes années » dans
+// la Vue d'ensemble (retour utilisateur, sept. 2026 : ces régies n'apparaissaient
+// pas du tout dans la Géographie, contrairement aux flux infranationaux).
+function nationalRegieBreakdown(year){
+  const d=DS.ent_revenus_entite;if(!d)return [];
+  const ci=d.cols.indexOf('Entité perceptrice harmonisée'),ni=d.cols.indexOf('Niveau'),mi=d.cols.indexOf('Montant normalisé'),yi=d.cols.indexOf('Exercice');
+  if(ci<0||ni<0||mi<0)return [];
+  const yv=year?yearVal(year):null;
+  const map=new Map();
+  for(const r of d.rows){
+    if(r[ni]!=='National')continue;
+    if(isRollupEntityLabel(r[ci]))continue;
+    if(yv&&yi>=0&&yearVal(r[yi])!==yv)continue;
+    const v=Number(r[mi]);if(isNaN(v))continue;
+    const k=r[ci]||'(non précisé)';
+    map.set(k,(map.get(k)||0)+v);
+  }
+  return [...map.entries()].map(([label,value])=>({label,value})).sort((a,b)=>b.value-a.value);
 }
 function revenueLevelBreakdown(){
   const d=DS.ent_revenus_entite;if(!d)return [];
@@ -606,6 +643,7 @@ function mViz(){
     </div>
     <div class="chiptypes" id="vzTypes"></div>
     <div id="vzHint" style="font-size:12.5px;color:var(--amber);margin:-6px 0 12px;font-weight:600"></div>
+    <div id="vzExcNote" style="margin:-6px 0 12px"></div>
     <div class="card"><div class="ch"><h3 id="vzTitle">Visualisation</h3></div><div class="chart" id="vzChart"></div></div>
     <div class="phead" style="margin-top:26px"><div class="eyebrow">Galerie</div><h1 style="font-size:20px">Analyses prêtes à l'emploi</h1></div>
     <div class="gallery">
@@ -663,6 +701,11 @@ function drawViz(){
   $('#vzTitle').textContent=`${d.label} — ${agg==='count'?'nombre':agg} ${measure?'de '+measure:''} par ${vizState.dim}`;
   if(vizState.type==='hist'){cHistogram(host,vizState.ds,vizState.dim);return;}
   let data=aggregate(vizState.ds,vizState.dim,measure,agg,globalYear);
+  const excNote=$('#vzExcNote');
+  if(excNote){
+    const exc=data._excluded;
+    excNote.innerHTML=(exc&&exc.count)?`<span class="msg warn">⚠ ${exc.count} ligne(s) sans valeur pour « ${esc(vizState.dim)} » exclue(s) du graphique (souvent des sous-totaux/notes)${exc.sum?` — masse concernée : ${esc(fmtCell(exc.sum,'num'))}`:''}. Consultez le Tableau ou l'Explorateur pour les examiner.</span>`:'';
+  }
   if(vizState.type==='table'){
     data=data.sort((a,b)=>b.value-a.value).slice(0,200);
     host.innerHTML=`<div class="gridwrap"><div class="gridscroll"><table class="dg"><thead><tr><th>${esc(vizState.dim)}</th><th>${esc(agg)} ${measure?esc(measure):''}</th></tr></thead><tbody>${data.map(r=>`<tr><td>${esc(r.label)}</td><td class="num">${esc(fmtCell(r.value,'num'))}</td></tr>`).join('')}</tbody></table></div></div>`;return;
@@ -917,6 +960,9 @@ function mGeo(){
         <div id="mapPanel"></div>
       </div>
     </div>`:''}
+    <div class="card" style="margin-bottom:18px"><div class="ch"><h3>Recettes nationales par régie perceptrice</h3><span class="badge" id="geoNatRegieBadge"></span></div>
+      <div class="sub">DGI, DGRAD, DGDA, Trésor public, SGH, CAMI, FOMIN, FONAREV, OCC, CEEC, BCC… — Montant normalisé (USD), lignes de sous-total exclues. Suit le sélecteur Année/Évolution ci-dessus (indépendant de la couche cartographique choisie).</div>
+      <div class="chart" id="geoNatRegie"></div></div>
     <div class="grid2">
       <div class="card"><div class="ch"><h3 id="geoRankTitle">Classement des provinces</h3></div><div class="sub" id="geoRankSub"></div><div class="chart" id="geoRank"></div></div>
       <div class="card"><div class="ch"><h3>Évolution nationale de l'indicateur</h3></div><div class="sub">Somme sur toutes les provinces couvertes, par année</div><div class="chart" id="geoEvo"></div></div>
@@ -1129,6 +1175,12 @@ function drawPanel(){
 }
 function drawGeo(){
   drawMap();
+  const nrHost=$('#geoNatRegie');
+  if(nrHost){
+    const y=mapEvo?null:curYear();
+    const badge=$('#geoNatRegieBadge');if(badge)badge.textContent=y?String(yearVal(y)||y):'Toutes années (cumul)';
+    cBar(nrHost,nationalRegieBreakdown(y),css('--teal'),true);
+  }
   const d=LY();
   const rt=$('#geoRankTitle');if(rt)rt.textContent='Classement des provinces';
   const rs=$('#geoRankSub');if(rs&&d)rs.textContent=d.label+' · '+(mapEvo?'cumul':curYear()||'');
@@ -1413,7 +1465,8 @@ let ME=null; // {username, role} de l'admin actuellement connecté
 function markEditable(on){$$('[data-edit]').forEach(el=>{if(on){el.setAttribute('contenteditable','true');el.setAttribute('spellcheck','false');if(!el.textContent.trim()){const v=getPath(C,el.getAttribute('data-edit'));if(v!=null)el.textContent=v;}}else el.removeAttribute('contenteditable');});document.body.classList.toggle('editing',on);}
 function collectEdits(){$$('[data-edit]').forEach(el=>{const p=el.getAttribute('data-edit');if(getPath(C,p)!==undefined)assignPath(C,p,el.textContent.trim());});}
 function enterAdminMode(me){editing=true;if(me)ME=me;$('#adminBar').classList.add('on');$('#adminFab').style.display='none';document.body.style.paddingBottom='64px';markEditable(true);buildSidebar();
-  const um=$('#userMgrBtn');if(um)um.style.display=(ME&&ME.role==='admin')?'':'none';}
+  const um=$('#userMgrBtn');if(um)um.style.display=(ME&&ME.role==='admin')?'':'none';
+  const tm=$('#tablesMgrBtn');if(tm)tm.style.display=(ME&&ME.role==='admin')?'':'none';}
 // Si une session admin est déjà active côté serveur (cookie valide), on
 // rouvre directement le mode édition sans redemander le mot de passe.
 // Le bouton "⚙ Admin" lui-même ne s'affiche que sur le lien d'accès dédié
@@ -1439,7 +1492,7 @@ async function tryLogin(){
 $('#loginBtn').onclick=tryLogin;$('#pw').addEventListener('keydown',e=>{if(e.key==='Enter')tryLogin();});
 $('#user').addEventListener('keydown',e=>{if(e.key==='Enter')tryLogin();});
 // close modals with Escape
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('#loginModal').classList.remove('on');$('#repModal').classList.remove('on');$('#enrichModal').classList.remove('on');$('#navModal').classList.remove('on');$('#userModal').classList.remove('on');$('#auditModal').classList.remove('on');}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('#loginModal').classList.remove('on');$('#repModal').classList.remove('on');$('#enrichModal').classList.remove('on');$('#navModal').classList.remove('on');$('#userModal').classList.remove('on');$('#auditModal').classList.remove('on');$('#tablesModal').classList.remove('on');}});
 $('#exitBtn').onclick=async()=>{try{await fetch('/api/logout',{method:'POST',credentials:'same-origin'});}catch(e){}editing=false;ME=null;$('#adminBar').classList.remove('on');$('#adminFab').style.display=window.ADMIN_ENTRY_PAGE?'':'none';document.body.style.paddingBottom='';markEditable(false);buildSidebar();if(isNavHidden(current))go(firstVisibleModule());};
 
 /* ===== Gestion des comptes administrateur (rôle "admin" uniquement) ===== */
@@ -1497,6 +1550,43 @@ const uAddBtn=$('#uAdd');if(uAddBtn)uAddBtn.onclick=async()=>{
   if(!r.ok){msg.className='msg err';msg.textContent=j.error||'Échec de la création.';return;}
   $('#uNewName').value='';$('#uNewPw').value='';renderUM();
 };
+
+/* ===== Gestion de l'affichage des tables (rôle "admin" uniquement) =====
+   Utilise directement DS (déjà chargé, y compris les tables masquées quand
+   on est authentifié — voir /api/warehouse côté serveur) plutôt qu'un
+   second appel réseau : la liste reflète donc exactement ce que l'admin
+   voit déjà dans l'appli. */
+function renderTablesList(filterTxt){
+  const host=$('#tablesList');if(!host)return;
+  const f=(filterTxt||'').trim().toLowerCase();
+  const names=Object.keys(DS).sort((a,b)=>(DS[a].label||a).localeCompare(DS[b].label||b));
+  const rows=names.filter(k=>!f||k.toLowerCase().includes(f)||(DS[k].label||'').toLowerCase().includes(f));
+  host.innerHTML=rows.map(k=>{
+    const d=DS[k],vis=d.visible!==false;
+    return `<div class="rm-item" data-tname="${esc(k)}" style="display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)">
+      <span title="${esc(k)}"><b>${esc(d.label||k)}</b> <i style="color:var(--ink-faint);font-size:11px">${esc(k)}</i></span>
+      <span class="sm-s" style="color:var(--ink-faint)">${(d.rows||[]).length||d.nb_lignes||0} lignes</span>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600">
+        <input type="checkbox" data-tvis="${esc(k)}" ${vis?'checked':''}> ${vis?'Visible':'Masquée'}
+      </label>
+    </div>`;
+  }).join('')||'<div class="empty">Aucune table ne correspond à ce filtre.</div>';
+  host.querySelectorAll('[data-tvis]').forEach(cb=>cb.addEventListener('change',async e=>{
+    const name=e.target.dataset.tvis,visible=e.target.checked;
+    const msg=$('#tablesMsg');msg.className='msg';msg.textContent='';
+    e.target.disabled=true;
+    try{
+      const r=await fetch('/api/datasets/'+encodeURIComponent(name)+'/visibility',{method:'PATCH',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({visible})});
+      if(!r.ok){const j=await r.json().catch(()=>({}));msg.className='msg err';msg.textContent=j.error||'Échec de la mise à jour.';e.target.checked=!visible;return;}
+      if(DS[name])DS[name].visible=visible;
+      const lbl=e.target.closest('label');lbl.lastChild.textContent=' '+(visible?'Visible':'Masquée');
+    }catch(err){msg.className='msg err';msg.textContent='Connexion au serveur impossible.';e.target.checked=!visible;}
+    finally{e.target.disabled=false;}
+  }));
+}
+const tablesMgrBtn=$('#tablesMgrBtn');if(tablesMgrBtn)tablesMgrBtn.onclick=()=>{$('#tmFilter').value='';renderTablesList('');$('#tablesModal').classList.add('on');};
+const tablesDoneBtn=$('#tablesDone');if(tablesDoneBtn)tablesDoneBtn.onclick=()=>$('#tablesModal').classList.remove('on');
+const tmFilterInput=$('#tmFilter');if(tmFilterInput)tmFilterInput.addEventListener('input',e=>renderTablesList(e.target.value));
 
 /* ===== Journal d'activité ===== */
 async function renderAudit(){

@@ -58,6 +58,15 @@
   <div style="display:flex;gap:10px;margin-top:14px"><button class="btn" id="userDone">Fermer</button></div>
 </div></div>
 
+<div class="modal-bg" id="tablesModal"><div class="modal wide">
+  <h3>Gérer l'affichage des tables</h3>
+  <p>Choisissez quelles tables restent visibles pour le public. Une table masquée reste dans l'entrepôt (rien n'est supprimé) : elle disparaît des menus, de l'explorateur, des visualisations et de la géographie côté public, mais reste consultable ici en mode administrateur. Réservé au rôle « admin ».</p>
+  <div class="field"><input type="text" id="tmFilter" placeholder="Filtrer par nom ou libellé…"></div>
+  <div class="rm-list" id="tablesList" style="display:flex;flex-direction:column;gap:6px;max-height:420px;overflow:auto;margin-top:10px"></div>
+  <div id="tablesMsg" class="msg" style="margin-top:10px"></div>
+  <div style="display:flex;gap:10px;margin-top:14px"><button class="btn" id="tablesDone">Fermer</button></div>
+</div></div>
+
 <div class="modal-bg" id="auditModal"><div class="modal wide">
   <h3>Journal d'activité</h3>
   <p>Historique des connexions et modifications (200 dernières entrées).</p>
@@ -106,6 +115,7 @@
   <button class="gh" id="repMgrBtn">Gérer les rapports</button>
   <button class="gh" id="enrichBtn">Enrichir les données</button>
   <button class="gh" id="userMgrBtn" style="display:none">Gérer les comptes</button>
+  <button class="gh" id="tablesMgrBtn" style="display:none">Gérer les tables</button>
   <button class="gh" id="auditBtn">Journal d'activité</button>
   <button class="gh" id="exitBtn">Quitter</button>
   <button class="save" id="saveBtn">Enregistrer &amp; publier</button>
