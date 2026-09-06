@@ -30,6 +30,7 @@ import base64
 import json
 import re
 import sys
+from datetime import date
 from pathlib import Path
 
 from app import create_app
@@ -143,7 +144,16 @@ def sync_database(warehouse: dict, content: dict, logo: str, geo: dict | None) -
     meta.officiel2023 = warehouse.get("officiel2023", {})
     meta.stats = warehouse.get("stats", {})
     meta.clean = warehouse.get("clean", {})
-    meta.generated = warehouse.get("generated", "")
+    # « Dernière actualisation » (page À propos) doit refléter le moment où
+    # les données ont réellement été synchronisées dans la base, pas une
+    # valeur figée recopiée d'un import précédent dans le fichier seed —
+    # sans quoi cette date se fige et devient fausse dès la correction
+    # suivante (constaté sept. 2026 : la date affichée ne bougeait pas alors
+    # que 11 tables venaient d'être ajoutées). On l'écrase donc à chaque
+    # exécution de ce script avec la date du jour ; `warehouse.get("generated")`
+    # sert uniquement de repli si, pour une raison quelconque, la date du jour
+    # n'a pas pu être déterminée (ne devrait jamais arriver).
+    meta.generated = date.today().isoformat() or warehouse.get("generated", "")
     db.session.add(meta)
 
     sc = SiteContent.singleton()

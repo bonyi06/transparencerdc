@@ -269,37 +269,162 @@ comme **Gérer les comptes**) :
 
 ## API disponible
 
-Toutes les routes de données sont en JSON.
+Toutes les routes renvoient du JSON (sauf `GET /` et `GET /<ADMIN_ENTRY_PATH>`,
+qui rendent la page HTML). Trois niveaux d'auth existent :
 
-| Méthode | Route                              | Description                                                   | Auth requise |
-|---------|-------------------------------------|-----------------------------------------------------------------|:---:|
-| GET     | `/api/warehouse`                   | Entrepôt complet (tous les jeux de données + agrégats globaux) | non |
-| GET     | `/api/datasets`                    | Métadonnées de tous les jeux de données (sans les lignes)       | non |
-| GET     | `/api/datasets/<nom>`              | Un jeu de données complet (colonnes, types, lignes)             | non |
-| PUT     | `/api/datasets/<nom>`              | Créer / remplacer un jeu de données                             | oui |
-| DELETE  | `/api/datasets/<nom>`              | Supprimer un jeu de données                                     | oui |
-| PATCH   | `/api/datasets/<nom>/visibility`   | Afficher/masquer une table pour le public `{visible}`            | oui (rôle admin) |
-| GET     | `/api/content`                     | Textes du site + liste des rapports                             | non |
-| PUT     | `/api/content`                     | Enregistrer & publier les textes (fusion, historisé)            | oui |
-| GET     | `/api/content/history`             | Les 20 dernières publications                                   | oui |
-| POST    | `/api/content/history/<id>/restore`| Revenir à une version précédente                                | oui |
-| GET     | `/api/geo`                         | Objet géographique complet (carte des provinces)                | non |
-| POST    | `/api/login`                       | `{username, password}` -> session admin                        | non |
-| POST    | `/api/logout`                      | Termine la session admin                                        | non |
-| GET     | `/api/me`                          | Session admin active ou non (+ rôle)                            | non |
-| GET     | `/api/users`                       | Liste des comptes admin                                          | oui (rôle admin) |
-| POST    | `/api/users`                       | Créer un compte `{username, password, role}`                    | oui (rôle admin) |
-| PUT     | `/api/users/<id>`                  | Modifier rôle/activation/mot de passe d'un compte                | oui (rôle admin) |
-| DELETE  | `/api/users/<id>`                  | Supprimer un compte                                              | oui (rôle admin) |
-| GET     | `/api/audit-log`                   | Journal d'audit (200 dernières entrées)                          | oui |
-| GET     | `/healthz`                         | Sonde de santé (pour load balancer / supervision)                | non |
+- **non** : accessible sans session.
+- **session** : nécessite une session admin valide, n'importe quel rôle
+  (`admin` ou `editor`) — décorateur `login_required`. Sans session : `401`.
+- **rôle admin** : nécessite une session admin *et* `role == "admin"` —
+  décorateur `admin_role_required`. Sans session : `401` ; session `editor` :
+  `403` (authentifié mais pas autorisé — les deux codes sont volontairement
+  distincts, voir `app.py`).
+
+L'authentification repose sur un cookie de session signé (Flask `session`,
+`SECRET_KEY`) : pas de jeton Bearer/API key. Pour scripter un appel
+authentifié, s'authentifier une fois via `POST /api/login` avec un
+cookie-jar (`-c cookies.txt`), puis réutiliser ce cookie-jar (`-b
+cookies.txt`) sur les appels suivants — voir les exemples `curl` par groupe
+ci-dessous.
 
 `/gestion-admin` (chemin configurable via `ADMIN_ENTRY_PATH`) sert la même
 page que `/` mais avec le bouton **⚙ Admin** visible — c'est le seul moyen
 d'atteindre l'écran de connexion (voir § « Espace administrateur »).
 
-Exemple : mettre à jour un jeu de données précis sans toucher aux autres
-(pratique pour un script de mise à jour automatisé, un cron, etc.) :
+### Authentification
+
+| Méthode | Route          | Auth |
+|---------|----------------|:---:|
+| POST    | `/api/login`   | non |
+| POST    | `/api/logout`  | non |
+| GET     | `/api/me`      | non |
+
+**`POST /api/login`** — corps :
+```json
+{"username": "jkayembe", "password": "un mot de passe solide"}
+```
+`username` est optionnel (repli sur `ADMIN_USERNAME` de `.env` si omis).
+Réponse `200` :
+```json
+{"ok": true, "username": "jkayembe", "role": "admin"}
+```
+Réponse `401` (identifiant inconnu, compte désactivé ou mot de passe
+incorrect — les trois cas renvoient la même erreur, pour ne pas indiquer à
+un attaquant si un identifiant existe) :
+```json
+{"ok": false, "error": "invalid_credentials"}
+```
+Chaque tentative (réussie ou non) est consignée dans le journal d'audit
+(`login.success` / `login.failed`).
+
+**`POST /api/logout`** — aucun corps requis. Réponse `200` : `{"ok": true}`
+(y compris si aucune session n'était active).
+
+**`GET /api/me`** — indique si la session courante est authentifiée, sans
+jamais renvoyer 401 (c'est la route à appeler pour savoir si un visiteur est
+connecté avant d'afficher l'UI admin) :
+```json
+{"authenticated": true, "username": "jkayembe", "role": "admin"}
+```
+ou, non connecté : `{"authenticated": false}`.
+
+```bash
+curl -X POST http://localhost:5000/api/login \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"votre-identifiant","password":"votre-mot-de-passe"}' \
+  -c cookies.txt
+
+curl http://localhost:5000/api/me -b cookies.txt
+
+curl -X POST http://localhost:5000/api/logout -b cookies.txt
+```
+
+### Entrepôt de données
+
+| Méthode | Route                            | Auth |
+|---------|-----------------------------------|:---:|
+| GET     | `/api/warehouse`                  | non |
+| GET     | `/api/datasets`                   | non |
+| GET     | `/api/datasets/<nom>`             | non |
+| PUT     | `/api/datasets/<nom>`             | session |
+| DELETE  | `/api/datasets/<nom>`             | session |
+| PATCH   | `/api/datasets/<nom>/visibility`  | rôle admin |
+
+**`GET /api/warehouse`** — l'entrepôt complet (équivalent de l'ancien bloc
+`<script id="warehouse">`) :
+```json
+{
+  "datasets": {
+    "fait_total_annuel": {
+      "label": "Totaux annuels",
+      "cat": "faits",
+      "desc": "...",
+      "cols": ["id", "exercice_id", "recettes_etat_usd"],
+      "types": ["num", "str", "num"],
+      "visible": true,
+      "rows": [[1, "CD2023", 123456789]]
+    }
+  },
+  "agg": {},
+  "officiel2023": {},
+  "stats": {},
+  "clean": {},
+  "generated": "2026-09-06"
+}
+```
+Une table dont `visible=false` est **retirée** de `datasets` pour un
+visiteur non connecté, mais reste incluse pour toute session admin/editor
+authentifiée (pour permettre de la retrouver et la réactiver).
+Réponse : `Cache-Control: private, max-age=120` pour une session admin/editor
+authentifiée, `public, max-age=120` sinon, toujours accompagné de
+`Vary: Cookie` — un cache partagé (proxy/CDN) placé devant l'appli ne doit
+donc jamais resservir à un visiteur anonyme une réponse générée pour une
+session admin (qui peut contenir des tables masquées) ; un client qui met en
+cache cette route lui-même doit tenir compte de ces deux en-têtes plutôt que
+de les ignorer.
+
+**`GET /api/datasets`** — mêmes règles de visibilité, mais métadonnées
+seules (sans `rows`, avec `nb_lignes` à la place) :
+```json
+{"fait_total_annuel": {"label": "Totaux annuels", "cat": "faits", "desc": "...", "cols": [...], "types": [...], "visible": true, "nb_lignes": 34}}
+```
+
+**`GET /api/datasets/<nom>`** — un jeu de données complet, avec `rows`.
+`404` si le nom n'existe pas, ou si la table existe mais `visible=false` et
+qu'aucune session admin n'est active (le masquage se comporte comme une
+absence, pas comme un accès refusé).
+
+**`PUT /api/datasets/<nom>`** — crée le jeu de données s'il n'existe pas, le
+remplace intégralement sinon (ne touche à aucun autre). Corps attendu :
+```json
+{
+  "label": "Totaux annuels",
+  "cat": "faits",
+  "desc": "Recettes État / paiements entreprises par exercice",
+  "cols": ["id", "exercice_id", "recettes_etat_usd"],
+  "types": ["num", "str", "num"],
+  "rows": [[1, "CD2025", 123456789]]
+}
+```
+`400` si `cols`, `types` ou `rows` manque :
+```json
+{"ok": false, "error": "champ manquant: rows"}
+```
+Réponse `200` : `{"ok": true, "name": "fait_total_annuel", "nb_lignes": 1}`.
+Action consignée dans le journal d'audit (`dataset.save`).
+
+**`DELETE /api/datasets/<nom>`** — `404` si le nom n'existe pas, sinon
+`{"ok": true}` (audit : `dataset.delete`).
+
+**`PATCH /api/datasets/<nom>/visibility`** — afficher/masquer une table pour
+le public sans toucher à son contenu, réservé au rôle `admin` (voir §
+« Afficher / masquer une table » ci-dessus). Corps :
+```json
+{"visible": false}
+```
+`400` si `visible` est absent du corps, `404` si le nom n'existe pas.
+Réponse `200` : `{"ok": true, "name": "fait_total_annuel", "visible": false}`
+(audit : `dataset.visibility`).
 
 ```bash
 curl -X POST http://localhost:5000/api/login \
@@ -316,6 +441,153 @@ curl -X PUT http://localhost:5000/api/datasets/fait_total_annuel \
     "types": ["num","str","num"],
     "rows": [[1,"CD2025", 123456789]]
   }'
+
+curl -X PATCH http://localhost:5000/api/datasets/fait_total_annuel/visibility \
+  -H 'Content-Type: application/json' -b cookies.txt \
+  -d '{"visible": false}'
+```
+
+### Comptes administrateur (rôle admin uniquement)
+
+| Méthode | Route              | Auth |
+|---------|--------------------|:---:|
+| GET     | `/api/users`       | rôle admin |
+| POST    | `/api/users`       | rôle admin |
+| PUT     | `/api/users/<id>`  | rôle admin |
+| DELETE  | `/api/users/<id>`  | rôle admin |
+
+Toutes ces routes renvoient `401` sans session, `403` pour une session de
+rôle `editor`.
+
+**`GET /api/users`** — liste des comptes, triés par date de création :
+```json
+[{"id": 1, "username": "jkayembe", "role": "admin", "active": true, "created_at": "2026-01-10T08:00:00+00:00", "last_login_at": "2026-09-06T09:12:00+00:00"}]
+```
+
+**`POST /api/users`** — corps :
+```json
+{"username": "mlukusa", "password": "un mot de passe solide", "role": "editor"}
+```
+`role` retombe sur `"editor"` si absent ou différent de `"admin"`/`"editor"`.
+`400` si `username` est vide ou `password` fait moins de 8 caractères ;
+`409` si `username` existe déjà. Réponse `200` :
+```json
+{"ok": true, "user": {"id": 2, "username": "mlukusa", "role": "editor", "active": true, "created_at": "...", "last_login_at": null}}
+```
+(audit : `user.create`).
+
+**`PUT /api/users/<id>`** — met à jour un sous-ensemble de `role`, `active`,
+`password` (tout champ omis reste inchangé). `404` si l'id n'existe pas ;
+`400` si on tente de désactiver son propre compte (`active: false` sur
+`session["admin_id"]`) ou si `password` fait moins de 8 caractères. Réponse
+`200` : `{"ok": true, "user": {...}}` (audit : `user.update`, uniquement si
+un changement effectif a eu lieu).
+
+**`DELETE /api/users/<id>`** — `404` si l'id n'existe pas ; `400` si on tente
+de supprimer son propre compte, ou de supprimer le dernier compte `admin`
+actif restant (`AdminUser.query.filter_by(role="admin", active=True).count()
+<= 1`). Réponse `200` : `{"ok": true}` (audit : `user.delete`).
+
+```bash
+curl -X POST http://localhost:5000/api/login \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"un-compte-admin","password":"..."}' -c cookies.txt
+
+curl -X POST http://localhost:5000/api/users \
+  -H 'Content-Type: application/json' -b cookies.txt \
+  -d '{"username":"mlukusa","password":"un mot de passe solide","role":"editor"}'
+
+curl -X PUT http://localhost:5000/api/users/2 \
+  -H 'Content-Type: application/json' -b cookies.txt \
+  -d '{"active": false}'
+```
+
+### Contenus éditoriaux
+
+| Méthode | Route                                 | Auth |
+|---------|-----------------------------------------|:---:|
+| GET     | `/api/content`                          | non |
+| PUT     | `/api/content`                          | session |
+| GET     | `/api/content/history`                  | session |
+| POST    | `/api/content/history/<id>/restore`     | session |
+
+**`GET /api/content`** :
+```json
+{"content": {"about": {...}, "contact": {...}, "reports": [...]}, "version": 7}
+```
+
+**`PUT /api/content`** — corps :
+```json
+{"content": {"about": {"titre": "..."}}}
+```
+`400` si `content` n'est pas un objet JSON. Le contenu envoyé est fusionné
+(deep-merge) dans le contenu existant plutôt que de le remplacer
+intégralement : envoyer une seule section (ex. `about`) n'efface pas les
+autres. La clé `reports`, si présente, est traitée à part (remplacée telle
+quelle, pas fusionnée). Chaque publication incrémente `version` et crée une
+entrée d'historique. Réponse `200` : `{"ok": true, "version": 8}` (audit :
+`content.publish`).
+
+**`GET /api/content/history`** — les 20 dernières publications :
+```json
+[{"id": 42, "editor": "jkayembe", "created_at": "2026-09-06T09:00:00+00:00"}]
+```
+
+**`POST /api/content/history/<id>/restore`** — `404` si l'id n'existe pas.
+Restaure le contenu et les rapports de cette révision, incrémente `version`.
+Réponse `200` : `{"ok": true, "version": 9}` (audit : `content.restore`).
+
+```bash
+curl -X PUT http://localhost:5000/api/content \
+  -H 'Content-Type: application/json' -b cookies.txt \
+  -d '{"content": {"about": {"titre": "À propos"}}}'
+
+curl http://localhost:5000/api/content/history -b cookies.txt
+
+curl -X POST http://localhost:5000/api/content/history/42/restore -b cookies.txt
+```
+
+### Journal d'audit
+
+| Méthode | Route             | Auth |
+|---------|-------------------|:---:|
+| GET     | `/api/audit-log`  | session |
+
+**`GET /api/audit-log?limit=<n>`** — `limit` par défaut 200, **plafonné à
+500** quelle que soit la valeur demandée (`min(int(limit), 500)` côté
+serveur) :
+```json
+[{"id": 1001, "username": "jkayembe", "action": "content.publish", "target": "v8", "detail": "", "created_at": "2026-09-06T09:00:00+00:00"}]
+```
+Accessible à toute session (`admin` ou `editor`), pas réservé au rôle admin.
+
+```bash
+curl 'http://localhost:5000/api/audit-log?limit=50' -b cookies.txt
+```
+
+### Géographie
+
+| Méthode | Route       | Auth |
+|---------|-------------|:---:|
+| GET     | `/api/geo`  | non |
+
+**`GET /api/geo`** — l'objet géographique complet attendu par la carte
+(`geometry`, `layers`, `provinces`, `terr_geom`, `prov_ref`), ou `null` si
+aucune couche n'a encore été importée. `Cache-Control: public, max-age=300`.
+
+```bash
+curl http://localhost:5000/api/geo
+```
+
+### Santé
+
+| Méthode | Route       | Auth |
+|---------|-------------|:---:|
+| GET     | `/healthz`  | non |
+
+**`GET /healthz`** — pour sonde de déploiement / load balancer :
+```json
+{"status": "ok"}
 ```
 
 ## Pourquoi cette architecture est "optimale" et facile à faire évoluer
@@ -470,6 +742,28 @@ d'ensemble, calculé sur `ent_revenus_entreprise`).
   corriger une valeur, modifier la table source puis relancer
   `python import_data.py` (voir § « Mettre à jour les données »).
 
+**Deux anomalies trouvées en créant ces tables (sept. 2026), corrigées :**
+
+- **2 lignes « Trésor » classées à tort sous DGI.** En construisant la table
+  dédiée DGI, deux lignes très inhabituelles apparaissaient (montants en
+  milliards, alors que les autres lignes DGI sont en millions) : leur
+  `Libellé d'origine` était « Trésor » / « Total Trésor » (2022 et 2023),
+  mais leur `Entité perceptrice harmonisée` valait « DGI » au lieu de
+  « Trésor public » — une erreur de la table consolidée `ent_revenus_entite`
+  elle-même (pas propre aux tables dérivées). Corrigé à la source : ces
+  2 lignes (9,7 Md USD au total) sont désormais rattachées à « Trésor
+  public », qui possède déjà sa propre entrée dans cette même colonne.
+  Effet visible : le classement DGI (Vue d'ensemble, Géographie, tables
+  dérivées) baisse d'environ 9,7 Md USD (cumul), et Trésor public apparaît
+  correctement pour 2022/2023 dans la carte de Géographie par année (il
+  était auparavant absent de la vue par année, ses seules recettes de ces
+  deux exercices étant comptées sous DGI).
+- **Année affichée avec un séparateur de milliers (« 2 022 » au lieu de
+  « 2022 »).** Dans l'Explorateur, une colonne « Exercice » de type
+  numérique héritait du même formatage que les montants (séparateur de
+  milliers). `fmtCell()` accepte désormais un indicateur « ne pas grouper »,
+  activé pour toute colonne reconnue comme une année (`isYearLikeCol()`).
+
 ## Fiabilité des tableaux (audit qualité de sept. 2026)
 
 Un second audit (`Audit_presentation_tableaux_TransparenceRDC.xlsx`, 168
@@ -559,6 +853,127 @@ code :
   indique combien de lignes ont été exclues et la masse concernée, pour
   que rien ne disparaisse silencieusement.
 
+## Second audit externe (6 sept. 2026) — constats vérifiés et corrigés
+
+Un audit externe du portail en production a soulevé une dizaine de points,
+allant de bugs concrets à des propositions de refonte de l'architecture
+publique (voir « Limites connues / pistes d'évolution » pour la partie
+refonte, non traitée dans cette passe). Chaque affirmation a été vérifiée
+sur le code réel avant correction plutôt que prise pour argent comptant :
+
+- **Recherche sensible aux accents (confirmé).** « redevance minière »
+  retournait 0 résultat contre 920 pour « redevance miniere ». La recherche
+  plein-texte de l'Explorateur, les filtres par colonne et la recherche du
+  Dictionnaire comparaient les chaînes en minuscule sans neutraliser les
+  accents. Corrigé : ces trois recherches utilisent désormais
+  `stripAccents()` (déjà utilisé ailleurs pour les référentiels canoniques,
+  mais qui n'était pas branché à la recherche) des deux côtés de la
+  comparaison.
+- **Rapports en double / lien générique trompeur (confirmé).** 38 rapports
+  listés pour seulement 34 adresses distinctes : les annexes 2022 et 2023
+  ainsi qu'un rapport de cadrage forestier étaient chacun présents deux fois
+  (mêmes fichiers, titres légèrement différents). Ces 3 doublons ont été
+  fusionnés (38 → 35 rapports). Restent deux entrées légitimement
+  différentes (données contextuelles vs registre de propriété réelle) qui
+  pointent toutes les deux vers la page de listing générale du site source
+  (le site ITIE-RDC ne publie pas encore ces deux fichiers à des adresses
+  séparées) : plutôt que d'inventer des liens directs, leur bouton affiche
+  désormais « ↗ Voir sur le site source » au lieu de « ↓ Télécharger », pour
+  ne pas laisser croire à un téléchargement direct qui n'existe pas.
+- **Page bloquée sur l'écran précédent en cas d'erreur (partiellement
+  confirmé).** `Dictionnaire`/`Qualité des données` ne plantaient pas au
+  moment de l'audit (leurs données existaient bien), mais le routeur ne
+  protégeait pas la construction du HTML d'une page contre une exception :
+  si une page échoue, le titre et l'URL changent mais le contenu reste celui
+  de la page précédente — symptôme exactement décrit par l'audit. Un
+  filet de sécurité générique a été ajouté (`go()` dans static/app.js) :
+  toute page qui échoue affiche désormais un message d'erreur explicite au
+  lieu de laisser un contenu obsolète sous un titre qui ne correspond plus.
+- **Date « Dernière actualisation » figée (confirmé, cause différente de
+  celle supposée).** Cette date était recopiée telle quelle depuis
+  `data/warehouse.seed.json` à chaque import, donc ne bougeait pas tant que
+  personne ne l'éditait manuellement dans le fichier — alors que les données
+  elles-mêmes changeaient (ex. ajout des 11 tables par régie). Corrigé :
+  `import_data.py` fixe désormais cette date à la date réelle de chaque
+  import, pour qu'elle reflète toujours la dernière synchronisation
+  effective de la base.
+- **« Version de l'entrepôt : à renseigner » (pas un bug).** Ce champ est un
+  texte librement éditable par un admin (mode édition, § « Modifier
+  n'importe quel texte ») sans mécanisme de version automatique dans le
+  projet — la valeur par défaut affichée est le comportement voulu tant que
+  personne ne l'a renseigné, pas un lien cassé.
+- **Écart de 168 à 149 tables entre les deux audits (non reproductible tel
+  quel).** Le nombre affiché dans l'Explorateur est calculé en direct depuis
+  les jeux de données réellement chargés (aucune valeur figée en dur) : il
+  varie légitimement à chaque ajout/retrait de table (ex. +11 tables par
+  régie cette semaine). Au moment de la vérification, l'entrepôt comptait
+  179 tables / 85 349 lignes — ni 168/84 485, ni 149/76 169 : ces deux
+  photographies ponctuelles ne peuvent pas être comparées sans savoir
+  exactement quelles tables étaient publiées à chaque instant. Cela confirme
+  cependant le besoin d'un vrai journal de version (voir pistes d'évolution)
+  plutôt que de laisser deviner l'écart après coup.
+
+### Écart de réconciliation anormal dans `fait_reconciliation_flux` / `fait_reconciliation_entreprise` (non résolu)
+
+**Non résolu.** Contrairement aux points ci-dessus, celui-ci n'a pas été
+corrigé — il est documenté ici précisément pour ne pas être découvert plus
+tard en production sans trace écrite.
+
+L'audit externe du 6 sept. 2026 relevait un « écart initial très supérieur
+aux déclarations affichées » sur les tables de réconciliation État/sociétés.
+Vérification faite directement sur `data/warehouse.seed.json` :
+
+- **Le volet « sociétés » de la réconciliation est vide.** `fait_reconciliation_flux`
+  (6 300 lignes) a ses colonnes `societes_initial`, `societes_ajustement` et
+  `societes_final` à `null` sur les 6 300 lignes, sans exception.
+  `fait_reconciliation_entreprise` (4 317 lignes) a les mêmes colonnes soit à
+  `null`, soit à exactement `0.0` — jamais une autre valeur. Dans les deux
+  tables, une vraie réconciliation « État déclaré vs Sociétés déclarées » est
+  donc actuellement impossible à calculer : le côté « sociétés » n'existe
+  simplement pas dans la donnée importée.
+- **`difference_initiale`/`difference_finale` sont incohérentes avec
+  `etat_initial`/`etat_final` de la même ligne, sur un nombre significatif de
+  lignes.** Exemples concrets (colonnes brutes, devise USD) :
+  - `fait_reconciliation_flux`, "Droits et Taxes A L'Exportation (Totale
+    Quittance)", exercice TSL2022 : `etat_initial` = 328 989 202 USD mais
+    `difference_initiale` = 452 861 744 743 USD (environ 1 400 fois plus).
+  - `fait_reconciliation_entreprise`, "SOCIETE MINIERE DE BISUNZU", exercice
+    TSL2019 : `etat_initial` = 1 323 172 USD mais `difference_initiale`
+    = 609 722 859 USD (environ 460 fois plus).
+  - `fait_reconciliation_flux`, "Impot sur les benefices et Profits (ou Impot
+    Special Forfetaire)", exercice TSL2015 : `etat_initial` = 258 948 USD mais
+    `difference_initiale` = 436 567 928 USD (environ 1 700 fois plus).
+  Une vingtaine d'autres lignes présentent le même symptôme (`difference_*`
+  supérieure de plusieurs ordres de grandeur à `etat_*` sur la même ligne).
+  Sommée sur l'ensemble des lignes, `difference_initiale` totalise environ
+  **622 milliards USD** dans `fait_reconciliation_flux` (et un montant du
+  même ordre, environ 622 milliards USD également, dans
+  `fait_reconciliation_entreprise`) — un chiffre qui dépasse de très loin les
+  recettes extractives nationales de n'importe quelle année, et qui est très
+  exactement l'anomalie signalée par l'audit du 6 sept. 2026.
+- **`etat_initial`, `etat_final` et `etat_ajustement` restent, eux, cohérents
+  entre eux** : `Σ etat_final − Σ etat_initial = Σ etat_ajustement` exactement,
+  vérifié sur les deux tables (ex. `fait_reconciliation_flux` :
+  30 572 197 856 − 30 152 036 506 = 420 161 350, qui correspond très
+  précisément à la somme de `etat_ajustement`). Ces trois colonnes sont donc
+  fiables et utilisables telles quelles comme chiffres de synthèse.
+- **Cause non identifiée.** Cet écart préexiste à ce lot de corrections — il
+  fait partie de l'import consolidé d'origine, pas d'une régression introduite
+  récemment. Deux hypothèses possibles, à vérifier auprès de la source, sans
+  privilégier l'une par rapport à l'autre : une confusion d'unité/devise dans
+  les colonnes `difference_*` lors de l'export TSL d'origine, ou une valeur
+  calculée obsolète laissée par une version antérieure des données.
+- **Recommandation pour toute page « Réconciliation ».** Tant que la cause
+  n'est pas confirmée et corrigée à la source, toute vue publique de
+  réconciliation devrait s'appuyer sur `etat_initial`/`etat_final`/
+  `etat_ajustement` (fiables, cf. ci-dessus) plutôt que sur une simple somme
+  de `difference_initiale`/`difference_finale`. Si ces dernières doivent tout
+  de même être affichées ligne par ligne, prévoir un plafond de vraisemblance
+  par ligne et/ou un indicateur explicite « donnée non fiable » plutôt que de
+  les laisser se fondre silencieusement dans un total. Comme pour les autres
+  limites de données de ce projet (voir § « Fiabilité des tableaux »), cette
+  limite doit être signalée au lecteur plutôt que masquée.
+
 ### Mettre à jour les données après une correction
 
 Les corrections d'en-têtes/lignes ci-dessus modifient `data/warehouse.seed.json`
@@ -576,6 +991,69 @@ table présente dans `data/warehouse.seed.json` — toute modification faite
 depuis l'interface d'administration (édition de cellule, enrichissement de
 données) sur une table du même nom serait alors perdue. À n'utiliser que
 juste après un déploiement de correctif comme celui-ci, pas en routine.
+
+## Refonte publique / expert (6 sept. 2026) — mise en œuvre de la section « Architecture publique recommandée »
+
+Suite au second audit externe ci-dessus, l'utilisateur a demandé la mise en
+œuvre complète des points 3 (générateur de visualisations trop technique), 4
+(Explorateur trop brut) et 7 (modèle de données conceptuellement confus) de
+l'audit, ainsi que de l'intégralité de sa section « Architecture publique
+recommandée ». Les 11 parcours ont été construits d'un coup, au même niveau
+de détail (choix explicite de l'utilisateur), avec une amélioration réelle
+mais honnête de l'accessibilité et du mobile (pas de certification WCAG
+revendiquée — choix explicite de l'utilisateur).
+
+- **Mode Public / mode Expert.** Un bouton dans la barre du haut (`☰
+  Public` / `⚙ Expert`) bascule entre deux menus : le mode **Public**
+  (activé par défaut, choix persisté dans le navigateur) affiche 11 parcours
+  thématiques en langage clair ; le mode **Expert** retrouve les outils
+  techniques existants (Explorateur, Visualisations, Géographie, Modèle de
+  données, Dictionnaire, Qualité des données, Rapports, À propos), inchangés.
+- **11 parcours thématiques publics**, un même gabarit pour chacun (question
+  en langage clair, jusqu'à 2 filtres, 3 à 5 indicateurs clés, un graphique
+  principal et un graphique de comparaison, un encadré « Ce qu'il faut
+  comprendre », un tableau limité à 7 colonnes maximum avec liens « voir les
+  données brutes », « télécharger » et « exporter cette vue ») : Vue
+  d'ensemble, Revenus extractifs, Entreprises et paiements, Flux et entités
+  perceptrices, Réconciliation, Territoires et paiements infranationaux,
+  Production et exportations, Dépenses sociales et environnementales,
+  Titres/licences et propriété effective, Rapports/sources/méthodologie,
+  Données ouvertes.
+- **Couche sémantique par rôle de colonne.** Une nouvelle fonction
+  `columnRole()` classe chaque colonne (`id`, `year`, `page`, `pct`, `price`,
+  `ratio`, `stock`, `additive`, `text`, `dimension`) et une fonction
+  `datasetKind()` classe chaque table (`source`, `référentiel`, `dimension`,
+  `fait`, `entrepôt`, `analytique`, `vue`) sur les 181 tables — remplace
+  l'ancien badge binaire faits/contextuel du Modèle de données et du
+  Dictionnaire, qui ne reflétait plus la variété réelle des tables.
+- **Tables limitées à 7 colonnes en mode Public.** `pickDefaultCols()`
+  choisit, par table, les colonnes les plus lisibles (dimensions et mesures
+  d'abord, identifiants techniques en dernier) ; un bouton « Afficher toutes
+  les colonnes (mode Expert) » reste disponible dans l'Explorateur pour qui
+  veut la vue complète. Le mode Expert affiche toujours toutes les colonnes.
+- **Galerie de graphiques validés.** En mode Public, l'écran Visualisations
+  ouvre par défaut sur une galerie de 8 graphiques prêts à l'emploi plutôt
+  que sur le générateur libre (table/dimension/mesure/agrégation) ; ce
+  dernier reste accessible via « Mode Expert : générateur libre » sur la même
+  page pour qui souhaite composer ses propres graphiques.
+- **Accessibilité et mobile — amélioration réelle, pas une certification.**
+  Lien d'évitement (« Aller au contenu principal »), zone de contenu
+  principale identifiée (`<main>`), navigation latérale annoncée
+  (`aria-label`), item de menu actif marqué `aria-current="page"`,
+  libellés accessibles sur les boutons et champs qui n'avaient qu'une icône
+  ou qu'un `title`, style de focus visible sur les liens/boutons/en-têtes de
+  tri/champs, les 7 fenêtres modales (connexion, comptes, tables, journal,
+  rapports, rubriques, enrichissement) sont maintenant de vraies boîtes de
+  dialogue (`role="dialog"`, focus piégé à l'intérieur, focus restitué au
+  bouton d'origine à la fermeture, fermeture au clavier via Échap déjà
+  existante), graphiques dotés d'un intitulé accessible. Limite assumée et
+  non cachée : les graphiques restent une image porteuse d'un intitulé, pas
+  un point de données navigable au clavier un par un — l'alternative
+  accessible réelle est le tableau de données affiché à côté sur la plupart
+  des parcours. Quelques ajustements de mise en page mobile (barre du haut,
+  fenêtres modales, cibles tactiles) complètent cette passe. Aucune mention
+  « conforme WCAG » n'a été ajoutée nulle part dans l'interface, conformément
+  au choix de l'utilisateur.
 
 ## Limites connues / pistes d'évolution
 

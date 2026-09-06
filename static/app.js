@@ -125,7 +125,11 @@ const fmtN=n=>(typeof n==='number'?n:Number(n)).toLocaleString('fr-FR');
 // qualité, sept. 2026 : « distinguer zéro confirmé, non déclaré, non
 // applicable et non disponible »).
 function isNonDeclareToken(v){if(v==null||v==='')return false;return /^(n\/?c|n[eé]ant|nd|n\/a|nap|non[\s-]?d[ée]clar[ée]|non[\s-]?disponible|non[\s-]?applicable)$/i.test(String(v).trim());}
-function fmtCell(v,type){if(v==null||v==='')return '';if(isNonDeclareToken(v))return '· non déclaré';if(type==='num'&&typeof v==='number')return Number.isInteger(v)?fmtN(v):v.toLocaleString('fr-FR',{maximumFractionDigits:2});return String(v);}
+// `noGroup` : pour une colonne-année (ex. « Exercice »), affiche l'entier tel
+// quel (« 2022 ») plutôt qu'avec les séparateurs de milliers de fmtN()
+// (« 2 022 », lu à tort comme "2 mille 22" — signalé sept. 2026 dans
+// l'Explorateur sur les nouvelles tables par régie).
+function fmtCell(v,type,noGroup){if(v==null||v==='')return '';if(isNonDeclareToken(v))return '· non déclaré';if(type==='num'&&typeof v==='number')return Number.isInteger(v)?(noGroup?String(v):fmtN(v)):v.toLocaleString('fr-FR',{maximumFractionDigits:2});return String(v);}
 function getPath(o,p){return p.split('.').reduce((a,k)=>a==null?a:a[k],o);}
 function assignPath(o,p,v){const ks=p.split('.');let x=o;for(let i=0;i<ks.length-1;i++){if(x[ks[i]]==null)x[ks[i]]={};x=x[ks[i]];}x[ks[ks.length-1]]=v;}
 
@@ -161,6 +165,66 @@ function isSummableNumCol(name,col){
   if(ov&&ov.includes(col))return false;
   return true;
 }
+// ===== Couche sémantique des colonnes (audit qualité, sept. 2026) =====
+// isIdCol/isYearLikeCol/isPct/isPageLikeCol/NON_SUMMABLE_OVERRIDES ci-dessus
+// ne couvrent que « sommable ou non » (isSummableNumCol). L'audit demande une
+// typologie plus fine des rôles de colonne (prix unitaire, ratio, encours…)
+// pour piloter, en aval, le choix des colonnes affichées par défaut dans
+// l'Explorateur public et les types de graphique valides par mesure — sans
+// changer le comportement des sommes déjà en place. isSummableNumCol reste
+// donc volontairement autonome (zéro régression garantie sur les callers
+// existants) ; columnRole ajoute deux rôles numériques plus stricts que
+// l'audit signale comme jamais sommables mais qu'isSummableNumCol traitait
+// jusqu'ici comme additionnables faute de détection dédiée : « Prix »
+// (ent_prix) et « Encours non remboursé » (ctx_pret_subvention). C'est un
+// raffinement délibéré (conforme au tableau sémantique de l'audit), pas une
+// régression : columnRole('additive') est un sous-ensemble strict, jamais un
+// sur-ensemble, de isSummableNumCol()===true.
+function isPriceLikeCol(col){return /^prix\b|\bcours\b|\btarif/i.test(col);}
+function isRatioLikeCol(col){return /\bratio\b|\bindice\b/i.test(col)&&!isPct(col);}
+function isStockLikeCol(col){return /\bencours\b|\bsolde\b|\bstock\b/i.test(col);}
+// Colonnes de texte libre (description, commentaire, observation…) : ni
+// mesure, ni dimension catégorielle utilisable pour grouper/filtrer.
+function isFreeTextCol(col){return /descri|comment|observ|remarqu|d[ée]tail|objet|intitul[ée]/i.test(col);}
+const ROLE_LABELS={
+  id:'Identifiant',
+  year:'Année/Exercice',
+  page:'Référence de page',
+  pct:'Pourcentage',
+  price:'Prix/Cours',
+  ratio:'Ratio/Indice',
+  stock:'Solde/Encours',
+  additive:'Montant additionnable',
+  text:'Texte libre',
+  dimension:'Dimension (catégorie)'
+};
+// Détermine le rôle sémantique d'une colonne, dans l'ordre de priorité fixé
+// par l'audit qualité (sept. 2026). Utilisé par l'Explorateur public et la
+// future galerie de graphiques pour savoir ce qu'il est licite de sommer,
+// moyenner, ou afficher « dernière valeur » plutôt que total.
+function columnRole(name,col){
+  if(isIdCol(col))return 'id';
+  if(isYearLikeCol(name,col))return 'year';
+  if(isPageLikeCol(col))return 'page';
+  if(isPct(col))return 'pct';
+  if(isPriceLikeCol(col))return 'price';
+  if(isRatioLikeCol(col))return 'ratio';
+  if(isStockLikeCol(col))return 'stock';
+  const d=DS[name],idx=d?d.cols.indexOf(col):-1,type=idx>=0?d.types[idx]:null;
+  if(type==='num'){
+    const ov=NON_SUMMABLE_OVERRIDES[name];
+    // identifiant métier non reconnu par isIdCol (ex. « PERMIS » du registre
+    // CAMI : un numéro de titre minier, pas une quantité additionnable).
+    if(ov&&ov.includes(col))return 'id';
+    return 'additive';
+  }
+  if(isFreeTextCol(col))return 'text';
+  return 'dimension';
+}
+// Exposés sur window : fonctions/objets plats (pas de modules ES), utilisables
+// depuis la console pour vérification, et par de futures pages/consommateurs
+// (galerie de graphiques, colonnes par défaut de l'Explorateur public…).
+window.columnRole=columnRole;window.ROLE_LABELS=ROLE_LABELS;window.isSummableNumCol=isSummableNumCol;
 // Avertit quand une somme affichée mélange plusieurs unités/devises (ex.
 // USD + CDF, ou tonnes + kg) sur la sélection courante : additionner des
 // montants dans des unités différentes produit un total sans signification
@@ -209,16 +273,24 @@ function numericStats(name,col){const i=colIndex(name,col);let sum=0,n=0,min=Inf
   for(const r of DS[name].rows){const v=r[i];if(v!=null&&v!=='')seen.add(String(v));const x=Number(v);if(v!=null&&v!==''&&!isNaN(x)){sum+=x;n++;if(x<min)min=x;if(x>max)max=x;}else if(v==null||v==='')nn++;}
   return {sum,avg:n?sum/n:0,min:n?min:0,max:n?max:0,count:n,distinct:seen.size,nulls:nn};}
 
-/* ===== chart engine ===== */
+/* ===== chart engine =====
+   Alternative texte : chaque conteneur ".chart" porte un aria-label repris
+   du titre de la carte (voir themePage() et les pages statiques) ; baseSvg()
+   le reprend comme aria-label + <title> du SVG, et la plupart de ces
+   graphiques sont doublés d'un tableau de données visible juste en dessous
+   (mountThemeTable) qui reste la vraie alternative accessible point par
+   point — on n'essaie pas de rendre chaque barre/point du SVG navigable
+   individuellement (hors périmètre de cette passe, cf. limite assumée). */
 function baseSvg(W,H,desc){const s=svgEl('svg',{viewBox:`0 0 ${W} ${H}`,width:W,height:H,class:'c',role:'img'});
   if(desc){s.setAttribute('aria-label',desc);const t=svgEl('title',{});t.textContent=desc;s.appendChild(t);}return s;}
+function hostDesc(host){try{return (host&&host.getAttribute('aria-label'))||null;}catch(e){return null;}}
 function isYearSeq(data){return data.length>1&&data.every(d=>/^\d{4}$/.test(String(d.label)));}
 function cBar(host,data,color,horizontal){
   data=data.slice().sort((a,b)=>b.value-a.value);
   color=color||css('--sky');
   if(horizontal||data.length>7){
     data=data.slice(0,14);const rowH=30,W=640,labelW=Math.min(230,Math.max(120,...data.map(d=>d.label.length*6.6))),P={t:6,r:96},iw=W-labelW-P.r,H=P.t*2+data.length*rowH,max=Math.max(...data.map(d=>d.value),1);
-    const s=baseSvg(W,H);
+    const s=baseSvg(W,H,hostDesc(host));
     data.forEach((d,i)=>{const cy=P.t+i*rowH,bw=Math.max(2,iw*d.value/max);let lab=d.label;if(lab.length>34)lab=lab.slice(0,33)+'…';
       const tl=svgEl('text',{class:'barlabel',x:0,y:cy+rowH/2+4});tl.textContent=lab;s.appendChild(tl);
       s.appendChild(svgEl('rect',{x:labelW,y:cy+6,width:bw,height:rowH-13,rx:3,fill:color,opacity:.9}));
@@ -228,7 +300,7 @@ function cBar(host,data,color,horizontal){
   const W=Math.max(420,data.length*74),H=250,P={l:48,r:14,t:14,b:44},iw=W-P.l-P.r,ih=H-P.t-P.b,bw=iw/data.length*.62;
   const dmax=Math.max(0,...data.map(d=>d.value)),dmin=Math.min(0,...data.map(d=>d.value)),span=(dmax-dmin)||1;
   const y0=P.t+ih*(dmax/span);                              // pixel position of value 0
-  const s=baseSvg(W,H,host&&host.getAttribute('aria-label'));
+  const s=baseSvg(W,H,hostDesc(host));
   for(let g=0;g<=4;g++){const gy=P.t+ih*g/4,val=dmax-span*g/4;s.appendChild(svgEl('line',{class:'gridline',x1:P.l,y1:gy,x2:W-P.r,y2:gy}));const t=svgEl('text',{class:'axis',x:P.l-7,y:gy+3,'text-anchor':'end'});t.textContent=fmtSmart(val);s.appendChild(t);}
   if(dmin<0)s.appendChild(svgEl('line',{x1:P.l,y1:y0,x2:W-P.r,y2:y0,stroke:css('--ink-faint'),'stroke-width':1}));
   data.forEach((d,i)=>{const cx=P.l+iw*(i+.5)/data.length,h=ih*Math.abs(d.value)/span,yy=d.value>=0?y0-h:y0;
@@ -242,7 +314,7 @@ function cLine(host,data,area,color,color2,k1,k2){
   const W=Math.max(480,data.length*46),H=250,P={l:48,r:16,t:14,b:30},iw=W-P.l-P.r,ih=H-P.t-P.b;
   const max=Math.max(...data.map(d=>Math.max(d[k1]||0,k2?d[k2]||0:0)),1)*1.08;
   const x=i=>P.l+iw*(i/(data.length-1||1)),y=v=>P.t+ih*(1-v/max);
-  const s=baseSvg(W,H);
+  const s=baseSvg(W,H,hostDesc(host));
   for(let g=0;g<=4;g++){const gy=P.t+ih*g/4;s.appendChild(svgEl('line',{class:'gridline',x1:P.l,y1:gy,x2:W-P.r,y2:gy}));const t=svgEl('text',{class:'axis',x:P.l-7,y:gy+3,'text-anchor':'end'});t.textContent=fmtSmart(max*(1-g/4));s.appendChild(t);}
   // break the line where a year is missing in a yearly series (no false continuity)
   const yearly=isYearSeq(data);
@@ -257,7 +329,7 @@ function cLine(host,data,area,color,color2,k1,k2){
 function cDonut(host,data){
   data=data.slice().sort((a,b)=>b.value-a.value);if(data.length>7){const rest=data.slice(6).reduce((a,d)=>a+d.value,0);data=data.slice(0,6).concat([{label:'Autres',value:rest}]);}
   const tot=data.reduce((a,d)=>a+d.value,0)||1,R=68,r0=40,cx=95,cy=95;let ang=-Math.PI/2;const cols=PALETTE();
-  const s=baseSvg(360,190);
+  const s=baseSvg(360,190,hostDesc(host));
   data.forEach((d,i)=>{const a2=ang+2*Math.PI*d.value/tot;const large=(a2-ang)>Math.PI?1:0;
     const x1=cx+R*Math.cos(ang),y1=cy+R*Math.sin(ang),x2=cx+R*Math.cos(a2),y2=cy+R*Math.sin(a2);
     const xi2=cx+r0*Math.cos(a2),yi1=cy+r0*Math.sin(ang),xi1=cx+r0*Math.cos(ang),yi2=cy+r0*Math.sin(a2);
@@ -270,7 +342,7 @@ function cTreemap(host,data){
   let items=data.filter(d=>Number(d.value)>0).sort((a,b)=>b.value-a.value).slice(0,20).map((d,i)=>({label:d.label,value:+d.value,ci:i}));
   if(!items.length){host.innerHTML='<div class="empty">Aucune valeur positive à répartir (le treemap requiert des parts positives).</div>';return;}
   const tot=items.reduce((a,d)=>a+d.value,0)||1;
-  const W=680,H=300,cols=PALETTE();const s=baseSvg(W,H);
+  const W=680,H=300,cols=PALETTE();const s=baseSvg(W,H,hostDesc(host));
   const area=W*H;items.forEach(it=>it.a=it.value/tot*area);
   let idx=0,cursorY=0;
   while(idx<items.length&&cursorY<H-1){
@@ -389,12 +461,12 @@ function mOverview(){return `
   ${kpiRow()}
   ${highlight()}
   <div class="grid2">
-    <div class="card"><div class="ch"><h3>Recettes de l'État par exercice</h3><span class="badge">${AGG.serie_etat.length?AGG.serie_etat[0].annee+'–'+AGG.serie_etat[AGG.serie_etat.length-1].annee:''}</span></div><div class="sub">Millions USD · réconciliées</div><div class="chart" id="ov1"></div></div>
-    <div class="card"><div class="ch"><h3>Répartition des revenus ${O._year||'2023'}</h3><span class="badge">Secteurs</span></div><div class="sub">Mines vs hydrocarbures</div><div class="chart" id="ov2"></div></div>
-    <div class="card"><div class="ch"><h3>Principales entreprises ${O._topyear||'2023'}</h3><span class="badge">Top 10</span></div><div class="sub">Recettes perçues par l'État, USD</div><div class="chart" id="ov3"></div></div>
-    <div class="card"><div class="ch"><h3>Dépenses sociales par exercice</h3><span class="badge">${AGG.social&&AGG.social.length?AGG.social[0].annee+'–'+AGG.social[AGG.social.length-1].annee:''}</span></div><div class="sub">Total annuel, USD</div><div class="chart" id="ov4"></div></div>
-    <div class="card"><div class="ch"><h3>Recettes par régie nationale</h3><span class="badge">Toutes années</span></div><div class="sub">DGI, DGRAD, DGDA, CAMI… — cumul, USD</div><div class="chart" id="ov5"></div></div>
-    <div class="card"><div class="ch"><h3>Recettes par niveau de perception</h3><span class="badge">National vs infranational</span></div><div class="sub">Régies nationales, provinciales, ETD, entreprises publiques</div><div class="chart" id="ov6"></div></div>
+    <div class="card"><div class="ch"><h3>Recettes de l'État par exercice</h3><span class="badge">${AGG.serie_etat.length?AGG.serie_etat[0].annee+'–'+AGG.serie_etat[AGG.serie_etat.length-1].annee:''}</span></div><div class="sub">Millions USD · réconciliées</div><div class="chart" id="ov1" aria-label="${esc("Recettes de l'État par exercice, millions USD")}"></div></div>
+    <div class="card"><div class="ch"><h3>Répartition des revenus ${O._year||'2023'}</h3><span class="badge">Secteurs</span></div><div class="sub">Mines vs hydrocarbures</div><div class="chart" id="ov2" aria-label="${esc('Répartition des revenus '+(O._year||'2023')+', mines vs hydrocarbures')}"></div></div>
+    <div class="card"><div class="ch"><h3>Principales entreprises ${O._topyear||'2023'}</h3><span class="badge">Top 10</span></div><div class="sub">Recettes perçues par l'État, USD</div><div class="chart" id="ov3" aria-label="${esc('Principales entreprises '+(O._topyear||'2023')+', recettes perçues par l’État en USD')}"></div></div>
+    <div class="card"><div class="ch"><h3>Dépenses sociales par exercice</h3><span class="badge">${AGG.social&&AGG.social.length?AGG.social[0].annee+'–'+AGG.social[AGG.social.length-1].annee:''}</span></div><div class="sub">Total annuel, USD</div><div class="chart" id="ov4" aria-label="${esc('Dépenses sociales par exercice, total annuel en USD')}"></div></div>
+    <div class="card"><div class="ch"><h3>Recettes par régie nationale</h3><span class="badge">Toutes années</span></div><div class="sub">DGI, DGRAD, DGDA, CAMI… — cumul, USD</div><div class="chart" id="ov5" aria-label="${esc('Recettes par régie nationale, cumul toutes années en USD')}"></div></div>
+    <div class="card"><div class="ch"><h3>Recettes par niveau de perception</h3><span class="badge">National vs infranational</span></div><div class="sub">Régies nationales, provinciales, ETD, entreprises publiques</div><div class="chart" id="ov6" aria-label="${esc('Recettes par niveau de perception, national vs infranational')}"></div></div>
   </div>`;}
 function drawOverview(){
   cLine($('#ov1'),AGG.serie_etat.map(d=>({label:d.annee,value:d.etat,ese:d.ese})),true,css('--sky'),css('--red'),'value','ese');
@@ -406,7 +478,7 @@ function drawOverview(){
 }
 
 /* Explorer */
-let exState={ds:'fait_reconciliation_flux',page:0,sort:null,dir:1,q:'',filters:{},panel:true};
+let exState={ds:'fait_reconciliation_flux',page:0,sort:null,dir:1,q:'',filters:{},panel:true,showAllCols:false};
 let exTableQ='';
 function mExplorer(){
   const groups={faits:[],contextuel:[],dimensions:[],annexe:[]};
@@ -438,13 +510,16 @@ function exDistinct(ds,i){const key=ds+'#'+i;if(_distinctCache[key])return _dist
 function exApply(){const d=DS[exState.ds];let rows=d.rows;
   const yc=yearCol(exState.ds),yi=yc?d.cols.indexOf(yc):-1;
   if(globalYear&&yi>=0)rows=rows.filter(r=>yearVal(r[yi])===+globalYear);
-  const q=(exState.q||'').toLowerCase();
-  if(q)rows=rows.filter(r=>r.some(v=>String(v==null?'':v).toLowerCase().includes(q)));
+  // Recherche insensible aux accents/casse (ex. « minière » doit retrouver
+  // « miniere » et inversement — signalé sept. 2026 : la recherche brute par
+  // .toLowerCase() seul ne rapprochait pas ces variantes orthographiques).
+  const q=stripAccents(exState.q||'').toLowerCase();
+  if(q)rows=rows.filter(r=>r.some(v=>stripAccents(v==null?'':v).toLowerCase().includes(q)));
   const F=exState.filters;
   for(const k in F){const i=+k,f=F[k];if(!f)continue;
     if(f.type==='cat'){const dim=canonDimFor(exState.ds,d.cols[i]);
       if(f.vals&&f.vals.length){const set=new Set(f.vals);rows=rows.filter(r=>{const raw=r[i];const v=(raw==null||raw==='')?'∅':String(dim?canonicalize(dim,raw):raw);return set.has(v);});}
-      if(f.q){const qq=f.q.toLowerCase();rows=rows.filter(r=>String(r[i]==null?'':r[i]).toLowerCase().includes(qq));}}
+      if(f.q){const qq=stripAccents(f.q).toLowerCase();rows=rows.filter(r=>stripAccents(r[i]==null?'':r[i]).toLowerCase().includes(qq));}}
     else if(f.type==='num'){if(f.min!=null)rows=rows.filter(r=>{const v=Number(r[i]);return !isNaN(v)&&v>=f.min;});
       if(f.max!=null)rows=rows.filter(r=>{const v=Number(r[i]);return !isNaN(v)&&v<=f.max;});}}
   return rows;}
@@ -476,14 +551,16 @@ function renderExplorer(){
   const pageRows=rows.slice(exState.page*per,exState.page*per+per);
   const canEdit=editing;
   const canonIdx=canonColIdxs(exState.ds);
-  const th=d.cols.map((c,i)=>`<th scope="col" data-si="${i}" tabindex="0" role="button" aria-sort="${exState.sort===i?(exState.dir>0?'ascending':'descending'):'none'}" title="Trier">${esc(c)}${exState.sort===i?`<span class="ar" aria-hidden="true">${exState.dir>0?'▲':'▼'}</span>`:''}</th>`+(canonIdx.includes(i)?`<th scope="col" class="canoncol" title="Valeur normalisée utilisée pour les filtres et les agrégations">${esc(c)} <span class="ftag">canonique</span></th>`:'')).join('')+(canEdit?'<th scope="col">—</th>':'');
+  const visIdx=exVisibleColIdx(exState.ds);
+  const colsLimited=visIdx.length<d.cols.length;
+  const th=visIdx.map(i=>{const c=d.cols[i];return `<th scope="col" data-si="${i}" tabindex="0" role="button" aria-sort="${exState.sort===i?(exState.dir>0?'ascending':'descending'):'none'}" title="Trier">${esc(c)}${exState.sort===i?`<span class="ar" aria-hidden="true">${exState.dir>0?'▲':'▼'}</span>`:''}</th>`+(canonIdx.includes(i)?`<th scope="col" class="canoncol" title="Valeur normalisée utilisée pour les filtres et les agrégations">${esc(c)} <span class="ftag">canonique</span></th>`:'');}).join('')+(canEdit?'<th scope="col">—</th>':'');
   const body=pageRows.map(r=>{const ridx=d.rows.indexOf(r);
-    return `<tr data-rowidx="${ridx}">${r.map((v,i)=>{
-      const cell=`<td class="${d.types[i]==='num'?'num':''}" ${canEdit?`contenteditable="true" data-ecol="${i}"`:''} title="${esc(v)}">${esc(fmtCell(v,d.types[i]))}</td>`;
+    return `<tr data-rowidx="${ridx}">${visIdx.map(i=>{const v=r[i];
+      const cell=`<td class="${d.types[i]==='num'?'num':''}" ${canEdit?`contenteditable="true" data-ecol="${i}"`:''} title="${esc(v)}">${esc(fmtCell(v,d.types[i],isYearLikeCol(exState.ds,d.cols[i])))}</td>`;
       const dim=canonIdx.includes(i)?canonDimFor(exState.ds,d.cols[i]):null;
       const canonCell=dim?`<td class="canoncol" title="Valeur canonique">${esc(canonicalize(dim,v)||'')}</td>`:'';
       return cell+canonCell;
-    }).join('')}${canEdit?`<td><button class="rm-del" data-erowdel="${ridx}" title="Supprimer cette ligne">✕</button></td>`:''}</tr>`;
+    }).join('')}${canEdit?`<td><button class="rm-del" data-erowdel="${ridx}" aria-label="Supprimer cette ligne" title="Supprimer cette ligne">✕</button></td>`:''}</tr>`;
   }).join('');
   // live aggregates over filtered rows: sum of each numeric column
   const numCols=d.cols.map((c,i)=>({c,i})).filter(o=>d.types[o.i]==='num' && isSummableNumCol(exState.ds,o.c));
@@ -494,19 +571,21 @@ function renderExplorer(){
     ${headerWarning}
     <div class="extoolbar">
       <div class="desc">${esc(d.desc)}</div>
-      <div class="exsearch"><span class="si">⌕</span><input id="exQ" placeholder="Recherche plein-texte…" value="${esc(exState.q)}"></div>
+      <div class="exsearch"><span class="si" aria-hidden="true">⌕</span><input id="exQ" placeholder="Recherche plein-texte…" value="${esc(exState.q)}" aria-label="Recherche plein-texte dans le tableau"></div>
       <button class="btn ${exState.panel?'primary':''}" id="exToggle">⚙ Filtres par colonne${nActive?` (${nActive})`:''}</button>
       <button class="btn" id="exReset">Réinitialiser</button>
       <button class="btn" id="exCsv">↓ Export CSV (sélection)</button>
       <button class="btn" id="exShare" title="Copier un lien reproduisant cette vue (table, filtres, tri, recherche)">🔗 Copier le lien</button>
+      ${colsLimited?`<button class="btn" id="exShowAllCols" title="Afficher les ${d.cols.length} colonnes de cette table (bascule en mode Expert)">▤ Afficher toutes les colonnes (mode Expert)</button>`:''}
       ${canEdit?`<button class="btn" id="exAddRow">+ Ligne</button><button class="btn primary" id="exSaveTable">💾 Enregistrer cette table en base</button>`:''}
     </div>
+    ${colsLimited?`<div class="msg warn" style="display:block;margin-bottom:10px">Vue simplifiée (mode Public) : ${visIdx.length} colonne(s) affichée(s) sur ${d.cols.length}. Cliquez « Afficher toutes les colonnes » pour la vue complète (mode Expert).</div>`:''}
     ${canEdit?`<div style="font-size:12px;color:var(--ink-soft);margin:-6px 0 10px">Mode édition : cliquez une cellule pour la modifier, <b>✕</b> pour supprimer une ligne, <b>+ Ligne</b> pour en ajouter une, puis <b>Enregistrer cette table en base</b> pour publier ces changements sur le serveur.</div>`:''}
     <div id="exFilters" class="exfilters" style="display:${exState.panel?'grid':'none'}"></div>
     <div class="exsummary" id="exSummary"></div>
-    <div class="gridwrap"><div class="gridscroll"><table class="dg"><thead><tr>${th}</tr></thead><tbody>${body||`<tr><td colspan="${d.cols.length+canonIdx.length+(canEdit?1:0)}"><div class="empty">Aucune ligne pour cette combinaison de filtres.</div></td></tr>`}</tbody></table></div>
-      <div class="gridfoot"><div>${fmtN(tot)} ligne(s)${nActive||exState.q||(globalYear&&yc)?' filtrée(s) sur '+fmtN(d.rows.length):''} · ${d.cols.length} colonnes${canonIdx.length?` (+${canonIdx.length} canonique${canonIdx.length>1?'s':''})`:''}</div>
-      <div class="pager"><button id="exFirst" ${exState.page===0?'disabled':''}>«</button><button id="exPrev" ${exState.page===0?'disabled':''}>‹</button><span>Page ${exState.page+1} / ${pages}</span><button id="exNext" ${exState.page>=pages-1?'disabled':''}>›</button><button id="exLast" ${exState.page>=pages-1?'disabled':''}>»</button></div></div>
+    <div class="gridwrap"><div class="gridscroll"><table class="dg"><thead><tr>${th}</tr></thead><tbody>${body||`<tr><td colspan="${visIdx.length+canonIdx.filter(i=>visIdx.includes(i)).length+(canEdit?1:0)}"><div class="empty">Aucune ligne pour cette combinaison de filtres.</div></td></tr>`}</tbody></table></div>
+      <div class="gridfoot"><div>${fmtN(tot)} ligne(s)${nActive||exState.q||(globalYear&&yc)?' filtrée(s) sur '+fmtN(d.rows.length):''} · ${visIdx.length}${colsLimited?'/'+d.cols.length:''} colonnes${canonIdx.length?` (+${canonIdx.filter(i=>visIdx.includes(i)).length} canonique${canonIdx.length>1?'s':''})`:''}</div>
+      <div class="pager"><button id="exFirst" aria-label="Première page" ${exState.page===0?'disabled':''}>«</button><button id="exPrev" aria-label="Page précédente" ${exState.page===0?'disabled':''}>‹</button><span>Page ${exState.page+1} / ${pages}</span><button id="exNext" aria-label="Page suivante" ${exState.page>=pages-1?'disabled':''}>›</button><button id="exLast" aria-label="Dernière page" ${exState.page>=pages-1?'disabled':''}>»</button></div></div>
     </div>`;
   if(canEdit)bindExplorerEdit(d);
   // summary
@@ -526,6 +605,7 @@ function renderExplorer(){
   $('#exLast').onclick=()=>{exState.page=pages-1;renderExplorer();};
   $('#exCsv').onclick=()=>exportCSV(exState.ds,rows);
   const exShareBtn=$('#exShare');if(exShareBtn)exShareBtn.onclick=()=>copyShareLink(exShareBtn);
+  const exShowAllBtn=$('#exShowAllCols');if(exShowAllBtn)exShowAllBtn.onclick=()=>{exState.showAllCols=true;setUiMode('expert');renderExplorer();};
   const tqi=$('#exTableQ');if(tqi&&!tqi._bound){tqi._bound=true;tqi.addEventListener('input',e=>{exTableQ=e.target.value;const v=e.target.value;$('#app').innerHTML=mExplorer();renderExplorer();const t=$('#exTableQ');if(t){t.focus();t.setSelectionRange(v.length,v.length);}});}
   if(editing)markEditable(true);
   syncURL();
@@ -598,16 +678,17 @@ function refreshExResult(){const d=DS[exState.ds];let rows=exApply();
   const per=25,tot=rows.length,pages=Math.max(1,Math.ceil(tot/per));if(exState.page>=pages)exState.page=0;
   const pageRows=rows.slice(exState.page*per,exState.page*per+per);
   const canonIdx=canonColIdxs(exState.ds);
-  const tb=$('#exMain tbody');if(tb)tb.innerHTML=pageRows.map(r=>`<tr>${r.map((v,i)=>{
-    const cell=`<td class="${d.types[i]==='num'?'num':''}" title="${esc(v)}">${esc(fmtCell(v,d.types[i]))}</td>`;
+  const visIdx=exVisibleColIdx(exState.ds);
+  const tb=$('#exMain tbody');if(tb)tb.innerHTML=pageRows.map(r=>`<tr>${visIdx.map(i=>{const v=r[i];
+    const cell=`<td class="${d.types[i]==='num'?'num':''}" title="${esc(v)}">${esc(fmtCell(v,d.types[i],isYearLikeCol(exState.ds,d.cols[i])))}</td>`;
     const dim=canonIdx.includes(i)?canonDimFor(exState.ds,d.cols[i]):null;
     const canonCell=dim?`<td class="canoncol" title="Valeur canonique">${esc(canonicalize(dim,v)||'')}</td>`:'';
     return cell+canonCell;
-  }).join('')}</tr>`).join('')||`<tr><td colspan="${d.cols.length+canonIdx.length}"><div class="empty">Aucune ligne pour cette combinaison de filtres.</div></td></tr>`;
+  }).join('')}</tr>`).join('')||`<tr><td colspan="${visIdx.length+canonIdx.filter(i=>visIdx.includes(i)).length}"><div class="empty">Aucune ligne pour cette combinaison de filtres.</div></td></tr>`;
   const numCols=d.cols.map((c,i)=>({c,i})).filter(o=>d.types[o.i]==='num' && isSummableNumCol(exState.ds,o.c));
   const sums=numCols.map(o=>{let s=0,n=0;for(const r of rows){const v=Number(r[o.i]);if(!isNaN(v)){s+=v;n++;}}return {c:o.c,s,n};}).filter(o=>o.n>0).slice(0,6);
   const sum=$('#exSummary');if(sum)sum.innerHTML=`<span class="sm-c">${fmtN(tot)} ligne(s) sélectionnée(s)</span>`+sums.map(o=>`<span class="sm-s"><span>Σ ${esc(o.c)}</span><b>${fmtSmart(o.s)}</b></span>`).join('')+mixedUnitWarning(exState.ds,rows);
-  const foot=$('#exMain .gridfoot > div:first-child');if(foot)foot.innerHTML=`${fmtN(tot)} ligne(s)${nActive||exState.q?' filtrée(s) sur '+fmtN(d.rows.length):''} · ${d.cols.length} colonnes`;
+  const foot=$('#exMain .gridfoot > div:first-child');if(foot)foot.innerHTML=`${fmtN(tot)} ligne(s)${nActive||exState.q?' filtrée(s) sur '+fmtN(d.rows.length):''} · ${visIdx.length}${visIdx.length<d.cols.length?'/'+d.cols.length:''} colonnes`;
   const pg=$('#exMain .pager');if(pg)pg.innerHTML=`<button id="exFirst" ${exState.page===0?'disabled':''}>«</button><button id="exPrev" ${exState.page===0?'disabled':''}>‹</button><span>Page ${exState.page+1} / ${pages}</span><button id="exNext" ${exState.page>=pages-1?'disabled':''}>›</button><button id="exLast" ${exState.page>=pages-1?'disabled':''}>»</button>`;
   if(pg){$('#exFirst').onclick=()=>{exState.page=0;refreshExResult();};$('#exPrev').onclick=()=>{exState.page--;refreshExResult();};$('#exNext').onclick=()=>{exState.page++;refreshExResult();};$('#exLast').onclick=()=>{exState.page=pages-1;refreshExResult();};}
   syncURL();
@@ -628,11 +709,19 @@ function exportCSV(name,rows){
 }
 
 /* Visualisations */
-let vizState={ds:'fait_reconciliation_entreprise',dim:'',measure:'',agg:'sum',type:'bar'};
+let vizState={ds:'fait_reconciliation_entreprise',dim:'',measure:'',agg:'sum',type:'bar',expertMode:false};
+const GALLERY_CARDS=`
+      <div class="card"><div class="ch"><h3>Recettes vs paiements (écart)</h3></div><div class="sub">Réconciliation par exercice, USD</div><div class="chart" id="g1" aria-label="Recettes vs paiements, écart de réconciliation par exercice"></div></div>
+      <div class="card"><div class="ch"><h3>Top flux de recettes 2023</h3></div><div class="sub">Perçu par l'État, USD</div><div class="chart" id="g2" aria-label="Top flux de recettes 2023, perçu par l’État"></div></div>
+      <div class="card"><div class="ch"><h3>Contributeurs sociaux (cumul)</h3></div><div class="sub">2015–2024, USD</div><div class="chart" id="g3" aria-label="Contributeurs sociaux, cumul 2015-2024"></div></div>
+      <div class="card"><div class="ch"><h3>Production 2023 (part-à-tout)</h3></div><div class="sub">Valeur par substance</div><div class="chart" id="g4" aria-label="Production 2023 part-à-tout, valeur par substance"></div></div>
+      <div class="card"><div class="ch"><h3>Exportations par produit</h3><span class="badge">Contextuel</span></div><div class="sub">Valeur cumulée déclarée</div><div class="chart" id="g5" aria-label="Exportations par produit, valeur cumulée déclarée"></div></div>
+      <div class="card"><div class="ch"><h3>Effectifs par exercice</h3><span class="badge">Contextuel</span></div><div class="sub">Total employés déclarés</div><div class="chart" id="g6" aria-label="Effectifs par exercice, total employés déclarés"></div></div>
+      <div class="card"><div class="ch"><h3>Recettes par régie nationale</h3><span class="badge">Cumul</span></div><div class="sub">DGI, DGRAD, DGDA, CAMI… — USD</div><div class="chart" id="g7" aria-label="Recettes par régie nationale, cumul"></div></div>
+      <div class="card"><div class="ch"><h3>Réconciliation — État initial vs final</h3><span class="badge">Fiable</span></div><div class="sub">Σ etat_final par exercice, USD</div><div class="chart" id="g8" aria-label="Réconciliation, état initial vs état final par exercice"></div></div>`;
 function mViz(){
   const dsOpts=Object.entries(DS).map(([k,d])=>`<option value="${k}" ${vizState.ds===k?'selected':''}>${esc(d.label)}</option>`).join('');
-  return `<div class="phead"><div class="eyebrow">Visualisations</div><h1>Générateur de visualisations</h1><p data-edit="intros.viz">${esc(C.intros.viz)}</p></div>
-    <div class="vizbar">
+  const genHtml=`<div class="vizbar">
       <div class="vf"><label>Table</label><select id="vzDs">${dsOpts}</select></div>
       <div class="vf"><label>Dimension (axe)</label><select id="vzDim"></select></div>
       <div class="vf"><label>Mesure</label><select id="vzMeasure"></select></div>
@@ -644,16 +733,18 @@ function mViz(){
     <div class="chiptypes" id="vzTypes"></div>
     <div id="vzHint" style="font-size:12.5px;color:var(--amber);margin:-6px 0 12px;font-weight:600"></div>
     <div id="vzExcNote" style="margin:-6px 0 12px"></div>
-    <div class="card"><div class="ch"><h3 id="vzTitle">Visualisation</h3></div><div class="chart" id="vzChart"></div></div>
-    <div class="phead" style="margin-top:26px"><div class="eyebrow">Galerie</div><h1 style="font-size:20px">Analyses prêtes à l'emploi</h1></div>
-    <div class="gallery">
-      <div class="card"><div class="ch"><h3>Recettes vs paiements (écart)</h3></div><div class="sub">Réconciliation par exercice, USD</div><div class="chart" id="g1"></div></div>
-      <div class="card"><div class="ch"><h3>Top flux de recettes 2023</h3></div><div class="sub">Perçu par l'État, USD</div><div class="chart" id="g2"></div></div>
-      <div class="card"><div class="ch"><h3>Contributeurs sociaux (cumul)</h3></div><div class="sub">2015–2024, USD</div><div class="chart" id="g3"></div></div>
-      <div class="card"><div class="ch"><h3>Production 2023 (part-à-tout)</h3></div><div class="sub">Valeur par substance</div><div class="chart" id="g4"></div></div>
-      <div class="card"><div class="ch"><h3>Exportations par produit</h3><span class="badge">Contextuel</span></div><div class="sub">Valeur cumulée déclarée</div><div class="chart" id="g5"></div></div>
-      <div class="card"><div class="ch"><h3>Effectifs par exercice</h3><span class="badge">Contextuel</span></div><div class="sub">Total employés déclarés</div><div class="chart" id="g6"></div></div>
-    </div>`;}
+    <div class="card"><div class="ch"><h3 id="vzTitle">Visualisation</h3></div><div class="chart" id="vzChart"></div></div>`;
+  const galleryHtml=`<div class="phead" style="margin-top:${uiMode==='public'?'0':'26'}px"><div class="eyebrow">Galerie</div><h1 style="font-size:20px">Analyses prêtes à l'emploi</h1></div>
+    <div class="gallery">${GALLERY_CARDS}</div>`;
+  if(uiMode==='public'&&!vizState.expertMode){
+    return `<div class="phead"><div class="eyebrow">Visualisations</div><h1>Analyses visuelles prêtes à l'emploi</h1><p data-edit="intros.viz">${esc(C.intros.viz)}</p></div>
+      ${galleryHtml}
+      <div class="explainbox" style="margin-top:18px"><h4>Envie d'aller plus loin ?</h4><p>Le générateur de visualisations permet de choisir librement n'importe quelle table, dimension, mesure et type de graphique de l'entrepôt.</p><button class="btn primary" id="vzExpertToggle">⚙ Mode Expert : générateur libre →</button></div>`;
+  }
+  return `<div class="phead"><div class="eyebrow">Visualisations</div><h1>Générateur de visualisations</h1><p data-edit="intros.viz">${esc(C.intros.viz)}</p></div>
+    ${uiMode==='public'?`<div style="margin-bottom:14px"><button class="btn" id="vzBackGallery">← Retour à la galerie</button></div>`:''}
+    ${genHtml}
+    ${galleryHtml}`;}
 function vizTypesFor(dimType){
   let types=[['bar','▊ Barres'],['hbar','▬ Barres H.'],['donut','◔ Secteurs'],['treemap','▦ Treemap'],['table','▤ Tableau']];
   if(dimType==='timeish')types=[['line','◟ Courbe'],['area','◣ Aire'],['bar','▊ Barres'],['table','▤ Tableau']];
@@ -698,7 +789,8 @@ function drawViz(){
   syncURL();
   const measure=vizState.measure==='__count__'?null:vizState.measure;
   const agg=vizState.measure==='__count__'?'count':vizState.agg;
-  $('#vzTitle').textContent=`${d.label} — ${agg==='count'?'nombre':agg} ${measure?'de '+measure:''} par ${vizState.dim}`;
+  const vzTitleTxt=`${d.label} — ${agg==='count'?'nombre':agg} ${measure?'de '+measure:''} par ${vizState.dim}`;
+  $('#vzTitle').textContent=vzTitleTxt;host.setAttribute('aria-label',vzTitleTxt);
   if(vizState.type==='hist'){cHistogram(host,vizState.ds,vizState.dim);return;}
   let data=aggregate(vizState.ds,vizState.dim,measure,agg,globalYear);
   const excNote=$('#vzExcNote');
@@ -727,24 +819,68 @@ function drawGallery(){
   cTreemap($('#g4'),[{label:'Cuivre',value:O.cuivre_val},{label:'Cobalt',value:O.cobalt_val},{label:'Diamant',value:O.diamant_val||O.diamant_c*10625},{label:'Pétrole',value:O.petrole*1e0}].filter(x=>x.value));
   if(AGG.export_produit)cBar($('#g5'),AGG.export_produit,css('--teal'),true);
   if(AGG.effectif_annee)cBar($('#g6'),AGG.effectif_annee.map(d=>({label:String(d.annee),value:d.value})),css('--violet'),false);
+  const g7=$('#g7');if(g7)cBar(g7,nationalRegieTop(8),css('--teal'),true);
+  const g8=$('#g8');if(g8)cLine(g8,sumByYear('fait_reconciliation_flux','etat_final'),true,css('--sky'));
 }
 function bindViz(){
-  $('#vzDs').onchange=e=>{vizState.ds=e.target.value;vizState.dim='';vizState.measure='';fillViz();};
-  $('#vzDim').onchange=e=>{vizState.dim=e.target.value;renderVizTypes();};
-  $('#vzMeasure').onchange=e=>{vizState.measure=e.target.value;applyMeasureSemantics();renderVizTypes();};
-  $('#vzAgg').onchange=e=>{vizState.agg=e.target.value;drawViz();};
-  $('#vzCsv').onclick=()=>{const measure=vizState.measure==='__count__'?null:vizState.measure;const agg=vizState.measure==='__count__'?'count':vizState.agg;const data=aggregate(vizState.ds,vizState.dim,measure,agg,globalYear);const csv=[[vizState.dim,agg].join(';')].concat(data.map(r=>[r.label,r.value].join(';'))).join('\n');saveFile('visualisation.csv',csv);};
-  const vzShareBtn=$('#vzShare');if(vzShareBtn)vzShareBtn.onclick=()=>copyShareLink(vzShareBtn);
-  fillViz();drawGallery();
+  const genPresent=!!$('#vzDs');
+  if(genPresent){
+    $('#vzDs').onchange=e=>{vizState.ds=e.target.value;vizState.dim='';vizState.measure='';fillViz();};
+    $('#vzDim').onchange=e=>{vizState.dim=e.target.value;renderVizTypes();};
+    $('#vzMeasure').onchange=e=>{vizState.measure=e.target.value;applyMeasureSemantics();renderVizTypes();};
+    $('#vzAgg').onchange=e=>{vizState.agg=e.target.value;drawViz();};
+    $('#vzCsv').onclick=()=>{const measure=vizState.measure==='__count__'?null:vizState.measure;const agg=vizState.measure==='__count__'?'count':vizState.agg;const data=aggregate(vizState.ds,vizState.dim,measure,agg,globalYear);const csv=[[vizState.dim,agg].join(';')].concat(data.map(r=>[r.label,r.value].join(';'))).join('\n');saveFile('visualisation.csv',csv);};
+    const vzShareBtn=$('#vzShare');if(vzShareBtn)vzShareBtn.onclick=()=>copyShareLink(vzShareBtn);
+    fillViz();
+  }
+  const vzExpertToggle=$('#vzExpertToggle');if(vzExpertToggle)vzExpertToggle.onclick=()=>{vizState.expertMode=true;$('#app').innerHTML=mViz();bindViz();};
+  const vzBackGallery=$('#vzBackGallery');if(vzBackGallery)vzBackGallery.onclick=()=>{vizState.expertMode=false;$('#app').innerHTML=mViz();bindViz();};
+  drawGallery();
 }
 
 /* Model */
+// ===== Classement architecture de l'entrepôt (audit qualité, sept. 2026) =====
+// La page « Modèle de données » distinguait jusqu'ici seulement 3 valeurs de
+// d.cat (faits/contextuel/tout le reste) et repliait tout le reste sur
+// l'étiquette « Dimension » — ce qui faisait passer des annexes brutes, des
+// entrepôts consolidés et des produits d'analyse (recommandations, synthèses
+// d'exigence…) pour de simples tables de dimension. datasetKind() distingue
+// 7 catégories d'architecture entrepôt, à partir de d.cat ET du nom de la
+// table (certaines familles de noms sont plus fiables que le seul d.cat).
+const KIND_LABELS={
+  source:'Source brute',
+  referentiel:'Référentiel',
+  dimension:'Dimension',
+  fait:'Fait',
+  entrepot:'Entrepôt consolidé',
+  analytique:'Produit analytique',
+  vue:'Vue calculée'
+};
+function datasetKind(name,d){
+  const cat=d&&d.cat;
+  if(name.startsWith('_'))return 'vue';                                    // _dictionnaire, _qualite
+  if(cat==='annexe'||name.startsWith('annexe_'))return 'source';           // annexes brutes déclarées telles quelles
+  if(name.includes('ref_'))return 'referentiel';                          // ref_canoniques, ref_entites_infranationales
+  if(cat==='faits'||name.startsWith('fait_'))return 'fait';
+  if(cat==='Entrepôt consolidé 2007-2023'||name.startsWith('regie_')||name.startsWith('ent_'))return 'entrepot';
+  // « contextuel » regroupe des tables de contexte ITIE 2023 dérivées des
+  // annexes (dépenses sociales, effectifs, exportations…) : ce sont des
+  // produits assemblés pour l'analyse thématique, pas des tables de
+  // dimension au sens entrepôt — l'audit cite justement les recommandations
+  // comme exemple de produit analytique à ne pas confondre avec une
+  // dimension ; on applique la même lecture aux autres tables ctx_*/cadrage_*.
+  if(cat==='Analyse par exigence ITIE 2023'||name.startsWith('ana_')||cat==='contextuel')return 'analytique';
+  return 'dimension';                                                      // dim_*, et repli par défaut (rare, à surveiller)
+}
+window.datasetKind=datasetKind;window.KIND_LABELS=KIND_LABELS;
 function mModel(){
-  const cards=Object.entries(DS).filter(([k])=>!k.startsWith('_')).map(([k,d])=>`<div class="tc"><div class="tct"><h4>${esc(d.label)}</h4><span class="tag ${d.cat}">${d.cat==='faits'?'Fait':d.cat==='contextuel'?'Contextuel':'Dimension'}</span></div>
+  const cards=Object.entries(DS).filter(([k])=>!k.startsWith('_')).map(([k,d])=>{const kind=datasetKind(k,d);
+    return `<div class="tc"><div class="tct"><h4>${esc(d.label)}</h4><span class="tag ${kind}">${esc(KIND_LABELS[kind])}</span></div>
     <div class="tn">${esc(k)} · ${fmtN(d.rows.length)} lignes · ${d.cols.length} colonnes</div><p>${esc(d.desc)}</p>
-    <div class="open" data-openex="${k}">Explorer cette table →</div></div>`).join('');
+    <div class="open" data-openex="${k}">Explorer cette table →</div></div>`;}).join('');
   const nT=Object.keys(DS).filter(k=>!k.startsWith('_')).length,nR=Object.entries(DS).filter(([k])=>!k.startsWith('_')).reduce((a,[,d])=>a+d.rows.length,0);
-  return `<div class="phead"><div class="eyebrow">Architecture</div><h1>Modèle de données</h1><p data-edit="intros.model">${esc(C.intros.model)}</p><p>${fmtN(nR)} lignes réparties sur ${nT} tables.</p></div>
+  return `<div class="phead"><div class="eyebrow">Architecture</div><h1>Modèle de données</h1><p data-edit="intros.model">${esc(C.intros.model)}</p><p>${fmtN(nR)} lignes réparties sur ${nT} tables.</p>
+    <p class="kindlegend">7 familles de tables composent l'entrepôt : les <b>sources brutes</b> reprennent les annexes déclarées telles quelles ; les <b>référentiels</b> harmonisent les libellés et codes ; les <b>dimensions</b> et les <b>faits</b> forment le modèle en étoile ; les <b>entrepôts consolidés</b> agrègent et dédoublonnent plusieurs exercices ; les <b>produits analytiques</b> répondent à une exigence ITIE (couverture, recommandations, synthèses) ; les <b>vues calculées</b> décrivent l'entrepôt lui-même (dictionnaire, qualité).</p></div>
     <div class="schema" id="schemaSvg"></div>
     <div class="tablecat">${cards}</div>`;}
 function drawSchema(){
@@ -769,9 +905,18 @@ let repFilter='all';
 function mReports(){const cats=[...new Set(C.reports.map(r=>r.categorie))];
   const chips=`<div class="filters"><button class="chip ${repFilter==='all'?'on':''}" data-f="all">Tous</button>`+cats.map(c=>`<button class="chip ${repFilter===c?'on':''}" data-f="${c}">${esc(CATS[c]||c)}</button>`).join('')+`</div>`;
   return `<div class="phead"><div class="eyebrow">Documents</div><h1>Rapports &amp; publications</h1><p data-edit="intros.reports">${esc(C.intros.reports)}</p></div>${chips}<div class="reports" id="repList"></div>`;}
+// Un lien qui pointe vers une page de listing générique (ex. ".../rapports/"
+// sans nom de fichier) n'est pas un téléchargement direct : l'étiqueter
+// « ↓ Télécharger » induit en erreur (audit sept. 2026 : deux rapports de
+// catégories différentes pointant tous deux vers la même page générique du
+// site source). On distingue donc le libellé selon la forme de l'URL plutôt
+// que de prétendre à un fichier précis qu'on ne peut pas garantir.
+function isGenericListingUrl(u){return /\/(rapports|publications)\/?$/i.test(String(u||'').split(/[?#]/)[0]);}
 function renderReports(){const list=$('#repList');if(!list)return;
   const rs=C.reports.filter(r=>repFilter==='all'||r.categorie===repFilter).sort((a,b)=>String(b.annees_couvertes).localeCompare(String(a.annees_couvertes)));
-  list.innerHTML=rs.map(r=>{const url=r.url&&r.url!=='#'?r.url:null;return `<div class="rep"><div class="yr">${esc(r.annees_couvertes||'')}</div><div><div class="t">${esc(r.titre)}</div><span class="cat">${esc(CATS[r.categorie]||r.categorie)}</span>${url?`<br><a class="dl" href="${esc(url)}" target="_blank" rel="noopener">↓ Télécharger (${esc((r.format||'pdf').toUpperCase())})</a>`:''}</div></div>`;}).join('')||`<div class="empty">Aucun rapport dans cette catégorie.</div>`;}
+  list.innerHTML=rs.map(r=>{const url=r.url&&r.url!=='#'?r.url:null;const generic=url&&isGenericListingUrl(url);
+    const linkHtml=url?(generic?`<br><a class="dl" href="${esc(url)}" target="_blank" rel="noopener">↗ Voir sur le site source (${esc((r.format||'pdf').toUpperCase())})</a>`:`<br><a class="dl" href="${esc(url)}" target="_blank" rel="noopener">↓ Télécharger (${esc((r.format||'pdf').toUpperCase())})</a>`):'';
+    return `<div class="rep"><div class="yr">${esc(r.annees_couvertes||'')}</div><div><div class="t">${esc(r.titre)}</div><span class="cat">${esc(CATS[r.categorie]||r.categorie)}</span>${linkHtml}</div></div>`;}).join('')||`<div class="empty">Aucun rapport dans cette catégorie.</div>`;}
 
 /* About */
 function mAbout(){const A=C.about,B=C.brand,F=C.footer,CT=C.contact;return `<div class="phead"><div class="eyebrow">Informations</div><h1 data-edit="about.titre">${esc(A.titre)}</h1></div>
@@ -841,8 +986,8 @@ function mQualite(){
     <div class="kpi"><div class="v">${negExp+negProd}</div><div class="l">Valeurs négatives signalées</div></div>
   </div>
   <div class="grid2">
-    <div class="card"><div class="ch"><h3>Complétude par table</h3><span class="badge">% renseigné</span></div><div class="sub">100 % − taux de cellules manquantes</div><div class="chart" id="q1"></div></div>
-    <div class="card"><div class="ch"><h3>Doublons exacts retirés par table</h3></div><div class="sub">Lignes identiques supprimées à l'intégration</div><div class="chart" id="q2"></div></div>
+    <div class="card"><div class="ch"><h3>Complétude par table</h3><span class="badge">% renseigné</span></div><div class="sub">100 % − taux de cellules manquantes</div><div class="chart" id="q1" aria-label="Complétude par table, pourcentage de cellules renseignées"></div></div>
+    <div class="card"><div class="ch"><h3>Doublons exacts retirés par table</h3></div><div class="sub">Lignes identiques supprimées à l'intégration</div><div class="chart" id="q2" aria-label="Doublons exacts retirés par table lors de l’intégration"></div></div>
   </div>
   <div style="height:18px"></div>
   <div class="card"><div class="ch"><h3>Traitements de nettoyage appliqués</h3></div>
@@ -877,12 +1022,19 @@ function drawQualite(){
 let dictQ='';
 function mDict(){
   return `<div class="phead"><div class="eyebrow">Métadonnées</div><h1>Dictionnaire de données</h1><p data-edit="intros.dict">${esc(C.intros.dict)}</p><p>${fmtN(DS._dictionnaire.rows.length)} colonnes documentées sur ${Object.keys(DS).filter(k=>!k.startsWith('_')).length} tables.</p></div>
-    <div class="extoolbar"><div class="exsearch"><span class="si">⌕</span><input id="dictQ" placeholder="Rechercher une table ou une colonne…" value="${esc(dictQ)}"></div><button class="btn" id="dictCsv">↓ Export CSV</button></div>
+    <div class="extoolbar"><div class="exsearch"><span class="si" aria-hidden="true">⌕</span><input id="dictQ" placeholder="Rechercher une table ou une colonne…" value="${esc(dictQ)}" aria-label="Rechercher une table ou une colonne"></div><button class="btn" id="dictCsv">↓ Export CSV</button></div>
     <div class="gridwrap"><div class="gridscroll"><table class="dg" id="dictTable"></table></div></div>`;}
 function renderDict(){
-  const t=$('#dictTable');if(!t)return;const d=DS._dictionnaire;const q=dictQ.toLowerCase();
-  let rows=d.rows.filter(r=>!q||r.some(v=>String(v).toLowerCase().includes(q)));
-  t.innerHTML=`<thead><tr>${d.cols.map(c=>`<th scope="col">${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows.slice(0,500).map(r=>`<tr>${r.map((v,i)=>`<td class="${d.types[i]==='num'?'num':''}">${esc(fmtCell(v,d.types[i]))}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  const t=$('#dictTable');if(!t)return;const d=DS._dictionnaire;const q=stripAccents(dictQ).toLowerCase();
+  let rows=d.rows.filter(r=>!q||r.some(v=>stripAccents(v).toLowerCase().includes(q)));
+  // La colonne « categorie » du dictionnaire (data/warehouse.seed.json) a été
+  // générée avec l'ancienne classification à 3 valeurs (Fait/Contextuel/
+  // Dimension) : on la ré-affiche ici à la volée avec datasetKind() plutôt
+  // que de retoucher le fichier de données figé.
+  const ciTable=d.cols.indexOf('table'),ciCat=d.cols.indexOf('categorie');
+  t.innerHTML=`<thead><tr>${d.cols.map(c=>`<th scope="col">${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows.slice(0,500).map(r=>`<tr>${r.map((v,i)=>{
+    if(i===ciCat&&ciTable>=0){const kind=datasetKind(r[ciTable],DS[r[ciTable]]);return `<td><span class="tag ${kind}">${esc(KIND_LABELS[kind]||v)}</span></td>`;}
+    return `<td class="${d.types[i]==='num'?'num':''}">${esc(fmtCell(v,d.types[i]))}</td>`;}).join('')}</tr>`).join('')}</tbody>`;
   const inp=$('#dictQ');if(inp)inp.oninput=e=>{dictQ=e.target.value;renderDict();const v=e.target.value;const el=$('#dictQ');el.focus();el.setSelectionRange(v.length,v.length);};
   const cb=$('#dictCsv');if(cb)cb.onclick=()=>exportCSV('_dictionnaire',rows);
 }
@@ -954,7 +1106,7 @@ function mGeo(){
           <div id="mapTip" style="position:absolute;pointer-events:none;display:none;background:var(--navy);color:#fff;padding:8px 11px;border-radius:8px;font-size:12px;z-index:5;box-shadow:0 6px 18px rgba(0,0,0,.3);max-width:240px"></div>
           <div style="display:flex;gap:14px;align-items:center;margin-top:10px;font-size:11.5px;color:var(--ink-soft);flex-wrap:wrap">
             <span id="mapLegend"></span>
-            <span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center">Molette : zoom · glisser : déplacer <button class="btn" id="mapZoomOut" style="padding:4px 11px;font-size:14px;line-height:1" title="Dézoomer">−</button><button class="btn" id="mapZoomIn" style="padding:4px 11px;font-size:14px;line-height:1" title="Zoomer">+</button><button class="btn" id="mapReset" style="padding:4px 10px">Réinitialiser</button><button class="btn" id="mapFull" style="padding:4px 10px" title="Afficher la carte en plein écran">⛶ Plein écran</button></span>
+            <span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center">Molette : zoom · glisser : déplacer <button class="btn" id="mapZoomOut" style="padding:4px 11px;font-size:14px;line-height:1" aria-label="Dézoomer la carte" title="Dézoomer">−</button><button class="btn" id="mapZoomIn" style="padding:4px 11px;font-size:14px;line-height:1" aria-label="Zoomer la carte" title="Zoomer">+</button><button class="btn" id="mapReset" style="padding:4px 10px">Réinitialiser</button><button class="btn" id="mapFull" style="padding:4px 10px" aria-label="Afficher la carte en plein écran" title="Afficher la carte en plein écran">⛶ Plein écran</button></span>
           </div>
         </div>
         <div id="mapPanel"></div>
@@ -962,10 +1114,10 @@ function mGeo(){
     </div>`:''}
     <div class="card" style="margin-bottom:18px"><div class="ch"><h3>Recettes nationales par régie perceptrice</h3><span class="badge" id="geoNatRegieBadge"></span></div>
       <div class="sub">DGI, DGRAD, DGDA, Trésor public, SGH, CAMI, FOMIN, FONAREV, OCC, CEEC, BCC… — Montant normalisé (USD), lignes de sous-total exclues. Suit le sélecteur Année/Évolution ci-dessus (indépendant de la couche cartographique choisie).</div>
-      <div class="chart" id="geoNatRegie"></div></div>
+      <div class="chart" id="geoNatRegie" aria-label="Recettes nationales par régie perceptrice"></div></div>
     <div class="grid2">
-      <div class="card"><div class="ch"><h3 id="geoRankTitle">Classement des provinces</h3></div><div class="sub" id="geoRankSub"></div><div class="chart" id="geoRank"></div></div>
-      <div class="card"><div class="ch"><h3>Évolution nationale de l'indicateur</h3></div><div class="sub">Somme sur toutes les provinces couvertes, par année</div><div class="chart" id="geoEvo"></div></div>
+      <div class="card"><div class="ch"><h3 id="geoRankTitle">Classement des provinces</h3></div><div class="sub" id="geoRankSub"></div><div class="chart" id="geoRank" aria-label="Classement des provinces"></div></div>
+      <div class="card"><div class="ch"><h3>Évolution nationale de l'indicateur</h3></div><div class="sub">Somme sur toutes les provinces couvertes, par année</div><div class="chart" id="geoEvo" aria-label="Évolution nationale de l'indicateur, somme sur toutes les provinces couvertes"></div></div>
     </div>
     <div class="card" style="margin-top:18px"><div class="ch"><h3>Paiements infranationaux — détail par entité perceptrice (DRP · ETD · DOT)</h3><span class="badge">Exigence ITIE 4.6</span></div>
       <div class="sub">Paiements <b>directs</b> des entreprises extractives aux entités locales, ventilés par exercice, province, type d'entité perceptrice (régie provinciale DRP, ETD — secteur/chefferie/commune, dotation OS DOT 0,3 %) et montant. Total infranational 2023 : 801,7 M USD (DRP 532,8 · ETD 165,1 · DOT 103,9), somme du détail des annexes. Le tableau de synthèse officiel (Tableau 60) affiche 797,7 M USD ; l’écart d’environ 4 M provient des paiements pétroliers perçus au Kongo Central (DGR-KC).</div>
@@ -1184,6 +1336,7 @@ function drawGeo(){
   const d=LY();
   const rt=$('#geoRankTitle');if(rt)rt.textContent='Classement des provinces';
   const rs=$('#geoRankSub');if(rs&&d)rs.textContent=d.label+' · '+(mapEvo?'cumul':curYear()||'');
+  const rankHost=$('#geoRank');if(rankHost&&d)rankHost.setAttribute('aria-label','Classement des provinces — '+d.label);
   const ranked=GEO?GEO.geometry.features.map(f=>({label:provName(f.properties.iso),value:unitVal(f.properties.iso)})).filter(x=>x.value>0):[];
   cBar($('#geoRank'),ranked,css('--sky'),true);
   // national evolution across years
@@ -1315,8 +1468,392 @@ function drawInfraTable(){const host=$('#geoInfra');if(!host)return;
   const ifShareBtn=$('#ifShare');if(ifShareBtn)ifShareBtn.onclick=()=>copyShareLink(ifShareBtn);
   syncURL();
 }
+/* ===== Parcours thématiques publics (Partie B) =====
+   Gabarit commun aux 11 pages du menu "Public" : une question en langage
+   clair (h1), jusqu'à 2 filtres, 3-5 KPI, un graphique principal + un
+   graphique de composition, un encadré méthodologique, un tableau limité à
+   7 colonnes maximum, et 3 exports (voir les données brutes dans
+   l'Explorateur, télécharger la table brute, exporter la vue). */
+function pickDefaultCols(name,max){
+  max=max||7;
+  const d=DS[name];if(!d)return [];
+  const tier1=[],tier2=[],tier3=[];
+  d.cols.forEach(c=>{const r=columnRole(name,c);
+    if(r==='dimension'||r==='additive')tier1.push(c);
+    else if(r==='id'||r==='page')tier3.push(c);
+    else tier2.push(c);});
+  let chosen=tier1.slice(0,max);
+  if(chosen.length<max)chosen=chosen.concat(tier2.slice(0,max-chosen.length));
+  if(chosen.length<max)chosen=chosen.concat(tier3.slice(0,max-chosen.length));
+  const chosenSet=new Set(chosen);
+  return d.cols.filter(c=>chosenSet.has(c)); // conserve l'ordre d'origine des colonnes
+}
+window.pickDefaultCols=pickDefaultCols;
+// Colonnes de l'Explorateur effectivement affichées : en mode Public (et hors
+// bascule locale "Afficher toutes les colonnes"), on limite à pickDefaultCols
+// (≤7) — comportement identique en Expert : toutes les colonnes.
+function exVisibleColIdx(name){
+  const d=DS[name];const allIdx=d.cols.map((_,i)=>i);
+  if(!(uiMode==='public'&&!exState.showAllCols))return allIdx;
+  const chosen=new Set(pickDefaultCols(name,7));
+  const idx=allIdx.filter(i=>chosen.has(d.cols[i]));
+  return idx.length?idx:allIdx;
+}
+function miniTable(cols,rows){
+  return `<div class="gridwrap"><div class="gridscroll"><table class="dg"><thead><tr>${cols.map(c=>`<th scope="col">${esc(c)}</th>`).join('')}</tr></thead><tbody>${
+    rows.length?rows.map(r=>`<tr>${r.map(v=>`<td>${esc(v==null?'':String(v))}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${cols.length}"><div class="empty">Aucune donnée pour cette sélection.</div></td></tr>`
+  }</tbody></table></div></div>`;
+}
+// Extrait, pour l'affichage, jusqu'à `limit` lignes d'une table (déjà
+// filtrées/triées par l'appelant) en ne gardant que les colonnes `cols`,
+// formatées comme dans l'Explorateur (fmtCell).
+function tableRowsFor(name,cols,rows,limit){
+  const d=DS[name];if(!d)return [];
+  const idxs=cols.map(c=>d.cols.indexOf(c));
+  return (rows||d.rows).slice(0,limit||30).map(r=>idxs.map((i,ci)=>i>=0?fmtCell(r[i],d.types[i],isYearLikeCol(name,cols[ci])):''));
+}
+function sumByYear(name,valCol){
+  const d=DS[name];if(!d)return [];
+  const yc=yearCol(name);const yi=yc?d.cols.indexOf(yc):-1,vi=d.cols.indexOf(valCol);
+  if(yi<0||vi<0)return [];
+  const map=new Map();
+  d.rows.forEach(r=>{const y=yearVal(r[yi]);if(!y)return;const v=Number(r[vi]);if(isNaN(v))return;map.set(y,(map.get(y)||0)+v);});
+  return [...map.entries()].map(([y,v])=>({label:y,value:v})).sort((a,b)=>a.label-b.label);
+}
+function sumAll(name,col){const d=DS[name];if(!d)return 0;const i=d.cols.indexOf(col);if(i<0)return 0;let s=0;d.rows.forEach(r=>{const v=Number(r[i]);if(!isNaN(v))s+=v;});return s;}
+function countDistinct(name,col,filterFn){const d=DS[name];if(!d)return 0;const i=d.cols.indexOf(col);if(i<0)return 0;const set=new Set();d.rows.forEach(r=>{if(filterFn&&!filterFn(r))return;if(r[i]!=null&&r[i]!=='')set.add(String(r[i]));});return set.size;}
+function latestYear(name){const d=DS[name];if(!d)return null;const yc=yearCol(name);if(!yc)return null;const yi=d.cols.indexOf(yc);let mx=null;d.rows.forEach(r=>{const y=yearVal(r[yi]);if(y&&(mx==null||y>mx))mx=y;});return mx;}
+function themePage(o){
+  const kpis=`<div class="kpis">`+o.kpis.map(k=>`<div class="kpi" ${k.title?`title="${esc(k.title)}"`:''}><div class="v">${k.v}</div><div class="l">${esc(k.l)}</div></div>`).join('')+`</div>`;
+  const mainCard=`<div class="card"><div class="ch"><h3>${esc(o.mainTitle)}</h3>${o.mainBadge?`<span class="badge">${esc(o.mainBadge)}</span>`:''}</div>${o.mainSub?`<div class="sub">${esc(o.mainSub)}</div>`:''}<div class="chart" id="${o.id}Main" aria-label="${esc(o.mainTitle+(o.mainSub?' — '+o.mainSub:''))}"></div></div>`;
+  const compCard=o.compTitle?`<div class="card"><div class="ch"><h3>${esc(o.compTitle)}</h3>${o.compBadge?`<span class="badge">${esc(o.compBadge)}</span>`:''}</div>${o.compSub?`<div class="sub">${esc(o.compSub)}</div>`:''}<div class="chart" id="${o.id}Comp" aria-label="${esc(o.compTitle+(o.compSub?' — '+o.compSub:''))}"></div></div>`:'';
+  const tableSection=o.tableDs?`<div class="card" style="margin-top:18px"><div class="ch"><h3>${esc(o.tableTitle||'Données détaillées')}</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" data-openex-mode="${esc(o.tableDs)}">▤ Voir les données brutes →</button>
+        <button class="btn" id="${o.id}RawCsv">↓ Télécharger les données brutes</button>
+        <button class="btn" id="${o.id}ViewCsv">↓ Exporter cette vue</button>
+      </div></div>
+      ${o.tableSub?`<div class="sub">${esc(o.tableSub)}</div>`:''}
+      <div id="${o.id}TableWrap"></div></div>`:'';
+  const cta=o.cta?`<div style="margin-top:14px"><a class="btn primary" href="#${o.cta.id}" data-go="${o.cta.id}">${esc(o.cta.label)} →</a></div>`:'';
+  return `<div class="phead"><div class="eyebrow">${esc(o.eyebrow)}</div><h1>${esc(o.question)}</h1>${o.sub?`<p>${esc(o.sub)}</p>`:''}</div>
+  ${o.caveat?`<div class="msg warn" style="display:block;margin-bottom:16px">${o.caveat}</div>`:''}
+  ${kpis}
+  <div class="grid2">${mainCard}${compCard}</div>
+  ${cta}
+  <div class="explainbox"><h4>Ce qu'il faut comprendre</h4>${o.explain}</div>
+  ${tableSection}
+  <details class="srcnote"><summary>Source et méthode</summary><div>${o.sourceNote}</div></details>`;
+}
+function mountThemeTable(o){
+  if(!o.tableDs)return;
+  const wrap=$('#'+o.id+'TableWrap');if(wrap)wrap.innerHTML=miniTable(o.tableCols,o.tableRows||[]);
+  const rawBtn=$('#'+o.id+'RawCsv');if(rawBtn)rawBtn.onclick=()=>exportCSV(o.tableDs,DS[o.tableDs].rows);
+  const viewBtn=$('#'+o.id+'ViewCsv');if(viewBtn)viewBtn.onclick=()=>{
+    const esc2=v=>{v=v==null?'':String(v);if(/^[=+\-@\t\r]/.test(v))v="'"+v;return /[",;\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+    const csv=[o.tableCols.join(';')].concat((o.tableRows||[]).map(r=>r.map(esc2).join(';'))).join('\n');
+    saveFile('vue_'+o.id+'.csv',csv);
+  };
+}
+// Un lien "Voir les données brutes" dans une page thématique bascule en mode
+// Expert et ouvre directement l'Explorateur sur la table source (pas de
+// sécurité en jeu : simple raccourci de navigation, voir Partie A).
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-openex-mode]');if(!b)return;
+  const name=b.dataset.openexMode;if(!DS[name])return;
+  exState.ds=name;exState.page=0;exState.sort=null;exState.q='';exState.filters={};
+  setUiMode('expert');go('explorer');
+});
+
+/* --- 2. Revenus extractifs --- */
+function mRevenus(){
+  const yrs=(AGG.serie_etat||[]).map(d=>d.annee);
+  const cols=pickDefaultCols('fait_total_annuel',7);
+  return themePage({id:'revenus',eyebrow:'Revenus extractifs',
+    question:"Combien l'État a-t-il perçu du secteur extractif, et pour quels sous-secteurs ?",
+    kpis:[
+      {v:fmtUSD(O.total),l:`Total recettes ${O._year||'2023'}`},
+      {v:fmtUSD(O.mines),l:'Dont secteur minier'},
+      {v:fmtUSD(O.petrole),l:'Dont hydrocarbures'},
+      {v:fmtN(O.entites||0),l:'Entreprises du périmètre'},
+      {v:yrs.length?yrs[0]+'–'+yrs[yrs.length-1]:'—',l:'Période couverte'},
+    ],
+    mainTitle:"Recettes de l'État par exercice",mainSub:'Millions USD · réconciliées',mainBadge:yrs.length?yrs[0]+'–'+yrs[yrs.length-1]:'',
+    compTitle:`Répartition ${O._year||'2023'}`,compSub:'Mines vs hydrocarbures',
+    explain:`<p>Ces montants proviennent de la table consolidée <code>fait_total_annuel</code> (recettes de l'État par exercice, ${yrs.length?yrs[0]+'–'+yrs[yrs.length-1]:'2007–2023'}) et des chiffres clés du dernier rapport ITIE-RDC publié. Ils regroupent l'ensemble des flux et régies percepteurs, tous secteurs extractifs confondus (mines et hydrocarbures).</p><p>Pour le détail par entreprise, voir le parcours « Entreprises et paiements » ; pour le détail par régie/flux percepteur, voir « Flux et entités perceptrices ».</p>`,
+    tableDs:'fait_total_annuel',tableTitle:'Recettes par exercice — détail',tableSub:'Table fait_total_annuel',tableCols:cols,
+    sourceNote:'Source : <code>fait_total_annuel</code> (recettes/paiements consolidés par exercice) et chiffres clés officiels ITIE-RDC. Montants en dollars américains (USD).'});
+}
+function drawRevenus(){
+  cLine($('#revenusMain'),(AGG.serie_etat||[]).map(d=>({label:d.annee,value:d.etat,ese:d.ese})),true,css('--sky'),css('--red'),'value','ese');
+  cDonut($('#revenusComp'),[{label:'Mines',value:O.mines},{label:'Hydrocarbures',value:O.petrole}]);
+  const cols=pickDefaultCols('fait_total_annuel',7);
+  const d=DS.fait_total_annuel;const yi=d?d.cols.indexOf(yearCol('fait_total_annuel')):-1;
+  const rows=d?d.rows.slice().sort((a,b)=>(yi>=0?yearVal(b[yi])-yearVal(a[yi]):0)):[];
+  mountThemeTable({id:'revenus',tableDs:'fait_total_annuel',tableCols:cols,tableRows:tableRowsFor('fait_total_annuel',cols,rows,50)});
+}
+
+/* --- 3. Entreprises et paiements --- */
+function mEntreprises(){
+  const ly=latestYear('ent_revenus_entreprise');
+  const secteurs=aggregate('ent_revenus_entreprise','Secteur','Montant normalisé','sum');
+  const totLatest=sumAll('ent_revenus_entreprise','Montant normalisé');
+  const top1=(AGG.top2023||[])[0];
+  return themePage({id:'entreprises',eyebrow:'Entreprises et paiements',
+    question:'Quelles entreprises paient le plus, et combien ?',
+    kpis:[
+      {v:top1?fmtUSD(top1.etat):'—',l:top1?`Plus gros contributeur (${top1.nom.length>22?top1.nom.slice(0,21)+'…':top1.nom})`:'Plus gros contributeur'},
+      {v:fmtUSD(totLatest),l:`Total déclaré ${ly||''}`},
+      {v:fmtN(countDistinct('ent_revenus_entreprise','Entreprise (nom canonique)')),l:'Entreprises distinctes (toutes années)'},
+      {v:fmtN((AGG.top2023||[]).length),l:'Entreprises du classement Top'},
+    ],
+    mainTitle:`Principales entreprises ${O._topyear||ly||''}`,mainSub:"Recettes perçues par l'État, USD",mainBadge:'Top 10',
+    compTitle:`Répartition par secteur ${ly||''}`,compSub:'Montants déclarés, tous rapports',
+    explain:`<p>Les montants proviennent de la table consolidée <code>ent_revenus_entreprise</code> (paiements déclarés par entreprise et par exercice, tous rapports ITIE-RDC) et du classement <code>top2023</code> calculé sur le dernier exercice disponible côté État. Les lignes de sous-total (« Total », « Toutes entités »…) sont exclues du classement pour éviter les doubles comptes.</p><p>Un même paiement peut être déclaré à la fois par l'entreprise et par l'État (colonne « Déclaré par ») : consultez l'Explorateur pour distinguer les deux sources.</p>`,
+    tableDs:'ent_revenus_entreprise',tableTitle:'Top entreprises — détail des déclarations',tableSub:`Table ent_revenus_entreprise, triée par montant décroissant${ly?' ('+ly+')':''}`,
+    tableCols:pickDefaultCols('ent_revenus_entreprise',7),
+    sourceNote:'Source : <code>ent_revenus_entreprise</code> (entrepôt consolidé 2007-2023) et <code>fait_reconciliation_entreprise</code> (colonnes etat_initial/etat_final/etat_ajustement uniquement — voir le parcours « Réconciliation »).'});
+}
+function drawEntreprises(){
+  cBar($('#entreprisesMain'),(AGG.top2023||[]).map(d=>({label:d.nom,value:d.etat})),css('--sky'),true);
+  cDonut($('#entreprisesComp'),aggregate('ent_revenus_entreprise','Secteur','Montant normalisé','sum'));
+  const d=DS.ent_revenus_entreprise;const ly=latestYear('ent_revenus_entreprise');
+  const cols=pickDefaultCols('ent_revenus_entreprise',7);
+  let rows=[];
+  if(d){const ei=d.cols.indexOf('Exercice'),ni=d.cols.indexOf('Entreprise (nom canonique)'),mi=d.cols.indexOf('Montant normalisé');
+    rows=d.rows.filter(r=>(!ly||yearVal(r[ei])===ly)&&r[ni]&&!isRollupEntityLabel(r[ni])).sort((a,b)=>(Number(b[mi])||0)-(Number(a[mi])||0));
+  }
+  mountThemeTable({id:'entreprises',tableDs:'ent_revenus_entreprise',tableCols:cols,tableRows:tableRowsFor('ent_revenus_entreprise',cols,rows,30)});
+}
+
+/* --- 4. Flux et entités perceptrices --- */
+function mFlux(){
+  const regieTot=nationalRegieTop(999).reduce((a,d)=>a+d.value,0);
+  const topFlux=(AGG.flux2023||[])[0];
+  return themePage({id:'flux',eyebrow:'Flux et entités perceptrices',
+    question:"Qui perçoit les recettes de l'État, et par quel flux ?",
+    kpis:[
+      {v:fmtUSD(regieTot),l:'Total perçu par les régies nationales (cumul)'},
+      {v:fmtN(countDistinct('ent_revenus_entite','Entité perceptrice harmonisée')),l:'Entités perceptrices distinctes'},
+      {v:topFlux?fmtUSD(topFlux.etat):'—',l:topFlux?`Premier flux 2023 (${topFlux.flux.replace(/\s*\(.*$/,'').slice(0,26)})`:'Premier flux 2023'},
+      {v:fmtN((AGG.flux2023||[]).length),l:'Flux distincts (2023)'},
+    ],
+    mainTitle:'Recettes par régie perceptrice nationale',mainSub:'DGI, DGRAD, DGDA, CAMI, SGH, OCC… — cumul, USD',mainBadge:'Toutes années',
+    compTitle:'Recettes par niveau de perception',compSub:'National vs provincial, ETD, entreprises publiques',
+    explain:`<p>Les recettes de l'État transitent par plusieurs régies percevantes (DGI, DGRAD, DGDA, CAMI, SGH, OCC, FONAREV, FOMIN, BCC, Trésor public…) et par plusieurs niveaux (national, provincial, entités territoriales décentralisées, entreprises publiques). Les libellés « Total »/« Toutes entités » sont exclus des classements par entité pour éviter les doubles comptes avec les lignes qu'ils recouvrent déjà.</p><p>Le détail territorial (province par province) est traité dans le parcours « Territoires et paiements infranationaux ».</p>`,
+    tableDs:'ent_revenus_entite',tableTitle:'Entités perceptrices — détail',tableSub:'Table ent_revenus_entite, triée par montant décroissant',
+    tableCols:pickDefaultCols('ent_revenus_entite',7),
+    sourceNote:'Source : <code>ent_revenus_entite</code> (entrepôt consolidé), tables <code>regie_*</code> (DGI, DGRAD, DGDA, CAMI, SGH, FOMIN, FONAREV, OCC, CEEC, BCC, Trésor public) et <code>AGG.flux2023</code>.'});
+}
+function drawFlux(){
+  cBar($('#fluxMain'),nationalRegieTop(12),css('--teal'),true);
+  cDonut($('#fluxComp'),revenueLevelBreakdown());
+  const d=DS.ent_revenus_entite;const cols=pickDefaultCols('ent_revenus_entite',7);
+  let rows=[];
+  if(d){const ci=d.cols.indexOf('Entité perceptrice harmonisée'),mi=d.cols.indexOf('Montant normalisé');
+    rows=d.rows.filter(r=>r[ci]&&!isRollupEntityLabel(r[ci])).sort((a,b)=>(Number(b[mi])||0)-(Number(a[mi])||0));
+  }
+  mountThemeTable({id:'flux',tableDs:'ent_revenus_entite',tableCols:cols,tableRows:tableRowsFor('ent_revenus_entite',cols,rows,40)});
+}
+
+/* --- 5. Réconciliation --- */
+// Caveat impératif (audit qualité, sept. 2026) : difference_initiale et
+// difference_finale de fait_reconciliation_flux/entreprise contiennent des
+// valeurs incohérentes avec etat_initial/etat_final (somme ~622 Md USD, sans
+// signification). Seules etat_initial/etat_final/etat_ajustement sont
+// fiables (Σetat_final − Σetat_initial = Σetat_ajustement, vérifié). Cette
+// page n'utilise donc JAMAIS difference_initiale/difference_finale, ni en
+// KPI, ni en graphique, ni en colonne de tableau.
+const RECON_CAVEAT="⚠ <b>Limite connue des données</b> : l'écart déclaré par les sociétés (colonnes « difference_initiale »/« difference_finale ») n'est pas disponible dans cette table pour le moment — ces colonnes contiennent des valeurs incohérentes avec les montants État de la même ligne. Les valeurs <b>État</b> (etat_initial, etat_ajustement, etat_final) sont fiables et vérifiées en interne (Σetat_final − Σetat_initial = Σetat_ajustement). Un écart global fiable entre État et Sociétés ne peut donc pas être calculé avec les données actuelles.";
+function mReconciliation(){
+  const initTot=sumAll('fait_reconciliation_flux','etat_initial')+sumAll('fait_reconciliation_entreprise','etat_initial');
+  const finalTot=sumAll('fait_reconciliation_flux','etat_final')+sumAll('fait_reconciliation_entreprise','etat_final');
+  const ajustTot=sumAll('fait_reconciliation_flux','etat_ajustement')+sumAll('fait_reconciliation_entreprise','etat_ajustement');
+  return themePage({id:'reconciliation',eyebrow:'Réconciliation',
+    question:"Les montants déclarés par l'État sont-ils cohérents dans le temps ?",
+    caveat:RECON_CAVEAT,
+    kpis:[
+      {v:fmtUSD(initTot),l:'Σ État initial (avant ajustement)'},
+      {v:fmtUSD(ajustTot),l:'Σ ajustements (audit/reconciliation)'},
+      {v:fmtUSD(finalTot),l:'Σ État final (après ajustement)'},
+      {v:fmtN(DS.fait_reconciliation_flux?DS.fait_reconciliation_flux.rows.length:0),l:'Lignes de réconciliation par flux'},
+      {v:fmtN(DS.fait_reconciliation_entreprise?DS.fait_reconciliation_entreprise.rows.length:0),l:'Lignes de réconciliation par entreprise'},
+    ],
+    mainTitle:'État initial vs État final, par exercice',mainSub:'Σ etat_initial / Σ etat_final, USD · fait_reconciliation_flux',mainBadge:'Fiable',
+    compTitle:'Ajustements par exercice',compSub:'Σ etat_ajustement, USD',
+    explain:`<p>Chaque ligne de réconciliation ITIE compare, pour un flux ou une entreprise donnés, le montant « État » déclaré avant audit (etat_initial), les ajustements opérés lors du processus de conciliation (etat_ajustement) et le montant final retenu (etat_final). Ces trois colonnes sont internement cohérentes (Σetat_final − Σetat_initial = Σetat_ajustement) et constituent donc la mesure fiable de ce que la table peut démontrer : la cohérence des montants État dans le temps.</p><p>Cette page ne prétend PAS mesurer l'écart entre les montants déclarés par l'État et ceux déclarés par les sociétés — voir l'encadré ci-dessus.</p>`,
+    tableDs:'fait_reconciliation_flux',tableTitle:'Réconciliation par flux — détail (colonnes fiables uniquement)',
+    tableSub:'Table fait_reconciliation_flux — difference_initiale/difference_finale volontairement exclues (non fiables)',
+    tableCols:['exercice_id','flux_libelle','regie_libelle','etat_initial','etat_ajustement','etat_final','devise'],
+    sourceNote:'Source : <code>fait_reconciliation_flux</code> et <code>fait_reconciliation_entreprise</code>. Seules les colonnes etat_initial/etat_ajustement/etat_final sont utilisées sur cette page ; difference_initiale/difference_finale sont exclues (voir la limite ci-dessus).'});
+}
+function drawReconciliation(){
+  const ini=sumByYear('fait_reconciliation_flux','etat_initial'),fin=sumByYear('fait_reconciliation_flux','etat_final');
+  const byYear=ini.map(d=>({label:d.label,value:d.value,fin:(fin.find(f=>f.label===d.label)||{}).value||0}));
+  cLine($('#reconciliationMain'),byYear,true,css('--sky'),css('--red'),'value','fin');
+  cBar($('#reconciliationComp'),sumByYear('fait_reconciliation_flux','etat_ajustement').map(d=>({label:String(d.label),value:d.value})),css('--amber'),false);
+  const cols=['exercice_id','flux_libelle','regie_libelle','etat_initial','etat_ajustement','etat_final','devise'];
+  const d=DS.fait_reconciliation_flux;
+  const rows=d?d.rows.slice().sort((a,b)=>(Number(b[d.cols.indexOf('etat_final')])||0)-(Number(a[d.cols.indexOf('etat_final')])||0)):[];
+  mountThemeTable({id:'reconciliation',tableDs:'fait_reconciliation_flux',tableCols:cols,tableRows:tableRowsFor('fait_reconciliation_flux',cols,rows,40)});
+}
+
+/* --- 6. Territoires et paiements infranationaux (landing court vers #geo) --- */
+function mTerritoires(){
+  const geoTot=(AGG.geo_prov||[]).reduce((a,d)=>a+(d.value||0),0);
+  const regieTot=nationalRegieTop(999).reduce((a,d)=>a+d.value,0);
+  return themePage({id:'territoires',eyebrow:'Territoires',
+    question:"Comment les recettes extractives se répartissent-elles entre l'État central et les provinces ?",
+    kpis:[
+      {v:fmtUSD(geoTot),l:'Paiements infranationaux (détail territorial)'},
+      {v:fmtN(Object.keys((GEO&&GEO.prov_ref)||{}).length),l:'Provinces référencées (RDC)'},
+      {v:fmtUSD(regieTot),l:'Recettes des régies nationales (cumul)'},
+      {v:fmtN(DS.ctx_paiement_infranational_detail?DS.ctx_paiement_infranational_detail.rows.length:0),l:'Paiements infranationaux détaillés'},
+    ],
+    mainTitle:'Recettes par régie nationale',mainSub:'DGI, DGRAD, DGDA, CAMI… — cumul, USD',
+    compTitle:'Top provinces (paiements infranationaux)',compSub:'Valeur cumulée, USD',
+    cta:{id:'geo',label:'Explorer la carte interactive complète'},
+    explain:`<p>La grande majorité des recettes extractives transite par les régies nationales (DGI, DGRAD, DGDA, CAMI…). Une partie des paiements est cependant versée directement au niveau provincial ou aux entités territoriales décentralisées (ETD), ou effectuée par les entreprises publiques. Cette page en donne un premier aperçu chiffré ; la page Géographie propose la carte interactive complète (par province, territoire, indicateur et année).</p>`,
+    tableDs:'ctx_paiement_infranational_detail',tableTitle:'Paiements infranationaux — détail',tableSub:'Table ctx_paiement_infranational_detail, triée par montant décroissant',
+    tableCols:pickDefaultCols('ctx_paiement_infranational_detail',7),
+    sourceNote:'Source : <code>ctx_paiement_infranational_detail</code>, <code>ent_revenus_entite</code> (niveaux National/Provincial/ETD) et <code>AGG.geo_prov</code>. Voir la page Géographie (mode Expert) pour le détail complet par province/territoire/indicateur/année.'});
+}
+function drawTerritoires(){
+  cBar($('#territoiresMain'),nationalRegieTop(8),css('--teal'),true);
+  const geoBars=(AGG.geo_prov||[]).map(d=>({label:d.nom||d.geo_id,value:d.value})).sort((a,b)=>b.value-a.value);
+  cBar($('#territoiresComp'),geoBars,css('--violet'),true);
+  const d=DS.ctx_paiement_infranational_detail;const cols=pickDefaultCols('ctx_paiement_infranational_detail',7);
+  const rows=d?d.rows.slice().sort((a,b)=>(Number(b[d.cols.indexOf('montant_usd')])||0)-(Number(a[d.cols.indexOf('montant_usd')])||0)):[];
+  mountThemeTable({id:'territoires',tableDs:'ctx_paiement_infranational_detail',tableCols:cols,tableRows:tableRowsFor('ctx_paiement_infranational_detail',cols,rows,30)});
+}
+
+/* --- 7. Production et exportations --- */
+function mProduction(){
+  return themePage({id:'production',eyebrow:'Production et exportations',
+    question:"Combien la RDC produit-elle et exporte-t-elle de ressources extractives ?",
+    kpis:[
+      {v:fmtN(O.cuivre_t),l:'Cuivre produit (t)'},
+      {v:fmtN(O.cobalt_t),l:'Cobalt produit (t)'},
+      {v:fmtN(O.diamant_c),l:'Diamant (carats)'},
+      {v:fmtN(O.petrole_bbl),l:'Pétrole (barils)'},
+    ],
+    mainTitle:`Production ${O._year||'2023'} — répartition par substance`,mainSub:'Valeur déclarée, part-à-tout',
+    compTitle:'Exportations par produit',compSub:'Valeur cumulée déclarée, USD',
+    explain:`<p>Les volumes et valeurs de production/exportation sont déclarés directement par les entreprises extractives dans les rapports ITIE-RDC (tables <code>ctx_production</code>/<code>ctx_exportation</code>, entrepôt consolidé <code>ent_production</code>/<code>ent_exportations</code>). Les chiffres clés officiels (cuivre, cobalt, diamant, pétrole) proviennent du dernier rapport publié.</p><p>Les unités de volume et de valeur varient selon le produit et la source (tonnes, carats, barils, USD…) — consultez toujours la colonne « Unité » avant de comparer deux lignes.</p>`,
+    tableDs:'ctx_production',tableTitle:'Production déclarée — détail par entreprise et produit',tableSub:'Table ctx_production, triée par valeur décroissante',
+    tableCols:pickDefaultCols('ctx_production',7),
+    sourceNote:'Source : <code>ctx_production</code>, <code>ctx_exportation</code>, <code>ent_production</code>, <code>ent_exportations</code> et chiffres clés officiels ITIE-RDC.'});
+}
+function drawProduction(){
+  cTreemap($('#productionMain'),AGG.prod_produit||[]);
+  cBar($('#productionComp'),AGG.export_produit||[],css('--teal'),true);
+  const d=DS.ctx_production;const cols=pickDefaultCols('ctx_production',7);
+  const rows=d?d.rows.slice().sort((a,b)=>(Number(b[d.cols.indexOf('Valeur_totale')])||0)-(Number(a[d.cols.indexOf('Valeur_totale')])||0)):[];
+  mountThemeTable({id:'production',tableDs:'ctx_production',tableCols:cols,tableRows:tableRowsFor('ctx_production',cols,rows,40)});
+}
+
+/* --- 8. Dépenses sociales et environnementales --- */
+function mDepenses(){
+  const socialTot=(AGG.social||[]).reduce((a,d)=>a+d.montant,0);
+  const envTot=sumAll('ctx_depense_environnementale','Total depense');
+  const top1=(AGG.top_social||[])[0];
+  return themePage({id:'depenses',eyebrow:'Dépenses sociales et environnementales',
+    question:"Combien les entreprises extractives dépensent-elles pour les communautés et l'environnement ?",
+    kpis:[
+      {v:fmtUSD(socialTot),l:'Total dépenses sociales déclarées (cumul)'},
+      {v:fmtUSD(envTot),l:'Total dépenses environnementales déclarées'},
+      {v:top1?fmtUSD(top1.total):'—',l:top1?`Premier contributeur (${top1.nom.length>22?top1.nom.slice(0,21)+'…':top1.nom})`:'Premier contributeur'},
+      {v:fmtN(DS.fait_depense_sociale?DS.fait_depense_sociale.rows.length:0),l:'Lignes de dépense sociale déclarées'},
+    ],
+    mainTitle:'Dépenses sociales par exercice',mainSub:'Total annuel, USD',mainBadge:(AGG.social&&AGG.social.length)?AGG.social[0].annee+'–'+AGG.social[AGG.social.length-1].annee:'',
+    compTitle:'Répartition par secteur',compSub:'Minier vs pétrolier, USD',
+    explain:`<p>Les dépenses sociales couvrent les contributions volontaires ou obligatoires des entreprises extractives aux communautés locales (infrastructures, santé, éducation…), déclarées dans <code>fait_depense_sociale</code>/<code>ctx_depense_sociale</code>. Les dépenses environnementales (réhabilitation, gestion des rejets…) proviennent de <code>ctx_depense_environnementale</code>, une table beaucoup plus réduite (moins d'entreprises déclarantes).</p><p>Ces montants sont déclaratifs et non audités au même niveau que les recettes de réconciliation État/Sociétés.</p>`,
+    tableDs:'fait_depense_sociale',tableTitle:'Dépenses sociales — détail',tableSub:'Table fait_depense_sociale, triée par montant décroissant',
+    tableCols:pickDefaultCols('fait_depense_sociale',7),
+    sourceNote:'Source : <code>fait_depense_sociale</code>, <code>ctx_depense_sociale</code>, <code>ctx_depense_environnementale</code>, <code>ent_depenses_sociales</code>.'});
+}
+function drawDepenses(){
+  cBar($('#depensesMain'),(AGG.social||[]).map(d=>({label:String(d.annee),value:d.montant})),css('--red'),false);
+  cDonut($('#depensesComp'),(AGG.social_secteur||[]).map(d=>({label:d.secteur,value:d.montant})));
+  const d=DS.fait_depense_sociale;const cols=pickDefaultCols('fait_depense_sociale',7);
+  const rows=d?d.rows.slice().sort((a,b)=>(Number(b[d.cols.indexOf('montant')])||0)-(Number(a[d.cols.indexOf('montant')])||0)):[];
+  mountThemeTable({id:'depenses',tableDs:'fait_depense_sociale',tableCols:cols,tableRows:tableRowsFor('fait_depense_sociale',cols,rows,40)});
+}
+
+/* --- 9. Titres, licences et propriété effective --- */
+// Note (audit qualité) : ctx_propriete peut contenir des noms de personnes
+// physiques (bénéficiaires effectifs) — conformément à la position affichée
+// ailleurs dans ce site ("toutes ces données sont publiques"), ces noms ne
+// sont NI masqués NI omis ici : ils sont présentés tels quels, comme le reste
+// des données de l'entrepôt.
+function mTitres(){
+  const permitsTot=DS.cami_droits_miniers?DS.cami_droits_miniers.rows.length:0;
+  return themePage({id:'titres',eyebrow:'Titres, licences et propriété effective',
+    question:'Qui détient les titres miniers, et qui sont les bénéficiaires effectifs des entreprises extractives ?',
+    kpis:[
+      {v:fmtN(permitsTot),l:'Titres miniers enregistrés (CAMI)'},
+      {v:fmtN(countDistinct('cami_droits_miniers','TITULAIRES')),l:'Titulaires distincts'},
+      {v:fmtN(countDistinct('ctx_propriete','BENEFICIAIRE')),l:'Bénéficiaires effectifs déclarés (distincts)'},
+      {v:fmtN(countDistinct('ctx_propriete','SOCIETE')),l:'Sociétés ayant déclaré leur actionnariat'},
+    ],
+    mainTitle:'Titres miniers par statut',mainSub:'Registre CAMI — nombre de titres',
+    compTitle:'Bénéficiaires effectifs par nationalité déclarée',compSub:'Table ctx_propriete — nombre de déclarations',
+    explain:`<p>Le registre des droits miniers (<code>cami_droits_miniers</code>) recense les permis octroyés par la Commission Ad hoc/CAMI : titulaire, nature du titre, statut, dates d'octroi/expiration, localisation. La table de propriété effective (<code>ctx_propriete</code>) recense les personnes physiques ou morales qui détiennent, in fine, le contrôle des entreprises extractives (participation directe/indirecte, fonction, personnes politiquement exposées).</p><p>Conformément à la politique de transparence de cet entrepôt, les noms des bénéficiaires effectifs déclarés ne sont ni masqués ni omis : ils sont publiés tels que rapportés par les entreprises.</p>`,
+    tableDs:'ctx_propriete',tableTitle:'Bénéficiaires effectifs déclarés — détail',tableSub:'Table ctx_propriete',
+    tableCols:['Année','SOCIETE','BENEFICIAIRE','Nationalité','FONCTION',"Pourcentage d'action",'PPE'],
+    sourceNote:'Source : <code>cami_droits_miniers</code> (registre des titres miniers) et <code>ctx_propriete</code> (propriété effective, déclarative). Voir aussi <code>ctx_effectif</code> (effectifs employés par société).'});
+}
+function drawTitres(){
+  cDonut($('#titresMain'),aggregate('cami_droits_miniers','STATUS',null,'count'));
+  cBar($('#titresComp'),aggregate('ctx_propriete','Nationalité',null,'count'),css('--violet'),true);
+  const cols=['Année','SOCIETE','BENEFICIAIRE','Nationalité','FONCTION',"Pourcentage d'action",'PPE'];
+  const d=DS.ctx_propriete;
+  const rows=d?d.rows.slice().sort((a,b)=>String(a[d.cols.indexOf('SOCIETE')]||'').localeCompare(String(b[d.cols.indexOf('SOCIETE')]||''))):[];
+  mountThemeTable({id:'titres',tableDs:'ctx_propriete',tableCols:cols,tableRows:tableRowsFor('ctx_propriete',cols,rows,40)});
+}
+
+/* --- 11. Données ouvertes --- */
+function mDonneesOuvertes(){
+  const nT=Object.keys(DS).filter(k=>!k.startsWith('_')).length;
+  const nR=Object.entries(DS).filter(([k])=>!k.startsWith('_')).reduce((a,[,d])=>a+d.rows.length,0);
+  return `<div class="phead"><div class="eyebrow">Données ouvertes</div><h1>Comment réutiliser ces données ?</h1>
+    <p>Toutes les données publiées sur ce site sont des données publiques ITIE-RDC : elles peuvent être librement téléchargées, réutilisées et republiées, avec mention de la source.</p></div>
+    <div class="kpis">
+      <div class="kpi"><div class="v">${fmtN(nT)}</div><div class="l">Tables ouvertes dans l'entrepôt</div></div>
+      <div class="kpi"><div class="v">${fmtN(nR)}</div><div class="l">Lignes de données au total</div></div>
+      <div class="kpi"><div class="v">2</div><div class="l">Points d'accès API (JSON)</div></div>
+      <div class="kpi"><div class="v">${esc(C.about&&C.about.derniere_maj||WH.generated||'—')}</div><div class="l">Dernière actualisation</div></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><h3 style="margin-bottom:10px">API ouverte (JSON)</h3>
+        <p style="font-size:13.5px;color:var(--ink-soft);line-height:1.7">L'intégralité de l'entrepôt est accessible sans authentification via deux points d'accès en lecture :</p>
+        <pre style="background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-family:'IBM Plex Mono';font-size:12px;overflow:auto">GET /api/warehouse   → toutes les tables, agrégats et statistiques
+GET /api/datasets    → liste des tables disponibles</pre>
+        <button class="btn primary" id="doExportJson">↓ Télécharger l'entrepôt complet (JSON)</button>
+      </div>
+      <div class="card"><h3 style="margin-bottom:10px">Licence et attribution</h3>
+        <p style="font-size:13.5px;color:var(--ink-soft);line-height:1.8">${esc((C.about&&C.about.licence)||"Licence ouverte — réutilisation libre à des fins non commerciales, avec mention de la source (ITIE-RDC / TransparenceRDC).")}</p>
+        <p style="font-size:12.5px;color:var(--ink-faint);margin-top:10px">Pour une réutilisation table par table (CSV), utilisez le bouton « Télécharger les données brutes » présent sur chacun des parcours thématiques, ou l'Explorateur en mode Expert.</p>
+      </div>
+    </div>
+    <div class="explainbox"><h4>Ce qu'il faut comprendre</h4><p>« Données ouvertes » ne signifie pas « données non vérifiées » : chaque table reste rattachée à sa source (rapport ITIE-RDC, exercice, page) via l'Explorateur. Les limites connues de certaines tables (voir notamment le parcours « Réconciliation ») sont documentées plutôt que masquées.</p></div>`;
+}
+function drawDonneesOuvertes(){
+  const b=$('#doExportJson');if(b)b.onclick=()=>saveFile('transparencerdc_entrepot_complet.json',JSON.stringify(WH,null,1));
+}
+
 const MODULES={
   overview:{t:"Vue d'ensemble",f:mOverview,d:drawOverview},
+  revenus:{t:"Revenus extractifs",f:mRevenus,d:drawRevenus},
+  entreprises:{t:"Entreprises et paiements",f:mEntreprises,d:drawEntreprises},
+  flux:{t:"Flux et entités perceptrices",f:mFlux,d:drawFlux},
+  reconciliation:{t:"Réconciliation",f:mReconciliation,d:drawReconciliation},
+  territoires:{t:"Territoires et paiements infranationaux",f:mTerritoires,d:drawTerritoires},
+  production:{t:"Production et exportations",f:mProduction,d:drawProduction},
+  depenses:{t:"Dépenses sociales et environnementales",f:mDepenses,d:drawDepenses},
+  titres:{t:"Titres, licences et propriété effective",f:mTitres,d:drawTitres},
+  rapports:{t:"Rapports, sources et méthodologie",f:mReports,d:renderReports},
+  donnees_ouvertes:{t:"Données ouvertes",f:mDonneesOuvertes,d:drawDonneesOuvertes},
   explorer:{t:"Explorateur de données",f:mExplorer,d:renderExplorer},
   viz:{t:"Visualisations",f:mViz,d:bindViz},
   geo:{t:"Géographie",f:mGeo,d:drawGeo},
@@ -1326,21 +1863,65 @@ const MODULES={
   reports:{t:"Rapports",f:mReports,d:renderReports},
   about:{t:"À propos",f:mAbout,d:()=>{}},
 };
-const NAV=[
+// NAV_PUBLIC : les 11 parcours thématiques en langage clair (mode "Public",
+// audit externe sept. 2026 — architecture d'information publique proposée
+// en remplacement de l'outillage technique brut comme expérience par
+// défaut). NAV_EXPERT : navigation technique historique, inchangée,
+// réservée au mode "Expert" (Explorateur, générateur de visualisations
+// libre, Modèle de données, Dictionnaire, Qualité des données).
+const NAV_PUBLIC=[
+  {g:'Parcours thématiques',items:[
+    ['overview','◧',"Vue d'ensemble"],
+    ['revenus','◈','Revenus extractifs'],
+    ['entreprises','▦','Entreprises et paiements'],
+    ['flux','⇄','Flux et entités perceptrices'],
+    ['reconciliation','✓','Réconciliation'],
+    ['territoires','🗺','Territoires et paiements infranationaux'],
+    ['production','⛏','Production et exportations'],
+    ['depenses','♥','Dépenses sociales et environnementales'],
+    ['titres','▤','Titres, licences et propriété effective'],
+    ['rapports','▥','Rapports, sources et méthodologie'],
+    ['donnees_ouvertes','⇩','Données ouvertes'],
+  ]},
+];
+const NAV_EXPERT=[
   {g:'Analyse',items:[['overview','◧',"Vue d'ensemble"],['viz','◫','Visualisations'],['explorer','▤','Explorateur'],['geo','◈','Géographie']]},
   {g:'Structure',items:[['model','✳','Modèle de données'],['dict','▥','Dictionnaire'],['qualite','✓','Qualité des données'],['reports','▦','Rapports']]},
   {g:'',items:[['about','ⓘ','À propos']]},
 ];
 
+/* ===== Mode Public / Expert (Partie A) =====
+   Bascule de PRÉSENTATION uniquement (aucune donnée n'est masquée, aucune
+   sécurité n'est ajoutée — toutes les données de cet entrepôt sont
+   publiques) : le mode "Public" (défaut pour tout nouveau visiteur, jamais
+   forcé pour une session admin déjà connectée) affiche les 11 parcours
+   thématiques ; le mode "Expert" affiche la navigation technique historique
+   (Explorateur, Visualisations, Géographie, Modèle de données, Dictionnaire,
+   Qualité des données, Rapports). Persisté en best-effort (localStorage
+   pouvant être indisponible/bloqué — même précaution défensive que pour le
+   thème clair/sombre, voir applyTheme()).
+*/
+let uiMode='public';
+try{const stm=localStorage.getItem('trdc-mode');if(stm==='expert'||stm==='public')uiMode=stm;}catch(e){}
+function activeNav(){return uiMode==='public'?NAV_PUBLIC:NAV_EXPERT;}
+function setUiMode(m){
+  uiMode=(m==='expert')?'expert':'public';
+  try{localStorage.setItem('trdc-mode',uiMode);}catch(e){}
+  const btn=$('#modeBtn');if(btn){btn.textContent=uiMode==='public'?'☰ Public':'⚙ Expert';btn.title=uiMode==='public'?'Vue simplifiée par parcours thématiques — basculer vers le mode Expert (outils techniques)':'Outils techniques complets — basculer vers le mode Public (vue simplifiée)';}
+  buildSidebar();
+  const stillVisible=activeNav().flatMap(sec=>sec.items).some(([id])=>id===current)&&!isNavHidden(current);
+  if(!stillVisible)go(firstVisibleModule());
+}
+
 /* ===== router / shell ===== */
 let current='overview', globalYear='';
 function isNavHidden(id){return id!=='overview'&&(C.nav_hidden||[]).includes(id);}
-function firstVisibleModule(){for(const sec of NAV)for(const [id] of sec.items)if(!isNavHidden(id))return id;return 'overview';}
+function firstVisibleModule(){for(const sec of activeNav())for(const [id] of sec.items)if(!isNavHidden(id))return id;return 'overview';}
 function buildSidebar(){
-  $('#sidenav').innerHTML=NAV.map(sec=>{const items=sec.items.filter(([id])=>editing||!isNavHidden(id));if(!items.length)return '';
+  $('#sidenav').innerHTML=activeNav().map(sec=>{const items=sec.items.filter(([id])=>editing||!isNavHidden(id));if(!items.length)return '';
     return `${sec.g?`<div class="grp">${sec.g}</div>`:''}`+items.map(([id,ico,lab])=>`<a class="item ${isNavHidden(id)?'hiddenrub':''}" href="#${id}" data-go="${id}"><span class="ico">${ico}</span>${lab}${isNavHidden(id)?' <span class="badge" style="margin-left:auto">masquée</span>':''}</a>`).join('');
   }).join('');
-  $$('#sidenav a.item').forEach(a=>a.classList.toggle('active',a.dataset.go===current));
+  $$('#sidenav a.item').forEach(a=>{const on=a.dataset.go===current;a.classList.toggle('active',on);if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
 }
 function syncBrandDom(){
   const b=C.brand||{},f=C.footer||{};
@@ -1406,15 +1987,21 @@ function go(id){
   if(isNavHidden(id)&&!editing)id=firstVisibleModule();
   current=id;
   $('#mtitle').textContent=MODULES[id].t;
-  $('#app').innerHTML=MODULES[id].f();
-  $$('#sidenav a.item').forEach(a=>a.classList.toggle('active',a.dataset.go===id));
+  // Si la construction du HTML de la page échoue (ex. un jeu de données
+  // attendu par la page est absent), on affiche un message explicite plutôt
+  // que de laisser le contenu de la page PRÉCÉDENTE affiché sous un titre/URL
+  // qui, eux, ont déjà changé — symptôme confus signalé sept. 2026 sur
+  // Dictionnaire/Qualité des données quand ces pages levaient une exception.
+  try{$('#app').innerHTML=MODULES[id].f();}
+  catch(e){console.error(e);$('#app').innerHTML=`<div class="phead"><div class="eyebrow">Erreur</div><h1>${esc(MODULES[id].t)}</h1><p>Cette page n'a pas pu s'afficher (donnée manquante ou erreur technique). Rechargez la page (Ctrl+Maj+R) ; si le problème persiste, contactez l'administrateur.</p></div>`;}
+  $$('#sidenav a.item').forEach(a=>{const on=a.dataset.go===id;a.classList.toggle('active',on);if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
   // the exercise filter only applies to Explorer & Visualisations (avoids showing one year's numbers while another is selected)
   const yf=$('#yearFilter'),scoped=(id==='explorer'||id==='viz');
   yf.disabled=!scoped;yf.style.opacity=scoped?'1':'.45';
   yf.title=scoped?'Filtrer par exercice':"Le filtre par exercice s'applique à l'Explorateur et aux Visualisations";
   requestAnimationFrame(()=>{try{MODULES[id].d();}catch(e){console.error(e);}syncURL();});
   window.scrollTo({top:0});
-  $('#side').classList.remove('open');$('#scrim').classList.remove('on');
+  setSideOpen(false);
   if(editing)markEditable(true);
   syncURL();
 }
@@ -1423,6 +2010,7 @@ function mountStatic(){
   // (src="/static/logo.png" défini dans templates/index.html) : plus besoin
   // de l'injecter en base64 depuis le JS.
   buildSidebar();fillYears();syncBrandDom();
+  const mb=$('#modeBtn');if(mb){mb.textContent=uiMode==='public'?'☰ Public':'⚙ Expert';mb.title=uiMode==='public'?'Vue simplifiée par parcours thématiques — basculer vers le mode Expert (outils techniques)':'Outils techniques complets — basculer vers le mode Public (vue simplifiée)';mb.onclick=()=>setUiMode(uiMode==='public'?'expert':'public');}
   // static editable (contact/kpi labels appear in modules; topbar none). fill contact placeholders handled in module render.
 }
 
@@ -1445,8 +2033,12 @@ document.addEventListener('change',e=>{
   if(e.target.id==='mYear'){mapYear=e.target.value;mapSel=null;drawGeo();return;}
 });
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')){const ds=e.target.closest&&e.target.closest('[data-ds]');if(ds){e.preventDefault();ds.click();}}});
-$('#burger').onclick=()=>{$('#side').classList.toggle('open');$('#scrim').classList.toggle('on');};
-$('#scrim').onclick=()=>{$('#side').classList.remove('open');$('#scrim').classList.remove('on');};
+function setSideOpen(open){$('#side').classList.toggle('open',open);$('#scrim').classList.toggle('on',open);$('#burger').setAttribute('aria-expanded',open?'true':'false');}
+$('#burger').onclick=()=>{setSideOpen(!$('#side').classList.contains('open'));};
+$('#scrim').onclick=()=>{setSideOpen(false);};
+// on mobile, picking a rubrique in the sidebar should close it (item was already
+// removed from .open via go(), this also resets the burger's aria-expanded state)
+document.addEventListener('click',e=>{if(e.target.closest('#sidenav a.item'))$('#burger').setAttribute('aria-expanded','false');});
 $('#yearFilter').onchange=e=>{globalYear=e.target.value;if(current==='explorer')renderExplorer();else if(current==='viz')drawViz();};
 $('#globalSearch').addEventListener('keydown',e=>{if(e.key==='Enter'){exState.q=e.target.value;exState.page=0;go('explorer');}});
 
@@ -1477,14 +2069,47 @@ getJSON('/api/me').then(me=>{
   if(me&&me.authenticated)enterAdminMode(me);
   else if(window.ADMIN_ENTRY_PAGE)$('#adminFab').style.display='';
 }).catch(()=>{if(window.ADMIN_ENTRY_PAGE)$('#adminFab').style.display='';});
-$('#adminFab').onclick=()=>{if(editing)return;$('#loginModal').classList.add('on');$('#user').value='';$('#pw').value='';$('#loginMsg').className='msg';setTimeout(()=>$('#user').focus(),50);};
-$('#loginCancel').onclick=()=>$('#loginModal').classList.remove('on');
-$('#loginModal').onclick=e=>{if(e.target.id==='loginModal')$('#loginModal').classList.remove('on');};
+/* ===== Modales : ouverture/fermeture accessibles =====
+   showModal()/hideModal() centralisent ce qu'on ajoutait auparavant
+   dispersé en classList.add/remove('on') : mémorisation de l'élément
+   déclencheur pour lui rendre le focus à la fermeture, focus initial sur le
+   premier champ/bouton de la boîte de dialogue, et un piège de focus (Tab/
+   Maj+Tab) qui garde le clavier à l'intérieur de la modale ouverte —
+   comportement standard des dialogues modales (role="dialog" posé côté
+   HTML), pas une certification. */
+let modalStack=[];
+function focusablesIn(el){return $$('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])',el).filter(e=>!e.disabled&&e.offsetParent!==null);}
+function showModal(id){
+  const bg=document.getElementById(id);if(!bg)return;
+  const trigger=(document.activeElement&&document.activeElement!==document.body)?document.activeElement:null;
+  bg.classList.add('on');
+  modalStack.push({id,trigger});
+  const modal=bg.querySelector('.modal');
+  requestAnimationFrame(()=>{const f=focusablesIn(modal);(f[0]||modal).focus({preventScroll:true});});
+}
+function hideModal(id){
+  const bg=document.getElementById(id);if(!bg)return;
+  bg.classList.remove('on');
+  const idx=modalStack.findIndex(m=>m.id===id);
+  if(idx>=0){const [m]=modalStack.splice(idx,1);if(m.trigger&&document.contains(m.trigger)&&m.trigger.focus)m.trigger.focus({preventScroll:true});}
+}
+function hideAllModals(){modalStack.slice().reverse().forEach(m=>hideModal(m.id));}
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Tab'||!modalStack.length)return;
+  const bg=document.getElementById(modalStack[modalStack.length-1].id);if(!bg)return;
+  const modal=bg.querySelector('.modal');const f=focusablesIn(modal);if(!f.length)return;
+  const first=f[0],last=f[f.length-1];
+  if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+  else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+});
+$('#adminFab').onclick=()=>{if(editing)return;$('#user').value='';$('#pw').value='';$('#loginMsg').className='msg';showModal('loginModal');};
+$('#loginCancel').onclick=()=>hideModal('loginModal');
+$('#loginModal').onclick=e=>{if(e.target.id==='loginModal')hideModal('loginModal');};
 async function tryLogin(){
   const btn=$('#loginBtn'),old=btn.textContent;btn.disabled=true;btn.textContent='Connexion…';
   try{
     const r=await fetch('/api/login',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:$('#user').value,password:$('#pw').value})});
-    if(r.ok){const me=await r.json();$('#loginModal').classList.remove('on');enterAdminMode(me);}
+    if(r.ok){const me=await r.json();hideModal('loginModal');enterAdminMode(me);}
     else{const m=$('#loginMsg');m.className='msg err';m.textContent='Identifiant ou mot de passe incorrect.';}
   }catch(e){const m=$('#loginMsg');m.className='msg err';m.textContent="Connexion au serveur impossible.";}
   finally{btn.disabled=false;btn.textContent=old;}
@@ -1492,7 +2117,7 @@ async function tryLogin(){
 $('#loginBtn').onclick=tryLogin;$('#pw').addEventListener('keydown',e=>{if(e.key==='Enter')tryLogin();});
 $('#user').addEventListener('keydown',e=>{if(e.key==='Enter')tryLogin();});
 // close modals with Escape
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('#loginModal').classList.remove('on');$('#repModal').classList.remove('on');$('#enrichModal').classList.remove('on');$('#navModal').classList.remove('on');$('#userModal').classList.remove('on');$('#auditModal').classList.remove('on');$('#tablesModal').classList.remove('on');}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modalStack.length)hideAllModals();});
 $('#exitBtn').onclick=async()=>{try{await fetch('/api/logout',{method:'POST',credentials:'same-origin'});}catch(e){}editing=false;ME=null;$('#adminBar').classList.remove('on');$('#adminFab').style.display=window.ADMIN_ENTRY_PAGE?'':'none';document.body.style.paddingBottom='';markEditable(false);buildSidebar();if(isNavHidden(current))go(firstVisibleModule());};
 
 /* ===== Gestion des comptes administrateur (rôle "admin" uniquement) ===== */
@@ -1508,7 +2133,7 @@ function renderUserRow(u){
     <select data-urole="${u.id}" ${isSelf?'disabled title="Vous ne pouvez pas changer votre propre rôle"':''}><option value="editor" ${u.role==='editor'?'selected':''}>editor</option><option value="admin" ${u.role==='admin'?'selected':''}>admin</option></select>
     <label style="display:flex;align-items:center;gap:4px;font-size:12px"><input type="checkbox" data-uactive="${u.id}" ${u.active?'checked':''} ${isSelf?'disabled':''}> actif</label>
     <button class="btn" data-upw="${u.id}" style="font-size:11px;padding:4px 8px">Réinit. mot de passe</button>
-    <button class="rm-del" data-udel="${u.id}" ${isSelf?'disabled title="Vous ne pouvez pas supprimer votre propre compte"':''} title="Supprimer">✕</button>
+    <button class="rm-del" data-udel="${u.id}" ${isSelf?'disabled title="Vous ne pouvez pas supprimer votre propre compte" aria-label="Vous ne pouvez pas supprimer votre propre compte"':'aria-label="Supprimer ce compte" title="Supprimer"'}>✕</button>
   </div>`;
 }
 async function renderUM(){
@@ -1539,8 +2164,8 @@ async function renderUM(){
     renderUM();
   }));
 }
-const userMgrBtn=$('#userMgrBtn');if(userMgrBtn)userMgrBtn.onclick=()=>{renderUM();$('#userModal').classList.add('on');};
-const userDoneBtn=$('#userDone');if(userDoneBtn)userDoneBtn.onclick=()=>$('#userModal').classList.remove('on');
+const userMgrBtn=$('#userMgrBtn');if(userMgrBtn)userMgrBtn.onclick=()=>{renderUM();showModal('userModal');};
+const userDoneBtn=$('#userDone');if(userDoneBtn)userDoneBtn.onclick=()=>hideModal('userModal');
 const uAddBtn=$('#uAdd');if(uAddBtn)uAddBtn.onclick=async()=>{
   const username=$('#uNewName').value.trim(),password=$('#uNewPw').value,role=$('#uNewRole').value;
   const msg=$('#userMsg');msg.className='msg';msg.textContent='';
@@ -1584,8 +2209,8 @@ function renderTablesList(filterTxt){
     finally{e.target.disabled=false;}
   }));
 }
-const tablesMgrBtn=$('#tablesMgrBtn');if(tablesMgrBtn)tablesMgrBtn.onclick=()=>{$('#tmFilter').value='';renderTablesList('');$('#tablesModal').classList.add('on');};
-const tablesDoneBtn=$('#tablesDone');if(tablesDoneBtn)tablesDoneBtn.onclick=()=>$('#tablesModal').classList.remove('on');
+const tablesMgrBtn=$('#tablesMgrBtn');if(tablesMgrBtn)tablesMgrBtn.onclick=()=>{$('#tmFilter').value='';renderTablesList('');showModal('tablesModal');};
+const tablesDoneBtn=$('#tablesDone');if(tablesDoneBtn)tablesDoneBtn.onclick=()=>hideModal('tablesModal');
 const tmFilterInput=$('#tmFilter');if(tmFilterInput)tmFilterInput.addEventListener('input',e=>renderTablesList(e.target.value));
 
 /* ===== Journal d'activité ===== */
@@ -1597,8 +2222,8 @@ async function renderAudit(){
   if(!rows.length){host.innerHTML='<div class="empty">Aucune activité enregistrée.</div>';return;}
   host.innerHTML=`<table class="dg" style="width:100%"><thead><tr><th>Date</th><th>Utilisateur</th><th>Action</th><th>Cible</th><th>Détail</th></tr></thead><tbody>${rows.map(a=>`<tr><td style="white-space:nowrap;font-size:11px">${esc(new Date(a.created_at).toLocaleString('fr-FR'))}</td><td>${esc(a.username)}</td><td><code>${esc(a.action)}</code></td><td>${esc(a.target)}</td><td style="font-size:11px;color:var(--ink-soft)">${esc(a.detail)}</td></tr>`).join('')}</tbody></table>`;
 }
-const auditBtn=$('#auditBtn');if(auditBtn)auditBtn.onclick=()=>{renderAudit();$('#auditModal').classList.add('on');};
-const auditDoneBtn=$('#auditDone');if(auditDoneBtn)auditDoneBtn.onclick=()=>$('#auditModal').classList.remove('on');
+const auditBtn=$('#auditBtn');if(auditBtn)auditBtn.onclick=()=>{renderAudit();showModal('auditModal');};
+const auditDoneBtn=$('#auditDone');if(auditDoneBtn)auditDoneBtn.onclick=()=>hideModal('auditModal');
 
 async function saveAndPublish(){
   collectEdits();RAW.content=C;
@@ -1613,7 +2238,7 @@ async function saveAndPublish(){
   finally{btn.disabled=false;}
 }
 $('#saveBtn').onclick=saveAndPublish;
-$('#repMgrBtn').onclick=()=>{renderRM();$('#repModal').classList.add('on');};
+$('#repMgrBtn').onclick=()=>{renderRM();showModal('repModal');};
 
 /* ===== Gestion des rubriques (menu) ===== */
 function renderNavMgr(){
@@ -1624,14 +2249,14 @@ function renderNavMgr(){
     <span>${ico} ${esc(lab)}</span>${id==='overview'?'<span style="margin-left:auto;font-size:11px;color:var(--ink-soft)">toujours visible</span>':''}
   </label>`).join('');
 }
-$('#navMgrBtn').onclick=()=>{renderNavMgr();$('#navModal').classList.add('on');};
-$('#navModal').onclick=e=>{if(e.target.id==='navModal')$('#navModal').classList.remove('on');};
+$('#navMgrBtn').onclick=()=>{renderNavMgr();showModal('navModal');};
+$('#navModal').onclick=e=>{if(e.target.id==='navModal')hideModal('navModal');};
 $('#navList').addEventListener('change',e=>{const cb=e.target.closest('[data-nav]');if(!cb)return;const id=cb.dataset.nav;
   C.nav_hidden=C.nav_hidden||[];
   if(cb.checked)C.nav_hidden=C.nav_hidden.filter(x=>x!==id);
   else if(!C.nav_hidden.includes(id))C.nav_hidden.push(id);
   buildSidebar();});
-$('#navDone').onclick=()=>{$('#navModal').classList.remove('on');buildSidebar();if(isNavHidden(current))go(firstVisibleModule());};
+$('#navDone').onclick=()=>{hideModal('navModal');buildSidebar();if(isNavHidden(current))go(firstVisibleModule());};
 
 /* ===== ENRICHISSEMENT DES DONNÉES ===== */
 let enParsed=null;
@@ -1663,10 +2288,10 @@ function enParseFile(name,txt){const t=$('#enTable').value,d=DS[t];let recs=[];
 function enRenderPreview(recs){const t=$('#enTable').value,d=DS[t];const show=recs.slice(0,20);
   $('#enPreview').style.display='';
   $('#enPreview').innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:11.5px"><thead><tr>${d.cols.map(c=>`<th style="position:sticky;top:0;background:var(--panel-2);padding:5px 8px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap">${esc(c)}</th>`).join('')}</tr></thead><tbody>${show.map(r=>`<tr>${r.map(v=>`<td style="padding:4px 8px;border-bottom:1px solid var(--line);white-space:nowrap">${v==null?'<span style=\"opacity:.4\">∅</span>':esc(String(v))}</td>`).join('')}</tr>`).join('')}</tbody></table>`;}
-$('#enrichBtn').onclick=()=>{fillEnTables();$('#enrichModal').classList.add('on');};
+$('#enrichBtn').onclick=()=>{fillEnTables();showModal('enrichModal');};
 $('#enTable').onchange=enShowInfo;
-$('#enDone').onclick=()=>$('#enrichModal').classList.remove('on');
-$('#enrichModal').onclick=e=>{if(e.target.id==='enrichModal')$('#enrichModal').classList.remove('on');};
+$('#enDone').onclick=()=>hideModal('enrichModal');
+$('#enrichModal').onclick=e=>{if(e.target.id==='enrichModal')hideModal('enrichModal');};
 $('#enTemplate').onclick=()=>{const t=$('#enTable').value,d=DS[t];const sample=d.rows[d.rows.length-1]||d.cols.map(()=>'');
   const csv=d.cols.join(',')+'\n'+d.cols.map((c,i)=>{const v=sample[i];return v==null?'':(''+v).includes(',')?'"'+v+'"':v;}).join(',');saveFile('modele_'+t+'.csv',csv);};
 $('#enFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();
@@ -1692,10 +2317,10 @@ $('#enAppend').onclick=async()=>{if(!enParsed)return;const t=$('#enTable').value
 $('#enExport').onclick=()=>{saveFile('transparencerdc_donnees_enrichies.json',JSON.stringify(WH,null,1));};
 $('#enExportCsv').onclick=()=>{const t=$('#enTable').value,d=DS[t];const esc2=v=>v==null?'':/[",;\n]/.test(''+v)?'"'+(''+v).replace(/"/g,'""')+'"':''+v;
   const csv=[d.cols.join(';')].concat(d.rows.map(r=>r.map(esc2).join(';'))).join('\n');saveFile(t+'_enrichi.csv',csv);};
-$('#repModal').onclick=e=>{if(e.target.id==='repModal')$('#repModal').classList.remove('on');};
-$('#rmDone').onclick=()=>{$('#repModal').classList.remove('on');if(current==='reports')renderReports();};
+$('#repModal').onclick=e=>{if(e.target.id==='repModal')hideModal('repModal');};
+$('#rmDone').onclick=()=>{hideModal('repModal');if(current==='reports')renderReports();};
 $('#rmAdd').onclick=()=>{C.reports.unshift({titre:'Nouveau rapport',categorie:'rapport_itie',annees_couvertes:'',date_publication:'',url:'',format:'pdf'});renderRM();};
-function renderRM(){$('#rmList').innerHTML=C.reports.map((r,i)=>`<div class="rm-item" data-i="${i}"><div class="g" style="grid-column:1/2"><input data-k="titre" value="${esc(r.titre)}" placeholder="Titre" style="grid-column:1/3"><input data-k="annees_couvertes" value="${esc(r.annees_couvertes||'')}" placeholder="Années"><select data-k="categorie">${Object.keys(CATS).map(c=>`<option value="${c}" ${r.categorie===c?'selected':''}>${esc(CATS[c])}</option>`).join('')}</select><input data-k="url" value="${esc(r.url||'')}" placeholder="URL PDF" style="grid-column:1/3"></div><button class="rm-del" data-del="${i}">✕</button></div>`).join('');}
+function renderRM(){$('#rmList').innerHTML=C.reports.map((r,i)=>`<div class="rm-item" data-i="${i}"><div class="g" style="grid-column:1/2"><input data-k="titre" value="${esc(r.titre)}" placeholder="Titre" style="grid-column:1/3"><input data-k="annees_couvertes" value="${esc(r.annees_couvertes||'')}" placeholder="Années"><select data-k="categorie">${Object.keys(CATS).map(c=>`<option value="${c}" ${r.categorie===c?'selected':''}>${esc(CATS[c])}</option>`).join('')}</select><input data-k="url" value="${esc(r.url||'')}" placeholder="URL PDF" style="grid-column:1/3"></div><button class="rm-del" data-del="${i}" aria-label="Supprimer ce rapport" title="Supprimer">✕</button></div>`).join('');}
 $('#rmList').addEventListener('input',e=>{const it=e.target.closest('.rm-item');if(!it)return;const i=+it.dataset.i,k=e.target.dataset.k;if(k)C.reports[i][k]=e.target.value;});
 $('#rmList').addEventListener('click',e=>{const del=e.target.closest('[data-del]');if(del){C.reports.splice(+del.dataset.del,1);renderRM();}});
 

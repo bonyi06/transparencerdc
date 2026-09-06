@@ -10,33 +10,35 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ asset_v }}">
 </head>
 <body>
+<a class="skip-link" href="#app">Aller au contenu principal</a>
 <div class="app">
   <aside class="side" id="side">
     <div class="brand"><img id="logoImg" src="{{ url_for('static', filename='logo.png') }}" alt="ITIE-RDC"><div class="bt"><b id="sideBrandName">TransparenceRDC</b><span id="sideBrandTag">Entrepôt de données ITIE</span></div></div>
-    <nav id="sidenav"></nav>
+    <nav id="sidenav" aria-label="Navigation principale"></nav>
     <div class="foot" id="sideFooterNote">Données publiques ITIE · 2007–2024</div>
   </aside>
   <div class="main">
     <div class="top">
-      <button class="icon-btn burger" id="burger" aria-label="Menu">☰</button>
+      <button class="icon-btn burger" id="burger" aria-label="Ouvrir/fermer le menu de navigation" aria-expanded="false" aria-controls="side">☰</button>
       <div class="brandbox"><img id="logoImgTop" src="{{ url_for('static', filename='logo.png') }}" alt="ITIE-RDC"><div class="brandttl"><b id="topBrandName">TransparenceRDC</b><span id="topBrandTag">Initiative pour la Transparence des Industries Extractives</span></div></div>
       <div class="sep"></div>
       <div class="mtitle" id="mtitle">Vue d'ensemble</div>
       <div class="grow"></div>
-      <div class="searchbox" id="globalSearchBox"><span class="si">⌕</span><input id="globalSearch" placeholder="Rechercher dans les données…" autocomplete="off"></div>
-      <div class="tsel">Exercice <select id="yearFilter"><option value="">Tous</option></select></div>
-      <button class="icon-btn" id="themeBtn" title="Thème">◐</button>
+      <div class="searchbox" id="globalSearchBox"><span class="si" aria-hidden="true">⌕</span><input id="globalSearch" placeholder="Rechercher dans les données…" autocomplete="off" aria-label="Rechercher dans les données"></div>
+      <div class="tsel"><label for="yearFilter">Exercice</label> <select id="yearFilter"><option value="">Tous</option></select></div>
+      <button class="icon-btn modebtn" id="modeBtn" aria-label="Basculer entre le mode Public et le mode Expert" title="Basculer entre le mode Public (parcours thématiques) et le mode Expert (outils techniques)">☰ Public</button>
+      <button class="icon-btn" id="themeBtn" aria-label="Changer de thème clair/sombre" title="Thème">◐</button>
     </div>
-    <div class="content" id="app"></div>
+    <main class="content" id="app" tabindex="-1"></main>
   </div>
 </div>
 <div class="scrim" id="scrim"></div>
 
 <script>window.ADMIN_ENTRY_PAGE = {{ 'true' if show_admin_ui else 'false' }};</script>
-<button class="admin-fab" id="adminFab" title="Espace administrateur" style="display:none">⚙ Admin</button>
+<button class="admin-fab" id="adminFab" aria-label="Espace administrateur" title="Espace administrateur" style="display:none">⚙ Admin</button>
 
-<div class="modal-bg" id="loginModal"><div class="modal">
-  <h3>Espace administrateur</h3>
+<div class="modal-bg" id="loginModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="loginModalTitle" tabindex="-1">
+  <h3 id="loginModalTitle">Espace administrateur</h3>
   <p>Saisissez vos identifiants nominatifs pour modifier les contenus publics.</p>
   <div class="msg" id="loginMsg"></div>
   <div class="field"><label for="user">Identifiant</label><input type="text" id="user" autocomplete="username"></div>
@@ -44,8 +46,8 @@
   <div style="display:flex;gap:10px"><button class="btn primary" id="loginBtn">Se connecter</button><button class="btn" id="loginCancel">Annuler</button></div>
 </div></div>
 
-<div class="modal-bg" id="userModal"><div class="modal wide">
-  <h3>Gérer les comptes administrateur</h3>
+<div class="modal-bg" id="userModal"><div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="userModalTitle" tabindex="-1">
+  <h3 id="userModalTitle">Gérer les comptes administrateur</h3>
   <p>Chaque personne doit avoir son propre compte nominatif (traçabilité des modifications). Réservé au rôle « admin ».</p>
   <div class="rm-list" id="userList" style="display:flex;flex-direction:column;gap:8px"></div>
   <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;align-items:flex-end">
@@ -58,38 +60,38 @@
   <div style="display:flex;gap:10px;margin-top:14px"><button class="btn" id="userDone">Fermer</button></div>
 </div></div>
 
-<div class="modal-bg" id="tablesModal"><div class="modal wide">
-  <h3>Gérer l'affichage des tables</h3>
+<div class="modal-bg" id="tablesModal"><div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="tablesModalTitle" tabindex="-1">
+  <h3 id="tablesModalTitle">Gérer l'affichage des tables</h3>
   <p>Choisissez quelles tables restent visibles pour le public. Une table masquée reste dans l'entrepôt (rien n'est supprimé) : elle disparaît des menus, de l'explorateur, des visualisations et de la géographie côté public, mais reste consultable ici en mode administrateur. Réservé au rôle « admin ».</p>
-  <div class="field"><input type="text" id="tmFilter" placeholder="Filtrer par nom ou libellé…"></div>
+  <div class="field"><input type="text" id="tmFilter" placeholder="Filtrer par nom ou libellé…" aria-label="Filtrer les tables par nom ou libellé"></div>
   <div class="rm-list" id="tablesList" style="display:flex;flex-direction:column;gap:6px;max-height:420px;overflow:auto;margin-top:10px"></div>
   <div id="tablesMsg" class="msg" style="margin-top:10px"></div>
   <div style="display:flex;gap:10px;margin-top:14px"><button class="btn" id="tablesDone">Fermer</button></div>
 </div></div>
 
-<div class="modal-bg" id="auditModal"><div class="modal wide">
-  <h3>Journal d'activité</h3>
+<div class="modal-bg" id="auditModal"><div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="auditModalTitle" tabindex="-1">
+  <h3 id="auditModalTitle">Journal d'activité</h3>
   <p>Historique des connexions et modifications (200 dernières entrées).</p>
   <div style="max-height:420px;overflow:auto" id="auditList"></div>
   <div style="display:flex;gap:10px;margin-top:14px"><button class="btn" id="auditDone">Fermer</button></div>
 </div></div>
 
-<div class="modal-bg" id="repModal"><div class="modal wide">
-  <h3>Gérer les rapports</h3>
+<div class="modal-bg" id="repModal"><div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="repModalTitle" tabindex="-1">
+  <h3 id="repModalTitle">Gérer les rapports</h3>
   <p>Ajoutez, modifiez ou supprimez les rapports affichés au public.</p>
   <div class="rm-list" id="rmList"></div>
   <div style="display:flex;gap:10px"><button class="btn" id="rmAdd">+ Ajouter</button><button class="btn primary" id="rmDone">Valider</button></div>
 </div></div>
 
-<div class="modal-bg" id="navModal"><div class="modal wide">
-  <h3>Gérer les rubriques</h3>
+<div class="modal-bg" id="navModal"><div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="navModalTitle" tabindex="-1">
+  <h3 id="navModalTitle">Gérer les rubriques</h3>
   <p>Choisissez les rubriques visibles dans le menu, pour vous et pour les visiteurs du site. « Vue d'ensemble » reste toujours accessible (page d'accueil).</p>
   <div class="rm-list" id="navList" style="display:flex;flex-direction:column;gap:8px"></div>
   <div style="display:flex;gap:10px;margin-top:14px"><button class="btn primary" id="navDone">Valider</button></div>
 </div></div>
 
-<div class="modal-bg" id="enrichModal"><div class="modal wide">
-  <h3>Enrichir les données</h3>
+<div class="modal-bg" id="enrichModal"><div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="enrichModalTitle" tabindex="-1">
+  <h3 id="enrichModalTitle">Enrichir les données</h3>
   <p>Ajoutez les données d'une nouvelle année (ou corrigez une table) en important un fichier <b>CSV</b> ou <b>JSON</b>. Téléchargez d'abord le modèle de la table pour respecter exactement les colonnes attendues.</p>
   <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px">
     <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600">Table cible

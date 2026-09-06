@@ -92,6 +92,7 @@ body.editing td[contenteditable]:focus{outline:2px solid var(--sky);background:v
 .phead .eyebrow{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--sky);font-weight:700;margin-bottom:6px}
 .phead h1{font-size:26px;color:var(--ink)}
 .phead p{color:var(--ink-soft);font-size:15px;margin:8px 0 0;max-width:80ch}
+.phead p.kindlegend{font-size:13px;max-width:100ch}
 
 /* KPI */
 .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:13px;margin-bottom:22px}
@@ -220,11 +221,29 @@ table.dg tr:hover td{background:var(--panel-2)}
 .tc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--shadow-sm)}
 .tc .tct{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
 .tc h4{font-size:15px;color:var(--ink)}
-.tc .tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px}
-.tc .tag.faits{background:#fdeaea;color:var(--red)}.tc .tag.dimensions{background:var(--sel);color:var(--sky)}
-.tc .tag.contextuel{background:#eaf7ee;color:var(--green)}
-:root[data-theme="dark"] .tc .tag.faits{background:#3a1618;color:#f0a0a6}
-:root[data-theme="dark"] .tc .tag.contextuel{background:#12311f;color:#7fd6a0}
+.tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap}
+/* 7 familles de tables de l'entrepôt (voir datasetKind() dans app.js, audit qualité sept. 2026) */
+.tag.fait{background:#fdeaea;color:var(--red)}
+.tag.dimension{background:var(--sel);color:var(--sky)}
+.tag.source{background:#eef1f4;color:var(--ink-soft)}
+.tag.referentiel{background:#e5f7f6;color:var(--teal)}
+.tag.entrepot{background:#f1eefc;color:var(--violet)}
+.tag.analytique{background:#fdf3e1;color:var(--amber)}
+.tag.vue{background:#eef1f4;color:var(--ink-faint)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .tag.fait{background:#3a1618;color:#f0a0a6}
+:root:not([data-theme="light"]) .tag.dimension{background:#123047;color:#8fd0f5}
+:root:not([data-theme="light"]) .tag.source{background:#1c2833;color:#aebcc7}
+:root:not([data-theme="light"]) .tag.referentiel{background:#0f2e2c;color:#7fdcd6}
+:root:not([data-theme="light"]) .tag.entrepot{background:#241d3d;color:#c0b0f2}
+:root:not([data-theme="light"]) .tag.analytique{background:#3a2c10;color:#f0c877}
+:root:not([data-theme="light"]) .tag.vue{background:#1c2833;color:#8a9bab}}
+:root[data-theme="dark"] .tag.fait{background:#3a1618;color:#f0a0a6}
+:root[data-theme="dark"] .tag.dimension{background:#123047;color:#8fd0f5}
+:root[data-theme="dark"] .tag.source{background:#1c2833;color:#aebcc7}
+:root[data-theme="dark"] .tag.referentiel{background:#0f2e2c;color:#7fdcd6}
+:root[data-theme="dark"] .tag.entrepot{background:#241d3d;color:#c0b0f2}
+:root[data-theme="dark"] .tag.analytique{background:#3a2c10;color:#f0c877}
+:root[data-theme="dark"] .tag.vue{background:#1c2833;color:#8a9bab}
 .tc .tn{font-family:"IBM Plex Mono";font-size:11.5px;color:var(--ink-faint)}
 .tc p{font-size:12.5px;color:var(--ink-soft);margin:6px 0 0}
 .tc .open{margin-top:10px;font-size:12.5px;font-weight:600;color:var(--sky);cursor:pointer}
@@ -283,6 +302,18 @@ body.editing [data-edit]:focus{outline:2px solid var(--sky);background:var(--pan
 
 .empty{padding:40px;text-align:center;color:var(--ink-faint);font-size:14px}
 
+/* ===== Parcours thématiques publics (mode Public / Expert) ===== */
+.modebtn{width:auto;padding:0 13px;font-weight:700;font-size:12.5px;white-space:nowrap;gap:6px}
+.explainbox{background:var(--panel-2);border:1px solid var(--line);border-left:4px solid var(--sky);border-radius:12px;padding:16px 20px;margin-top:18px;font-size:13.5px;color:var(--ink-soft);line-height:1.6}
+.explainbox h4{font-size:13.5px;color:var(--ink);margin-bottom:8px;font-family:Poppins}
+.explainbox p{margin:0 0 8px}
+.explainbox p:last-child{margin-bottom:0}
+.explainbox code{font-family:"IBM Plex Mono";font-size:12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+.srcnote{margin-top:16px;font-size:12.5px;color:var(--ink-soft);border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:var(--panel)}
+.srcnote summary{cursor:pointer;font-weight:600;color:var(--ink)}
+.srcnote div{margin-top:8px;line-height:1.6}
+.srcnote code{font-family:"IBM Plex Mono";font-size:11.5px}
+
 @media(max-width:1080px){
   .app{grid-template-columns:1fr}
   .side{position:fixed;left:0;top:0;bottom:0;width:250px;z-index:100;transform:translateX(-100%);transition:transform .25s}
@@ -298,5 +329,29 @@ body.editing [data-edit]:focus{outline:2px solid var(--sky);background:var(--pan
   .about-grid{grid-template-columns:1fr}.reports{grid-template-columns:1fr}
   .scrim{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99;display:none}.scrim.on{display:block}
 }
-@media(max-width:560px){.kpis{grid-template-columns:repeat(2,1fr)}.hl .hsub{grid-template-columns:1fr}.vizbar{grid-template-columns:1fr}.top .mtitle{display:none}}
-@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(max-width:560px){
+  .kpis{grid-template-columns:repeat(2,1fr)}.hl .hsub{grid-template-columns:1fr}.vizbar{grid-template-columns:1fr}.top .mtitle{display:none}
+  .top{padding:8px 10px;gap:8px}
+  .searchbox{min-width:0}
+  .top .brandbox{gap:7px}.top .brandbox img{height:28px}
+  .tsel{font-size:0}.tsel label{font-size:0}.tsel select{font-size:13px;padding:8px 6px}
+  .icon-btn{width:40px;height:40px}
+  .modebtn{padding:0 10px;font-size:11.5px}
+  .modal{padding:18px;max-height:88vh;overflow:auto}
+  .rep{flex-direction:column}
+}
+/* ===== Accessibilité : lien d'évitement, focus visible ===== */
+.skip-link{position:absolute;left:8px;top:-48px;z-index:1000;background:var(--sky);color:#fff;padding:10px 16px;border-radius:8px;font-weight:700;font-size:13px;transition:top .15s ease;box-shadow:var(--shadow)}
+.skip-link:focus{top:8px;outline:2px solid #fff;outline-offset:2px}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.side a.item:focus-visible,.dsitem:focus-visible,table.dg th:focus-visible,[tabindex]:focus-visible{
+  outline:2.5px solid var(--sky);outline-offset:2px;border-radius:4px;
+}
+.top a:focus-visible,.top button:focus-visible{outline-color:#fff}
+#app:focus-visible{outline:none}
+/* tap targets confortables sur petit écran */
+@media(max-width:1080px){
+  .side a.item{padding:12px 12px;min-height:44px}
+  .icon-btn{min-width:40px;min-height:40px}
+  .burger{min-width:40px;min-height:40px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}

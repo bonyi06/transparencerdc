@@ -1,1 +1,364 @@
-{"content": {"brand": {"name": "ITIE-RDC", "full": "Initiative pour la Transparence des Industries Extractives", "tagline": "Promouvoir la transparence et la bonne gouvernance des revenus issus des industries extractives en RDC"}, "topbar": {"tel": "+243 824 855 057", "email": "secretariat@itierdc.org"}, "overview": {"intro": "Explorez l'intégralité des données publiées par l'ITIE en République Démocratique du Congo : recettes de l'État, paiements des entreprises, réconciliation, production, dépenses sociales et indicateurs — dans un entrepôt de données interactif."}, "kpi_labels": {"exercices": "Exercices couverts", "orgs": "Organisations déclarantes", "flux": "Flux / taxes recensés", "rapports": "Rapports publiés", "recon": "Lignes de réconciliation", "social": "Dépenses sociales déclarées"}, "about": {"titre": "À propos de l'entrepôt", "mission": "L'Initiative pour la Transparence des Industries Extractives (ITIE) est une norme mondiale visant à promouvoir la gestion ouverte et redevable des ressources pétrolières, gazières et minières. La RDC a adhéré à l'ITIE en 2007 et a été déclarée conforme à la norme.", "gouvernance": "La mise en œuvre repose sur un Comité Exécutif tripartite réunissant l'administration publique, les entreprises extractives et la société civile, appuyé par un Secrétariat Technique.", "methodo": "Les totaux annuels 2007-2019 proviennent des données récapitulatives réconciliées de l'ITIE International (déjà en USD). Le détail par flux, par entreprise et les dépenses sociales 2015-2024 proviennent du portail national de télédéclaration. Les anomalies de devise sont conservées telles que publiées."}, "contact": {"org": "Secrétariat Technique de l'ITIE-RDC", "tel": "+243 824 855 057", "email": "secretariat@itierdc.org", "site": "www.itierdc.net", "adresse": "Kinshasa, République Démocratique du Congo"}, "footer": {"note": "TransparenceRDC — plateforme de données ITIE de la République Démocratique du Congo. Données publiques ITIE. Cette plateforme n'est pas un site officiel de l'ITIE-RDC."}, "reports": [{"titre": "Rapport ITIE-RDC 2007", "categorie": "rapport_itie", "annees_couvertes": "2007", "date_publication": "2009-12-22", "url": "https://eiti.org/sites/default/files/attachments/2007_drc_eiti_report_en.pdf", "format": "pdf"}, {"titre": "Rapport ITIE-RDC 2008-2009", "categorie": "rapport_itie", "annees_couvertes": "2008-2009", "date_publication": "2012-01-01", "url": "https://eiti.org/documents/democratic-republic-congo-2008-2009-eiti-report", "format": "pdf"}, {"titre": "Rapport ITIE-RDC 2010", "categorie": "rapport_itie", "annees_couvertes": "2010", "date_publication": "2013-01-26", "url": "https://eiti.org/documents/democratic-republic-congo-2010-eiti-report", "format": "pdf"}, {"titre": "Rapport ITIE-RDC 2011", "categorie": "rapport_itie", "annees_couvertes": "2011", "date_publication": "2013-12-31", "url": "https://eiti.org/documents/democratic-republic-congo-2011-eiti-report", "format": "pdf"}, {"titre": "Rapport ITIE-RDC 2012", "categorie": "rapport_itie", "annees_couvertes": "2012", "date_publication": "2014-12-24", "url": "https://eiti.org/documents/democratic-republic-congo-2012-eiti-report", "format": "pdf"}, {"titre": "Rapport ITIE-RDC 2013", "categorie": "rapport_itie", "annees_couvertes": "2013", "date_publication": "2015-07-01", "url": "https://eiti.org/documents/democratic-republic-congo-2013-eiti-report", "format": "pdf"}, {"titre": "Rapport ITIE-RDC 2014", "categorie": "rapport_itie", "annees_couvertes": "2014", "date_publication": "2015-12-01", "url": "https://eiti.org/documents/democratic-republic-congo-2014-eiti-report", "format": "pdf"}, {"titre": "Rapport ITIE-RDC 2015", "categorie": "rapport_itie", "annees_couvertes": "2015", "date_publication": "2017-12-31", "url": "https://www.itierdc.net/public/rapports-itie-rdc/2015/RAPPORT%20ITIE-RDC%202015.pdf", "format": "pdf"}, {"titre": "Rapport ITIE-RDC 2016", "categorie": "rapport_itie", "annees_couvertes": "2016", "date_publication": "2018-12-31", "url": "https://www.itierdc.net/publications/rapports-itie-rdc-2000/rapport-itie-rdc-2016/", "format": "pdf"}, {"titre": "Rapport ITIE-RDC 2017", "categorie": "rapport_itie", "annees_couvertes": "2017", "date_publication": "2019-12-31", "url": "https://eiti.org/documents/democratic-republic-congo-2017-eiti-report", "format": "pdf"}, {"titre": "Rapport assoupli ITIE-RDC 2018-2019-1er sem. 2020", "categorie": "rapport_itie", "annees_couvertes": "2018-2020", "date_publication": "2021", "url": "https://www.itierdc.net/publications/rapports-itie-rdc-2000/rapport-itie-rdc-2018-1er-sem-2020/", "format": "pdf"}, {"titre": "Rapport ITIE-RDC 2019", "categorie": "rapport_itie", "annees_couvertes": "2019", "date_publication": "2021-03-16", "url": "https://eiti.org/documents/democratic-republic-congo-2019-eiti-report", "format": "pdf"}, {"titre": "Rapport ITIE-RDC 2020-2021", "categorie": "rapport_itie", "annees_couvertes": "2020-2021", "date_publication": "2023-02-23", "url": "https://www.itierdc.net/public/rapports-itie-rdc/2020-2021/RAPPORT%20ITIE-RDC%202020-2021_23022023_V_Publi%C3%A9.pdf", "format": "pdf"}, {"titre": "Rapport ITIE-RDC 2022", "categorie": "rapport_itie", "annees_couvertes": "2022", "date_publication": "2024-12-31", "url": "https://www.itierdc.net/public/rapports-itie-rdc/2022/Rapport%20ITIE%20RDC%202022%20-%2031122024.pdf", "format": "pdf"}, {"titre": "Rapport ITIE-RDC 2023", "categorie": "rapport_itie", "annees_couvertes": "2023", "date_publication": "2025-12-31", "url": "https://www.itierdc.net/public/rapports-itie-rdc/2023/Rapport%20final%20ITIE%20RDC%202023%20-%2031-12-2025.pdf", "format": "pdf"}, {"titre": "Annexes du Rapport ITIE-RDC 2022", "categorie": "annexe_donnees", "annees_couvertes": "2022", "date_publication": "2024-12-31", "url": "https://eiti.org/document/24312", "format": "xlsx"}, {"titre": "Annexe 58 - Fiches de conciliation par entreprise 2022", "categorie": "annexe_donnees", "annees_couvertes": "2022", "date_publication": "2024-12-31", "url": "https://eiti.org/document/24313", "format": "xlsx"}, {"titre": "Annexes du Rapport ITIE-RDC 2023", "categorie": "annexe_donnees", "annees_couvertes": "2023", "date_publication": "2025-12-31", "url": "https://eiti.org/document/25572", "format": "xlsx"}, {"titre": "Annexe cadastre minier (registre CAMI)", "categorie": "annexe_donnees", "annees_couvertes": "2020-2021", "date_publication": "2023-03", "url": "https://eiti.org/document/21846", "format": "xlsx"}, {"titre": "Données récapitulatives (summary data) 2017", "categorie": "summary_data", "annees_couvertes": "2017", "date_publication": "2019-12-31", "url": "https://eiti.org/sites/default/files/spreadsheets/2017%20DRC%20Summary%20Data%20v2%20EN.xlsx", "format": "xlsx"}, {"titre": "Données récapitulatives (summary data) 2019", "categorie": "summary_data", "annees_couvertes": "2019", "date_publication": "2021-03-16", "url": "https://eiti.org/sites/default/files/spreadsheets/2019%20DRC%20Summary%20data%20EN%20v2%20final_copy.xlsx", "format": "xlsx"}, {"titre": "Étude de faisabilité divulgation systématique (DISM)", "categorie": "thematique", "annees_couvertes": "2024", "date_publication": "2024-05-16", "url": "https://www.itierdc.net/public/rapports-itie-rdc/thematiques/2024/Mainstreaming%20EITI_DISM%20-%20Rapport%20d%27%C3%A9tude%20de%20faisabilit%C3%A9_final%20-%2016-05-2024.pdf", "format": "pdf"}, {"titre": "Feuille de route divulgation systématique", "categorie": "thematique", "annees_couvertes": "2024", "date_publication": "2024-08-09", "url": "https://www.itierdc.net/public/rapports-itie-rdc/thematiques/2024/Mainstreaming%20EITI_DISM%20-%20Feuille%20de%20route%20-%20Final%20-%2009-08-2024.pdf", "format": "pdf"}, {"titre": "Rapport EMAPE filière 3T & Or", "categorie": "thematique", "annees_couvertes": "2023", "date_publication": "2023-11-27", "url": "https://www.itierdc.net/public/rapports-itie-rdc/thematiques/2023/Rapport%20ITIE%20Artisanal%203T%20OR%20adopt%C3%A9%20le%2027%20novembre%202023.pdf", "format": "pdf"}, {"titre": "Rapport EMAPE filière cuivre-cobalt-zinc", "categorie": "thematique", "annees_couvertes": "2023", "date_publication": "2023-03-27", "url": "https://www.itierdc.net/public/rapports-itie-rdc/thematiques/2023/ASM%20-%20ITIE-RDC%20-%20Rapport%20final%20-%2027-03-2023.pdf", "format": "pdf"}, {"titre": "Rapport contextuel secteur forestier 2020-2021", "categorie": "forestier", "annees_couvertes": "2020-2021", "date_publication": "2025-02-25", "url": "https://www.itierdc.net/public/rapports-itie-rdc/foret/2020-2021/Rapport%20ITIE%20RDC%20Forestier%202020%20-%202021%20(version%20finale%2025022025).pdf", "format": "pdf"}, {"titre": "Rapport de cadrage secteur forestier 2020-2021", "categorie": "forestier", "annees_couvertes": "2020-2021", "date_publication": "2023-02-25", "url": "https://www.itierdc.net/public/rapports-itie-rdc/foret/2020-2021/RAPPORT%20CADRAGE-FORET-VF_25%2002%2023.pdf", "format": "pdf"}, {"titre": "Rapport de cadrage secteur forestier 2013-2014", "categorie": "forestier", "annees_couvertes": "2013-2014", "date_publication": null, "url": "https://www.itierdc.net/public/rapports-itie-rdc/foret/2013-2014/Cadrage%20forestier%202013-2014.pdf", "format": "pdf"}, {"titre": "Rapport annuel d'avancement 2016", "categorie": "raa", "annees_couvertes": "2016", "date_publication": "2017", "url": "https://www.itierdc.net/public/rapports-itie-rdc/raa/2016/RAA_2016%20Version%20finale.pdf", "format": "pdf"}, {"titre": "Rapport annuel d'avancement 2017", "categorie": "raa", "annees_couvertes": "2017", "date_publication": "2018", "url": "https://www.itierdc.net/public/rapports-itie-rdc/raa/2017/RAPPORT%20ANNUEL%20D-AVANCEMENT%20ITIE-RDC%202017_Adopte_par_le_gtt.pdf", "format": "pdf"}, {"titre": "Rapport annuel d'avancement 2021-2022", "categorie": "raa", "annees_couvertes": "2021-2022", "date_publication": "2023", "url": "https://www.itierdc.net/public/rapports-itie-rdc/raa/2021-2022/Rapport%20Annuel%20d%27Avancement%202021-2022.pdf", "format": "pdf"}, {"titre": "Validation ITIE-RDC 2019 (progrès significatifs)", "categorie": "validation", "annees_couvertes": "2019", "date_publication": "2019-10-16", "url": "https://api.eiti.org/sites/default/files/attachments/validation_report_drc_final_25_07_19.pdf", "format": "pdf"}, {"titre": "Rapport de validation ITIE-RDC 2022 (score 85.5)", "categorie": "validation", "annees_couvertes": "2022", "date_publication": "2022-12-13", "url": "https://www.itierdc.net/public/rapports-itie-rdc/validations/2022/Rapport%20de%20validation%20de%20l%27ITIE-RDC%202022.pdf", "format": "pdf"}, {"titre": "Rapport de cadrage du secteur forestier 2020-2021", "categorie": "forestier", "annees_couvertes": "2020-2021", "date_publication": "2023-02-25", "url": "https://www.itierdc.net/public/rapports-itie-rdc/foret/2020-2021/RAPPORT%20CADRAGE-FORET-VF_25%2002%2023.pdf", "format": "pdf"}, {"titre": "Annexes du Rapport ITIE-RDC 2023 (classeur détaillé, 68 feuilles)", "categorie": "annexe_donnees", "annees_couvertes": "2023", "date_publication": "2025-12-31", "url": "https://eiti.org/document/25572", "format": "xlsx"}, {"titre": "Annexes du Rapport ITIE-RDC 2022 (classeur détaillé, 58 feuilles)", "categorie": "annexe_donnees", "annees_couvertes": "2022", "date_publication": "2024-12-31", "url": "https://eiti.org/document/24312", "format": "xlsx"}, {"titre": "Données contextuelles ITIE-RDC (production, exportations, emploi, propriété effective…)", "categorie": "annexe_donnees", "annees_couvertes": "2013-2023", "date_publication": "2025-12-31", "url": "https://www.itierdc.net/rapports/", "format": "xlsx"}, {"titre": "Registre de la propriété réelle des entreprises extractives", "categorie": "annexe_donnees", "annees_couvertes": "2013-2023", "date_publication": "2025-12-31", "url": "https://www.itierdc.net/rapports/", "format": "csv"}], "sources": [{"libelle": "ITIE International - API summary data v2.0", "type": "api", "url": "https://eiti.org/api/v2.0/summary_data"}, {"libelle": "ITIE International - API revenue streams", "type": "api", "url": "https://eiti.org/api/v2.0/revenue"}, {"libelle": "ITIE International - API indicator values", "type": "api", "url": "https://eiti.org/api/v2.0/indicator_value"}, {"libelle": "Portail national des donnees ITIE-RDC (T/SL)", "type": "portail", "url": "https://www.tsl-itierdc.org/donnees-itie/"}, {"libelle": "Site ITIE-RDC", "type": "site", "url": "https://www.itierdc.net/"}, {"libelle": "Portail open data ITIE-RDC", "type": "site", "url": "https://www.itierdc.net/open-data/"}, {"libelle": "Annexes xlsx des rapports ITIE-RDC", "type": "annexe_xlsx", "url": "https://eiti.org/"}, {"libelle": "Données contextuelles ITIE-RDC (rapport 2023) & registre de propriété réelle", "type": "fichiers ITIE-RDC", "url": "https://www.itierdc.net/rapports/"}]}}
+{
+  "content": {
+    "brand": {
+      "name": "ITIE-RDC",
+      "full": "Initiative pour la Transparence des Industries Extractives",
+      "tagline": "Promouvoir la transparence et la bonne gouvernance des revenus issus des industries extractives en RDC"
+    },
+    "topbar": {
+      "tel": "+243 824 855 057",
+      "email": "secretariat@itierdc.org"
+    },
+    "overview": {
+      "intro": "Explorez l'intégralité des données publiées par l'ITIE en République Démocratique du Congo : recettes de l'État, paiements des entreprises, réconciliation, production, dépenses sociales et indicateurs — dans un entrepôt de données interactif."
+    },
+    "kpi_labels": {
+      "exercices": "Exercices couverts",
+      "orgs": "Organisations déclarantes",
+      "flux": "Flux / taxes recensés",
+      "rapports": "Rapports publiés",
+      "recon": "Lignes de réconciliation",
+      "social": "Dépenses sociales déclarées"
+    },
+    "about": {
+      "titre": "À propos de l'entrepôt",
+      "mission": "L'Initiative pour la Transparence des Industries Extractives (ITIE) est une norme mondiale visant à promouvoir la gestion ouverte et redevable des ressources pétrolières, gazières et minières. La RDC a adhéré à l'ITIE en 2007 et a été déclarée conforme à la norme.",
+      "gouvernance": "La mise en œuvre repose sur un Comité Exécutif tripartite réunissant l'administration publique, les entreprises extractives et la société civile, appuyé par un Secrétariat Technique.",
+      "methodo": "Les totaux annuels 2007-2019 proviennent des données récapitulatives réconciliées de l'ITIE International (déjà en USD). Le détail par flux, par entreprise et les dépenses sociales 2015-2024 proviennent du portail national de télédéclaration. Les anomalies de devise sont conservées telles que publiées."
+    },
+    "contact": {
+      "org": "Secrétariat Technique de l'ITIE-RDC",
+      "tel": "+243 824 855 057",
+      "email": "secretariat@itierdc.org",
+      "site": "www.itierdc.net",
+      "adresse": "Kinshasa, République Démocratique du Congo"
+    },
+    "footer": {
+      "note": "TransparenceRDC — plateforme de données ITIE de la République Démocratique du Congo. Données publiques ITIE. Cette plateforme n'est pas un site officiel de l'ITIE-RDC."
+    },
+    "reports": [
+      {
+        "titre": "Rapport ITIE-RDC 2007",
+        "categorie": "rapport_itie",
+        "annees_couvertes": "2007",
+        "date_publication": "2009-12-22",
+        "url": "https://eiti.org/sites/default/files/attachments/2007_drc_eiti_report_en.pdf",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport ITIE-RDC 2008-2009",
+        "categorie": "rapport_itie",
+        "annees_couvertes": "2008-2009",
+        "date_publication": "2012-01-01",
+        "url": "https://eiti.org/documents/democratic-republic-congo-2008-2009-eiti-report",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport ITIE-RDC 2010",
+        "categorie": "rapport_itie",
+        "annees_couvertes": "2010",
+        "date_publication": "2013-01-26",
+        "url": "https://eiti.org/documents/democratic-republic-congo-2010-eiti-report",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport ITIE-RDC 2011",
+        "categorie": "rapport_itie",
+        "annees_couvertes": "2011",
+        "date_publication": "2013-12-31",
+        "url": "https://eiti.org/documents/democratic-republic-congo-2011-eiti-report",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport ITIE-RDC 2012",
+        "categorie": "rapport_itie",
+        "annees_couvertes": "2012",
+        "date_publication": "2014-12-24",
+        "url": "https://eiti.org/documents/democratic-republic-congo-2012-eiti-report",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport ITIE-RDC 2013",
+        "categorie": "rapport_itie",
+        "annees_couvertes": "2013",
+        "date_publication": "2015-07-01",
+        "url": "https://eiti.org/documents/democratic-republic-congo-2013-eiti-report",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport ITIE-RDC 2014",
+        "categorie": "rapport_itie",
+        "annees_couvertes": "2014",
+        "date_publication": "2015-12-01",
+        "url": "https://eiti.org/documents/democratic-republic-congo-2014-eiti-report",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport ITIE-RDC 2015",
+        "categorie": "rapport_itie",
+        "annees_couvertes": "2015",
+        "date_publication": "2017-12-31",
+        "url": "https://www.itierdc.net/public/rapports-itie-rdc/2015/RAPPORT%20ITIE-RDC%202015.pdf",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport ITIE-RDC 2016",
+        "categorie": "rapport_itie",
+        "annees_couvertes": "2016",
+        "date_publication": "2018-12-31",
+        "url": "https://www.itierdc.net/publications/rapports-itie-rdc-2000/rapport-itie-rdc-2016/",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport ITIE-RDC 2017",
+        "categorie": "rapport_itie",
+        "annees_couvertes": "2017",
+        "date_publication": "2019-12-31",
+        "url": "https://eiti.org/documents/democratic-republic-congo-2017-eiti-report",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport assoupli ITIE-RDC 2018-2019-1er sem. 2020",
+        "categorie": "rapport_itie",
+        "annees_couvertes": "2018-2020",
+        "date_publication": "2021",
+        "url": "https://www.itierdc.net/publications/rapports-itie-rdc-2000/rapport-itie-rdc-2018-1er-sem-2020/",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport ITIE-RDC 2019",
+        "categorie": "rapport_itie",
+        "annees_couvertes": "2019",
+        "date_publication": "2021-03-16",
+        "url": "https://eiti.org/documents/democratic-republic-congo-2019-eiti-report",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport ITIE-RDC 2020-2021",
+        "categorie": "rapport_itie",
+        "annees_couvertes": "2020-2021",
+        "date_publication": "2023-02-23",
+        "url": "https://www.itierdc.net/public/rapports-itie-rdc/2020-2021/RAPPORT%20ITIE-RDC%202020-2021_23022023_V_Publi%C3%A9.pdf",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport ITIE-RDC 2022",
+        "categorie": "rapport_itie",
+        "annees_couvertes": "2022",
+        "date_publication": "2024-12-31",
+        "url": "https://www.itierdc.net/public/rapports-itie-rdc/2022/Rapport%20ITIE%20RDC%202022%20-%2031122024.pdf",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport ITIE-RDC 2023",
+        "categorie": "rapport_itie",
+        "annees_couvertes": "2023",
+        "date_publication": "2025-12-31",
+        "url": "https://www.itierdc.net/public/rapports-itie-rdc/2023/Rapport%20final%20ITIE%20RDC%202023%20-%2031-12-2025.pdf",
+        "format": "pdf"
+      },
+      {
+        "titre": "Annexes du Rapport ITIE-RDC 2022 (classeur détaillé, 58 feuilles)",
+        "categorie": "annexe_donnees",
+        "annees_couvertes": "2022",
+        "date_publication": "2024-12-31",
+        "url": "https://eiti.org/document/24312",
+        "format": "xlsx"
+      },
+      {
+        "titre": "Annexe 58 - Fiches de conciliation par entreprise 2022",
+        "categorie": "annexe_donnees",
+        "annees_couvertes": "2022",
+        "date_publication": "2024-12-31",
+        "url": "https://eiti.org/document/24313",
+        "format": "xlsx"
+      },
+      {
+        "titre": "Annexes du Rapport ITIE-RDC 2023 (classeur détaillé, 68 feuilles)",
+        "categorie": "annexe_donnees",
+        "annees_couvertes": "2023",
+        "date_publication": "2025-12-31",
+        "url": "https://eiti.org/document/25572",
+        "format": "xlsx"
+      },
+      {
+        "titre": "Annexe cadastre minier (registre CAMI)",
+        "categorie": "annexe_donnees",
+        "annees_couvertes": "2020-2021",
+        "date_publication": "2023-03",
+        "url": "https://eiti.org/document/21846",
+        "format": "xlsx"
+      },
+      {
+        "titre": "Données récapitulatives (summary data) 2017",
+        "categorie": "summary_data",
+        "annees_couvertes": "2017",
+        "date_publication": "2019-12-31",
+        "url": "https://eiti.org/sites/default/files/spreadsheets/2017%20DRC%20Summary%20Data%20v2%20EN.xlsx",
+        "format": "xlsx"
+      },
+      {
+        "titre": "Données récapitulatives (summary data) 2019",
+        "categorie": "summary_data",
+        "annees_couvertes": "2019",
+        "date_publication": "2021-03-16",
+        "url": "https://eiti.org/sites/default/files/spreadsheets/2019%20DRC%20Summary%20data%20EN%20v2%20final_copy.xlsx",
+        "format": "xlsx"
+      },
+      {
+        "titre": "Étude de faisabilité divulgation systématique (DISM)",
+        "categorie": "thematique",
+        "annees_couvertes": "2024",
+        "date_publication": "2024-05-16",
+        "url": "https://www.itierdc.net/public/rapports-itie-rdc/thematiques/2024/Mainstreaming%20EITI_DISM%20-%20Rapport%20d%27%C3%A9tude%20de%20faisabilit%C3%A9_final%20-%2016-05-2024.pdf",
+        "format": "pdf"
+      },
+      {
+        "titre": "Feuille de route divulgation systématique",
+        "categorie": "thematique",
+        "annees_couvertes": "2024",
+        "date_publication": "2024-08-09",
+        "url": "https://www.itierdc.net/public/rapports-itie-rdc/thematiques/2024/Mainstreaming%20EITI_DISM%20-%20Feuille%20de%20route%20-%20Final%20-%2009-08-2024.pdf",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport EMAPE filière 3T & Or",
+        "categorie": "thematique",
+        "annees_couvertes": "2023",
+        "date_publication": "2023-11-27",
+        "url": "https://www.itierdc.net/public/rapports-itie-rdc/thematiques/2023/Rapport%20ITIE%20Artisanal%203T%20OR%20adopt%C3%A9%20le%2027%20novembre%202023.pdf",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport EMAPE filière cuivre-cobalt-zinc",
+        "categorie": "thematique",
+        "annees_couvertes": "2023",
+        "date_publication": "2023-03-27",
+        "url": "https://www.itierdc.net/public/rapports-itie-rdc/thematiques/2023/ASM%20-%20ITIE-RDC%20-%20Rapport%20final%20-%2027-03-2023.pdf",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport contextuel secteur forestier 2020-2021",
+        "categorie": "forestier",
+        "annees_couvertes": "2020-2021",
+        "date_publication": "2025-02-25",
+        "url": "https://www.itierdc.net/public/rapports-itie-rdc/foret/2020-2021/Rapport%20ITIE%20RDC%20Forestier%202020%20-%202021%20(version%20finale%2025022025).pdf",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport de cadrage du secteur forestier 2020-2021",
+        "categorie": "forestier",
+        "annees_couvertes": "2020-2021",
+        "date_publication": "2023-02-25",
+        "url": "https://www.itierdc.net/public/rapports-itie-rdc/foret/2020-2021/RAPPORT%20CADRAGE-FORET-VF_25%2002%2023.pdf",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport de cadrage secteur forestier 2013-2014",
+        "categorie": "forestier",
+        "annees_couvertes": "2013-2014",
+        "date_publication": null,
+        "url": "https://www.itierdc.net/public/rapports-itie-rdc/foret/2013-2014/Cadrage%20forestier%202013-2014.pdf",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport annuel d'avancement 2016",
+        "categorie": "raa",
+        "annees_couvertes": "2016",
+        "date_publication": "2017",
+        "url": "https://www.itierdc.net/public/rapports-itie-rdc/raa/2016/RAA_2016%20Version%20finale.pdf",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport annuel d'avancement 2017",
+        "categorie": "raa",
+        "annees_couvertes": "2017",
+        "date_publication": "2018",
+        "url": "https://www.itierdc.net/public/rapports-itie-rdc/raa/2017/RAPPORT%20ANNUEL%20D-AVANCEMENT%20ITIE-RDC%202017_Adopte_par_le_gtt.pdf",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport annuel d'avancement 2021-2022",
+        "categorie": "raa",
+        "annees_couvertes": "2021-2022",
+        "date_publication": "2023",
+        "url": "https://www.itierdc.net/public/rapports-itie-rdc/raa/2021-2022/Rapport%20Annuel%20d%27Avancement%202021-2022.pdf",
+        "format": "pdf"
+      },
+      {
+        "titre": "Validation ITIE-RDC 2019 (progrès significatifs)",
+        "categorie": "validation",
+        "annees_couvertes": "2019",
+        "date_publication": "2019-10-16",
+        "url": "https://api.eiti.org/sites/default/files/attachments/validation_report_drc_final_25_07_19.pdf",
+        "format": "pdf"
+      },
+      {
+        "titre": "Rapport de validation ITIE-RDC 2022 (score 85.5)",
+        "categorie": "validation",
+        "annees_couvertes": "2022",
+        "date_publication": "2022-12-13",
+        "url": "https://www.itierdc.net/public/rapports-itie-rdc/validations/2022/Rapport%20de%20validation%20de%20l%27ITIE-RDC%202022.pdf",
+        "format": "pdf"
+      },
+      {
+        "titre": "Données contextuelles ITIE-RDC (production, exportations, emploi, propriété effective…)",
+        "categorie": "annexe_donnees",
+        "annees_couvertes": "2013-2023",
+        "date_publication": "2025-12-31",
+        "url": "https://www.itierdc.net/rapports/",
+        "format": "xlsx"
+      },
+      {
+        "titre": "Registre de la propriété réelle des entreprises extractives",
+        "categorie": "annexe_donnees",
+        "annees_couvertes": "2013-2023",
+        "date_publication": "2025-12-31",
+        "url": "https://www.itierdc.net/rapports/",
+        "format": "csv"
+      }
+    ],
+    "sources": [
+      {
+        "libelle": "ITIE International - API summary data v2.0",
+        "type": "api",
+        "url": "https://eiti.org/api/v2.0/summary_data"
+      },
+      {
+        "libelle": "ITIE International - API revenue streams",
+        "type": "api",
+        "url": "https://eiti.org/api/v2.0/revenue"
+      },
+      {
+        "libelle": "ITIE International - API indicator values",
+        "type": "api",
+        "url": "https://eiti.org/api/v2.0/indicator_value"
+      },
+      {
+        "libelle": "Portail national des donnees ITIE-RDC (T/SL)",
+        "type": "portail",
+        "url": "https://www.tsl-itierdc.org/donnees-itie/"
+      },
+      {
+        "libelle": "Site ITIE-RDC",
+        "type": "site",
+        "url": "https://www.itierdc.net/"
+      },
+      {
+        "libelle": "Portail open data ITIE-RDC",
+        "type": "site",
+        "url": "https://www.itierdc.net/open-data/"
+      },
+      {
+        "libelle": "Annexes xlsx des rapports ITIE-RDC",
+        "type": "annexe_xlsx",
+        "url": "https://eiti.org/"
+      },
+      {
+        "libelle": "Données contextuelles ITIE-RDC (rapport 2023) & registre de propriété réelle",
+        "type": "fichiers ITIE-RDC",
+        "url": "https://www.itierdc.net/rapports/"
+      }
+    ]
+  }
+}
