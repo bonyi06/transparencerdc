@@ -306,6 +306,46 @@ function highlight(){return `<div class="hl">
   </div></div>`;}
 
 /* ===== MODULES ===== */
+// Répartition des recettes extractives par régie percevante nationale
+// (DGI, DGRAD, DGDA, CAMI, SGH, OCC...) et par niveau (National / Provincial
+// / ETD / Entreprise publique) : les recettes nationales sont largement
+// majoritaires dans les données (ent_revenus_entite, colonne "Niveau") mais
+// n'apparaissaient auparavant dans aucun graphique du tableau de bord,
+// contrairement aux flux infranationaux mis en avant par la Géographie
+// (retour utilisateur, sept. 2026).
+// Certaines valeurs de "Entité perceptrice harmonisée" sont en réalité des
+// sous-totaux ou des agrégats de la source ("Total", "Toutes entités",
+// "Total secteur minier"...) plutôt que de vraies régies : les inclure dans
+// un classement par entité créerait des doublons trompeurs (une régie et,
+// séparément, un total qui la recouvre déjà). On les exclut du classement.
+function isRollupEntityLabel(v){return /^(total|toutes)\b/i.test(String(v||'').trim());}
+function nationalRegieTop(n){
+  const d=DS.ent_revenus_entite;if(!d)return [];
+  const ci=d.cols.indexOf('Entité perceptrice harmonisée'),ni=d.cols.indexOf('Niveau'),mi=d.cols.indexOf('Montant normalisé');
+  if(ci<0||ni<0||mi<0)return [];
+  const map=new Map();
+  for(const r of d.rows){
+    if(r[ni]!=='National')continue;
+    if(isRollupEntityLabel(r[ci]))continue;
+    const v=Number(r[mi]);if(isNaN(v))continue;
+    const k=r[ci]||'(non précisé)';
+    map.set(k,(map.get(k)||0)+v);
+  }
+  return [...map.entries()].map(([label,value])=>({label,value})).sort((a,b)=>b.value-a.value).slice(0,n);
+}
+function revenueLevelBreakdown(){
+  const d=DS.ent_revenus_entite;if(!d)return [];
+  const ci=d.cols.indexOf('Entité perceptrice harmonisée'),ni=d.cols.indexOf('Niveau'),mi=d.cols.indexOf('Montant normalisé');
+  if(ni<0||mi<0)return [];
+  const map=new Map();
+  for(const r of d.rows){
+    if(ci>=0&&isRollupEntityLabel(r[ci]))continue; // évite les doubles comptes (une ligne "Total" additionnée aux lignes qu'elle recouvre déjà)
+    const v=Number(r[mi]);if(isNaN(v))continue;
+    const k=r[ni]||'(non précisé)';
+    map.set(k,(map.get(k)||0)+v);
+  }
+  return [...map.entries()].map(([label,value])=>({label,value})).sort((a,b)=>b.value-a.value);
+}
 function mOverview(){return `
   <div class="phead"><div class="eyebrow">Tableau de bord</div><h1>Vue d'ensemble</h1>
     <p data-edit="overview.intro">${esc(C.overview.intro)}</p></div>
@@ -316,12 +356,16 @@ function mOverview(){return `
     <div class="card"><div class="ch"><h3>Répartition des revenus ${O._year||'2023'}</h3><span class="badge">Secteurs</span></div><div class="sub">Mines vs hydrocarbures</div><div class="chart" id="ov2"></div></div>
     <div class="card"><div class="ch"><h3>Principales entreprises ${O._topyear||'2023'}</h3><span class="badge">Top 10</span></div><div class="sub">Recettes perçues par l'État, USD</div><div class="chart" id="ov3"></div></div>
     <div class="card"><div class="ch"><h3>Dépenses sociales par exercice</h3><span class="badge">${AGG.social&&AGG.social.length?AGG.social[0].annee+'–'+AGG.social[AGG.social.length-1].annee:''}</span></div><div class="sub">Total annuel, USD</div><div class="chart" id="ov4"></div></div>
+    <div class="card"><div class="ch"><h3>Recettes par régie nationale</h3><span class="badge">Toutes années</span></div><div class="sub">DGI, DGRAD, DGDA, CAMI… — cumul, USD</div><div class="chart" id="ov5"></div></div>
+    <div class="card"><div class="ch"><h3>Recettes par niveau de perception</h3><span class="badge">National vs infranational</span></div><div class="sub">Régies nationales, provinciales, ETD, entreprises publiques</div><div class="chart" id="ov6"></div></div>
   </div>`;}
 function drawOverview(){
   cLine($('#ov1'),AGG.serie_etat.map(d=>({label:d.annee,value:d.etat,ese:d.ese})),true,css('--sky'),css('--red'),'value','ese');
   cDonut($('#ov2'),[{label:'Mines',value:O.mines},{label:'Hydrocarbures',value:O.petrole}]);
   cBar($('#ov3'),AGG.top2023.map(d=>({label:d.nom,value:d.etat})),css('--sky'),true);
   cBar($('#ov4'),AGG.social.map(d=>({label:String(d.annee),value:d.montant})),css('--red'),false);
+  cBar($('#ov5'),nationalRegieTop(10),css('--teal'),true);
+  cDonut($('#ov6'),revenueLevelBreakdown());
 }
 
 /* Explorer */
@@ -1590,7 +1634,7 @@ function recomputeAll(){try{
     const yrs=[...new Set(RE.rows.map(r=>String(r[iE]||'').trim()).filter(y=>/^\d{4}$/.test(y)))].sort();
     const ly=yrs[yrs.length-1];
     const agEtat={},agAll={};
-    RE.rows.forEach(r=>{if(String(r[iE]||'').trim()!==ly)return;const nom=r[iN];if(!nom)return;const v=_num(r[iV])||0;const dec=String(r[iD]||'').toLowerCase();
+    RE.rows.forEach(r=>{if(String(r[iE]||'').trim()!==ly)return;const nom=r[iN];if(!nom||isRollupEntityLabel(nom))return;const v=_num(r[iV])||0;const dec=String(r[iD]||'').toLowerCase();
       agAll[nom]=(agAll[nom]||0)+v; if(/(tat)/.test(dec))agEtat[nom]=(agEtat[nom]||0)+v;});
     let list=Object.entries(agEtat).filter(([,v])=>v>0); if(!list.length)list=Object.entries(agAll);
     list.sort((a,b)=>b[1]-a[1]);

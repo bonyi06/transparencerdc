@@ -390,6 +390,33 @@ traitées différemment :
   correspond pas au code déployé, un rechargement forcé (Ctrl+Maj+R /
   Cmd+Maj+R) élimine cette hypothèse.
 
+## Visibilité des recettes nationales (DGI, DGRAD, DGDA…)
+
+Retour utilisateur (sept. 2026) : les flux infranationaux (province par
+province) sont mis en avant par la Géographie, mais les recettes perçues
+par les régies financières nationales n'apparaissaient dans aucun
+graphique du tableau de bord — alors que les données existent et
+représentent la majorité des recettes (`ent_revenus_entite`, colonne
+`Niveau` : National ≈ 78 %, Provincial ≈ 13 %, Entreprise publique ≈ 8 %,
+ETD ≈ 2 %). Deux graphiques ont été ajoutés à la Vue d'ensemble
+(static/app.js, `mOverview`/`drawOverview`) :
+
+- **Recettes par régie nationale** : classement DGI, Trésor public, DGDA,
+  DGRAD, FOMIN, CAMI, CEEC, BCC… par montant cumulé
+  (`nationalRegieTop()`).
+- **Recettes par niveau de perception** : répartition National / Provincial
+  / ETD / Entreprise publique (`revenueLevelBreakdown()`).
+
+En construisant ces graphiques, un bug de double comptage a été trouvé et
+corrigé : la colonne `Entité perceptrice harmonisée` mélange de vraies
+régies avec des lignes de sous-total de la source ("Total", "Toutes
+entités", "Total secteur minier"…) — les inclure dans un classement par
+entité aurait affiché un faux doublon à côté de la régie qu'il recouvre
+déjà. `isRollupEntityLabel()` les exclut désormais des agrégations
+client (le même filtre a corrigé, au passage, une ligne "Total" qui
+s'était glissée dans le classement « Principales entreprises » de la Vue
+d'ensemble, calculé sur `ent_revenus_entreprise`).
+
 ## Fiabilité des tableaux (audit qualité de sept. 2026)
 
 Un second audit (`Audit_presentation_tableaux_TransparenceRDC.xlsx`, 168
