@@ -992,50 +992,39 @@ depuis l'interface d'administration (édition de cellule, enrichissement de
 données) sur une table du même nom serait alors perdue. À n'utiliser que
 juste après un déploiement de correctif comme celui-ci, pas en routine.
 
-## Refonte publique / expert (6 sept. 2026) — mise en œuvre de la section « Architecture publique recommandée »
+## Simplification des tableaux et amélioration accessibilité/mobile (6 sept. 2026)
 
-Suite au second audit externe ci-dessus, l'utilisateur a demandé la mise en
-œuvre complète des points 3 (générateur de visualisations trop technique), 4
-(Explorateur trop brut) et 7 (modèle de données conceptuellement confus) de
-l'audit, ainsi que de l'intégralité de sa section « Architecture publique
-recommandée ». Les 11 parcours ont été construits d'un coup, au même niveau
-de détail (choix explicite de l'utilisateur), avec une amélioration réelle
-mais honnête de l'accessibilité et du mobile (pas de certification WCAG
-revendiquée — choix explicite de l'utilisateur).
+Suite au second audit externe ci-dessus, une refonte complète avait d'abord
+été construite pour traiter ses points 3, 4 et 7 ainsi que sa section
+« Architecture publique recommandée » : un mode Public/Expert avec bouton de
+bascule, et 11 parcours thématiques distincts remplaçant le menu unique.
+**Cette bascule de mode et ces 11 parcours ont été retirés après retour de
+l'utilisateur**, qui a explicitement demandé de conserver le menu unique
+historique (Vue d'ensemble, Visualisations, Explorateur, Géographie, Modèle
+de données, Dictionnaire, Qualité des données, Rapports, À propos) plutôt que
+d'ajouter une couche supplémentaire de navigation et de pages — retour
+verbatim : *« Je préfère garder la vue publique et ne pas rajouter plusieurs
+couches de visualisations, ce que je veux c'est garder l'ancienne vue avec
+ses options mais garder les montants finaux, pas trop des colonnes
+difficiles à comprendre pour un citoyen »*.
 
-- **Mode Public / mode Expert.** Un bouton dans la barre du haut (`☰
-  Public` / `⚙ Expert`) bascule entre deux menus : le mode **Public**
-  (activé par défaut, choix persisté dans le navigateur) affiche 11 parcours
-  thématiques en langage clair ; le mode **Expert** retrouve les outils
-  techniques existants (Explorateur, Visualisations, Géographie, Modèle de
-  données, Dictionnaire, Qualité des données, Rapports, À propos), inchangés.
-- **11 parcours thématiques publics**, un même gabarit pour chacun (question
-  en langage clair, jusqu'à 2 filtres, 3 à 5 indicateurs clés, un graphique
-  principal et un graphique de comparaison, un encadré « Ce qu'il faut
-  comprendre », un tableau limité à 7 colonnes maximum avec liens « voir les
-  données brutes », « télécharger » et « exporter cette vue ») : Vue
-  d'ensemble, Revenus extractifs, Entreprises et paiements, Flux et entités
-  perceptrices, Réconciliation, Territoires et paiements infranationaux,
-  Production et exportations, Dépenses sociales et environnementales,
-  Titres/licences et propriété effective, Rapports/sources/méthodologie,
-  Données ouvertes.
-- **Couche sémantique par rôle de colonne.** Une nouvelle fonction
-  `columnRole()` classe chaque colonne (`id`, `year`, `page`, `pct`, `price`,
-  `ratio`, `stock`, `additive`, `text`, `dimension`) et une fonction
-  `datasetKind()` classe chaque table (`source`, `référentiel`, `dimension`,
-  `fait`, `entrepôt`, `analytique`, `vue`) sur les 181 tables — remplace
-  l'ancien badge binaire faits/contextuel du Modèle de données et du
-  Dictionnaire, qui ne reflétait plus la variété réelle des tables.
-- **Tables limitées à 7 colonnes en mode Public.** `pickDefaultCols()`
-  choisit, par table, les colonnes les plus lisibles (dimensions et mesures
-  d'abord, identifiants techniques en dernier) ; un bouton « Afficher toutes
-  les colonnes (mode Expert) » reste disponible dans l'Explorateur pour qui
-  veut la vue complète. Le mode Expert affiche toujours toutes les colonnes.
-- **Galerie de graphiques validés.** En mode Public, l'écran Visualisations
-  ouvre par défaut sur une galerie de 8 graphiques prêts à l'emploi plutôt
-  que sur le générateur libre (table/dimension/mesure/agrégation) ; ce
-  dernier reste accessible via « Mode Expert : générateur libre » sur la même
-  page pour qui souhaite composer ses propres graphiques.
+Ce qui a été **conservé** de ce chantier, car il répond directement à cette
+demande sans ajouter de couche de navigation :
+
+- **Couche sémantique par rôle de colonne.** `columnRole()` classe chaque
+  colonne (`id`, `year`, `page`, `pct`, `price`, `ratio`, `stock`,
+  `additive`, `text`, `dimension`) et `datasetKind()` classe chaque table
+  (`source`, `référentiel`, `dimension`, `fait`, `entrepôt`, `analytique`,
+  `vue`) sur les 181 tables — remplace l'ancien badge binaire
+  faits/contextuel du Modèle de données et du Dictionnaire, qui ne reflétait
+  plus la variété réelle des tables.
+- **Tables simplifiées à 7 colonnes par défaut, pour tout le monde.**
+  `pickDefaultCols()` choisit, par table, les colonnes les plus lisibles
+  (dimensions et montants d'abord, identifiants techniques en dernier) ;
+  l'Explorateur applique cette limite par défaut sur toute table de plus de
+  7 colonnes, sans distinction de mode ou de profil. Un bouton « ▤ Afficher
+  toutes les colonnes » reste disponible pour qui veut la vue technique
+  complète.
 - **Accessibilité et mobile — amélioration réelle, pas une certification.**
   Lien d'évitement (« Aller au contenu principal »), zone de contenu
   principale identifiée (`<main>`), navigation latérale annoncée
@@ -1048,12 +1037,19 @@ revendiquée — choix explicite de l'utilisateur).
   bouton d'origine à la fermeture, fermeture au clavier via Échap déjà
   existante), graphiques dotés d'un intitulé accessible. Limite assumée et
   non cachée : les graphiques restent une image porteuse d'un intitulé, pas
-  un point de données navigable au clavier un par un — l'alternative
-  accessible réelle est le tableau de données affiché à côté sur la plupart
-  des parcours. Quelques ajustements de mise en page mobile (barre du haut,
-  fenêtres modales, cibles tactiles) complètent cette passe. Aucune mention
-  « conforme WCAG » n'a été ajoutée nulle part dans l'interface, conformément
-  au choix de l'utilisateur.
+  un point de données navigable au clavier un par un. Quelques ajustements
+  de mise en page mobile (barre du haut, fenêtres modales, cibles tactiles)
+  complètent cette passe. Aucune mention « conforme WCAG » n'a été ajoutée
+  nulle part dans l'interface.
+
+Ce qui a été **retiré**, sur demande explicite : le bouton de bascule
+Public/Expert, les 11 pages thématiques (Revenus extractifs, Entreprises et
+paiements, Flux et entités perceptrices, Réconciliation, Territoires et
+paiements infranationaux, Production et exportations, Dépenses sociales et
+environnementales, Titres/licences et propriété effective, Données
+ouvertes), ainsi que la bascule galerie/générateur de l'écran Visualisations
+(qui redevient une page unique, générateur + petite galerie de graphiques
+prêts à l'emploi visibles ensemble, comme avant ce chantier).
 
 ## Limites connues / pistes d'évolution
 
