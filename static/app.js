@@ -203,8 +203,15 @@ const ROLE_LABELS={
 // future galerie de graphiques pour savoir ce qu'il est licite de sommer,
 // moyenner, ou afficher « dernière valeur » plutôt que total.
 function columnRole(name,col){
-  if(isIdCol(col))return 'id';
+  // isYearLikeCol est vérifié AVANT isIdCol : certaines colonnes-année sont
+  // nommées avec un suffixe « _id » (ex. « exercice_id » dans
+  // fait_depense_sociale) que isIdCol reconnaîtrait sinon comme un simple
+  // identifiant technique, la reléguant en fin de liste et masquant
+  // l'exercice dans la vue simplifiée à 7 colonnes (retour utilisateur,
+  // audit du 7 sept. 2026 : « un montant social sans année est
+  // pratiquement inutilisable »).
   if(isYearLikeCol(name,col))return 'year';
+  if(isIdCol(col))return 'id';
   if(isPageLikeCol(col))return 'page';
   if(isPct(col))return 'pct';
   if(isPriceLikeCol(col))return 'price';
@@ -231,13 +238,23 @@ window.columnRole=columnRole;window.ROLE_LABELS=ROLE_LABELS;window.isSummableNum
 // (audit qualité, sept. 2026 : « afficher l'unité … et filtrer avant
 // agrégation »). Ne bloque rien : signale seulement, pour laisser
 // l'utilisateur affiner ses filtres.
+// Détecte toute colonne « devise »/« unité » — y compris les variantes
+// composées comme « Unité de volume » ou « Unité de valeur » (tables de
+// production/exportations, qui mélangent tonnes, carats, barils… dans une
+// même colonne) : la version précédente ne reconnaissait que les noms de
+// colonne exacts « Devise »/« Unité » et laissait passer ces variantes sans
+// avertissement, alors que sommer des quantités dans des unités différentes
+// produit un total sans signification (audit du 7 sept. 2026).
 function mixedUnitWarning(name,rows){
-  const d=DS[name];if(!d)return '';
-  const uCol=d.cols.findIndex(c=>/^(devise|unit[eé])$/i.test(c));
-  if(uCol<0||!rows.length)return '';
-  const vals=new Set();for(const r of rows){const v=r[uCol];if(v!=null&&v!=='')vals.add(String(v));}
-  if(vals.size<=1)return '';
-  return `<span class="sm-s" style="color:#b3261e" title="${esc([...vals].join(', '))}">⚠ ${esc(d.cols[uCol])} mixte (${vals.size})</span>`;
+  const d=DS[name];if(!d||!rows.length)return '';
+  const uCols=d.cols.map((c,i)=>({c,i})).filter(o=>/devise|unit[eé]/i.test(o.c));
+  if(!uCols.length)return '';
+  const out=[];
+  for(const {c,i} of uCols){
+    const vals=new Set();for(const r of rows){const v=r[i];if(v!=null&&v!=='')vals.add(String(v));}
+    if(vals.size>1)out.push(`<span class="sm-s" style="color:#b3261e" title="${esc([...vals].join(', '))}">⚠ ${esc(c)} mixte (${vals.size})</span>`);
+  }
+  return out.join('');
 }
 // Les lignes dont la dimension choisie est vide/nulle sont le plus souvent des
 // sous-totaux, notes de bas de tableau ou lignes récapitulatives (mêmes causes
@@ -720,7 +737,7 @@ function exportCSV(name,rows){
 /* Visualisations */
 let vizState={ds:'fait_reconciliation_entreprise',dim:'',measure:'',agg:'sum',type:'bar'};
 const GALLERY_CARDS=`
-      <div class="card"><div class="ch"><h3>Recettes vs paiements (écart)</h3></div><div class="sub">Réconciliation par exercice, USD</div><div class="chart" id="g1" aria-label="Recettes vs paiements, écart de réconciliation par exercice"></div></div>
+      <div class="card"><div class="ch"><h3>Recettes vs paiements (écart)</h3></div><div class="sub">Réconciliation par exercice, USD</div><div class="chart" id="g1" aria-label="Recettes vs paiements, écart de réconciliation par exercice"></div><div id="g1Warn"></div></div>
       <div class="card"><div class="ch"><h3>Top flux de recettes 2023</h3></div><div class="sub">Perçu par l'État, USD</div><div class="chart" id="g2" aria-label="Top flux de recettes 2023, perçu par l’État"></div></div>
       <div class="card"><div class="ch"><h3>Contributeurs sociaux (cumul)</h3></div><div class="sub">2015–2024, USD</div><div class="chart" id="g3" aria-label="Contributeurs sociaux, cumul 2015-2024"></div></div>
       <div class="card"><div class="ch"><h3>Production 2023 (part-à-tout)</h3></div><div class="sub">Valeur par substance</div><div class="chart" id="g4" aria-label="Production 2023 part-à-tout, valeur par substance"></div></div>
@@ -815,6 +832,17 @@ function drawViz(){
 }
 function drawGallery(){
   cLine($('#g1'),AGG.recon_year.map(d=>({label:d.annee,value:d.etat,soc:d.soc})),true,css('--sky'),css('--red'),'value','soc');
+  // Alerte qualité : sur 2015-2021 « soc » (paiements des sociétés) et « etat » (recettes
+  // déclarées par l'État) restent du même ordre de grandeur (ratio < x2), ce qui est
+  // attendu pour une réconciliation ; sur les exercices suivants, « soc » explose sans
+  // que la source de l'écart n'ait pu être confirmée à ce jour — on ne masque pas ces
+  // valeurs (elles restent affichées, ne rien cacher) mais on avertit explicitement
+  // le lecteur plutôt que de les laisser passer pour un écart réel (retour audit, 7 sept. 2026).
+  const g1w=$('#g1Warn');
+  if(g1w){
+    const susp=AGG.recon_year.filter(d=>d.etat>0&&(d.soc/d.etat)>5).map(d=>d.annee);
+    g1w.innerHTML=susp.length?`<div class="msg warn" style="margin-top:8px">⚠ Donnée expérimentale — non validée pour ${susp.join(', ')} : le montant « paiements des sociétés » y dépasse de plus de 5× les recettes déclarées par l'État, un écart improbable qui indique très probablement une erreur d'unité ou d'agrégation en amont plutôt qu'un véritable écart de réconciliation. Les chiffres bruts restent affichés ci-dessus par souci de transparence, mais ne doivent pas être interprétés comme un écart réel tant que la source n'est pas confirmée.</div>`:'';
+  }
   cBar($('#g2'),AGG.flux2023.map(f=>({label:f.flux.replace(/\s*\(.*$/,''),value:f.etat})),css('--sky'),true);
   cBar($('#g3'),AGG.top_social.map(d=>({label:d.nom,value:d.total})),css('--amber'),true);
   cTreemap($('#g4'),[{label:'Cuivre',value:O.cuivre_val},{label:'Cobalt',value:O.cobalt_val},{label:'Diamant',value:O.diamant_val||O.diamant_c*10625},{label:'Pétrole',value:O.petrole*1e0}].filter(x=>x.value));
@@ -940,11 +968,21 @@ function mAbout(){const A=C.about,B=C.brand,F=C.footer,CT=C.contact;return `<div
         </div>
         ${editing?'<div style="font-size:11.5px;color:var(--ink-soft);margin-top:8px">Ces champs sont visibles publiquement — à tenir à jour à chaque nouvel import de données.</div>':''}
       </div>
+      <div class="card" style="margin-bottom:16px"><h3 style="margin-bottom:10px">Journal des modifications</h3>
+        <div style="font-size:12.5px;color:var(--ink-soft);line-height:1.7">
+          ${CHANGELOG.map(c=>`<div style="padding:7px 0;border-bottom:1px dashed var(--line)"><b class="mono" style="color:var(--navy)">${esc(c.date)}</b> — ${esc(c.txt)}</div>`).join('')}
+        </div>
+        <div style="font-size:11px;color:var(--ink-faint);margin-top:8px">Journal tenu manuellement pour tracer les corrections apportées à l'entrepôt (doublons, encodage, libellés…) — voir aussi la « Version de l'entrepôt » ci-dessus.</div>
+      </div>
       <details class="srcdetails"><summary>Sources techniques (API)</summary>
         <div class="srcs" style="margin-top:10px">${C.sources.map(s=>`<div class="src"><span class="d"></span><div><b>${esc(s.libelle)}</b><br><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url)}</a></div></div>`).join('')}</div>
       </details>
     </div>
   </div>`;}
+const CHANGELOG=[
+  {date:'2026-09-07',txt:"Correction d'un double comptage dans les revenus par entité (76 lignes de sous-total additionnées en trop, ex. DGI 2022 : 17,25 Md → 10,29 Md USD) ; réparation de l'encodage (471 cellules) et des dates 1905 issues d'un import Excel défectueux (79 valeurs, remplacées par une valeur manquante plutôt que devinées) ; fusion des libellés dupliqués de communes/secteurs/chefferies (22 cas, ex. « COMMUNE DE SHITURU » / « Commune de Shituru ») dans la Géographie ; ajout d'un avertissement sur le graphique « écart » de réconciliation pour les exercices où le montant paru est incohérent ; colonnes par défaut recentrées sur les montants définitifs/certifiés."},
+  {date:'2026-09-06',txt:"Retour à une vue unique et simplifiée (abandon d'un mode Public/Expert à deux espaces) ; limitation des tableaux à 7 colonnes par défaut avec option « Afficher toutes les colonnes » ; passe accessibilité et mobile (navigation clavier, contraste, alternative textuelle aux graphiques)."},
+];
 
 /* Qualité des données */
 function countNeg(name,cols){let n=0;const d=DS[name];if(!d)return 0;const idx=cols.map(c=>d.cols.indexOf(c)).filter(i=>i>=0);for(const r of d.rows)for(const i of idx){const v=Number(r[i]);if(!isNaN(v)&&v<0){n++;break;}}return n;}
@@ -1118,7 +1156,7 @@ function mGeo(){
       <div class="card"><div class="ch"><h3>Évolution nationale de l'indicateur</h3></div><div class="sub">Somme sur toutes les provinces couvertes, par année</div><div class="chart" id="geoEvo" aria-label="Évolution nationale de l'indicateur, somme sur toutes les provinces couvertes"></div></div>
     </div>
     <div class="card" style="margin-top:18px"><div class="ch"><h3>Paiements infranationaux — détail par entité perceptrice (DRP · ETD · DOT)</h3><span class="badge">Exigence ITIE 4.6</span></div>
-      <div class="sub">Paiements <b>directs</b> des entreprises extractives aux entités locales, ventilés par exercice, province, type d'entité perceptrice (régie provinciale DRP, ETD — secteur/chefferie/commune, dotation OS DOT 0,3 %) et montant. Total infranational 2023 : 801,7 M USD (DRP 532,8 · ETD 165,1 · DOT 103,9), somme du détail des annexes. Le tableau de synthèse officiel (Tableau 60) affiche 797,7 M USD ; l’écart d’environ 4 M provient des paiements pétroliers perçus au Kongo Central (DGR-KC).</div>
+      <div class="sub">Paiements <b>directs</b> des entreprises extractives aux entités locales, ventilés par exercice, province, type d'entité perceptrice (régie provinciale DRP, ETD — secteur/chefferie/commune, dotation OS DOT 0,3 %) et montant. Total infranational 2023 : 801,7 M USD (DRP 532,8 · ETD 165,1 · DOT 103,9), somme du détail des annexes. Le tableau de synthèse officiel (Tableau 60) affiche 797,7 M USD ; l’écart d’environ 4 M provient des paiements pétroliers perçus au Kongo Central (DGR-KC). <b>Note :</b> les variantes de casse/orthographe d'un même nom d'ETD (ex. « COMMUNE DE SHITURU » / « Commune de Shituru ») sont regroupées sous un libellé unique, mais une même entité déclarée sous des provinces différentes selon l'exercice (rare, ex. « Commune de Shituru » rattachée au Haut-Katanga la plupart des années et, ponctuellement, au Lualaba) n'est <b>pas</b> réattribuée d'office : la province déclarée dans la source est conservée telle quelle par souci de traçabilité, même quand elle semble incohérente d'une année à l'autre.</div>
       <div id="geoInfra" style="overflow:auto"></div></div>`;}
 // equirectangular projection over DRC bounds
 const DRC_BOUNDS={minLng:11.9,maxLng:31.4,minLat:-13.6,maxLat:5.5};

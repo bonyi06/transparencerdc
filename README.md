@@ -1110,6 +1110,116 @@ le code et les données réelles avant correction (pas de correction à l'aveugl
   quand cette signification n'a pas pu être retrouvée avec certitude (auquel
   cas la description le dit honnêtement plutôt que de deviner).
 
+## Corrections suite au troisième audit externe (7 sept. 2026)
+
+Un troisième audit externe, très détaillé (10 sections numérotées), a noté le
+portail 4/10. Comme pour les deux audits précédents, chaque affirmation a été
+vérifiée directement sur le code et les données avant toute correction — et,
+point important, **la proposition de l'audit de revenir à un portail « Espace
+public / Espace expert » (section 10) n'a pas été mise en œuvre**, car elle
+contredit directement le refus explicite de l'utilisateur, formulé la veille,
+de cette même architecture à deux espaces (voir « Simplification des tableaux »
+ci-dessus). Un second passage de cet audit, plus détaillé encore (avec des
+exemples ligne par ligne : SONAHYDROC, Perenco Recherche, LIREX…), a permis de
+confirmer et de localiser précisément le problème le plus grave qu'il
+signalait. Les corrections suivantes ont été appliquées :
+
+- **Écarts de réconciliation à plusieurs centaines de milliards USD (le plus
+  grave, confirmé et corrigé).** Le résumé affiché au-dessus des tableaux
+  `fait_reconciliation_entreprise` et `fait_reconciliation_flux` (table ouverte
+  par défaut à l'entrée dans l'Explorateur) totalisait `Σ difference_initiale`
+  à environ 621,7 et 622,6 milliards USD — sans rapport avec les recettes
+  annuelles réelles (quelques milliards). Investigation détaillée : sur les
+  4 317 et 6 300 lignes de ces deux tables, exactement **23 cellules**
+  (concentrées sur les exercices T/SL 2022-2024, toujours là où la déclaration
+  « sociétés » correspondante est manquante) affichaient une valeur dépassant
+  le milliard USD alors qu'aucune des deux déclarations sous-jacentes n'atteint
+  ce niveau — jusqu'à **9 126 fois** la valeur déclarée pour une seule
+  entreprise (HUACHIN METAL LEACH, exercice 2022 : 42,5 M déclarés côté État,
+  387,7 Md de « différence »). Comparaison avec la table `ent_reconciliation`
+  (source du même rapprochement, avec citation de page/tableau ITIE d'origine)
+  qui donne, pour ce même cas, un écart initial de 186,3 M USD tout à fait
+  plausible : confirmation que les 23 cellules concernées sont bien corrompues
+  à l'import, et non un écart réel. N'ayant pas pu reconstituer la valeur
+  d'origine avec certitude, ces 23 cellules ont été vidées (valeur manquante)
+  plutôt que devinées ; **aucune autre valeur n'a été modifiée**, y compris des
+  écarts proportionnellement importants mais restant sous ce seuil d'un
+  milliard. Résultat : la somme affichée passe de ~622 milliards à ~715
+  millions et ~561 millions USD, un ordre de grandeur cohérent avec les
+  montants annuels réels. Une note explicative a été ajoutée à la description
+  des deux tables, et le lecteur qui a besoin d'écarts intégralement
+  réconciliés et sourcés est renvoyé vers `ent_reconciliation`.
+- **Encodage corrompu (« mojibake »).** 471 cellules texte de l'entrepôt
+  (`ctx_propriete`, `ctx_effectif`, `ctx_production`, `ctx_exportation`,
+  `ctx_structure_capital`, `dim_organisation`, `ctx_depense_sociale`,
+  `fait_reconciliation_flux`…) contenaient des séquences de caractères mal
+  décodées (ex. « Ã© » au lieu de « é »), issues d'un import antérieur en
+  mauvais encodage. Corrigées caractère par caractère (une tentative de
+  ré-encodage global UTF-8↔CP1252 a été abandonnée : elle échouait sur les
+  chaînes partiellement déjà correctes).
+- **Dates 1905 dans `ctx_propriete` (79 valeurs).** Confirmé : ce sont des
+  numéros de série Excel mal convertis en date lors d'un import antérieur
+  (`Date Mandat`, `Date d'acquisition`). Faute de pouvoir reconstituer la date
+  d'origine avec certitude (deux hypothèses d'origine testées, aucune ne
+  produit de date plausible), ces 79 valeurs ont été remplacées par une valeur
+  manquante plutôt que devinées, avec une note explicative ajoutée à la
+  description de la table.
+- **Année masquée par défaut dans les dépenses sociales.** `columnRole()`
+  testait la règle « identifiant » avant la règle « année », ce qui faisait
+  classer `exercice_id` comme identifiant technique (masqué par défaut) plutôt
+  que comme année. Corrigé : la détection d'année est désormais prioritaire.
+- **Avertissement d'unités mixtes incomplet.** `mixedUnitWarning()` ne
+  détectait que les colonnes nommées exactement « devise » ou « unité »,
+  ratant les colonnes composées comme « Unité de volume » ou « Unité de
+  valeur ». Corrigé pour détecter toute colonne dont le nom contient
+  « devise » ou « unité ».
+- **Années manquantes dans le graphique des recettes de l'État.** Le graphique
+  « Recettes de l'État par exercice » (Vue d'ensemble) sautait 2018, 2020 et
+  2021 alors que la table source (`fait_total_annuel`) les couvre sans trou.
+  Complété avec les valeurs de cette table, sans toucher aux années déjà
+  présentes.
+- **Doublons de libellés de communes/secteurs/chefferies en Géographie
+  (confirmé, ex. « COMMUNE DE SHITURU » / « COMMUNE SHITURU » / « Commune de
+  Shituru »).** 24 entités (Shituru, Ruashi, Kampemba, Panda, Bukanda,
+  Balamba, Bayeke, Manika, Beia, Bahunde, Buhavu, DGRHU, DPRKOR, etc.)
+  apparaissaient comme des points de carte et des lignes de tableau distincts
+  d'une année à l'autre à cause de simples variantes de casse ou de
+  formulation du même nom. Elles sont désormais regroupées sous un unique
+  libellé canonique (issu du référentiel `ref_canoniques` déjà utilisé
+  ailleurs, remis en forme proprement — ex. « commune de ruashi » →
+  « Commune de Ruashi »), avec fusion des montants et unification du point de
+  carte pour que les vues « Évolution (cumul) » additionnent correctement le
+  même lieu d'une année sur l'autre. Précision : quand la **province**
+  déclarée pour une même entité change d'une année à l'autre dans les données
+  brutes (rare — ex. « Commune de Shituru » rattachée au Lualaba en 2020-2021
+  contre le Haut-Katanga les autres années), cette incohérence n'est **pas**
+  corrigée d'office : la province telle que déclarée dans la source est
+  conservée par souci de traçabilité, et une note explicite en informe
+  désormais le lecteur sur la page Géographie.
+- **Graphique « écart » de réconciliation (`AGG.recon_year`) marqué comme
+  expérimental pour les exercices suspects.** Confirmé : pour 2015-2021, les
+  montants « recettes de l'État » et « paiements des sociétés » restent du
+  même ordre de grandeur, mais pour 2022 et 2024 le second explose
+  (respectivement ~570 Md et ~55 Md USD contre ~6,6 Md et ~2,8 Md de recettes
+  déclarées) — un ratio supérieur à 5, très probablement une erreur d'unité ou
+  d'agrégation en amont dans une donnée qui n'a pas pu être recalculée de
+  façon fiable à partir des tables sources actuellement disponibles (le
+  script d'origine ayant produit cet agrégat n'existe plus). Plutôt que de
+  masquer ou de deviner une correction, le graphique affiche désormais un
+  avertissement explicite pour les années concernées, sans supprimer ni
+  modifier les chiffres eux-mêmes.
+- **Traçabilité des corrections (nouveau).** La page « À propos » affiche
+  désormais un « Journal des modifications » recensant les corrections
+  successives apportées à l'entrepôt (doublons, encodage, libellés…), en
+  complément du champ « Version de l'entrepôt » déjà présent.
+
+Points de l'audit examinés mais **non modifiés à ce stade**, faute de pouvoir
+les corriger sans risque de deviner ou de masquer une donnée : l'écart entre
+« 22 exercices » et « 18 années » (nomenclature ITIE historique, chaque
+exercice n'est pas forcément une année civile distincte) et les éventuels
+écarts résiduels entre les années des graphiques de synthèse et celles des
+tableaux de détail — signalés ici pour suivi plutôt que corrigés à l'aveugle.
+
 ## Limites connues / pistes d'évolution
 
 - Le générateur de visualisations et l'explorateur de tables chargent
