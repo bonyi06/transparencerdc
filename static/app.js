@@ -283,6 +283,17 @@ function baseSvg(W,H,desc){const s=svgEl('svg',{viewBox:`0 0 ${W} ${H}`,width:W,
   if(desc){s.setAttribute('aria-label',desc);const t=svgEl('title',{});t.textContent=desc;s.appendChild(t);}return s;}
 function hostDesc(host){try{return (host&&host.getAttribute('aria-label'))||null;}catch(e){return null;}}
 function isYearSeq(data){return data.length>1&&data.every(d=>/^\d{4}$/.test(String(d.label)));}
+/* Alternative accessible d'un graphique en barres : un vrai <table> caché
+   visuellement (.sr-only) plutôt qu'un simple aria-label de synthèse — un
+   graphique lu ou copié-collé sans cette table ne restitue que les textes
+   SVG bruts, concaténés sans séparateur (« 202292202368 » pour 2022 : 92,
+   2023 : 68 : illisible, retour utilisateur sept. 2026). Le tableau, lui,
+   reste lisible ligne par ligne à la copie comme au lecteur d'écran, et ne
+   duplique pas visuellement le graphique puisqu'il est masqué à l'écran. */
+function chartDataTable(data,labelHead,valueHead){
+  const rows=data.map(d=>`<tr><td>${esc(d.label)}</td><td>${esc(fmtSmart(d.value))}</td></tr>`).join('');
+  return `<table class="sr-only charttbl"><caption>${esc(labelHead)} et ${esc(valueHead)}</caption><thead><tr><th scope="col">${esc(labelHead)}</th><th scope="col">${esc(valueHead)}</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
 function cBar(host,data,color,horizontal){
   data=data.slice().sort((a,b)=>b.value-a.value);
   color=color||css('--sky');
@@ -293,7 +304,7 @@ function cBar(host,data,color,horizontal){
       const tl=svgEl('text',{class:'barlabel',x:0,y:cy+rowH/2+4});tl.textContent=lab;s.appendChild(tl);
       s.appendChild(svgEl('rect',{x:labelW,y:cy+6,width:bw,height:rowH-13,rx:3,fill:color,opacity:.9}));
       const tv=svgEl('text',{class:'barval',x:labelW+bw+7,y:cy+rowH/2+4});tv.textContent=fmtSmart(d.value);s.appendChild(tv);});
-    host.innerHTML='';host.appendChild(s);return;
+    host.innerHTML='';host.appendChild(s);host.insertAdjacentHTML('beforeend',chartDataTable(data,isYearSeq(data)?'Année':'Catégorie','Valeur'));return;
   }
   const W=Math.max(420,data.length*74),H=250,P={l:48,r:14,t:14,b:44},iw=W-P.l-P.r,ih=H-P.t-P.b,bw=iw/data.length*.62;
   const dmax=Math.max(0,...data.map(d=>d.value)),dmin=Math.min(0,...data.map(d=>d.value)),span=(dmax-dmin)||1;
@@ -305,7 +316,7 @@ function cBar(host,data,color,horizontal){
     s.appendChild(svgEl('rect',{x:cx-bw/2,y:yy,width:bw,height:Math.max(0,h),rx:3,fill:d.value<0?css('--red'):color,opacity:.9}));
     const t=svgEl('text',{class:'axis',x:cx,y:H-24,'text-anchor':'middle'});let lb=String(d.label);if(lb.length>10)lb=lb.slice(0,9)+'…';t.textContent=lb;s.appendChild(t);
     const tv=svgEl('text',{class:'barval',x:cx,y:(d.value>=0?yy-5:yy+h+11),'text-anchor':'middle'});tv.textContent=fmtSmart(d.value);s.appendChild(tv);});
-  host.innerHTML='';host.appendChild(s);
+  host.innerHTML='';host.appendChild(s);host.insertAdjacentHTML('beforeend',chartDataTable(data,isYearSeq(data)?'Année':'Catégorie','Valeur'));
 }
 function cLine(host,data,area,color,color2,k1,k2){
   color=color||css('--sky');k1=k1||'value';
@@ -459,12 +470,12 @@ function mOverview(){return `
   ${kpiRow()}
   ${highlight()}
   <div class="grid2">
-    <div class="card"><div class="ch"><h3>Recettes de l'État par exercice</h3><span class="badge">${AGG.serie_etat.length?AGG.serie_etat[0].annee+'–'+AGG.serie_etat[AGG.serie_etat.length-1].annee:''}</span></div><div class="sub">Millions USD · réconciliées</div><div class="chart" id="ov1" aria-label="${esc("Recettes de l'État par exercice, millions USD")}"></div></div>
-    <div class="card"><div class="ch"><h3>Répartition des revenus ${O._year||'2023'}</h3><span class="badge">Secteurs</span></div><div class="sub">Mines vs hydrocarbures</div><div class="chart" id="ov2" aria-label="${esc('Répartition des revenus '+(O._year||'2023')+', mines vs hydrocarbures')}"></div></div>
-    <div class="card"><div class="ch"><h3>Principales entreprises ${O._topyear||'2023'}</h3><span class="badge">Top 10</span></div><div class="sub">Recettes perçues par l'État, USD</div><div class="chart" id="ov3" aria-label="${esc('Principales entreprises '+(O._topyear||'2023')+', recettes perçues par l’État en USD')}"></div></div>
-    <div class="card"><div class="ch"><h3>Dépenses sociales par exercice</h3><span class="badge">${AGG.social&&AGG.social.length?AGG.social[0].annee+'–'+AGG.social[AGG.social.length-1].annee:''}</span></div><div class="sub">Total annuel, USD</div><div class="chart" id="ov4" aria-label="${esc('Dépenses sociales par exercice, total annuel en USD')}"></div></div>
-    <div class="card"><div class="ch"><h3>Recettes par régie nationale</h3><span class="badge">Toutes années</span></div><div class="sub">DGI, DGRAD, DGDA, CAMI… — cumul, USD</div><div class="chart" id="ov5" aria-label="${esc('Recettes par régie nationale, cumul toutes années en USD')}"></div></div>
-    <div class="card"><div class="ch"><h3>Recettes par niveau de perception</h3><span class="badge">National vs infranational</span></div><div class="sub">Régies nationales, provinciales, ETD, entreprises publiques</div><div class="chart" id="ov6" aria-label="${esc('Recettes par niveau de perception, national vs infranational')}"></div></div>
+    <div class="card"><div class="ch"><h3>Recettes de l'État par exercice</h3><span class="badge">${AGG.serie_etat.length?AGG.serie_etat[0].annee+'–'+AGG.serie_etat[AGG.serie_etat.length-1].annee:''}</span></div><div class="sub">Millions USD · réconciliées</div><div class="chart" id="ov1" aria-label="${esc("Recettes de l'État par exercice, millions USD")}"></div><div class="srcnote">Source : agrégat <code>serie_etat</code> (recettes de l'État réconciliées par exercice)</div></div>
+    <div class="card"><div class="ch"><h3>Répartition des revenus ${O._year||'2023'}</h3><span class="badge">Secteurs</span></div><div class="sub">Mines vs hydrocarbures</div><div class="chart" id="ov2" aria-label="${esc('Répartition des revenus '+(O._year||'2023')+', mines vs hydrocarbures')}"></div><div class="srcnote">Source : chiffres officiels agrégés <code>officiel2023</code> (mines / hydrocarbures)</div></div>
+    <div class="card"><div class="ch"><h3>Principales entreprises ${O._topyear||'2023'}</h3><span class="badge">Top 10</span></div><div class="sub">Recettes perçues par l'État, USD</div><div class="chart" id="ov3" aria-label="${esc('Principales entreprises '+(O._topyear||'2023')+', recettes perçues par l’État en USD')}"></div><div class="srcnote">Source : table <code>ent_revenus_entreprise</code></div></div>
+    <div class="card"><div class="ch"><h3>Dépenses sociales par exercice</h3><span class="badge">${AGG.social&&AGG.social.length?AGG.social[0].annee+'–'+AGG.social[AGG.social.length-1].annee:''}</span></div><div class="sub">Total annuel, USD</div><div class="chart" id="ov4" aria-label="${esc('Dépenses sociales par exercice, total annuel en USD')}"></div><div class="srcnote">Source : table <code>ent_depenses_sociales</code></div></div>
+    <div class="card"><div class="ch"><h3>Recettes par régie nationale</h3><span class="badge">Toutes années</span></div><div class="sub">DGI, DGRAD, DGDA, CAMI… — cumul, USD</div><div class="chart" id="ov5" aria-label="${esc('Recettes par régie nationale, cumul toutes années en USD')}"></div><div class="srcnote">Source : table <code>ent_revenus_entite</code></div></div>
+    <div class="card"><div class="ch"><h3>Recettes par niveau de perception</h3><span class="badge">National vs infranational</span></div><div class="sub">Régies nationales, provinciales, ETD, entreprises publiques</div><div class="chart" id="ov6" aria-label="${esc('Recettes par niveau de perception, national vs infranational')}"></div><div class="srcnote">Source : table <code>ent_revenus_entite</code></div></div>
   </div>`;}
 function drawOverview(){
   cLine($('#ov1'),AGG.serie_etat.map(d=>({label:d.annee,value:d.etat,ese:d.ese})),true,css('--sky'),css('--red'),'value','ese');
@@ -890,7 +901,7 @@ const CATS={rapport_itie:'Rapport annuel',thematique:'Thématique',forestier:'Se
 let repFilter='all';
 function mReports(){const cats=[...new Set(C.reports.map(r=>r.categorie))];
   const chips=`<div class="filters"><button class="chip ${repFilter==='all'?'on':''}" data-f="all">Tous</button>`+cats.map(c=>`<button class="chip ${repFilter===c?'on':''}" data-f="${c}">${esc(CATS[c]||c)}</button>`).join('')+`</div>`;
-  return `<div class="phead"><div class="eyebrow">Documents</div><h1>Rapports &amp; publications</h1><p data-edit="intros.reports">${esc(C.intros.reports)}</p></div>${chips}<div class="reports" id="repList"></div>`;}
+  return `<div class="phead"><div class="eyebrow">Documents</div><h1>Rapports &amp; publications</h1><p data-edit="intros.reports">${esc(C.intros.reports)}</p></div>${chips}<div class="msg warn" style="display:block;margin-bottom:12px">Certains liens vers itierdc.net peuvent être temporairement inaccessibles (site source) — réessayez plus tard ou consultez eiti.org.</div><div class="reports" id="repList"></div>`;}
 // Un lien qui pointe vers une page de listing générique (ex. ".../rapports/"
 // sans nom de fichier) n'est pas un téléchargement direct : l'étiqueter
 // « ↓ Télécharger » induit en erreur (audit sept. 2026 : deux rapports de
@@ -929,8 +940,9 @@ function mAbout(){const A=C.about,B=C.brand,F=C.footer,CT=C.contact;return `<div
         </div>
         ${editing?'<div style="font-size:11.5px;color:var(--ink-soft);margin-top:8px">Ces champs sont visibles publiquement — à tenir à jour à chaque nouvel import de données.</div>':''}
       </div>
-      <h3 style="font-size:15px;margin:0 0 10px">Sources des données</h3>
-      <div class="srcs">${C.sources.map(s=>`<div class="src"><span class="d"></span><div><b>${esc(s.libelle)}</b><br><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url)}</a></div></div>`).join('')}</div>
+      <details class="srcdetails"><summary>Sources techniques (API)</summary>
+        <div class="srcs" style="margin-top:10px">${C.sources.map(s=>`<div class="src"><span class="d"></span><div><b>${esc(s.libelle)}</b><br><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url)}</a></div></div>`).join('')}</div>
+      </details>
     </div>
   </div>`;}
 
@@ -1460,16 +1472,28 @@ function drawInfraTable(){const host=$('#geoInfra');if(!host)return;
    colonnes techniques (identifiants, pages) en dernier recours — pour que
    l'Explorateur reste lisible pour un citoyen sans cacher aucune donnée
    (« Afficher toutes les colonnes » reste toujours disponible). */
+// Certaines tables (réconciliation notamment) déclinent un même montant en
+// plusieurs colonnes : valeur initiale déclarée, ajustement, écart, puis
+// valeur finale retenue. Le lecteur citoyen ne veut voir que ce dernier
+// chiffre définitif, pas les étapes intermédiaires du calcul (retour
+// utilisateur, sept. 2026 : « le lecteur veut voir un chiffre unique de
+// paiement, le chiffre définitif ») — ces colonnes intermédiaires sont donc
+// reléguées en dernier, et une colonne « finale/définitive » est priorisée.
+const INTERMEDIATE_COL_RE=/initial|ajustement|difference|différence|ecart|écart/i;
+const FINAL_COL_RE=/final|définitif|definitif|certifi/i;
 function pickDefaultCols(name,max){
   max=max||7;
   const d=DS[name];if(!d)return [];
-  const tier1=[],tier2=[],tier3=[];
+  const tierFinal=[],tier1=[],tier2=[],tierIntermediate=[],tier3=[];
   d.cols.forEach(c=>{const r=columnRole(name,c);
-    if(r==='dimension'||r==='additive')tier1.push(c);
+    if((r==='dimension'||r==='additive')&&FINAL_COL_RE.test(c))tierFinal.push(c);
+    else if((r==='dimension'||r==='additive')&&INTERMEDIATE_COL_RE.test(c))tierIntermediate.push(c);
+    else if(r==='dimension'||r==='additive')tier1.push(c);
     else if(r==='id'||r==='page')tier3.push(c);
     else tier2.push(c);});
-  let chosen=tier1.slice(0,max);
+  let chosen=tierFinal.concat(tier1).slice(0,max);
   if(chosen.length<max)chosen=chosen.concat(tier2.slice(0,max-chosen.length));
+  if(chosen.length<max)chosen=chosen.concat(tierIntermediate.slice(0,max-chosen.length));
   if(chosen.length<max)chosen=chosen.concat(tier3.slice(0,max-chosen.length));
   const chosenSet=new Set(chosen);
   return d.cols.filter(c=>chosenSet.has(c)); // conserve l'ordre d'origine des colonnes

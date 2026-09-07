@@ -1051,6 +1051,65 @@ ouvertes), ainsi que la bascule galerie/générateur de l'écran Visualisations
 (qui redevient une page unique, générateur + petite galerie de graphiques
 prêts à l'emploi visibles ensemble, comme avant ce chantier).
 
+## Corrections suite au retour utilisateur du 7 sept. 2026 (lisibilité et double comptage)
+
+Après mise en production de la simplification ci-dessus, l'utilisateur a testé le
+site en conditions réelles et remonté 8 points précis. Chacun a été vérifié sur
+le code et les données réelles avant correction (pas de correction à l'aveugle) :
+
+- **Double comptage confirmé dans `ent_revenus_entite` (le plus grave).**
+  Vérification directe des données : pour DGI en 2022 par exemple, 2 des 7
+  lignes étaient en réalité des sous-totaux d'autres lignes déjà présentes dans
+  le même tableau (ex. 3,4Md + 0,1Md = une 3ᵉ ligne de 3,5Md, les trois étant
+  additionnées comme si c'étaient 3 montants distincts). En élargissant la
+  vérification à toute la table, **22 des 60 couples entité/année présentaient
+  ce même motif** (une ligne strictement égale à la somme de deux autres lignes
+  du même groupe) — 76 lignes en doublon au total. Ces 76 lignes ont été
+  retirées après revue du détail (fichier de revue fourni à l'utilisateur avant
+  correction), et les 11 tables `regie_*` dérivées (DGI, DGRAD, DGDA, Trésor
+  public, SGH, CAMI, FOMIN, FONAREV, OCC, CEEC, BCC) régénérées en conséquence.
+  Résultat : DGI 2022 passe de 17,25 milliards USD (chiffre gonflé par le
+  doublon) à 10,29 milliards USD. Cette correction n'a **retiré aucune ligne
+  autrement** : seules les lignes mathématiquement identiques à la somme de
+  deux lignes sœurs ont été enlevées, par prudence (voir aussi
+  « Fiabilité des tableaux » plus haut pour la méthodologie de ce type de
+  vérification).
+- **Colonnes « finales » masquées par la limite à 7 colonnes (corrigé).**
+  Sur les tables de réconciliation, les colonnes intermédiaires
+  (`*_initial`, `*_ajustement`, `difference_*`) passaient avant les colonnes
+  du montant définitif (`*_final`) dans le choix des 7 colonnes par défaut —
+  l'inverse de ce qu'un lecteur veut voir. `pickDefaultCols()` priorise
+  désormais explicitement les colonnes dont le nom contient « final »,
+  « définitif » ou « certifié », et relègue en dernier celles contenant
+  « initial », « ajustement », « différence » ou « écart ».
+- **Recettes des régies nationales par année.** Déjà en place avant ce retour
+  (le graphique de Géographie suit le sélecteur Année) — corrigé
+  indirectement par la correction du double comptage ci-dessus, qui faussait
+  ces montants.
+- **Texte de graphique illisible en copier-coller / lecteur d'écran (corrigé).**
+  Les graphiques en barres exposent maintenant, en plus du rendu visuel, un
+  tableau de données visuellement masqué mais lisible (copier-coller, lecteur
+  d'écran) associant clairement chaque année à sa valeur.
+- **Liens de rapports itierdc.net en erreur 403.** Confirmé : nos adresses
+  sont correctement construites, le blocage vient du site source lui-même
+  (non réparable ici). Une note discrète prévient désormais le lecteur que
+  certains liens source peuvent être temporairement inaccessibles.
+- **Page « À propos » trop technique (corrigé).** La liste des sources/API
+  brutes est désormais repliée par défaut (« Sources techniques (API) »),
+  sans qu'aucune information ne soit supprimée.
+- **Aucune attribution de source sur les graphiques de la Vue d'ensemble
+  (corrigé).** Chacun des 6 graphiques affiche désormais une légende
+  indiquant la table source exacte.
+- **52 tables d'annexes peu explicites (corrigé).** Sur les 181 tables de
+  l'entrepôt, 117 sont des annexes brutes des rapports ITIE, dont 52 avaient
+  des colonnes génériques (`col1`, `col2`...) ou dupliquées (`Titres (2)`,
+  `%(2)`...) sans explication. Conformément à la consigne de l'utilisateur de
+  ne rien masquer (toutes ces données sont publiques), aucune table n'a été
+  supprimée : chacune des 52 a reçu une description réécrite expliquant
+  concrètement son contenu et la signification de ses colonnes, y compris
+  quand cette signification n'a pas pu être retrouvée avec certitude (auquel
+  cas la description le dit honnêtement plutôt que de deviner).
+
 ## Limites connues / pistes d'évolution
 
 - Le générateur de visualisations et l'explorateur de tables chargent
