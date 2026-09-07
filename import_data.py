@@ -133,6 +133,7 @@ def sync_database(warehouse: dict, content: dict, logo: str, geo: dict | None) -
         row.cols = d.get("cols", [])
         row.types = d.get("types", [])
         row.rows = d.get("rows", [])
+        row.meta = d.get("meta")
         db.session.add(row)
     # Supprime les jeux de données qui n'existent plus dans le nouvel export.
     for name, row in existing.items():
@@ -144,6 +145,7 @@ def sync_database(warehouse: dict, content: dict, logo: str, geo: dict | None) -
     meta.officiel2023 = warehouse.get("officiel2023", {})
     meta.stats = warehouse.get("stats", {})
     meta.clean = warehouse.get("clean", {})
+    meta.theme_info = warehouse.get("theme_info", {})
     # « Dernière actualisation » (page À propos) doit refléter le moment où
     # les données ont réellement été synchronisées dans la base, pas une
     # valeur figée recopiée d'un import précédent dans le fichier seed —

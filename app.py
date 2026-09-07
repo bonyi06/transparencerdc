@@ -317,6 +317,7 @@ def register_routes(app: Flask) -> None:
                 "stats": meta.stats or {},
                 "clean": meta.clean or {},
                 "generated": meta.generated or "",
+                "theme_info": meta.theme_info or {},
             }
         )
         # Mise en cache courte côté navigateur : l'entrepôt ne change qu'à

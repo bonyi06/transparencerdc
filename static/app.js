@@ -49,6 +49,51 @@ C.intros=Object.assign({
   reports:"Rapports annuels, thématiques, contextuels, forestiers, d'avancement et de validation publiés par l'ITIE-RDC.",
 },C.intros||{});
 const DS=WH.datasets, AGG=WH.agg, O=WH.officiel2023, STATS=WH.stats;
+/* ===== Rubriques publiques alignées sur la Norme ITIE 2023 (sept. 2026) =====
+   Chaque table de l'entrepôt porte désormais une métadonnée `meta` (thème,
+   période, unité, devise, source, périmètre, désagrégation, statut qualité)
+   calculée à l'import (voir import_data.py / data/warehouse.seed.json). Les
+   117 annexes brutes et les tables de référence internes portent le thème
+   'technique' : elles ne sont listées dans l'Explorateur, le Dictionnaire et
+   la Qualité des données que pour un utilisateur connecté en administrateur
+   — le visiteur public ne voit que les tables organisées par thème ITIE
+   (retour utilisateur, sept. 2026 : « organiser les données selon les
+   exigences de la Norme ITIE plutôt que selon la structure des fichiers
+   sources »). Aucune donnée n'est supprimée : tout reste accessible à
+   l'administrateur, jamais caché de manière permanente. */
+const THEME_INFO=WH.theme_info||{};
+function tableMeta(name){const d=DS[name];return d&&d.meta?d.meta:null;}
+function tableTheme(name){const m=tableMeta(name);return m?m.theme:'technique';}
+function isPublicTable(name){return tableTheme(name)!=='technique';}
+function visibleTableNames(){return Object.keys(DS).filter(n=>editing||isPublicTable(n));}
+function tablesInTheme(theme){return Object.keys(DS).filter(n=>tableTheme(n)===theme).sort((a,b)=>(DS[a].label||a).localeCompare(DS[b].label||b,'fr'));}
+function metaStrip(name){
+  const m=tableMeta(name);if(!m)return '';
+  const row=(k,v)=>v?`<div><b>${esc(k)}</b><br>${esc(v)}</div>`:'';
+  return `<div class="metastrip" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 16px;font-size:11.5px;color:var(--ink-soft);background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0 14px">
+    ${row('Période',m.periode)}${row('Unité',m.unite)}${row('Devise',m.devise)}${row('Périmètre',m.perimetre)}${row('Désagrégation',m.desagregation)}${row('Source',m.source)}
+  </div>${m.qualite?`<div class="msg warn" style="margin-bottom:12px"><b>Statut qualité :</b> ${esc(m.qualite)}</div>`:''}`;
+}
+function goExplorerTable(name){exState.ds=name;exState.page=0;exState.filters={};exState.q='';go('explorer');}
+window.goExplorerTable=goExplorerTable;
+function themeCard(name){
+  const d=DS[name];if(!d)return '';
+  const rowN=d.rows.length;
+  return `<div class="card" style="margin-bottom:16px">
+    <div class="ch"><h3 style="margin:0">${esc(d.label||name)}</h3><span class="badge">${fmtN(rowN)} ligne${rowN>1?'s':''}</span></div>
+    <div class="sub" style="margin-bottom:2px">${esc(d.desc||'')}</div>
+    ${metaStrip(name)}
+    <button class="btn primary" data-gotable="${esc(name)}">▤ Explorer ce tableau →</button>
+  </div>`;
+}
+function mTheme(theme){
+  const info=THEME_INFO[theme]||{label:theme,desc:'',eiti:''};
+  const names=tablesInTheme(theme);
+  return `<div class="phead"><div class="eyebrow">${esc(info.eiti||'')}</div><h1>${esc(info.label)}</h1><p>${esc(info.desc)}</p></div>
+    ${names.length?names.map(themeCard).join(''):'<div class="empty" style="padding:20px">Aucun tableau public dans cette rubrique pour le moment.</div>'}`;
+}
+function bindThemePage(){$$('#app [data-gotable]').forEach(b=>b.onclick=()=>goExplorerTable(b.dataset.gotable));}
+
 
 /* ===== Référentiels canoniques (provinces / entreprises / flux / entités
    perceptrices) =====
@@ -507,21 +552,27 @@ function drawOverview(){
 let exState={ds:'fait_reconciliation_flux',page:0,sort:null,dir:1,q:'',filters:{},panel:true,showAllCols:false};
 let exTableQ='';
 function mExplorer(){
-  const groups={faits:[],contextuel:[],dimensions:[],annexe:[]};
+  // Regroupement par thème ITIE (et non plus par nature technique de la
+  // table) — cohérent avec la navigation par thème (voir NAV/mTheme, sept.
+  // 2026). Les 128 tables « techniques » (117 annexes brutes + référentiels
+  // internes) ne sont listées que pour un utilisateur connecté en
+  // administrateur ; rien n'est supprimé, seulement masqué du visiteur
+  // public par défaut (ne rien cacher ne veut pas dire tout mélanger).
+  const names=visibleTableNames();
   const tq=exTableQ.toLowerCase();
-  Object.entries(DS).forEach(([k,d])=>{if(k.startsWith('_'))return;if(tq&&!(d.label||'').toLowerCase().includes(tq)&&!k.toLowerCase().includes(tq))return;(groups[d.cat]||(groups[d.cat]=[])).push([k,d]);});
-  const list=cat=>(groups[cat]||[]).map(([k,d])=>`<div class="dsitem ${exState.ds===k?'on':''}" data-ds="${k}" role="button" tabindex="0" aria-pressed="${exState.ds===k}"><span>${esc(d.label)}</span><span class="n">${fmtN(d.rows.length)}</span></div>`).join('');
-  const grp=(cat,title)=>groups[cat]&&groups[cat].length?`<div class="dg">${title} <span style="opacity:.5">(${groups[cat].length})</span></div>${list(cat)}`:'';
-  const nT=Object.keys(DS).filter(k=>!k.startsWith('_')).length, nR=Object.entries(DS).filter(([k])=>!k.startsWith('_')).reduce((a,[,d])=>a+d.rows.length,0);
-  return `<div class="phead"><div class="eyebrow">Explorateur</div><h1>Explorateur de données</h1><p data-edit="intros.explorer">${esc(C.intros.explorer)}</p><p><b>${nT} tables</b> dont les <b>annexes complètes ITIE 2022 & 2023</b> · ${fmtN(nR)} lignes.</p></div>
+  const groups={};
+  names.forEach(k=>{const d=DS[k];if(k.startsWith('_'))return;if(tq&&!(d.label||'').toLowerCase().includes(tq)&&!k.toLowerCase().includes(tq))return;
+    const th=tableTheme(k);(groups[th]||(groups[th]=[])).push([k,d]);});
+  const list=th=>(groups[th]||[]).sort((a,b)=>(a[1].label||a[0]).localeCompare(b[1].label||b[0],'fr')).map(([k,d])=>`<div class="dsitem ${exState.ds===k?'on':''}" data-ds="${k}" role="button" tabindex="0" aria-pressed="${exState.ds===k}"><span>${esc(d.label)}</span><span class="n">${fmtN(d.rows.length)}</span></div>`).join('');
+  const grp=(th,title)=>groups[th]&&groups[th].length?`<div class="dg">${title} <span style="opacity:.5">(${groups[th].length})</span></div>${list(th)}`:'';
+  const themeOrder=Object.keys(THEME_INFO).filter(k=>k!=='technique');
+  const nT=names.length, nR=names.reduce((a,k)=>a+DS[k].rows.length,0);
+  return `<div class="phead"><div class="eyebrow">Explorateur</div><h1>Explorateur de données</h1><p data-edit="intros.explorer">${esc(C.intros.explorer)}</p><p><b>${nT} tables</b>${editing?' (y compris les annexes brutes et référentiels techniques)':''} · ${fmtN(nR)} lignes.${!editing?' <a href="#" id="exGoAdmin" style="font-size:12px">Voir aussi les tables techniques (connexion administrateur)</a>':''}</p></div>
   <div class="expl">
     <div class="dslist">
-      <div class="dstsearch"><input id="exTableQ" placeholder="🔍 Trouver une table / annexe…" value="${esc(exTableQ)}"></div>
-      ${grp('faits','Tables de faits')}
-      ${grp('contextuel','Données contextuelles')}
-      ${grp('dimensions','Dimensions')}
-      ${grp('annexe','Annexes ITIE 2022 & 2023')}
-      ${Object.keys(groups).filter(c=>!['faits','contextuel','dimensions','annexe'].includes(c)).map(c=>grp(c,c)).join('')}
+      <div class="dstsearch"><input id="exTableQ" placeholder="🔍 Trouver une table…" value="${esc(exTableQ)}"></div>
+      ${themeOrder.map(th=>grp(th,(THEME_INFO[th]||{}).label||th)).join('')}
+      ${editing?grp('technique','Espace technique (annexes brutes & référentiels)'):''}
     </div>
     <div class="exmain" id="exMain"></div>
   </div>`;}
@@ -633,6 +684,7 @@ function renderExplorer(){
   const exShareBtn=$('#exShare');if(exShareBtn)exShareBtn.onclick=()=>copyShareLink(exShareBtn);
   const exShowAllBtn=$('#exShowAllCols');if(exShowAllBtn)exShowAllBtn.onclick=()=>{exState.showAllCols=true;renderExplorer();};
   const tqi=$('#exTableQ');if(tqi&&!tqi._bound){tqi._bound=true;tqi.addEventListener('input',e=>{exTableQ=e.target.value;const v=e.target.value;$('#app').innerHTML=mExplorer();renderExplorer();const t=$('#exTableQ');if(t){t.focus();t.setSelectionRange(v.length,v.length);}});}
+  const exGoAdmin=$('#exGoAdmin');if(exGoAdmin)exGoAdmin.onclick=e=>{e.preventDefault();$('#user').value='';$('#pw').value='';$('#loginMsg').className='msg';showModal('loginModal');};
   if(editing)markEditable(true);
   syncURL();
 }
@@ -744,7 +796,9 @@ const GALLERY_CARDS=`
       <div class="card"><div class="ch"><h3>Exportations par produit</h3><span class="badge">Contextuel</span></div><div class="sub">Valeur cumulée déclarée</div><div class="chart" id="g5" aria-label="Exportations par produit, valeur cumulée déclarée"></div></div>
       <div class="card"><div class="ch"><h3>Effectifs par exercice</h3><span class="badge">Contextuel</span></div><div class="sub">Total employés déclarés</div><div class="chart" id="g6" aria-label="Effectifs par exercice, total employés déclarés"></div></div>`;
 function mViz(){
-  const dsOpts=Object.entries(DS).map(([k,d])=>`<option value="${k}" ${vizState.ds===k?'selected':''}>${esc(d.label)}</option>`).join('');
+  const vizNames=visibleTableNames();
+  if(!vizNames.includes(vizState.ds))vizState.ds=vizNames[0];
+  const dsOpts=vizNames.map(k=>`<option value="${k}" ${vizState.ds===k?'selected':''}>${esc(DS[k].label)}</option>`).join('');
   const genHtml=`<div class="vizbar">
       <div class="vf"><label>Table</label><select id="vzDs">${dsOpts}</select></div>
       <div class="vf"><label>Dimension (axe)</label><select id="vzDim"></select></div>
@@ -899,12 +953,13 @@ function datasetKind(name,d){
 }
 window.datasetKind=datasetKind;window.KIND_LABELS=KIND_LABELS;
 function mModel(){
-  const cards=Object.entries(DS).filter(([k])=>!k.startsWith('_')).map(([k,d])=>{const kind=datasetKind(k,d);
+  const names=visibleTableNames().filter(k=>!k.startsWith('_'));
+  const cards=names.map(k=>{const d=DS[k];const kind=datasetKind(k,d);
     return `<div class="tc"><div class="tct"><h4>${esc(d.label)}</h4><span class="tag ${kind}">${esc(KIND_LABELS[kind])}</span></div>
     <div class="tn">${esc(k)} · ${fmtN(d.rows.length)} lignes · ${d.cols.length} colonnes</div><p>${esc(d.desc)}</p>
     <div class="open" data-openex="${k}">Explorer cette table →</div></div>`;}).join('');
-  const nT=Object.keys(DS).filter(k=>!k.startsWith('_')).length,nR=Object.entries(DS).filter(([k])=>!k.startsWith('_')).reduce((a,[,d])=>a+d.rows.length,0);
-  return `<div class="phead"><div class="eyebrow">Architecture</div><h1>Modèle de données</h1><p data-edit="intros.model">${esc(C.intros.model)}</p><p>${fmtN(nR)} lignes réparties sur ${nT} tables.</p>
+  const nT=names.length,nR=names.reduce((a,k)=>a+DS[k].rows.length,0);
+  return `<div class="phead"><div class="eyebrow">Architecture</div><h1>Modèle de données</h1><p data-edit="intros.model">${esc(C.intros.model)}</p><p>${fmtN(nR)} lignes réparties sur ${nT} tables${editing?' (y compris les tables techniques, visibles uniquement en mode administrateur)':''}.</p>
     <p class="kindlegend">7 familles de tables composent l'entrepôt : les <b>sources brutes</b> reprennent les annexes déclarées telles quelles ; les <b>référentiels</b> harmonisent les libellés et codes ; les <b>dimensions</b> et les <b>faits</b> forment le modèle en étoile ; les <b>entrepôts consolidés</b> agrègent et dédoublonnent plusieurs exercices ; les <b>produits analytiques</b> répondent à une exigence ITIE (couverture, recommandations, synthèses) ; les <b>vues calculées</b> décrivent l'entrepôt lui-même (dictionnaire, qualité).</p></div>
     <div class="schema" id="schemaSvg"></div>
     <div class="tablecat">${cards}</div>`;}
@@ -980,6 +1035,7 @@ function mAbout(){const A=C.about,B=C.brand,F=C.footer,CT=C.contact;return `<div
     </div>
   </div>`;}
 const CHANGELOG=[
+  {date:'2026-09-07',txt:"Réorganisation complète de l'entrepôt selon les thèmes et exigences de la Norme ITIE 2023 : les 181 tables sont désormais réparties en 10 rubriques publiques (cadre légal/licences, propriété effective, entreprises publiques, production/exportations, paiements/recettes, réconciliation, transferts infranationaux, dépenses sociales/environnementales, contribution économique, rapports/méthodologie) et un espace technique réservé au profil administrateur (annexes brutes, référentiels, 128 tables), sans suppression de données. Chaque table publique affiche désormais période, unité, devise, source, périmètre, désagrégation et statut de qualité."},
   {date:'2026-09-07',txt:"Correction d'un double comptage dans les revenus par entité (76 lignes de sous-total additionnées en trop, ex. DGI 2022 : 17,25 Md → 10,29 Md USD) ; réparation de l'encodage (471 cellules) et des dates 1905 issues d'un import Excel défectueux (79 valeurs, remplacées par une valeur manquante plutôt que devinées) ; fusion des libellés dupliqués de communes/secteurs/chefferies (22 cas, ex. « COMMUNE DE SHITURU » / « Commune de Shituru ») dans la Géographie ; ajout d'un avertissement sur le graphique « écart » de réconciliation pour les exercices où le montant paru est incohérent ; colonnes par défaut recentrées sur les montants définitifs/certifiés."},
   {date:'2026-09-06',txt:"Retour à une vue unique et simplifiée (abandon d'un mode Public/Expert à deux espaces) ; limitation des tableaux à 7 colonnes par défaut avec option « Afficher toutes les colonnes » ; passe accessibilité et mobile (navigation clavier, contraste, alternative textuelle aux graphiques)."},
 ];
@@ -1005,16 +1061,18 @@ function businessRules(){
   return R;
 }
 function mQualite(){
-  const q=DS._qualite.rows;             // [table,label,cat,rows,cols,miss%]
-  const totRows=Object.entries(DS).filter(([k])=>!k.startsWith('_')).reduce((a,[,d])=>a+d.rows.length,0);
-  const avgMiss=(window.__missWeighted!=null?window.__missWeighted:(q.length?q.reduce((a,r)=>a+r[5],0)/q.length:0)).toFixed(1);
+  const qNames=visibleTableNames();
+  const qCiTable=DS._qualite.cols.indexOf('table');
+  const q=DS._qualite.rows.filter(r=>qCiTable<0||qNames.includes(r[qCiTable]));             // [table,label,cat,rows,cols,miss%]
+  const totRows=qNames.filter(k=>!k.startsWith('_')).reduce((a,k)=>a+DS[k].rows.length,0);
+  const avgMiss=(editing&&window.__missWeighted!=null?window.__missWeighted:(q.length?q.reduce((a,r)=>a+r[5],0)/q.length:0)).toFixed(1);
   const cl=WH.clean||{dedup:{},sentinels:{},dropped_cols:{}};
   const dupTot=Object.values(cl.dedup||{}).reduce((a,b)=>a+b,0);
   const sentTot=Object.values(cl.sentinels||{}).reduce((a,s)=>a+(String(s).match(/\d+/g)||[]).reduce((x,y)=>x+ +y,0),0);
   const negExp=countNeg('ctx_exportation',['Valeur_totale','Quantite_totale']), negProd=countNeg('ctx_production',['Valeur_totale','Quantite_totale']);
   return `<div class="phead"><div class="eyebrow">Gouvernance</div><h1>Qualité des données</h1><p data-edit="intros.qualite">${esc(C.intros.qualite)}</p><p>Dernière actualisation : <b>${esc(WH.generated||'2026')}</b>.</p></div>
   <div class="kpis">
-    <div class="kpi"><div class="v">${Object.keys(DS).filter(k=>!k.startsWith('_')).length}</div><div class="l">Tables</div></div>
+    <div class="kpi"><div class="v">${qNames.filter(k=>!k.startsWith('_')).length}</div><div class="l">Tables</div></div>
     <div class="kpi"><div class="v">${fmtN(totRows)}</div><div class="l">Lignes</div></div>
     <div class="kpi"><div class="v">${avgMiss}%</div><div class="l">Cellules manquantes (pondéré)</div></div>
     <div class="kpi"><div class="v">${fmtN(dupTot)}</div><div class="l">Doublons exacts retirés</div></div>
@@ -1048,21 +1106,29 @@ function mQualite(){
   <div class="note-block" style="margin-top:16px;background:var(--panel-2);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:10px;padding:14px 18px;font-size:13px;color:var(--ink-soft)">
     <b>Limite connue :</b> un taux de cellules manquantes élevé (ex. réconciliation par flux, 52 %) reflète en partie des lignes <i>non déclarées</i> ou <i>non applicables</i> qui ne devraient pas être confondues avec le zéro. Les incohérences ci-dessus sont <b>signalées, pas corrigées</b> (ce sont des déclarations telles que publiées). La distinction fine (déclaré-zéro / non-déclaré / non-applicable / manquant / corrigé) et l'imposition des règles à la charge nécessitent le modèle d'états de l'entrepôt central — voir le plan d'architecture cible.</div>`;}
 function drawQualite(){
-  const q=DS._qualite.rows.slice().sort((a,b)=>a[5]-b[5]);
+  const qNames=visibleTableNames();
+  const qCiTable=DS._qualite.cols.indexOf('table');
+  const q=DS._qualite.rows.filter(r=>qCiTable<0||qNames.includes(r[qCiTable])).slice().sort((a,b)=>a[5]-b[5]);
   cBar($('#q1'),q.map(r=>({label:r[1],value:+(100-r[5]).toFixed(1)})),css('--green'),true);
   const cl=WH.clean||{dedup:{}};
-  const dd=Object.entries(cl.dedup||{}).map(([k,v])=>({label:(DS[k]?DS[k].label:k),value:v})).sort((a,b)=>b.value-a.value);
+  const dd=Object.entries(cl.dedup||{}).filter(([k])=>qNames.includes(k)).map(([k,v])=>({label:(DS[k]?DS[k].label:k),value:v})).sort((a,b)=>b.value-a.value);
   cBar($('#q2'),dd,css('--red'),true);
 }
 /* Dictionnaire de données */
 let dictQ='';
 function mDict(){
-  return `<div class="phead"><div class="eyebrow">Métadonnées</div><h1>Dictionnaire de données</h1><p data-edit="intros.dict">${esc(C.intros.dict)}</p><p>${fmtN(DS._dictionnaire.rows.length)} colonnes documentées sur ${Object.keys(DS).filter(k=>!k.startsWith('_')).length} tables.</p></div>
+  const names=visibleTableNames().filter(k=>!k.startsWith('_'));
+  const ciTable=DS._dictionnaire.cols.indexOf('table');
+  const nCols=ciTable>=0?DS._dictionnaire.rows.filter(r=>names.includes(r[ciTable])).length:DS._dictionnaire.rows.length;
+  return `<div class="phead"><div class="eyebrow">Métadonnées</div><h1>Dictionnaire de données</h1><p data-edit="intros.dict">${esc(C.intros.dict)}</p><p>${fmtN(nCols)} colonnes documentées sur ${names.length} tables${editing?' (y compris les tables techniques)':''}.</p></div>
     <div class="extoolbar"><div class="exsearch"><span class="si" aria-hidden="true">⌕</span><input id="dictQ" placeholder="Rechercher une table ou une colonne…" value="${esc(dictQ)}" aria-label="Rechercher une table ou une colonne"></div><button class="btn" id="dictCsv">↓ Export CSV</button></div>
     <div class="gridwrap"><div class="gridscroll"><table class="dg" id="dictTable"></table></div></div>`;}
 function renderDict(){
   const t=$('#dictTable');if(!t)return;const d=DS._dictionnaire;const q=stripAccents(dictQ).toLowerCase();
-  let rows=d.rows.filter(r=>!q||r.some(v=>stripAccents(v).toLowerCase().includes(q)));
+  const visNames=visibleTableNames();
+  const ciTableF=d.cols.indexOf('table');
+  let rows=d.rows.filter(r=>ciTableF<0||visNames.includes(r[ciTableF]));
+  rows=rows.filter(r=>!q||r.some(v=>stripAccents(v).toLowerCase().includes(q)));
   // La colonne « categorie » du dictionnaire (data/warehouse.seed.json) a été
   // générée avec l'ancienne classification à 3 valeurs (Fait/Contextuel/
   // Dimension) : on la ré-affiche ici à la volée avec datasetKind() plutôt
@@ -1549,25 +1615,36 @@ function exVisibleColIdx(name){
   return idx.length?idx:allIdx;
 }
 
+const THEME_NAV_ICONS={cadre_licences:'⚖',propriete:'◉',entreprises_publiques:'🏛',production_export:'⛏',
+  paiements_recettes:'💰',reconciliation:'⇄',transferts_infra:'⇩',depenses_sociales:'❤',contribution_eco:'📈',rapports:'▦'};
 const MODULES={
   overview:{t:"Vue d'ensemble",f:mOverview,d:drawOverview},
-  viz:{t:"Visualisations",f:mViz,d:bindViz},
-  explorer:{t:"Explorateur de données",f:mExplorer,d:renderExplorer},
   geo:{t:"Géographie",f:mGeo,d:drawGeo},
+  viz:{t:"Visualisations",f:mViz,d:bindViz},
+  explorer:{t:"Explorateur (données complètes)",f:mExplorer,d:renderExplorer},
   model:{t:"Modèle de données",f:mModel,d:drawSchema},
   dict:{t:"Dictionnaire de données",f:mDict,d:renderDict},
   qualite:{t:"Qualité des données",f:mQualite,d:drawQualite},
   reports:{t:"Rapports",f:mReports,d:renderReports},
   about:{t:"À propos",f:mAbout,d:()=>{}},
 };
-// Navigation technique historique unique — pas de bascule de mode Public /
-// Expert (retirée à la demande explicite de l'utilisateur, sept. 2026 : une
-// seule interface pour tous, avec des colonnes par défaut simplifiées dans
-// l'Explorateur — voir exVisibleColIdx/pickDefaultCols).
+Object.keys(THEME_INFO).forEach(k=>{if(k==='technique')return;
+  MODULES[k]={t:(THEME_INFO[k]||{}).label||k,f:()=>mTheme(k),d:bindThemePage};});
+// Navigation réorganisée selon les thèmes et exigences de la Norme ITIE 2023
+// plutôt que selon la structure technique des tables sources (retour
+// utilisateur, sept. 2026). Chaque table publique est rattachée à une seule
+// rubrique ITIE et porte un bandeau de métadonnées (période, unité, devise,
+// périmètre, désagrégation, source, statut qualité — voir metaStrip()).
+// L'Explorateur technique (données complètes, 181 tables dont les 117
+// annexes brutes) et le reste de l'« Espace technique » restent accessibles
+// à tous MAIS ne listent, hors connexion administrateur, que les tables
+// publiques ; aucune donnée n'est supprimée, seulement rangée par thème —
+// toujours « ne rien cacher, toutes ces données sont publiques ».
 const NAV=[
-  {g:'Analyse',items:[['overview','◧',"Vue d'ensemble"],['viz','◫','Visualisations'],['explorer','▤','Explorateur'],['geo','◈','Géographie']]},
-  {g:'Structure',items:[['model','✳','Modèle de données'],['dict','▥','Dictionnaire'],['qualite','✓','Qualité des données'],['reports','▦','Rapports']]},
-  {g:'',items:[['about','ⓘ','À propos']]},
+  {g:"Vue d'ensemble",items:[['overview','◧',"Vue d'ensemble"],['geo','◈','Géographie']]},
+  {g:'Par thème ITIE',items:Object.keys(THEME_INFO).filter(k=>k!=='technique').map(k=>[k,THEME_NAV_ICONS[k]||'▪',(THEME_INFO[k]||{}).label||k])},
+  {g:'Données complètes',items:[['viz','◫','Visualisations'],['explorer','▤','Explorateur'],['model','✳','Modèle de données'],['dict','▥','Dictionnaire'],['qualite','✓','Qualité des données']]},
+  {g:'',items:[['reports','▦','Rapports'],['about','ⓘ','À propos']]},
 ];
 
 /* ===== router / shell ===== */

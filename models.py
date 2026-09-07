@@ -46,6 +46,10 @@ _ADDED_COLUMNS = {
     ],
     "dataset": [
         ("visible", "BOOLEAN DEFAULT 1"),
+        ("meta", "JSON"),
+    ],
+    "warehouse_meta": [
+        ("theme_info", "JSON"),
     ],
 }
 
@@ -103,6 +107,13 @@ class Dataset(db.Model):
     # colonne à une base déjà peuplée (migration légère ci-dessus) ne masque
     # donc rien de ce qui était déjà publié.
     visible = db.Column(db.Boolean, nullable=False, default=True)
+    # Métadonnées structurées de publication ITIE (thème, période, unité,
+    # devise, source, périmètre, désagrégation, statut qualité) — ajoutées
+    # sept. 2026 pour la réorganisation de l'entrepôt par thème ITIE 2023.
+    # Sans cette colonne, le front-end reçoit des jeux de données sans
+    # `meta` et ne peut plus distinguer une table publique d'une table
+    # technique (voir aussi WarehouseMeta.theme_info ci-dessous).
+    meta = db.Column(db.JSON, nullable=True)
     updated_at = db.Column(db.DateTime, default=utcnow, onupdate=utcnow)
 
     def to_dict(self, with_rows: bool = True) -> dict:
@@ -113,6 +124,7 @@ class Dataset(db.Model):
             "cols": self.cols or [],
             "types": self.types or [],
             "visible": bool(self.visible) if self.visible is not None else True,
+            "meta": self.meta or None,
         }
         if with_rows:
             d["rows"] = self.rows or []
@@ -132,13 +144,16 @@ class WarehouseMeta(db.Model):
     stats = db.Column(db.JSON, default=dict)
     clean = db.Column(db.JSON, default=dict)
     generated = db.Column(db.String(60), default="")
+    # Taxonomie publique des 11 thèmes ITIE (+ « technique ») utilisée par la
+    # navigation par thème et l'Explorateur — ajoutée sept. 2026.
+    theme_info = db.Column(db.JSON, default=dict)
     updated_at = db.Column(db.DateTime, default=utcnow, onupdate=utcnow)
 
     @staticmethod
     def singleton() -> "WarehouseMeta":
         obj = WarehouseMeta.query.get(1)
         if obj is None:
-            obj = WarehouseMeta(id=1, agg={}, officiel2023={}, stats={}, clean={}, generated="")
+            obj = WarehouseMeta(id=1, agg={}, officiel2023={}, stats={}, clean={}, generated="", theme_info={})
             db.session.add(obj)
             db.session.commit()
         return obj

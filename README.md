@@ -1220,6 +1220,68 @@ exercice n'est pas forcément une année civile distincte) et les éventuels
 écarts résiduels entre les années des graphiques de synthèse et celles des
 tableaux de détail — signalés ici pour suivi plutôt que corrigés à l'aveugle.
 
+## Réorganisation de l'entrepôt selon la Norme ITIE 2023 (7 sept. 2026)
+
+Après le troisième audit externe, l'utilisateur a signalé que l'entrepôt
+restait « indigeste » : les 181 tables étaient présentées selon la structure
+technique des fichiers sources (annexes, entrepôts consolidés, tables de
+faits/dimensions...) plutôt que selon une logique de publication compréhensible
+par un lecteur non technique. Sur demande explicite, et après lecture de la
+Norme ITIE 2023 (Partie 1, Principes et Exigences) fournie par l'utilisateur,
+l'entrepôt a été entièrement réorganisé, en une seule fois (181 tables,
+nouvelle navigation complète) :
+
+- **Une seule vue publique, désormais organisée par thème ITIE.** Le portail
+  « Espace public / Espace expert » proposé par l'audit et déjà refusé
+  explicitement par l'utilisateur (voir plus haut) n'a pas été réintroduit.
+  À la place, les 53 tables destinées au public sont réparties en **10
+  rubriques thématiques** alignées sur les exigences de la Norme ITIE 2023 :
+  cadre légal/licences (2.1-2.4), propriété effective (2.5), entreprises
+  publiques (2.6), production et exportations (3.2-3.3), paiements des
+  entreprises et recettes de l'État (4.1), réconciliation et écarts (4.1/4.9),
+  transferts et paiements infranationaux (4.6/5.2), dépenses sociales et
+  environnementales (6.1), contribution économique du secteur (6.3), et
+  rapports/sources/méthodologie (4.9/7.2). Chaque rubrique a sa propre page de
+  navigation (`#cadre_licences`, `#propriete`, etc.), listée dans le menu
+  latéral sous « Par thème ITIE ».
+- **Les 128 tables techniques (annexes brutes, référentiels internes,
+  tables intermédiaires) sont désormais réservées au profil administrateur**,
+  et non plus mélangées aux tables publiques dans l'Explorateur, le
+  Dictionnaire, la Qualité des données, le Modèle de données et le Générateur
+  de visualisations. Un visiteur non connecté n'y a plus accès ; un lien
+  « Voir aussi les tables techniques (connexion administrateur) » dans
+  l'Explorateur ouvre directement la connexion administrateur existante — sans
+  créer de second mode de navigation. Conformément à la consigne de ne rien
+  supprimer, ces 128 tables restent entièrement présentes en base et
+  consultables par un compte administrateur : rien n'a été effacé, seule leur
+  visibilité par défaut a changé.
+- **Chaque table publique porte désormais une fiche de métadonnées
+  structurée** (période couverte, unité de mesure, devise, source, périmètre,
+  niveau de désagrégation, statut de qualité), affichée directement au-dessus
+  du tableau sur sa page thématique — au lieu d'une simple description libre.
+  Ces métadonnées sont stockées avec chaque jeu de données (colonne `meta` du
+  modèle `Dataset`) et la taxonomie des 11 thèmes (les 10 thèmes publics + un
+  thème technique) est stockée séparément (`WarehouseMeta.theme_info`) ; les
+  deux sont désormais renvoyées par `/api/warehouse`, alors qu'elles ne
+  l'étaient pas dans une première version de ce travail (bug corrigé avant
+  livraison : sans cette correction, le nouveau système de thèmes restait
+  invisible côté serveur et toutes les pages thématiques retombaient sur la
+  page « Vue d'ensemble »).
+- **Aucune donnée déplacée dans l'espace administrateur n'a été supprimée ou
+  modifiée** : ce travail est une réorganisation de la présentation et de la
+  navigation, pas une correction de données. Les corrections de données
+  décrites dans les sections d'audit ci-dessus restent inchangées et
+  s'appliquent aux mêmes tables, qu'elles soient désormais publiques ou
+  réservées à l'administrateur.
+- **Vérification effectuée avant livraison** : contrôle de syntaxe JS et de
+  validité JSON, redémarrage local du serveur Flask, et parcours automatisé
+  (Playwright) des 19 pages de navigation (aperçu, géographie, visualisations,
+  explorateur, modèle, dictionnaire, qualité, rapports, à propos, et les 10
+  pages thématiques) sans erreur JavaScript, en visiteur anonyme puis en
+  session administrateur — y compris un test de rechargement complet de page
+  en étant déjà connecté, pour confirmer que l'espace technique reste
+  accessible après un rafraîchissement du navigateur.
+
 ## Limites connues / pistes d'évolution
 
 - Le générateur de visualisations et l'explorateur de tables chargent
