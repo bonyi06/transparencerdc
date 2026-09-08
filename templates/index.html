@@ -24,7 +24,7 @@
       <div class="sep"></div>
       <div class="mtitle" id="mtitle">Vue d'ensemble</div>
       <div class="grow"></div>
-      <div class="searchbox" id="globalSearchBox"><span class="si" aria-hidden="true">⌕</span><input id="globalSearch" placeholder="Rechercher dans les données…" autocomplete="off" aria-label="Rechercher dans les données"></div>
+      <div class="searchbox" id="globalSearchBox"><span class="si" aria-hidden="true">⌕</span><input id="globalSearch" placeholder="Rechercher : entreprise, régie, flux, province, exercice, rapport, exigence ITIE…" autocomplete="off" aria-label="Recherche transversale" role="combobox" aria-expanded="false" aria-controls="gsugList"><div class="gsug" id="gsugList" role="listbox"></div></div>
       <div class="tsel"><label for="yearFilter">Exercice</label> <select id="yearFilter"><option value="">Tous</option></select></div>
       <button class="icon-btn" id="themeBtn" aria-label="Changer de thème clair/sombre" title="Thème">◐</button>
     </div>
@@ -87,6 +87,19 @@
   <p>Choisissez les rubriques visibles dans le menu, pour vous et pour les visiteurs du site. « Vue d'ensemble » reste toujours accessible (page d'accueil).</p>
   <div class="rm-list" id="navList" style="display:flex;flex-direction:column;gap:8px"></div>
   <div style="display:flex;gap:10px;margin-top:14px"><button class="btn primary" id="navDone">Valider</button></div>
+</div></div>
+
+<div class="modal-bg" id="srcModal"><div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="srcModalTitle" tabindex="-1">
+  <h3 id="srcModalTitle">Source &amp; traçabilité</h3>
+  <div id="srcModalBody"></div>
+  <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap"><button class="btn" id="srcGoReports">▤ Voir les rapports &amp; méthodologie</button><button class="btn primary" id="srcDone">Fermer</button></div>
+</div></div>
+
+<div class="modal-bg" id="crossModal"><div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="crossModalTitle" tabindex="-1">
+  <h3 id="crossModalTitle">Fiche transversale</h3>
+  <p id="crossModalSub" style="font-size:12.5px;color:var(--ink-soft);margin-top:-6px"></p>
+  <div id="crossModalBody" style="max-height:56vh;overflow:auto"></div>
+  <div style="display:flex;gap:10px;margin-top:14px"><button class="btn primary" id="crossDone">Fermer</button></div>
 </div></div>
 
 <div class="modal-bg" id="enrichModal"><div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="enrichModalTitle" tabindex="-1">

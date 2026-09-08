@@ -72,8 +72,35 @@ function metaStrip(name){
   const row=(k,v)=>v?`<div><b>${esc(k)}</b><br>${esc(v)}</div>`:'';
   return `<div class="metastrip" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 16px;font-size:11.5px;color:var(--ink-soft);background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0 14px">
     ${row('Période',m.periode)}${row('Unité',m.unite)}${row('Devise',m.devise)}${row('Périmètre',m.perimetre)}${row('Désagrégation',m.desagregation)}${row('Source',m.source)}
-  </div>${m.qualite?`<div class="msg warn" style="margin-bottom:12px"><b>Statut qualité :</b> ${esc(m.qualite)}</div>`:''}`;
+  </div>${m.qualite?`<div class="msg warn" style="margin-bottom:12px"><b>Statut qualité :</b> ${esc(m.qualite)}</div>`:''}
+  <div style="margin:-8px 0 12px"><button type="button" class="srclink" data-srctable="${esc(name)}">ⓘ Source &amp; traçabilité de ce tableau</button></div>`;
 }
+// Transforme les URL en texte brut d'un champ `source`/`méthodologie` en
+// liens cliquables, sans toucher au reste du texte (retour utilisateur,
+// sept. 2026 : « chaque chiffre devrait ouvrir sa source exacte »).
+function linkifySource(text){
+  return esc(text).replace(/(https?:\/\/[^\s<]+)/g,url=>`<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
+}
+function openSourceModal(tableName){
+  const d=DS[tableName],m=tableMeta(tableName);
+  const body=$('#srcModalBody');if(!d||!body)return;
+  body.innerHTML=`
+    <div style="margin-bottom:12px"><b>${esc(d.label||tableName)}</b><br><span style="font-size:12.5px;color:var(--ink-soft)">${esc(d.desc||'')}</span></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 16px;font-size:12.5px;margin-bottom:12px">
+      ${m&&m.periode?`<div><b>Période</b><br>${esc(m.periode)}</div>`:''}
+      ${m&&m.perimetre?`<div><b>Périmètre</b><br>${esc(m.perimetre)}</div>`:''}
+      ${m&&m.desagregation?`<div><b>Désagrégation</b><br>${esc(m.desagregation)}</div>`:''}
+      <div><b>Dernière synchronisation de l'entrepôt</b><br>${esc(WH.generated||'non renseignée')}<br><span style="color:var(--ink-faint);font-size:11px">Date du dernier import complet (<code>python import_data.py</code>) ; l'entrepôt étant resynchronisé intégralement à chaque mise à jour, cette date s'applique à toutes les tables.</span></div>
+      <div><b>Nombre de lignes</b><br>${fmtN(d.rows.length)}</div>
+      <div><b>Identifiant technique de la table</b><br><code>${esc(tableName)}</code></div>
+    </div>
+    ${m&&m.source?`<div style="font-size:12.5px;margin-bottom:12px"><b>Source</b><br>${linkifySource(m.source)}</div>`:'<div class="msg warn" style="font-size:12px;margin-bottom:12px">Aucune source détaillée n\'a encore été renseignée pour ce tableau technique.</div>'}
+    ${d.tech?`<div style="font-size:11px;color:var(--ink-faint);margin-bottom:12px"><b>Repère technique interne (provenance du fichier importé)</b><br><code>${esc(d.tech)}</code></div>`:''}
+    ${m&&m.qualite?`<div class="msg warn" style="font-size:12px">${esc(m.qualite)}</div>`:''}
+  `;
+  showModal('srcModal');
+}
+window.openSourceModal=openSourceModal;
 function goExplorerTable(name){exState.ds=name;exState.page=0;exState.filters={};exState.q='';go('explorer');}
 window.goExplorerTable=goExplorerTable;
 function themeCard(name){
@@ -376,6 +403,164 @@ function canonicalize(dim,raw){
   const hit=map.get(normKey(raw));
   return hit!=null?hit:raw; // variante non référencée : conservée telle quelle (traçabilité de la déclaration d'origine)
 }
+
+/* ===== Recherche transversale (entreprises, régies, flux, provinces,
+   exercices, rapports, exigences ITIE 2023) =====
+   Audit du 8 sept. 2026 : la barre de recherche de l'en-tête ne présélectionnait
+   qu'un filtre plein texte sur la SEULE table déjà affichée dans l'Explorateur —
+   ce n'était pas une recherche transversale. Cette section construit, au
+   chargement, un index de toutes les entités canoniques déjà identifiées
+   (table `ref_identifiants_stables`, elle-même dérivée de `ref_canoniques` et
+   de `GEO.prov_ref` — voir README « Identifiants stables des référentiels »),
+   des exercices (années) présents dans les tables publiques, des rapports
+   publiés et des exigences de la Norme ITIE 2023 (déduites de THEME_INFO).
+   Choisir une entreprise / régie / flux affiche la liste RÉELLE des tableaux
+   publics où elle apparaît (via CANON_COLS), au lieu de se limiter à un seul
+   tableau présélectionné à l'avance. */
+function isPlausibleEntityLabel(s){
+  if(s==null)return false;
+  const t=String(s).trim();
+  if(t.length<2)return false;
+  if(/^[<%]/.test(t))return false;
+  if(/^(exclure|n\/?c|n[ée]ant|nd|n\/a|nap)$/i.test(t))return false;
+  return true;
+}
+function buildReverseCanonCols(){
+  const rev={entreprise:[],'entité perceptrice':[],flux:[],province:[]};
+  Object.entries(CANON_COLS).forEach(([key,dim])=>{
+    if(!rev[dim])return;
+    const dot=key.indexOf('.');const table=key.slice(0,dot),col=key.slice(dot+1);
+    const d=DS[table];
+    if(!d||!isPublicTable(table))return;
+    const idx=d.cols.indexOf(col);
+    if(idx>=0)rev[dim].push({table,col,idx});
+  });
+  return rev;
+}
+const REV_CANON_COLS=buildReverseCanonCols();
+const YEAR_COL_NAMES=new Set(['exercice','année','annee','year']);
+function buildYearIndex(){
+  const years=new Map(); // année -> Set(nom de table publique)
+  Object.keys(DS).forEach(n=>{
+    if(!isPublicTable(n))return;
+    const d=DS[n];
+    const idx=d.cols.findIndex(c=>YEAR_COL_NAMES.has(String(c).trim().toLowerCase()));
+    if(idx<0)return;
+    d.rows.forEach(r=>{
+      const raw=r[idx];if(raw==null||raw==='')return;
+      const yn=typeof raw==='number'?Math.round(raw):parseInt(raw,10);
+      if(!yn||yn<1960||yn>2100)return;
+      if(!years.has(yn))years.set(yn,new Set());
+      years.get(yn).add(n);
+    });
+  });
+  return years;
+}
+const YEAR_INDEX=buildYearIndex();
+// Déduit la liste des numéros d'Exigence ITIE 2023 rattachés à chaque
+// rubrique à partir du champ `eiti` déjà affiché en en-tête de page (ex.
+// « Exigences 2.1 à 2.4 », « Exigence 2.5 », « Exigences 3.2 et 3.3 ») :
+// aucune liste séparée à maintenir à la main, donc jamais désynchronisée du
+// texte réellement affiché aux visiteurs.
+function exigencesIndex(){
+  const out=[];
+  Object.entries(THEME_INFO).forEach(([k,info])=>{
+    if(k==='technique'||!info.eiti)return;
+    const rangeM=info.eiti.match(/(\d+)\.(\d+)\s*à\s*(\d+)\.(\d+)/i);
+    if(rangeM&&rangeM[1]===rangeM[3]){
+      for(let i=parseInt(rangeM[2],10);i<=parseInt(rangeM[4],10);i++)out.push({num:`${rangeM[1]}.${i}`,theme:k,label:info.label});
+      return;
+    }
+    [...info.eiti.matchAll(/\d+\.\d+/g)].forEach(m=>out.push({num:m[0],theme:k,label:info.label}));
+  });
+  return out;
+}
+const EXIGENCES_INDEX=exigencesIndex();
+const GSEARCH_KIND_LABELS={entreprise:'Entreprises','entité perceptrice':'Entités perceptrices (régies)',flux:'Flux de paiement',province:'Provinces',exercice:'Exercices',rapport:'Rapports',exigence:'Exigences ITIE 2023'};
+const GSEARCH_KIND_ORDER=['entreprise','entité perceptrice','flux','province','exercice','exigence','rapport'];
+function globalSearchIndex(){
+  const idx=[];
+  const rid=DS.ref_identifiants_stables;
+  if(rid){
+    const li=rid.cols.indexOf('Libellé canonique'),ii=rid.cols.indexOf('Identifiant stable (application)'),vi=rid.cols.indexOf('Variantes brutes recensées');
+    rid.rows.forEach(r=>{
+      const label=r[li],sid=r[ii];
+      if(!isPlausibleEntityLabel(label))return;
+      const prefix=String(sid).split(':')[0];
+      const kind=prefix==='entite'?'entité perceptrice':prefix;
+      idx.push({kind,label,sid,weight:r[vi]||0});
+    });
+  }
+  YEAR_INDEX.forEach((tables,year)=>idx.push({kind:'exercice',label:String(year),sid:'exercice:'+year,weight:tables.size}));
+  (C.reports||[]).forEach((r,i)=>idx.push({kind:'rapport',label:r.titre,sid:'rapport:'+i,weight:1}));
+  EXIGENCES_INDEX.forEach(e=>idx.push({kind:'exigence',label:'Exigence ITIE '+e.num+' — '+e.label,sid:'exigence:'+e.num+':'+e.theme,weight:1}));
+  return idx;
+}
+const GLOBAL_SEARCH_INDEX=globalSearchIndex();
+function searchGlobal(q,limitPerGroup){
+  const nq=normKey(q);
+  if(!nq)return [];
+  limitPerGroup=limitPerGroup||6;
+  const groups={};
+  GLOBAL_SEARCH_INDEX.forEach(item=>{
+    if(!normKey(item.label).includes(nq))return;
+    (groups[item.kind]||(groups[item.kind]=[])).push(item);
+  });
+  const out=[];
+  GSEARCH_KIND_ORDER.forEach(k=>{
+    if(!groups[k])return;
+    groups[k].sort((a,b)=>(b.weight||0)-(a.weight||0)||a.label.localeCompare(b.label,'fr'));
+    out.push({kind:k,items:groups[k].slice(0,limitPerGroup),total:groups[k].length});
+  });
+  return out;
+}
+function crossTableHits(kind,label){
+  const cols=REV_CANON_COLS[kind]||[];
+  const hits=[];
+  cols.forEach(({table,idx})=>{
+    const d=DS[table];let n=0;
+    for(const r of d.rows){if(canonicalize(kind,r[idx])===label)n++;}
+    if(n>0)hits.push({table,label:d.label||table,n});
+  });
+  hits.sort((a,b)=>b.n-a.n);
+  return hits;
+}
+function renderGlobalSuggestions(q){
+  const box=$('#gsugList');if(!box)return;
+  const groups=searchGlobal(q);
+  const inp=$('#globalSearch');
+  if(!q){box.classList.remove('on');if(inp)inp.setAttribute('aria-expanded','false');return;}
+  if(!groups.length){box.innerHTML='<div class="gsug-empty">Aucun résultat pour « '+esc(q)+' » parmi les entreprises, régies, flux, provinces, exercices, rapports et exigences ITIE.<br><span style="color:var(--ink-faint)">Entrée : rechercher ce texte dans le tableau actuellement ouvert.</span></div>';box.classList.add('on');if(inp)inp.setAttribute('aria-expanded','true');return;}
+  box.innerHTML=groups.map(g=>`<div class="gsug-group">${esc(GSEARCH_KIND_LABELS[g.kind]||g.kind)}${g.total>g.items.length?` (${g.total})`:''}</div>`+
+    g.items.map(it=>`<button type="button" class="gsug-item" role="option" data-gkind="${esc(it.kind)}" data-glabel="${esc(it.label)}" data-gsid="${esc(it.sid)}"><span class="gtag">${esc((GSEARCH_KIND_LABELS[it.kind]||it.kind).slice(0,3).toUpperCase())}</span><span>${esc(it.label)}</span></button>`).join('')
+  ).join('');
+  box.classList.add('on');if(inp)inp.setAttribute('aria-expanded','true');
+}
+function closeGlobalSuggestions(){const box=$('#gsugList');if(box)box.classList.remove('on');const inp=$('#globalSearch');if(inp)inp.setAttribute('aria-expanded','false');}
+function openCrossModal(kind,label,sid){
+  const body=$('#crossModalBody'),sub=$('#crossModalSub'),title=$('#crossModalTitle');
+  title.textContent=label;
+  if(kind==='exercice'){
+    const year=parseInt(label,10);
+    const tables=[...(YEAR_INDEX.get(year)||[])].map(t=>({table:t,label:DS[t].label||t})).sort((a,b)=>a.label.localeCompare(b.label,'fr'));
+    sub.textContent=`Exercice ${year} — présent dans ${tables.length} tableau${tables.length>1?'x':''} public${tables.length>1?'s':''}.`;
+    body.innerHTML=tables.map(t=>`<div class="xt-hit"><span>${esc(t.label)}</span><button class="btn" data-xtgo="${esc(t.table)}" data-xtyear="${year}">▤ Explorer →</button></div>`).join('')||'<div class="empty">Aucun tableau public ne référence cet exercice.</div>';
+  }else if(kind==='rapport'){
+    hideModal('crossModal');closeGlobalSuggestions();go('reports');return;
+  }else if(kind==='exigence'){
+    hideModal('crossModal');closeGlobalSuggestions();go(sid.split(':')[2]);return;
+  }else{
+    const item=GLOBAL_SEARCH_INDEX.find(it=>it.sid===sid);
+    const hits=crossTableHits(kind,label);
+    sub.textContent=`${GSEARCH_KIND_LABELS[kind]||kind} — apparaît dans ${hits.length} tableau${hits.length>1?'x':''} public${hits.length>1?'s':''}${item&&item.weight?` (${fmtN(item.weight)} variante${item.weight>1?'s':''} de libellé recensée${item.weight>1?'s':''} dans les déclarations brutes, regroupées ici sous ce nom canonique)`:''}.`;
+    body.innerHTML=(hits.length?hits.map(h=>`<div class="xt-hit"><span>${esc(h.label)} <span style="color:var(--ink-faint);font-size:11px">(${fmtN(h.n)} ligne${h.n>1?'s':''})</span></span><button class="btn" data-xtgo="${esc(h.table)}" data-xtq="${esc(label)}">▤ Explorer →</button></div>`).join(''):'')+
+      `<div style="margin-top:8px"><a href="#" data-srctable="ref_identifiants_stables" style="font-size:11.5px">ⓘ À propos de cet identifiant (référentiel technique)</a></div>`+
+      (!hits.length?'<div class="empty">Aucun tableau public n\'est actuellement rattaché à cette entité (voir README, « Référentiels canoniques »).</div>':'');
+  }
+  closeGlobalSuggestions();
+  showModal('crossModal');
+}
+window.openCrossModal=openCrossModal;
 
 const $=(s,r)=>(r||document).querySelector(s),$$=(s,r)=>[...(r||document).querySelectorAll(s)];
 const NS='http://www.w3.org/2000/svg';
@@ -1260,6 +1445,7 @@ function mAbout(){const A=C.about,B=C.brand,F=C.footer,CT=C.contact;return `<div
     </div>
   </div>`;}
 const CHANGELOG=[
+  {date:'2026-09-08',txt:"Premier volet de l'audit d'optimisation du 8 sept. 2026 (confiance/traçabilité + recherche transversale, menés en parallèle) : (1) chaque tableau public affiche désormais un bouton « Source & traçabilité » ouvrant sa fiche complète — source (avec liens cliquables), périmètre, désagrégation, date de dernière synchronisation de l'entrepôt et repère technique du fichier importé ; (2) la barre de recherche de l'en-tête devient une vraie recherche transversale (entreprises, entités perceptrices/régies, flux, provinces, exercices, rapports et exigences ITIE 2023, avec suggestions en direct) — choisir une entreprise/régie/flux/province affiche désormais la liste réelle des tableaux publics où elle apparaît (au lieu de présélectionner un seul tableau), et un exercice ou une exigence ITIE renvoie directement vers les tableaux ou la rubrique correspondante ; (3) nouvelle table technique `ref_identifiants_stables` (2 191 lignes) attribuant un identifiant de navigation stable à chaque entreprise/régie/flux/province déjà recensés dans les référentiels canoniques existants — à ne pas confondre avec un numéro d'immatriculation officiel (RCCM, Id-Nat…). Restent à traiter dans les prochains volets : performance du chargement initial, export CSV/XLSX des vues filtrées, matrice de conformité par exigence ITIE, et ergonomie du menu/mobile (voir README, « Feuille de route »)."},
   {date:'2026-09-08',txt:"Ajout du registre des contrats et licences extractifs (Exigence ITIE 2.4) dans « Cadre légal, licences et contrats » : 756 contrats miniers, pétroliers, gaziers et fonciers/forestiers publiés par le Resource Contracts Portal (NRGI/CCSI, resourcecontracts.org, snapshot du 8 septembre 2026), avec fiche par contrat (catégorie, type, ressource, année et date de signature, langue, lien vers le texte intégral), recherche et filtres (catégorie, ressource, période), pagination, et mise en évidence des 43 contrats signés depuis le 1er janvier 2021 relevant du champ obligatoire de l'Exigence 2.4. Les 252 contrats sans date de signature complète dans la source sont signalés tels quels plutôt que masqués ou complétés par une valeur devinée. Le tableau brut des 756 lignes reste consultable intégralement depuis cette page."},
   {date:'2026-09-08',txt:"Cahiers des charges : remplacement du simple tableau brut par une vue dédiée dans « Dépenses sociales et environnementales » (28 fiches entreprise avec identité, titre minier, chronogramme et budget, et pour chacune la liste dépliable de ses projets — secteur, description complète, montant), avec recherche par entreprise et filtres par feuille source / secteur ; les deux tableaux bruts restent consultables intégralement depuis cette page."},
   {date:'2026-09-08',txt:"Ajout des cahiers des charges des entreprises minières (résumé mai 2022) : deux nouvelles tables publiques dans la rubrique « Dépenses sociales et environnementales » — synthèse par entreprise (28 lignes, 2 feuilles source) et détail des 122 projets engagés (secteur, description complète, montant estimé) — ainsi que deux nouvelles couches cartographiques dans Géographie (entreprises engagées et budget engagé, Haut-Katanga, 2021). La feuille source « LUALABA » du document, qui déclare elle-même « Province : Haut-Katanga » et recoupe les données de MMG Kinsevere, est publiée telle quelle mais exclue des agrégats géographiques pour éviter un double comptage."},
@@ -1980,6 +2166,16 @@ function mountStatic(){
 
 document.addEventListener('click',e=>{
   const g=e.target.closest('[data-go]');if(g){e.preventDefault();go(g.dataset.go);return;}
+  const srcBtn=e.target.closest('[data-srctable]');if(srcBtn){e.preventDefault();openSourceModal(srcBtn.dataset.srctable);return;}
+  const gitem=e.target.closest('.gsug-item[data-gkind]');if(gitem){e.preventDefault();openCrossModal(gitem.dataset.gkind,gitem.dataset.glabel,gitem.dataset.gsid);return;}
+  const xtgo=e.target.closest('[data-xtgo]');if(xtgo){
+    e.preventDefault();hideModal('crossModal');
+    exState.ds=xtgo.dataset.xtgo;exState.page=0;exState.filters={};exState.q=xtgo.dataset.xtq||'';
+    if(xtgo.dataset.xtyear)globalYear=xtgo.dataset.xtyear;
+    go('explorer');
+    requestAnimationFrame(()=>{const yf=$('#yearFilter');if(yf&&xtgo.dataset.xtyear)yf.value=globalYear;});
+    return;
+  }
   const ds=e.target.closest('[data-ds]');if(ds){exState.ds=ds.dataset.ds;exState.page=0;exState.sort=null;exState.q='';exState.filters={};$$('#exMain');$$('.dsitem').forEach(x=>x.classList.toggle('on',x===ds));renderExplorer();return;}
   const chip=e.target.closest('.chip[data-f]');if(chip){repFilter=chip.dataset.f;$$('.chip').forEach(c=>c.classList.toggle('on',c===chip));renderReports();if(editing)markEditable(true);return;}
   const evo=e.target.closest('[data-evo]');if(evo){mapEvo=evo.dataset.evo==='1';mapSel=null;const yb=$('#mYear');if(yb)yb.disabled=mapEvo;$$('[data-evo]').forEach(b=>b.classList.toggle('on',b===evo));drawGeo();return;}
@@ -2004,7 +2200,38 @@ $('#scrim').onclick=()=>{setSideOpen(false);};
 // removed from .open via go(), this also resets the burger's aria-expanded state)
 document.addEventListener('click',e=>{if(e.target.closest('#sidenav a.item'))$('#burger').setAttribute('aria-expanded','false');});
 $('#yearFilter').onchange=e=>{globalYear=e.target.value;if(current==='explorer')renderExplorer();else if(current==='viz')drawViz();};
-$('#globalSearch').addEventListener('keydown',e=>{if(e.key==='Enter'){exState.q=e.target.value;exState.page=0;go('explorer');}});
+// Recherche transversale : suggestions en direct pendant la saisie
+// (entreprises, régies, flux, provinces, exercices, rapports, exigences
+// ITIE — voir GLOBAL_SEARCH_INDEX plus haut) ; Entrée sans sélection retombe
+// sur l'ancien comportement (filtre plein texte du tableau déjà ouvert dans
+// l'Explorateur), pour ne rien retirer de ce qui fonctionnait déjà.
+$('#globalSearch').addEventListener('input',e=>{renderGlobalSuggestions(e.target.value);});
+$('#globalSearch').addEventListener('focus',e=>{if(e.target.value)renderGlobalSuggestions(e.target.value);});
+$('#globalSearch').addEventListener('keydown',e=>{
+  const box=$('#gsugList');
+  if(e.key==='Escape'){closeGlobalSuggestions();return;}
+  if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+    if(!box||!box.classList.contains('on'))return;
+    e.preventDefault();
+    const items=$$('.gsug-item',box);if(!items.length)return;
+    let i=items.findIndex(x=>x.classList.contains('active'));
+    items.forEach(x=>x.classList.remove('active'));
+    i=e.key==='ArrowDown'?(i+1)%items.length:(i<=0?items.length-1:i-1);
+    items[i].classList.add('active');items[i].scrollIntoView({block:'nearest'});
+    return;
+  }
+  if(e.key==='Enter'){
+    const active=box&&$('.gsug-item.active',box);
+    if(active){e.preventDefault();openCrossModal(active.dataset.gkind,active.dataset.glabel,active.dataset.gsid);return;}
+    closeGlobalSuggestions();exState.q=e.target.value;exState.page=0;go('explorer');
+  }
+});
+document.addEventListener('click',e=>{if(!e.target.closest('#globalSearchBox'))closeGlobalSuggestions();});
+const srcDoneBtn=$('#srcDone');if(srcDoneBtn)srcDoneBtn.onclick=()=>hideModal('srcModal');
+$('#srcModal').onclick=e=>{if(e.target.id==='srcModal')hideModal('srcModal');};
+const srcGoReportsBtn=$('#srcGoReports');if(srcGoReportsBtn)srcGoReportsBtn.onclick=()=>{hideModal('srcModal');go('reports');};
+const crossDoneBtn=$('#crossDone');if(crossDoneBtn)crossDoneBtn.onclick=()=>hideModal('crossModal');
+$('#crossModal').onclick=e=>{if(e.target.id==='crossModal')hideModal('crossModal');};
 
 function applyTheme(t){if(t)document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('trdc-theme',t)}catch(e){}requestAnimationFrame(()=>{try{MODULES[current].d();}catch(e){}});}
 $('#themeBtn').onclick=()=>{const cur=document.documentElement.getAttribute('data-theme');const dark=cur?cur==='dark':matchMedia('(prefers-color-scheme:dark)').matches;applyTheme(dark?'light':'dark');};

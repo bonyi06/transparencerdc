@@ -1372,6 +1372,85 @@ signature, langue, statut au regard de l'Exigence 2.4, lien vers le texte intég
 filtres par catégorie / ressource / période (avant ou depuis 2021), et pagination (24 fiches par page, 756 lignes
 au total).
 
+## Audit d'optimisation du 8 sept. 2026 — feuille de route et premier volet livré
+
+L'utilisateur a transmis un audit de la plateforme relevant dix chantiers prioritaires : performance du
+chargement initial, recherche transversale réelle, traçabilité de chaque chiffre vers sa source exacte,
+détection des incohérences (années/unités/doublons/valeurs manquantes ou aberrantes), export CSV/XLSX des
+résultats filtrés, matrice de conformité par exigence de la Norme ITIE 2023, ergonomie (menu, mobile, filtres
+dans l'URL), séparation claire sources brutes / données normalisées / agrégats / indicateurs, et identifiants
+stables pour les référentiels (entreprises, régies, flux, licences, contrats, bénéficiaires effectifs).
+
+Suivi (mis à jour à chaque volet livré) :
+
+| Chantier | Statut |
+|---|---|
+| Confiance & traçabilité (source exacte de chaque tableau) | **Livré (ce volet)** |
+| Recherche transversale (entreprises, régies, flux, provinces, exercices, rapports, exigences ITIE) | **Livré (ce volet)** |
+| Identifiants stables (entreprises, régies, flux, provinces) | **Livré (ce volet)** — contrats/licences disposaient déjà d'un identifiant source (Open Contracting / n° PE-TE) |
+| Performance du chargement initial | Non commencé |
+| Détection automatique des incohérences (années, unités, doublons, valeurs aberrantes) | Non commencé |
+| Export CSV/XLSX des vues filtrées, avec métadonnées et licence | Non commencé |
+| Matrice de conformité par exigence ITIE 2023 (preuves/lacunes/niveau) | Non commencé |
+| Ergonomie (menu allégé, mobile, filtres dans l'URL) | Filtres dans l'URL déjà en place (`syncURL()`) ; menu/mobile non revus dans ce volet |
+| Séparation sources brutes / données normalisées / agrégats / indicateurs | Non commencé (partiellement déjà le cas via la distinction annexes brutes ↔ tables `ent_*`/`ctx_*` publiques) |
+| Identifiants stables pour les bénéficiaires effectifs | Non commencé (touche des données personnelles — à traiter avec précaution) |
+
+### Traçabilité : « Source & traçabilité » sur chaque tableau
+
+Chaque tableau public affiche désormais, sous son bandeau de métadonnées (période/unité/devise/périmètre/
+désagrégation/source déjà existant), un lien **« ⓘ Source & traçabilité de ce tableau »**. Il ouvre une fiche
+récapitulant : le nom et la description complète du tableau, sa période et son périmètre, sa source (les URL
+qu'elle contient deviennent des liens cliquables), la **date de dernière synchronisation complète de
+l'entrepôt** (`WH.generated`, déjà suivie côté import mais jusqu'ici seulement affichée sur les pages « À
+propos » et « Qualité des données ») et le repère technique interne du fichier importé (champ `tech` de chaque
+jeu de données, ex. `RESOURCECONTRACTS.ORG (NRGI/CCSI) — SNAPSHOT 2026-09-08`).
+
+Limite assumée et documentée plutôt que dissimulée : l'entrepôt est resynchronisé **intégralement** à chaque
+mise à jour (`python import_data.py` réimporte les 185 jeux de données en une fois), il n'existe donc qu'une
+seule date de synchronisation pour tout l'entrepôt et non une date par table ou par ligne — la fiche de
+traçabilité l'indique explicitement plutôt que de laisser croire à un suivi plus fin qu'il ne l'est réellement.
+Une traçabilité au niveau de la ligne ou de la cellule individuelle (rapport, page, tableau précis pour
+*chaque* chiffre) existe déjà nativement pour les tables qui le permettent (`ent_titres_licences` porte par
+exemple les colonnes `Rapport` / `Page` / `Tableau ou section source` pour chacune de ses lignes) mais
+demanderait, pour être généralisée à l'ensemble de l'entrepôt, de reprendre l'import de chaque table source une
+à une — chantier plus lourd, non traité dans ce volet.
+
+### Recherche transversale (entreprises, régies, flux, provinces, exercices, rapports, exigences ITIE)
+
+La barre de recherche de l'en-tête ne faisait jusqu'ici que présélectionner le texte tapé comme filtre plein
+texte de l'Explorateur, sur la seule table déjà affichée — ce n'était pas une recherche transversale. Elle
+propose désormais, dès la saisie, des suggestions groupées par type (entreprises, entités perceptrices/régies,
+flux de paiement, provinces, exercices, rapports, exigences de la Norme ITIE 2023), construites à partir :
+
+- des entités déjà canonicalisées dans `ref_canoniques` (voir § « Référentiels canoniques » ci-dessous) et de
+  `GEO.prov_ref` pour les provinces ;
+- des années détectées dans les colonnes `Exercice`/`Année` de toutes les tables publiques ;
+- des rapports publiés (page Rapports) ;
+- des exigences de la Norme ITIE 2023, déduites automatiquement du texte déjà affiché en en-tête de chaque
+  rubrique (ex. « Exigences 2.1 à 2.4 ») plutôt que d'une liste séparée à maintenir à la main.
+
+Sélectionner une **entreprise, une entité perceptrice ou un flux** affiche la liste réelle des tableaux publics
+où elle apparaît (nombre de lignes à l'appui, calculé à la volée via la même correspondance canonique que
+l'Explorateur), avec un lien direct pré-filtré vers chacun — au lieu de se limiter à un seul tableau
+présélectionné à l'avance. Sélectionner un **exercice** liste les tableaux publics qui le couvrent. Sélectionner
+un **rapport** ouvre la page Rapports ; une **exigence ITIE** ouvre directement la rubrique correspondante.
+L'ancien comportement (Entrée = filtre plein texte sur le tableau déjà ouvert dans l'Explorateur) reste
+disponible quand aucune suggestion n'est sélectionnée.
+
+### Identifiants stables des référentiels
+
+Nouvelle table technique `ref_identifiants_stables` (2 191 lignes : 1 050 entreprises, 1 088 entités
+perceptrices, 27 flux, 26 provinces), qui attribue à chaque entité déjà canonicalisée dans `ref_canoniques` /
+`GEO.prov_ref` un identifiant de la forme `entreprise:gecamines-sa`, `entite:dgi`, `flux:redevance-miniere`,
+`province:haut-katanga` — dérivé du libellé canonique lui-même (slug), stable tant que ce libellé n'est pas
+corrigé dans le référentiel. **Ce n'est pas un numéro d'immatriculation officiel** (RCCM, Id-Nat, code ISO) :
+ces identifiants officiels, quand ils sont connus, restent publiés tels quels dans leurs tables d'origine (ex.
+RCCM/Id-Nat dans les cahiers des charges, `Identifiant Open Contracting` dans le registre des contrats
+extractifs, numéro PE/TE dans le cadastre minier CAMI). Cette table sert d'ancrage technique à la recherche
+transversale ci-dessus ; elle est classée dans l'espace technique (non listée au public) car elle n'a pas de
+valeur informative propre en dehors de cet usage de navigation.
+
 ## Limites connues / pistes d'évolution
 
 - Le générateur de visualisations et l'explorateur de tables chargent
