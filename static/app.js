@@ -190,15 +190,134 @@ function bindCahiers(){
   const f=$('#cahFeuille');if(f)f.onchange=e=>{cahiersFeuille=e.target.value;renderCahiers();};
   const s=$('#cahSecteur');if(s)s.onchange=e=>{cahiersSecteur=e.target.value;renderCahiers();};
 }
+/* ===== Contrats et licences extractifs (Exigence ITIE 2.4) =====
+   Table ent_contrats_extractifs (756 lignes) : registre intégral des
+   contrats, licences, avenants et documents contractuels miniers,
+   pétroliers, gaziers et forestiers de la RDC, tel que publié par le
+   Resource Contracts Portal (Natural Resource Governance Institute / NRGI
+   et Columbia Center on Sustainable Investment / CCSI, resourcecontracts.org
+   — snapshot du 8 septembre 2026, 756/756 documents vérifiés sans doublon).
+   L'Exigence 2.4 rend obligatoire, depuis le 1er janvier 2021, la
+   divulgation des contrats et licences octroyés, conclus ou modifiés ;
+   elle encourage par ailleurs la divulgation de l'ensemble des contrats.
+   Comme pour les cahiers des charges, un simple tableau de 756 lignes à
+   12 colonnes serait peu exploitable : cette vue le recompose en fiches
+   filtrables (catégorie, ressource, année, conformité 2021+), chaque fiche
+   renvoyant vers le texte intégral du contrat sur resourcecontracts.org.
+   Rien n'est retiré : le tableau brut reste consultable via le bouton en
+   bas de section, et les 756 lignes y figurent toutes. */
+const CONTRATS_DS='ent_contrats_extractifs';
+let contratsQ='', contratsCat='', contratsRessource='', contratsConf='', contratsPage=0;
+const CONTRATS_PAGE_SIZE=24;
+function contratsCtx(){
+  const d=DS[CONTRATS_DS];if(!d)return null;
+  const ci=n=>d.cols.indexOf(n);
+  const idx={n:ci('N°'),titre:ci('Intitulé du contrat'),cat:ci('Catégorie'),types:ci('Type(s) de contrat'),
+    annee:ci('Année de signature'),date:ci('Date de signature'),ressource:ci('Ressource(s) / secteur'),
+    pays:ci('Pays / parties'),langue:ci('Langue du document'),conf:ci('Conformité Exigence ITIE 2.4 (divulgation à compter du 1er janvier 2021)'),
+    lien:ci('Lien vers le contrat (texte intégral, PDF)'),ocid:ci('Identifiant Open Contracting')};
+  return {d,idx};
+}
+function contratsRessources(){
+  const c=contratsCtx();if(!c)return [];
+  const s=new Set();
+  c.d.rows.forEach(r=>{String(r[c.idx.ressource]||'').split(',').map(x=>x.trim()).filter(Boolean).forEach(x=>s.add(x));});
+  return [...s].sort((a,b)=>a.localeCompare(b,'fr'));
+}
+function contratsCard(c,r){
+  const {idx}=c;
+  const is2021=String(r[idx.conf]||'').startsWith('Oui');
+  const cat=r[idx.cat]||'';
+  const catTag=cat.startsWith('Contrat minier')?'fait':'referentiel';
+  const link=r[idx.lien];
+  return `<div class="card" style="margin-bottom:12px">
+    <div class="ch" style="flex-wrap:wrap;gap:8px">
+      <h3 style="margin:0;font-size:14.5px;line-height:1.4">${esc(r[idx.titre])}</h3>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span class="tag ${catTag}">${esc(cat.split(' (')[0])}</span>
+        ${is2021?'<span class="tag analytique">Exigence 2.4 — obligatoire</span>':''}
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px 16px;font-size:12px;color:var(--ink-soft);margin:6px 0 10px">
+      ${cahiersField('Type(s) de contrat',r[idx.types])}${cahiersField('Ressource(s) / secteur',r[idx.ressource])}
+      ${cahiersField('Année de signature',r[idx.annee],fmtN)}${cahiersField('Date de signature',r[idx.date])}
+      ${cahiersField('Langue du document',r[idx.langue])}${cahiersField('Pays / parties',r[idx.pays])}
+    </div>
+    <div class="msg" style="font-size:11.5px;margin-bottom:10px">${esc(r[idx.conf])}</div>
+    ${link?`<a class="btn primary" href="${esc(link)}" target="_blank" rel="noopener noreferrer">↗ Voir le contrat (texte intégral, PDF) sur resourcecontracts.org</a>`:''}
+  </div>`;
+}
+function renderContrats(){
+  const host=$('#conList');if(!host)return;
+  const c=contratsCtx();if(!c)return;
+  const {idx}=c;
+  const q=stripAccents(contratsQ).toLowerCase();
+  let rows=c.d.rows.filter(r=>{
+    if(contratsCat&&!String(r[idx.cat]||'').startsWith(contratsCat))return false;
+    if(contratsRessource&&!String(r[idx.ressource]||'').split(',').map(x=>x.trim()).includes(contratsRessource))return false;
+    if(contratsConf==='2021'&&!String(r[idx.conf]||'').startsWith('Oui'))return false;
+    if(contratsConf==='avant'&&String(r[idx.conf]||'').startsWith('Oui'))return false;
+    if(q&&!stripAccents(r[idx.titre]||'').toLowerCase().includes(q))return false;
+    return true;
+  });
+  const total=rows.length;
+  const maxPage=Math.max(0,Math.ceil(total/CONTRATS_PAGE_SIZE)-1);
+  if(contratsPage>maxPage)contratsPage=maxPage;
+  const page=rows.slice(contratsPage*CONTRATS_PAGE_SIZE,(contratsPage+1)*CONTRATS_PAGE_SIZE);
+  host.innerHTML=(total?`<div style="font-size:12px;color:var(--ink-soft);margin-bottom:8px">${fmtN(total)} contrat${total>1?'s':''} correspondant${total>1?'s':''} à ces filtres (sur ${fmtN(c.d.rows.length)} au total)</div>`:'')+
+    (page.length?page.map(r=>contratsCard(c,r)).join(''):'<div class="empty" style="padding:16px">Aucun contrat ne correspond à ces filtres.</div>')+
+    (total>CONTRATS_PAGE_SIZE?`<div style="display:flex;justify-content:center;align-items:center;gap:12px;margin:14px 0 4px">
+      <button class="btn" id="conPrev"${contratsPage<=0?' disabled':''}>← Précédent</button>
+      <span style="font-size:12px;color:var(--ink-soft)">Page ${contratsPage+1} / ${maxPage+1}</span>
+      <button class="btn" id="conNext"${contratsPage>=maxPage?' disabled':''}>Suivant →</button>
+    </div>`:'');
+  const prev=$('#conPrev');if(prev)prev.onclick=()=>{contratsPage--;renderContrats();host.scrollIntoView({block:'start',behavior:'smooth'});};
+  const next=$('#conNext');if(next)next.onclick=()=>{contratsPage++;renderContrats();host.scrollIntoView({block:'start',behavior:'smooth'});};
+}
+function contratsSection(){
+  const c=contratsCtx();if(!c)return '';
+  const ressources=contratsRessources();
+  const total=c.d.rows.length;
+  const n2021=c.d.rows.filter(r=>String(r[c.idx.conf]||'').startsWith('Oui')).length;
+  return `<div class="card" style="margin-bottom:16px;background:var(--panel-2)">
+      <div class="ch"><h2 style="margin:0;font-size:16px">Contrats et licences miniers, pétroliers et forestiers</h2><span class="badge">${fmtN(total)} contrats — Exigence 2.4</span></div>
+      <p style="font-size:12.5px;color:var(--ink-soft);margin:6px 0 0">L'Exigence ITIE 2.4 vise à assurer l'accès public à toutes les licences et à tous les contrats liés aux activités extractives, comme base de la compréhension publique des droits et obligations contractuels des entreprises. Elle est obligatoire, depuis le 1<sup>er</sup> janvier 2021, pour tout contrat ou licence octroyé, conclu ou modifié ; les pays sont par ailleurs encouragés à divulguer l'ensemble de leurs contrats. Ce registre reprend les ${fmtN(total)} contrats, licences, avenants et documents contractuels de la RDC (mines, pétrole, gaz, forêts) publiés par le <a href="https://resourcecontracts.org/countries/cd" target="_blank" rel="noopener noreferrer">Resource Contracts Portal</a> (Natural Resource Governance Institute et Columbia Center on Sustainable Investment) ; chaque fiche renvoie vers le texte intégral du contrat.</p>
+      <div class="msg warn" style="margin-top:10px;font-size:12px"><b>${fmtN(n2021)} contrats sur ${fmtN(total)}</b> ont été signés à compter du 1<sup>er</sup> janvier 2021 et relèvent donc du champ obligatoire de l'Exigence 2.4 (badge « Exigence 2.4 — obligatoire » ci-dessous) ; les ${fmtN(total-n2021)} autres, antérieurs à 2021, sont publiés au titre de la divulgation volontaire que l'ITIE encourage également. Pour 252 documents, la source ne renseigne pas de date de signature complète (seule l'année est alors connue) : c'est un défaut d'information du Resource Contracts Portal, reproduit tel quel plutôt que masqué ou deviné.</div>
+    </div>
+    <div class="extoolbar">
+      <div class="exsearch"><span class="si" aria-hidden="true">⌕</span><input id="conQ" placeholder="Rechercher un contrat (entreprise, titre…)" value="${esc(contratsQ)}" aria-label="Rechercher un contrat"></div>
+      <select id="conCat" aria-label="Filtrer par catégorie"><option value="">Toutes catégories</option>
+        <option value="Contrat minier"${contratsCat.startsWith('Contrat minier')?' selected':''}>Contrats miniers / pétroliers</option>
+        <option value="Contrat foncier"${contratsCat.startsWith('Contrat foncier')?' selected':''}>Contrats fonciers / forestiers</option></select>
+      <select id="conRessource" aria-label="Filtrer par ressource"><option value="">Toutes ressources</option>
+        ${ressources.map(r=>`<option value="${esc(r)}"${contratsRessource===r?' selected':''}>${esc(r)}</option>`).join('')}</select>
+      <select id="conConf" aria-label="Filtrer par conformité Exigence 2.4"><option value="">Toutes périodes</option>
+        <option value="2021"${contratsConf==='2021'?' selected':''}>Signés depuis 2021 (obligatoire)</option>
+        <option value="avant"${contratsConf==='avant'?' selected':''}>Signés avant 2021 (volontaire)</option></select>
+    </div>
+    <div id="conList"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 4px">
+      <button class="btn" data-gotable="${CONTRATS_DS}">▤ Tableau brut — les ${fmtN(total)} contrats →</button>
+    </div>`;
+}
+function bindContrats(){
+  if(!$('#conList'))return;
+  renderContrats();
+  const q=$('#conQ');if(q)q.oninput=e=>{contratsQ=e.target.value;contratsPage=0;renderContrats();const el=$('#conQ');if(el){el.focus();el.setSelectionRange(e.target.value.length,e.target.value.length);}};
+  const cat=$('#conCat');if(cat)cat.onchange=e=>{contratsCat=e.target.value;contratsPage=0;renderContrats();};
+  const res=$('#conRessource');if(res)res.onchange=e=>{contratsRessource=e.target.value;contratsPage=0;renderContrats();};
+  const conf=$('#conConf');if(conf)conf.onchange=e=>{contratsConf=e.target.value;contratsPage=0;renderContrats();};
+}
 function mTheme(theme){
   const info=THEME_INFO[theme]||{label:theme,desc:'',eiti:''};
-  const names=tablesInTheme(theme).filter(n=>!(theme==='depenses_sociales'&&(n===CAHIERS_ENT||n===CAHIERS_PROJ)));
+  const names=tablesInTheme(theme).filter(n=>!(theme==='depenses_sociales'&&(n===CAHIERS_ENT||n===CAHIERS_PROJ))&&!(theme==='cadre_licences'&&n===CONTRATS_DS));
   const cahiers=theme==='depenses_sociales'?cahiersSection():'';
+  const contrats=theme==='cadre_licences'?contratsSection():'';
   return `<div class="phead"><div class="eyebrow">${esc(info.eiti||'')}</div><h1>${esc(info.label)}</h1><p>${esc(info.desc)}</p></div>
-    ${names.length?names.map(themeCard).join(''):(cahiers?'':'<div class="empty" style="padding:20px">Aucun tableau public dans cette rubrique pour le moment.</div>')}
-    ${cahiers}`;
+    ${names.length?names.map(themeCard).join(''):(cahiers||contrats?'':'<div class="empty" style="padding:20px">Aucun tableau public dans cette rubrique pour le moment.</div>')}
+    ${contrats}${cahiers}`;
 }
-function bindThemePage(){$$('#app [data-gotable]').forEach(b=>b.onclick=()=>goExplorerTable(b.dataset.gotable));bindCahiers();}
+function bindThemePage(){$$('#app [data-gotable]').forEach(b=>b.onclick=()=>goExplorerTable(b.dataset.gotable));bindCahiers();bindContrats();}
 
 
 /* ===== Référentiels canoniques (provinces / entreprises / flux / entités
@@ -1141,6 +1260,7 @@ function mAbout(){const A=C.about,B=C.brand,F=C.footer,CT=C.contact;return `<div
     </div>
   </div>`;}
 const CHANGELOG=[
+  {date:'2026-09-08',txt:"Ajout du registre des contrats et licences extractifs (Exigence ITIE 2.4) dans « Cadre légal, licences et contrats » : 756 contrats miniers, pétroliers, gaziers et fonciers/forestiers publiés par le Resource Contracts Portal (NRGI/CCSI, resourcecontracts.org, snapshot du 8 septembre 2026), avec fiche par contrat (catégorie, type, ressource, année et date de signature, langue, lien vers le texte intégral), recherche et filtres (catégorie, ressource, période), pagination, et mise en évidence des 43 contrats signés depuis le 1er janvier 2021 relevant du champ obligatoire de l'Exigence 2.4. Les 252 contrats sans date de signature complète dans la source sont signalés tels quels plutôt que masqués ou complétés par une valeur devinée. Le tableau brut des 756 lignes reste consultable intégralement depuis cette page."},
   {date:'2026-09-08',txt:"Cahiers des charges : remplacement du simple tableau brut par une vue dédiée dans « Dépenses sociales et environnementales » (28 fiches entreprise avec identité, titre minier, chronogramme et budget, et pour chacune la liste dépliable de ses projets — secteur, description complète, montant), avec recherche par entreprise et filtres par feuille source / secteur ; les deux tableaux bruts restent consultables intégralement depuis cette page."},
   {date:'2026-09-08',txt:"Ajout des cahiers des charges des entreprises minières (résumé mai 2022) : deux nouvelles tables publiques dans la rubrique « Dépenses sociales et environnementales » — synthèse par entreprise (28 lignes, 2 feuilles source) et détail des 122 projets engagés (secteur, description complète, montant estimé) — ainsi que deux nouvelles couches cartographiques dans Géographie (entreprises engagées et budget engagé, Haut-Katanga, 2021). La feuille source « LUALABA » du document, qui déclare elle-même « Province : Haut-Katanga » et recoupe les données de MMG Kinsevere, est publiée telle quelle mais exclue des agrégats géographiques pour éviter un double comptage."},
   {date:'2026-09-07',txt:"Réorganisation complète de l'entrepôt selon les thèmes et exigences de la Norme ITIE 2023 : les 181 tables sont désormais réparties en 10 rubriques publiques (cadre légal/licences, propriété effective, entreprises publiques, production/exportations, paiements/recettes, réconciliation, transferts infranationaux, dépenses sociales/environnementales, contribution économique, rapports/méthodologie) et un espace technique réservé au profil administrateur (annexes brutes, référentiels, 128 tables), sans suppression de données. Chaque table publique affiche désormais période, unité, devise, source, périmètre, désagrégation et statut de qualité."},

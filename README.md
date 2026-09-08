@@ -1331,6 +1331,47 @@ description complète, montant) ; une recherche par nom d'entreprise et des filt
 secteur de projet permettent de naviguer dans les 28 entreprises et 122 projets sans dérouler un tableau à 17
 colonnes. Aucune donnée n'est retirée : c'est uniquement la présentation qui change.
 
+## Ajout du registre des contrats et licences extractifs — Exigence ITIE 2.4 (8 sept. 2026)
+
+Demande de l'utilisateur : « rajouter les contrats miniers, pétroliers et forestiers en allant les rechercher sur
+https://resourcecontracts.org/countries/cd », conformément à l'Exigence ITIE 2.4, qui impose aux pays de mise en
+œuvre de divulguer, à compter du 1er janvier 2021, tous les contrats et licences octroyés, conclus ou modifiés
+dans les industries extractives (et encourage la divulgation volontaire de l'ensemble des contrats, y compris
+antérieurs).
+
+Les données proviennent du **Resource Contracts Portal**, opéré par le Natural Resource Governance Institute
+(NRGI) et le Columbia Center on Sustainable Investment (CCSI) — `https://resourcecontracts.org/countries/cd` —
+via son API publique (`api.resourcecontracts.org`). L'intégralité des contrats déclarés pour la RDC a été
+récupérée par pagination (8 pages de 100 résultats maximum) le 8 septembre 2026 : **756 contrats**, vérifiés un à
+un (aucun doublon, total exactement conforme à celui renvoyé par l'API).
+
+Ce registre constitue la nouvelle table publique `ent_contrats_extractifs` (756 lignes, 12 colonnes), rattachée à
+la rubrique « Cadre légal, licences et contrats » :
+
+- **346 contrats** relèvent de la catégorie « resource contract » (contrats miniers, pétroliers et gaziers
+  proprement dits) et **410** de la catégorie « other legal contract » (baux fonciers, concessions forestières et
+  documents annexes) — catégorisation reprise telle quelle depuis la source.
+- **43 contrats** ont été signés à compter du 1er janvier 2021 et relèvent donc du champ **obligatoire** de
+  l'Exigence 2.4 ; ils sont signalés distinctement (bandeau « Exigence 2.4 — obligatoire ») dans la nouvelle vue.
+  Les **713 autres**, antérieurs à 2021, sont publiés au titre de la divulgation volontaire encouragée par l'ITIE.
+- Chaque fiche renvoie, par un lien direct, vers la page du contrat sur resourcecontracts.org, qui donne accès au
+  texte intégral (PDF) ; les documents eux-mêmes n'ont pas été republiés, seulement leurs métadonnées et un lien
+  vers la source.
+
+Conformément au principe de ne rien masquer : pour **252 des 756 contrats**, la source ne renseigne pas de date
+de signature complète (seule l'année est parfois connue) — ce n'est pas une donnée manquante de notre fait mais
+un défaut d'information de la source primaire, et la mention « Non renseignée dans la source » est affichée telle
+quelle plutôt qu'une date devinée ou une ligne supprimée. De même, quelques contrats sans titre, catégorie, type
+de contrat ou ressource identifiable dans la source portent la mention explicite correspondante (« non renseigné
+dans la source », « non catégorisé dans la source »).
+
+Comme pour les cahiers des charges, la rubrique « Cadre légal, licences et contrats » affiche désormais, en plus
+du tableau brut des 756 lignes (toujours consultable intégralement via un bouton dédié), une vue « Contrats et
+licences miniers, pétroliers et forestiers » : une fiche par contrat (catégorie, type, ressource, années/date de
+signature, langue, statut au regard de l'Exigence 2.4, lien vers le texte intégral), avec recherche par titre,
+filtres par catégorie / ressource / période (avant ou depuis 2021), et pagination (24 fiches par page, 756 lignes
+au total).
+
 ## Limites connues / pistes d'évolution
 
 - Le générateur de visualisations et l'explorateur de tables chargent
