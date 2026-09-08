@@ -1282,6 +1282,45 @@ nouvelle navigation complète) :
   en étant déjà connecté, pour confirmer que l'espace technique reste
   accessible après un rafraîchissement du navigateur.
 
+## Ajout des cahiers des charges des entreprises minières (8 sept. 2026)
+
+L'utilisateur a transmis un fichier Excel distinct, « Résumé des cahiers des charges des entreprises minières
+fait au mois de mai 2022 », avec la demande de l'intégrer intégralement, de manière structurée, dans le volet
+« Dépenses sociales et environnementales » (Exigence ITIE 6.1) et de le répercuter dans la Géographie (métadonnées
+et carte). Le fichier comporte deux feuilles :
+
+- **HAUT-KATANGA 2021-2025** : 14 entreprises minières, avec pour chacune son identité (RCCM, Id-Nat, numéro(s) de
+  PE/TE, validité du titre), la synthèse de ses engagements (chronogramme, durée, budget total) et le détail de
+  chacun de ses projets (jusqu'à 23 par entreprise : secteur, description complète, coût).
+- **LUALABA** : structurée différemment (avec en plus la province, le siège social et la superficie du titre),
+  mais dont les 3 seules entreprises réellement renseignées (MMG Kinsevere, STL, Anvil Mining) déclarent
+  elles-mêmes « Province : Haut-Katanga » et reprennent des projets identiques à ceux de la feuille précédente —
+  signe d'une copie de travail incomplète plutôt que de données propres au Lualaba. Les 11 autres entreprises de
+  cette feuille n'y apparaissent que par leur nom, sans aucune autre donnée.
+
+Conformément au principe de ne rien masquer, **les deux feuilles sont publiées intégralement, sans fusion ni
+correction de l'une par l'autre** (colonne « Feuille source »), dans deux nouvelles tables publiques :
+
+- `ent_cahier_charges_entreprise` (28 lignes) : synthèse par entreprise.
+- `ent_cahier_charges_projet` (122 lignes) : détail par projet, avec un montant extrait automatiquement du
+  dernier chiffre suivi de « $ » dans chaque description (8 projets sur 112 de la feuille Haut-Katanga n'ont pas
+  de montant identifiable dans leur texte et restent vides plutôt que d'être devinés).
+
+Deux incohérences du document source ont été identifiées et **signalées plutôt que corrigées** :
+
+- Un montant mal saisi (« 806 6121 $ » pour RUASHI MINING SAS, projet Santé) est reproduit tel quel.
+- La somme des coûts unitaires des projets ne correspond pas toujours au « Budget total engagé » déclaré au
+  niveau de l'entreprise (écarts notables pour STL, RUASHI MINING SAS et GRANDE CIMENTERIE DE KATANGA) — les deux
+  niveaux sont publiés tels quels, sans réconciliation artificielle.
+
+Pour la Géographie, deux nouvelles couches cartographiques ont été ajoutées (groupe « Cahiers de charge ») :
+« Cahiers de charge — entreprises engagées 2021 » (14, Haut-Katanga) et « Cahiers de charge — budget engagé 2021 »
+(30 169 481,22 USD, Haut-Katanga). Ces couches sont **volontairement distinctes** des couches déjà existantes
+« Cahiers de charge (nb, statut CPI) » et « (dépenses sociales, $) », qui viennent des annexes officielles des
+Rapports ITIE 2022-2023 et comptent les *cahiers* par statut d'approbation — une base de mesure différente qu'il
+aurait été trompeur de mélanger. La feuille « LUALABA » n'a volontairement pas été utilisée pour ces agrégats
+géographiques, afin d'éviter un double comptage avec la feuille Haut-Katanga.
+
 ## Limites connues / pistes d'évolution
 
 - Le générateur de visualisations et l'explorateur de tables chargent
