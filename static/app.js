@@ -86,13 +86,119 @@ function themeCard(name){
     <button class="btn primary" data-gotable="${esc(name)}">▤ Explorer ce tableau →</button>
   </div>`;
 }
+/* ===== Cahiers des charges des entreprises minières — vue détaillée =====
+   Les deux tables ent_cahier_charges_entreprise (28 lignes) et
+   ent_cahier_charges_projet (122 lignes) contiennent l'intégralité du
+   document source (« Résumé des cahiers des charges des entreprises
+   minières », mai 2022, 2 feuilles Excel) mais un simple tableau à colonnes
+   multiples les rendait peu lisibles (retour utilisateur, sept. 2026 :
+   « pas assez structuré, professionnel et compréhensible »). Cette vue les
+   recompose en fiches par entreprise (identité, titre minier, chronogramme,
+   budget) avec, en dessous, chaque projet détaillé (secteur, description
+   complète, montant) — sans rien retirer ni fusionner : les deux tables
+   restent aussi consultables telles quelles dans l'Explorateur (boutons en
+   bas de section), et aucune ligne (y compris les entrées incomplètes de la
+   feuille LUALABA) n'est masquée. */
+const CAHIERS_ENT='ent_cahier_charges_entreprise', CAHIERS_PROJ='ent_cahier_charges_projet';
+let cahiersQ='', cahiersFeuille='', cahiersSecteur='';
+function cahiersCtx(){
+  const eD=DS[CAHIERS_ENT], pD=DS[CAHIERS_PROJ];
+  if(!eD||!pD)return null;
+  const ci=(d,name)=>d.cols.indexOf(name);
+  const ei={feuille:ci(eD,'Feuille source'),ent:ci(eD,'Entreprise'),abrev:ci(eD,'Abréviation'),
+    rccm:ci(eD,'RCCM'),idnat:ci(eD,'Id-Nat'),prov:ci(eD,'Province déclarée'),siege:ci(eD,'Siège à Kinshasa'),
+    pete:ci(eD,'Numéro(s) PE ou TE'),valide:ci(eD,"Valide jusqu'au"),dureeTitre:ci(eD,'Durée totale du titre'),
+    superficie:ci(eD,'Superficie (carrés miniers)'),chrono:ci(eD,'Chronogramme des engagements'),
+    dureeEng:ci(eD,'Durée des engagements (an)'),nbProj:ci(eD,'Nombre de projets prévus'),
+    secteursNb:ci(eD,"Secteurs d'intervention (nombre)"),budget:ci(eD,'Budget total engagé (USD)'),obs:ci(eD,'Observation')};
+  const pi={feuille:ci(pD,'Feuille source'),ent:ci(pD,'Entreprise'),n:ci(pD,'N° projet'),secteur:ci(pD,'Secteur'),
+    titre:ci(pD,'Titre du projet'),desc:ci(pD,'Description complète'),montant:ci(pD,'Montant estimé (USD)')};
+  const byEnt=new Map();
+  pD.rows.forEach(r=>{const key=r[pi.feuille]+'||'+r[pi.ent];if(!byEnt.has(key))byEnt.set(key,[]);byEnt.get(key).push(r);});
+  return {eD,pD,ei,pi,byEnt};
+}
+function cahiersSecteurs(){
+  const c=cahiersCtx();if(!c)return [];
+  const s=new Set();c.pD.rows.forEach(r=>{if(r[c.pi.secteur])s.add(r[c.pi.secteur]);});
+  return [...s].sort((a,b)=>a.localeCompare(b,'fr'));
+}
+function cahiersField(lab,v,fmt){if(v==null||v==='')return '';return `<div><b>${esc(lab)}</b><br>${esc(fmt?fmt(v):v)}</div>`;}
+function cahiersCard(c,eRow){
+  const {ei,pi}=c;
+  const feuille=eRow[ei.feuille];
+  let projets=(c.byEnt.get(feuille+'||'+eRow[ei.ent])||[]).slice().sort((a,b)=>(a[pi.n]||0)-(b[pi.n]||0));
+  if(cahiersSecteur)projets=projets.filter(p=>p[pi.secteur]===cahiersSecteur);
+  const totalProjBudget=projets.reduce((s,p)=>s+(typeof p[pi.montant]==='number'?p[pi.montant]:0),0);
+  return `<div class="card" style="margin-bottom:14px">
+    <div class="ch" style="flex-wrap:wrap">
+      <h3 style="margin:0">${esc(eRow[ei.ent])}${eRow[ei.abrev]?` <span style="color:var(--ink-soft);font-weight:400">(${esc(eRow[ei.abrev])})</span>`:''}</h3>
+      <span class="tag ${feuille==='LUALABA'?'analytique':'referentiel'}" title="Feuille source du document Excel">${esc(feuille)}</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px 16px;font-size:12px;color:var(--ink-soft);margin:8px 0 10px">
+      ${cahiersField('RCCM',eRow[ei.rccm])}${cahiersField('Id-Nat',eRow[ei.idnat])}${cahiersField('Province déclarée',eRow[ei.prov])}
+      ${cahiersField('Siège à Kinshasa',eRow[ei.siege])}${cahiersField('Permis (PE/TE)',eRow[ei.pete])}${cahiersField("Valide jusqu'au",eRow[ei.valide])}
+      ${cahiersField('Durée totale du titre',eRow[ei.dureeTitre])}${cahiersField('Superficie (carrés miniers)',eRow[ei.superficie],fmtN)}
+      ${cahiersField('Chronogramme des engagements',eRow[ei.chrono])}${cahiersField('Durée des engagements',eRow[ei.dureeEng]!=null?eRow[ei.dureeEng]+' an(s)':null)}
+      ${cahiersField('Projets prévus (déclarés)',eRow[ei.nbProj],fmtN)}${cahiersField("Secteurs d'intervention (déclarés)",eRow[ei.secteursNb],fmtN)}
+      ${cahiersField('Budget total engagé (synthèse)',eRow[ei.budget],fmtUSD)}${cahiersField('Observation',eRow[ei.obs])}
+    </div>
+    ${projets.length?`<div style="font-size:12.5px;color:var(--ink-soft);margin-bottom:6px">${fmtN(projets.length)} projet${projets.length>1?'s':''} détaillé${projets.length>1?'s':''} dans le document${totalProjBudget?` · ${fmtUSD(totalProjBudget)} au total sur ${projets.length>1?'ces projets':'ce projet'}`:''}</div>
+      <div style="display:flex;flex-direction:column;gap:6px">${projets.map(p=>`
+        <details class="srcdetails">
+          <summary><b>${esc(p[pi.secteur]||'Secteur non précisé')}</b>${p[pi.titre]?' — '+esc(p[pi.titre]):''}${typeof p[pi.montant]==='number'?` <span class="badge">${fmtUSD(p[pi.montant])}</span>`:''}</summary>
+          <div style="font-size:12.5px;color:var(--ink-soft);margin-top:6px;line-height:1.6">${esc(p[pi.desc]||'')}</div>
+        </details>`).join('')}</div>`
+      :`<div class="empty" style="padding:10px">Aucun projet détaillé n'est renseigné pour cette entreprise dans le document source${feuille==='LUALABA'?' (feuille « LUALABA » très incomplète pour cette entreprise, voir note ci-dessus)':''}.</div>`}
+  </div>`;
+}
+function cahiersSection(){
+  const c=cahiersCtx();if(!c)return '';
+  const secteurs=cahiersSecteurs();
+  return `<div class="card" style="margin-bottom:16px;background:var(--panel-2)">
+      <div class="ch"><h2 style="margin:0;font-size:16px">Cahiers des charges des entreprises minières — détail entreprise par entreprise</h2><span class="badge">Résumé, mai 2022</span></div>
+      <p style="font-size:12.5px;color:var(--ink-soft);margin:6px 0 0">Synthèse (identité, titre minier, chronogramme, budget engagé) et détail des projets (secteur, description complète, montant) de chaque cahier des charges de responsabilité sociétale en cours, tels que déclarés dans le document transmis à l'ITIE-RDC. Document composé de deux feuilles Excel distinctes, reprises ici sans les fusionner (badge « HAUT-KATANGA 2021-2025 » ou « LUALABA » sur chaque fiche).</p>
+      <div class="msg warn" style="margin-top:10px;font-size:12px">Malgré son nom, la feuille « LUALABA » déclare elle-même « Province : Haut-Katanga » pour les 3 entreprises qu'elle renseigne, et ses données de projets recoupent largement celles de MMG Kinsevere dans la feuille « HAUT-KATANGA 2021-2025 » : il s'agit très probablement d'une copie de travail incomplète. Conformément au principe de ne rien masquer, elle est publiée ici telle quelle (aucune ligne supprimée) mais n'a pas été utilisée pour les agrégats cartographiques (voir Géographie) afin d'éviter un double comptage. Pour la même raison, le « Budget total engagé » d'une fiche ne correspond pas toujours à la somme des montants de ses projets détaillés ci-dessous : c'est un reflet direct du document source, pas une erreur de traitement.</div>
+    </div>
+    <div class="extoolbar">
+      <div class="exsearch"><span class="si" aria-hidden="true">⌕</span><input id="cahQ" placeholder="Rechercher une entreprise…" value="${esc(cahiersQ)}" aria-label="Rechercher une entreprise"></div>
+      <select id="cahFeuille" aria-label="Filtrer par feuille source"><option value="">Toutes les feuilles</option>
+        <option value="HAUT-KATANGA 2021-2025"${cahiersFeuille==='HAUT-KATANGA 2021-2025'?' selected':''}>HAUT-KATANGA 2021-2025</option>
+        <option value="LUALABA"${cahiersFeuille==='LUALABA'?' selected':''}>LUALABA</option></select>
+      <select id="cahSecteur" aria-label="Filtrer par secteur de projet"><option value="">Tous les secteurs de projet</option>
+        ${secteurs.map(s=>`<option value="${esc(s)}"${cahiersSecteur===s?' selected':''}>${esc(s)}</option>`).join('')}</select>
+    </div>
+    <div id="cahList"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 4px">
+      <button class="btn" data-gotable="${CAHIERS_ENT}">▤ Tableau brut — synthèse par entreprise →</button>
+      <button class="btn" data-gotable="${CAHIERS_PROJ}">▤ Tableau brut — détail des projets →</button>
+    </div>`;
+}
+function renderCahiers(){
+  const host=$('#cahList');if(!host)return;
+  const c=cahiersCtx();if(!c)return;
+  const {ei}=c;
+  const q=stripAccents(cahiersQ).toLowerCase();
+  let rows=c.eD.rows.filter(r=>!cahiersFeuille||r[ei.feuille]===cahiersFeuille);
+  if(q)rows=rows.filter(r=>stripAccents(r[ei.ent]||'').toLowerCase().includes(q)||stripAccents(r[ei.abrev]||'').toLowerCase().includes(q));
+  if(cahiersSecteur)rows=rows.filter(r=>(c.byEnt.get(r[ei.feuille]+'||'+r[ei.ent])||[]).some(p=>p[c.pi.secteur]===cahiersSecteur));
+  host.innerHTML=rows.length?rows.map(r=>cahiersCard(c,r)).join(''):'<div class="empty" style="padding:16px">Aucune entreprise ne correspond à ces filtres.</div>';
+}
+function bindCahiers(){
+  if(!$('#cahList'))return;
+  renderCahiers();
+  const q=$('#cahQ');if(q)q.oninput=e=>{cahiersQ=e.target.value;renderCahiers();const el=$('#cahQ');if(el){el.focus();el.setSelectionRange(e.target.value.length,e.target.value.length);}};
+  const f=$('#cahFeuille');if(f)f.onchange=e=>{cahiersFeuille=e.target.value;renderCahiers();};
+  const s=$('#cahSecteur');if(s)s.onchange=e=>{cahiersSecteur=e.target.value;renderCahiers();};
+}
 function mTheme(theme){
   const info=THEME_INFO[theme]||{label:theme,desc:'',eiti:''};
-  const names=tablesInTheme(theme);
+  const names=tablesInTheme(theme).filter(n=>!(theme==='depenses_sociales'&&(n===CAHIERS_ENT||n===CAHIERS_PROJ)));
+  const cahiers=theme==='depenses_sociales'?cahiersSection():'';
   return `<div class="phead"><div class="eyebrow">${esc(info.eiti||'')}</div><h1>${esc(info.label)}</h1><p>${esc(info.desc)}</p></div>
-    ${names.length?names.map(themeCard).join(''):'<div class="empty" style="padding:20px">Aucun tableau public dans cette rubrique pour le moment.</div>'}`;
+    ${names.length?names.map(themeCard).join(''):(cahiers?'':'<div class="empty" style="padding:20px">Aucun tableau public dans cette rubrique pour le moment.</div>')}
+    ${cahiers}`;
 }
-function bindThemePage(){$$('#app [data-gotable]').forEach(b=>b.onclick=()=>goExplorerTable(b.dataset.gotable));}
+function bindThemePage(){$$('#app [data-gotable]').forEach(b=>b.onclick=()=>goExplorerTable(b.dataset.gotable));bindCahiers();}
 
 
 /* ===== Référentiels canoniques (provinces / entreprises / flux / entités
@@ -1035,6 +1141,7 @@ function mAbout(){const A=C.about,B=C.brand,F=C.footer,CT=C.contact;return `<div
     </div>
   </div>`;}
 const CHANGELOG=[
+  {date:'2026-09-08',txt:"Cahiers des charges : remplacement du simple tableau brut par une vue dédiée dans « Dépenses sociales et environnementales » (28 fiches entreprise avec identité, titre minier, chronogramme et budget, et pour chacune la liste dépliable de ses projets — secteur, description complète, montant), avec recherche par entreprise et filtres par feuille source / secteur ; les deux tableaux bruts restent consultables intégralement depuis cette page."},
   {date:'2026-09-08',txt:"Ajout des cahiers des charges des entreprises minières (résumé mai 2022) : deux nouvelles tables publiques dans la rubrique « Dépenses sociales et environnementales » — synthèse par entreprise (28 lignes, 2 feuilles source) et détail des 122 projets engagés (secteur, description complète, montant estimé) — ainsi que deux nouvelles couches cartographiques dans Géographie (entreprises engagées et budget engagé, Haut-Katanga, 2021). La feuille source « LUALABA » du document, qui déclare elle-même « Province : Haut-Katanga » et recoupe les données de MMG Kinsevere, est publiée telle quelle mais exclue des agrégats géographiques pour éviter un double comptage."},
   {date:'2026-09-07',txt:"Réorganisation complète de l'entrepôt selon les thèmes et exigences de la Norme ITIE 2023 : les 181 tables sont désormais réparties en 10 rubriques publiques (cadre légal/licences, propriété effective, entreprises publiques, production/exportations, paiements/recettes, réconciliation, transferts infranationaux, dépenses sociales/environnementales, contribution économique, rapports/méthodologie) et un espace technique réservé au profil administrateur (annexes brutes, référentiels, 128 tables), sans suppression de données. Chaque table publique affiche désormais période, unité, devise, source, périmètre, désagrégation et statut de qualité."},
   {date:'2026-09-07',txt:"Correction d'un double comptage dans les revenus par entité (76 lignes de sous-total additionnées en trop, ex. DGI 2022 : 17,25 Md → 10,29 Md USD) ; réparation de l'encodage (471 cellules) et des dates 1905 issues d'un import Excel défectueux (79 valeurs, remplacées par une valeur manquante plutôt que devinées) ; fusion des libellés dupliqués de communes/secteurs/chefferies (22 cas, ex. « COMMUNE DE SHITURU » / « Commune de Shituru ») dans la Géographie ; ajout d'un avertissement sur le graphique « écart » de réconciliation pour les exercices où le montant paru est incohérent ; colonnes par défaut recentrées sur les montants définitifs/certifiés."},

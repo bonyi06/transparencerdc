@@ -1321,6 +1321,16 @@ Rapports ITIE 2022-2023 et comptent les *cahiers* par statut d'approbation — u
 aurait été trompeur de mélanger. La feuille « LUALABA » n'a volontairement pas été utilisée pour ces agrégats
 géographiques, afin d'éviter un double comptage avec la feuille Haut-Katanga.
 
+**Mise à jour (8 sept. 2026, plus tard le même jour)** : retour utilisateur — le rendu initial (les deux tables
+listées comme n'importe quel autre tableau de l'entrepôt, consultables uniquement dans l'Explorateur générique)
+ne mettait pas en valeur la richesse du document malgré son niveau de détail élevé. La rubrique « Dépenses
+sociales et environnementales » affiche désormais, en plus des deux tableaux bruts (toujours consultables tels
+quels via un bouton dédié), une vue « Cahiers des charges » composée d'une fiche par entreprise (identité, titre
+minier, chronogramme, budget engagé) avec, dépliable sous chaque fiche, le détail de ses projets (secteur, titre,
+description complète, montant) ; une recherche par nom d'entreprise et des filtres par feuille source et par
+secteur de projet permettent de naviguer dans les 28 entreprises et 122 projets sans dérouler un tableau à 17
+colonnes. Aucune donnée n'est retirée : c'est uniquement la présentation qui change.
+
 ## Limites connues / pistes d'évolution
 
 - Le générateur de visualisations et l'explorateur de tables chargent
