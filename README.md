@@ -1427,6 +1427,55 @@ données sont publiques ». Correctif appliqué :
    ouvert et pourra être complété dans un prochain volet, une fois la correspondance colonne par colonne établie
    avec certitude — jamais par une supposition.
 
+### Séparation GECAMINES / CAMI et lisibilité des tableaux « regie_* » (correctif du 10 sept. 2026)
+
+En vérification finale sur la version publiée, l'utilisateur a repéré dans le tableau `regie_dgi` plusieurs
+lignes affichant, pour un même exercice et une même entité, des montants très différents — ce qui ressemblait
+à des doublons. Vérification faite ligne par ligne (colonnes « Explication et précisions du rapport » et
+« Tableau / section source », déjà présentes dans le schéma), il ne s'agissait *pas* d'une erreur : ce sont des
+montants légitimement différents, issus de tableaux ou concepts distincts du même rapport officiel (ex.
+« Revenus globaux du secteur extractif » vs « Revenus budgétaires perçus par le Trésor » vs « Déclaration
+unilatérale de l'État »). Mais cette même vérification, étendue aux 11 tableaux `regie_*` (paiements/recettes
+par régie financière, 819 lignes), a mis au jour une **véritable erreur de fond** dans `regie_cami` : 21 lignes
+de pas-de-porte et royalties perçus par **GECAMINES** (entreprise publique minière) avaient été harmonisées par
+erreur sous l'entité « CAMI — Cadastre Minier » — alors que le Cadastre Minier (autorité chargée de l'octroi des
+titres miniers) et GECAMINES (entreprise publique d'exploitation minière) sont deux entités totalement
+différentes qui ne doivent jamais être confondues.
+
+Deux corrections ont été apportées :
+
+1. **Séparation GECAMINES / CAMI.** Dans `ent_revenus_entite` (table consolidée source) et dans `regie_cami`
+   (son sous-ensemble public), les 21 lignes GECAMINES (libellés d'origine « GECAMINES », « Générale des
+   Carrières et des Mines », « Entreprise publique (Gécamines essentiellement) », « GECAMINES et SODIMICO ») ont
+   été ré-harmonisées sous des valeurs distinctes (« GECAMINES — Générale des Carrières et des Mines » ou
+   « GECAMINES et SODIMICO (déclaration conjointe) » pour la seule ligne concernant les deux entités à la fois)
+   et publiées dans un **nouveau tableau public `regie_gecamines`**, plutôt que d'être simplement supprimées de
+   `regie_cami` — aucune donnée n'est perdue ni masquée. 4 lignes résiduelles qui n'étaient ni CAMI ni GECAMINES
+   (« Autres AFE », « Entreprises étatiques », « Autres entités publiques ») ont été retirées de `regie_cami` et
+   ré-étiquetées avec un intitulé fidèle à leur description dans le rapport source ; elles restent consultables,
+   correctement identifiées, dans `ent_revenus_entite`. `regie_cami` ne contient donc plus que les 16 lignes
+   authentiquement CAMI (libellés « CAMI » et « CADASTRE MINIER »).
+2. **Lisibilité des montants multiples par entité/exercice.** Sur les 11 tableaux `regie_*`, une nouvelle
+   colonne **« Type de recette (catégorie de la source) »** a été ajoutée, dérivée par mots-clés du texte réel
+   déjà présent dans la colonne « Tableau / section source » de chaque ligne (aucune catégorie inventée : environ
+   92 % des lignes sont classées avec une catégorie descriptive précise — Revenus globaux, Revenus budgétaires
+   du Trésor, Déclaration unilatérale de l'État, Données réconciliées, Synthèse des déclarations, etc. — le solde
+   reste en catégorie honnête « Autre (voir Tableau / section source) » plutôt que de forcer un classement
+   incertain). L'ordre des colonnes de ces tableaux a aussi été revu : la vue par défaut (7 colonnes) montre
+   désormais l'exercice, l'entité, ce type de recette et le **montant normalisé en USD** (un chiffre unique et
+   comparable), plutôt que le montant en unité d'origine (mélangeant milliers/millions selon la ligne), qui
+   donnait l'impression trompeuse de montants incohérents entre eux. Le montant en unité d'origine et son unité
+   restent consultables via « Afficher toutes les colonnes ».
+3. **Correction générale associée.** La colonne année/exercice, jusque-là parfois absente de la vue par défaut
+   pour les tableaux comptant plus de 7 colonnes de type dimension (dont c'était précisément le cas des
+   tableaux `regie_*`), est désormais toujours affichée en priorité — sur l'ensemble de l'entrepôt, pas
+   seulement ces 12 tableaux.
+
+Nouveau tableau créé : `regie_gecamines`. Tableaux modifiés : `ent_revenus_entite`, et les 11 tableaux `regie_*`
+(`regie_dgi`, `regie_dgrad`, `regie_dgda`, `regie_tresor_public`, `regie_sgh`, `regie_cami`, `regie_fomin`,
+`regie_fonarev`, `regie_occ`, `regie_ceec`, `regie_bcc`). Aucune ligne n'a été supprimée : chaque ligne
+déplacée ou ré-étiquetée reste consultable, avec une entité correcte, dans l'un de ces tableaux.
+
 ### Traçabilité : « Source & traçabilité » sur chaque tableau
 
 Chaque tableau public affiche désormais, sous son bandeau de métadonnées (période/unité/devise/périmètre/
