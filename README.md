@@ -1388,13 +1388,44 @@ Suivi (mis à jour à chaque volet livré) :
 | Confiance & traçabilité (source exacte de chaque tableau) | **Livré (ce volet)** |
 | Recherche transversale (entreprises, régies, flux, provinces, exercices, rapports, exigences ITIE) | **Livré (ce volet)** |
 | Identifiants stables (entreprises, régies, flux, provinces) | **Livré (ce volet)** — contrats/licences disposaient déjà d'un identifiant source (Open Contracting / n° PE-TE) |
+| Détection et correction d'un vrai trou de données 2022/2023 (voir « Complétude 2022/2023 » ci-dessous) | **Livré le 9 sept. 2026** |
 | Performance du chargement initial | Non commencé |
-| Détection automatique des incohérences (années, unités, doublons, valeurs aberrantes) | Non commencé |
+| Détection automatique des incohérences (années, unités, doublons, valeurs aberrantes) | Non commencé (le chantier du 9 sept. 2026 a traité un cas concret — la non-publication d'annexes 2022/2023 déjà présentes dans l'entrepôt — mais aucune détection automatique systématique n'existe encore) |
 | Export CSV/XLSX des vues filtrées, avec métadonnées et licence | Non commencé |
 | Matrice de conformité par exigence ITIE 2023 (preuves/lacunes/niveau) | Non commencé |
 | Ergonomie (menu allégé, mobile, filtres dans l'URL) | Filtres dans l'URL déjà en place (`syncURL()`) ; menu/mobile non revus dans ce volet |
 | Séparation sources brutes / données normalisées / agrégats / indicateurs | Non commencé (partiellement déjà le cas via la distinction annexes brutes ↔ tables `ent_*`/`ctx_*` publiques) |
 | Identifiants stables pour les bénéficiaires effectifs | Non commencé (touche des données personnelles — à traiter avec précaution) |
+
+### Complétude 2022/2023 (correctif du 9 sept. 2026)
+
+Un retour utilisateur a signalé, à juste titre, que plusieurs tableaux publics n'avaient aucune donnée pour
+2022 et 2023 alors que ce sont des exercices richement documentés dans les Rapports ITIE-RDC. L'investigation
+a montré que les 117 annexes officielles brutes de ces deux rapports (2022 et 2023) avaient bien été importées
+dans l'entrepôt, mais classées par erreur dans l'espace technique (réservé à l'administration), donc **invisibles
+au public alors que la donnée existait déjà** — une violation de fait du principe « ne rien cacher, toutes ces
+données sont publiques ». Correctif appliqué :
+
+1. **113 de ces 117 annexes** ont été reclassées dans leur rubrique thématique publique naturelle (Production et
+   exportations, Dépenses sociales et environnementales, Cadre légal/licences, Entreprises publiques, Propriété
+   effective, Transferts infranationaux, Paiements et recettes, Réconciliation, Rapports/méthodologie,
+   Contribution économique) et portent désormais un bandeau les identifiant comme annexe source brute. Les 4
+   restantes (deux référentiels de flux déjà dupliqués dans `ref_canoniques`, et deux annexes au titre générique
+   « Annexe 1.1 »/« Annexe 1.2 » dont le contenu réel n'a pas pu être identifié avec certitude) restent dans
+   l'espace technique par prudence plutôt que d'être classées au hasard.
+2. **`ctx_production`, `ctx_exportation`, `ctx_propriete` et `ctx_effectif`** (ce dernier pour 2022 seulement)
+   ont été complétés avec les données réelles 2022/2023 extraites de ces mêmes annexes, avec correction des
+   cellules fusionnées Excel (société/NIF répétés) et des en-têtes génériques (« col1 », « col2 »…) là où le
+   fichier source les avait perdus à l'export. Aucune valeur non renseignée dans la source (« Non renseignée »,
+   « NC », cellule vide) n'a été convertie en zéro : elle reste vide dans la base.
+3. Pour les tableaux composites plus anciens dont la structure de colonnes n'est plus documentée de façon
+   fiable (`ctx_depense_sociale`, `ctx_depense_environnementale`, `ctx_structure_capital`,
+   `ctx_transaction_troc`, `ctx_participation_publique`, `ctx_paiement_infranational`, `ctx_pret_subvention`),
+   **aucune correspondance incertaine n'a été forcée** entre les colonnes de l'annexe 2022/2023 et celles du
+   tableau historique : chacun indique dans sa note de qualité pourquoi 2022/2023 n'y figurent pas encore et
+   renvoie vers l'annexe source réelle (désormais publique) où trouver les chiffres. C'est un chantier qui reste
+   ouvert et pourra être complété dans un prochain volet, une fois la correspondance colonne par colonne établie
+   avec certitude — jamais par une supposition.
 
 ### Traçabilité : « Source & traçabilité » sur chaque tableau
 
