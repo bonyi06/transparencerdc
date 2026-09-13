@@ -81,6 +81,15 @@ def load_from_seed_files() -> tuple[dict, dict, str, dict | None]:
     logo = (DATA_DIR / "logo.seed.txt").read_text(encoding="utf-8").strip()
     geo_path = DATA_DIR / "geo.seed.json"
     geo = json.loads(geo_path.read_text(encoding="utf-8")) if geo_path.exists() else None
+    # Couche additionnelle « titres miniers » (permis d'exploitation actifs et
+    # demandes en cours) — stockée dans un fichier séparé (volumineux : ~4-5 Mo
+    # de géométries) pour ne pas alourdir geo.seed.json, mais fusionnée ici
+    # dans le même objet GEO transmis au front-end (clé `mining_titles`),
+    # afin de rester compatible avec l'endpoint /api/mining-titles qui la lit
+    # directement dans GeoLayer.geometry.
+    mining_titles_path = DATA_DIR / "mining_titles.seed.json"
+    if geo is not None and mining_titles_path.exists():
+        geo["mining_titles"] = json.loads(mining_titles_path.read_text(encoding="utf-8"))
     return warehouse, content, logo, geo
 
 

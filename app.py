@@ -478,9 +478,30 @@ def register_routes(app: Flask) -> None:
     @app.get("/api/geo")
     def get_geo():
         """Renvoie l'objet géographique complet (geometry, layers, provinces,
-        terr_geom, prov_ref) tel qu'attendu par le front-end (variable GEO)."""
+        terr_geom, prov_ref) tel qu'attendu par le front-end (variable GEO).
+        Ne contient PAS la couche « titres miniers » (voir /api/mining-titles
+        ci-dessous) : celle-ci est volumineuse (plusieurs Mo de géométries) et
+        n'est utile que sur la page Géographie, ne serait-ce que si l'onglet
+        correspondant est ouvert — elle est donc chargée à la demande plutôt
+        que sur chaque page, pour ne pas alourdir le chargement initial du
+        site (voir chantier « performance du chargement initial » du README)."""
         gl = GeoLayer.singleton()
-        resp = jsonify(gl.geometry)  # None si aucune couche n'a encore été importée
+        geo = gl.geometry
+        if isinstance(geo, dict) and "mining_titles" in geo:
+            geo = {k: v for k, v in geo.items() if k != "mining_titles"}
+        resp = jsonify(geo)  # None si aucune couche n'a encore été importée
+        resp.headers["Cache-Control"] = "public, max-age=300"
+        return resp
+
+    @app.get("/api/mining-titles")
+    def get_mining_titles():
+        """Couche « titres miniers » (permis d'exploitation actifs et demandes
+        en cours), chargée à la demande par la page Géographie. Peut être
+        volumineuse : compressée automatiquement par Flask-Compress."""
+        gl = GeoLayer.singleton()
+        geo = gl.geometry or {}
+        data = geo.get("mining_titles") if isinstance(geo, dict) else None
+        resp = jsonify(data)  # None si la couche n'a pas (encore) été importée
         resp.headers["Cache-Control"] = "public, max-age=300"
         return resp
 

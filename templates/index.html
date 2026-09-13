@@ -8,6 +8,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ asset_v }}">
+<!-- Leaflet : bibliothèque cartographique utilisée uniquement par la page
+     « Titres miniers » (chargée à la demande, pas d'impact sur les autres
+     pages) — voir static/app.js, fonction drawMining(). Servie localement
+     (static/vendor/leaflet/, v1.9.4 officielle inchangée) plutôt que depuis
+     un CDN externe, pour ne pas dépendre d'un service tiers. -->
+<link rel="stylesheet" href="{{ url_for('static', filename='vendor/leaflet/leaflet.css') }}">
 </head>
 <body>
 <a class="skip-link" href="#app">Aller au contenu principal</a>
@@ -135,6 +141,7 @@
   <button class="save" id="saveBtn">Enregistrer &amp; publier</button>
 </div>
 
+<script src="{{ url_for('static', filename='vendor/leaflet/leaflet.js') }}"></script>
 <script src="{{ url_for('static', filename='app.js') }}?v={{ asset_v }}"></script>
 </body>
 </html>

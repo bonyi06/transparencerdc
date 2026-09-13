@@ -1445,6 +1445,7 @@ function mAbout(){const A=C.about,B=C.brand,F=C.footer,CT=C.contact;return `<div
     </div>
   </div>`;}
 const CHANGELOG=[
+  {date:'2026-09-13',txt:"Nouvelle page « Titres miniers » (rubrique Territoire) : carte interactive (fond OpenStreetMap) des permis d'exploitation actifs et des demandes en cours sur l'ensemble du territoire — 6 236 titres géoréférencés au total, avec pour chacun le titulaire, le statut, les substances, la superficie, la région et les dates de demande/octroi/expiration, filtrables par statut, type de titre et substance. Cette couche est volumineuse (plusieurs Mo de géométries) : elle est chargée à la demande uniquement à l'ouverture de cette page (nouvel endpoint /api/mining-titles), pas au démarrage général de l'application, pour ne pas ralentir le chargement des autres pages. Comme pour les autres tableaux, un lien discret « Source & traçabilité de cette couche » explique la portée exacte des données (permis d'exploitation et demandes uniquement ; les périmètres de recherche/exploration active ainsi que les données géologiques et administratives n'étaient pas accessibles publiquement au moment de la préparation de cette carte, et ne sont donc pas incluses)."},
   {date:'2026-09-13',txt:"Simplification de la page « À propos » côté public, suite à un retour utilisateur (le terme technique « entrepôt » ne devait plus apparaître dans les textes publics, et certains détails techniques n'avaient pas leur place dans la version publique) : (1) le mot « entrepôt » a été retiré du titre de la page (désormais « À propos »), du sous-titre de la barre latérale (désormais « Portail de données ITIE ») et des textes d'introduction des pages Visualisations/Modèle de données/Dictionnaire/fiche « Source & traçabilité » ; (2) le bloc « Journal des modifications » (historique technique détaillé des correctifs) et le bloc « Sources techniques (API) » ont été retirés de la vue publique et ne sont plus visibles que par les comptes administrateur/éditeur connectés — la vue publique de la page « À propos » se limite désormais aux textes de présentation et au bloc « Gouvernance des données » (dernière actualisation, version de l'application, licence de réutilisation)."},
   {date:'2026-09-10',txt:"Suite à un retour utilisateur sur les tableaux « Paiements et recettes » des régies financières (« gecamines et cami sont des entités totalement différentes à ne pas mélanger », et « les montants différents pour une même entité pour une même année, ce n'est pas clair »), deux corrections : (1) dans le tableau regie_cami (et sa source, ent_revenus_entite), 21 lignes de pas-de-porte/royalties perçus par GECAMINES — entreprise publique minière — avaient été fusionnées à tort sous l'entité harmonisée « CAMI — Cadastre Minier », alors que le Cadastre Minier (autorité d'octroi des titres miniers) et GECAMINES sont deux entités totalement différentes ; ces 21 lignes ont été séparées dans un nouveau tableau public « regie_gecamines », et 4 lignes résiduelles qui n'étaient ni CAMI ni GECAMINES (« Autres AFE », « Entreprises étatiques », « Autres entités publiques ») ont été retirées de regie_cami et ré-étiquetées correctement (elles restent consultables dans ent_revenus_entite) ; (2) sur les 11 tableaux « regie_* » (paiements/recettes par régie), une nouvelle colonne « Type de recette (catégorie de la source) », dérivée du texte réel de la colonne « Tableau / section source » déjà présente dans chaque ligne, explique désormais pourquoi plusieurs montants peuvent coexister pour une même entité et le même exercice (ce ne sont pas des doublons mais des concepts de rapport différents : revenus globaux, revenus budgétaires du Trésor, déclaration unilatérale de l'État, données réconciliées, etc.) ; l'ordre des colonnes de ces 11 tableaux a été revu pour que la vue par défaut (7 colonnes) montre l'exercice, l'entité, ce nouveau type de recette et le montant normalisé en USD (chiffre unique et comparable), plutôt que le montant en unité d'origine mélangeant milliers/unités qui donnait une impression trompeuse de montants incohérents. Correction générale associée : la colonne « Exercice/Année », auparavant parfois absente de la vue par défaut sur les tableaux à plus de 7 colonnes de dimension, est désormais toujours affichée en priorité sur toutes les tables de l'entrepôt."},
   {date:'2026-09-09',txt:"Suite à un retour utilisateur (« il est anormal que certaines tables aient des données manquantes pour 2022 et 2023 alors que les annexes sont très riches »), deux actions : (1) 113 annexes officielles brutes du Rapport ITIE-RDC 2022/2023 (sur 117), jusqu'ici classées par erreur dans l'espace technique et donc invisibles au public alors qu'elles existaient déjà dans l'entrepôt, sont désormais publiées dans leurs rubriques thématiques (Production et exportations, Dépenses sociales et environnementales, Cadre légal/licences, Entreprises publiques, Propriété effective, Transferts infranationaux, Paiements et recettes, Réconciliation, Rapports/méthodologie, Contribution économique) ; (2) 2022 et 2023 ont été intégrés, à partir de ces mêmes annexes réelles, dans les tableaux normalisés « Production », « Exportations », « Propriété effective » et « Effectifs / emploi » (2022 seulement pour ce dernier — voir sa note de qualité). Pour les tableaux composites plus anciens dont la structure de colonnes n'est plus documentée de façon fiable (Dépenses sociales, Dépenses environnementales, Structure du capital, Transactions de troc, Participation publique, Paiements infranationaux « régies », Prêts & subventions), aucune correspondance incertaine n'a été forcée : chacun indique désormais dans sa note de qualité pourquoi 2022/2023 n'y figurent pas et renvoie vers l'annexe source réelle, désormais publique, où consulter les chiffres. Par ailleurs, le texte d'introduction de la page « Géographie de l'extraction », jugé trop dense, a été condensé (les précisions méthodologiques restent disponibles dans un bloc dépliable)."},
@@ -1557,6 +1558,150 @@ function renderDict(){
   const inp=$('#dictQ');if(inp)inp.oninput=e=>{dictQ=e.target.value;renderDict();const v=e.target.value;const el=$('#dictQ');el.focus();el.setSelectionRange(v.length,v.length);};
   const cb=$('#dictCsv');if(cb)cb.onclick=()=>exportCSV('_dictionnaire',rows);
 }
+/* ===== Titres miniers — carte interactive (Leaflet, chargée à la demande) =====
+   Registre des titres/permis miniers de la RDC (permis d'exploitation actifs
+   et demandes en cours) : plusieurs milliers d'entités géoréférencées, avec
+   titulaire, statut, substances, superficie et dates. Contrairement à la
+   choroplèthe « Géographie » (SVG maison, ci-dessous), cette couche est
+   volumineuse (plusieurs Mo de géométries) : elle n'est donc PAS chargée au
+   démarrage de l'application comme GEO/WH/C, mais récupérée à la demande, la
+   première fois que cette page est ouverte, via /api/mining-titles (voir
+   app.py) — puis mise en cache en mémoire (MINING) pour les visites
+   suivantes dans la même session. Bibliothèque cartographique : Leaflet
+   (chargée uniquement sur cette page, voir templates/index.html), avec rendu
+   canevas (preferCanvas) pour rester fluide avec plusieurs milliers de
+   polygones. Aucune donnée n'est filtrée côté serveur : tout ce qui a été
+   récupéré reste consultable, seuls les filtres d'affichage ci-dessous
+   changent ce qui est visible à l'écran. */
+let MINING=null, miningLoading=false, miningErr=false;
+let miningMapObj=null, miningLayerObj=null;
+let miningF={statut:'',groupe:'',substance:''};
+const MINING_STATUT_LABEL={'Actif':'Actif','Demande':'Demande en cours'};
+const MINING_COLOR={'Actif':'#1a7a3c','Demande':'#c47f0a'};
+function miningSubstanceList(){
+  if(!MINING)return [];
+  const c=new Map();
+  MINING.features.forEach(f=>{const s=f.properties.substances;if(!s)return;
+    s.split(',').map(x=>x.trim()).filter(Boolean).forEach(t=>c.set(t,(c.get(t)||0)+1));});
+  return [...c.entries()].sort((a,b)=>b[1]-a[1]);
+}
+function miningGroupeList(){
+  if(!MINING)return [];
+  const c=new Map();
+  MINING.features.forEach(f=>{const g=f.properties.groupe;if(!g)return;c.set(g,(c.get(g)||0)+1);});
+  return [...c.entries()].sort((a,b)=>b[1]-a[1]);
+}
+function miningFilteredFeatures(){
+  if(!MINING)return [];
+  return MINING.features.filter(f=>{
+    const p=f.properties;
+    if(miningF.statut&&p.statut_groupe!==miningF.statut)return false;
+    if(miningF.groupe&&p.groupe!==miningF.groupe)return false;
+    if(miningF.substance&&!(p.substances||'').split(',').map(x=>x.trim()).includes(miningF.substance))return false;
+    return true;
+  });
+}
+function openMiningSourceModal(){
+  const body=$('#srcModalBody');if(!body)return;
+  const n=MINING?MINING.features.length:0;
+  body.innerHTML=`
+    <div style="margin-bottom:12px"><b>Titres miniers de la RDC</b><br><span style="font-size:12.5px;color:var(--ink-soft)">Permis d'exploitation actifs et demandes en cours, avec géométrie, titulaire, statut, substances, superficie et dates.</span></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 16px;font-size:12.5px;margin-bottom:12px">
+      <div><b>Nombre d'entités</b><br>${fmtN(n)}</div>
+      <div><b>Champs disponibles</b><br>Titulaire, statut, substances, superficie, dates de demande/octroi/expiration, localisation</div>
+    </div>
+    <div class="msg warn" style="font-size:12px">Cette couche couvre les permis d'exploitation (actifs et en renouvellement) et les demandes en cours de traitement. Elle ne couvre pas les périmètres de recherche/exploration active ni les données géologiques ou administratives, qui n'étaient pas accessibles publiquement au moment de la préparation de cette carte.</div>
+  `;
+  showModal('srcModal');
+}
+window.openMiningSourceModal=openMiningSourceModal;
+function mMining(){
+  return `<div class="phead"><div class="eyebrow">Territoire</div><h1>Titres miniers</h1>
+    <p>Permis d'exploitation actifs et demandes en cours sur l'ensemble du territoire, avec titulaire, statut, substances et superficie de chaque titre.</p></div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="ch" style="flex-wrap:wrap;gap:10px 16px">
+        <label style="font-size:12px;font-weight:700;color:var(--ink-soft);display:flex;flex-direction:column;gap:4px">Statut
+          <select id="mnStatut" class="sel"><option value="">Tous statuts</option></select></label>
+        <label style="font-size:12px;font-weight:700;color:var(--ink-soft);display:flex;flex-direction:column;gap:4px">Type de titre
+          <select id="mnGroupe" class="sel"><option value="">Tous types</option></select></label>
+        <label style="font-size:12px;font-weight:700;color:var(--ink-soft);display:flex;flex-direction:column;gap:4px">Substance
+          <select id="mnSubstance" class="sel"><option value="">Toutes substances</option></select></label>
+        <span class="grow"></span>
+        <span class="badge" id="mnCount">…</span>
+      </div>
+      <div id="mnMap" style="height:600px;border-radius:12px;overflow:hidden;margin-top:12px;background:var(--panel-2)"></div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:12px;font-size:12px;color:var(--ink-soft)">
+        <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${MINING_COLOR.Actif};vertical-align:-2px;margin-right:5px"></span>Actif</span>
+        <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${MINING_COLOR.Demande};vertical-align:-2px;margin-right:5px"></span>Demande en cours</span>
+        <span class="grow"></span>
+        <button type="button" class="srclink" onclick="openMiningSourceModal()">ⓘ Source &amp; traçabilité de cette couche</button>
+      </div>
+    </div>`;
+}
+function miningPopupHtml(p){
+  const row=(k,v)=>v?`<div style="margin-bottom:4px"><b>${esc(k)}</b> — ${esc(v)}</div>`:'';
+  return `<div style="font-size:12.5px;max-width:260px">
+    ${row('Type',p.type)}
+    ${row('Statut',p.statut)}
+    ${row('Titulaire',p.titulaire)}
+    ${row('Substances',p.substances)}
+    ${row('Superficie',p.superficie?`${p.superficie} ${p.superficie_unite||''}`.trim():null)}
+    ${row('Région',p.region)}
+    ${row('Localisation',p.localisation)}
+    ${row('Date d’octroi',p.date_octroi)}
+    ${row('Date d’expiration',p.date_expiration)}
+  </div>`;
+}
+function miningRenderLayer(){
+  if(!miningMapObj)return;
+  if(miningLayerObj){miningMapObj.removeLayer(miningLayerObj);miningLayerObj=null;}
+  const feats=miningFilteredFeatures();
+  miningLayerObj=L.geoJSON({type:'FeatureCollection',features:feats},{
+    style:f=>({color:MINING_COLOR[f.properties.statut_groupe]||'#666',weight:1,fillOpacity:.35}),
+    onEachFeature:(f,layer)=>layer.bindPopup(miningPopupHtml(f.properties)),
+  }).addTo(miningMapObj);
+  const cnt=$('#mnCount');if(cnt)cnt.textContent=`${fmtN(feats.length)} titre${feats.length>1?'s':''} affiché${feats.length>1?'s':''} sur ${fmtN(MINING.features.length)}`;
+}
+function miningFillFilterOptions(){
+  const stSel=$('#mnStatut');if(stSel){
+    stSel.innerHTML='<option value="">Tous statuts</option>'+Object.entries(MINING_STATUT_LABEL).map(([v,l])=>`<option value="${esc(v)}">${esc(l)}</option>`).join('');
+    stSel.value=miningF.statut;
+  }
+  const grSel=$('#mnGroupe');if(grSel){
+    grSel.innerHTML='<option value="">Tous types</option>'+miningGroupeList().map(([v,c])=>`<option value="${esc(v)}">${esc(v)} (${fmtN(c)})</option>`).join('');
+    grSel.value=miningF.groupe;
+  }
+  const suSel=$('#mnSubstance');if(suSel){
+    suSel.innerHTML='<option value="">Toutes substances</option>'+miningSubstanceList().slice(0,40).map(([v,c])=>`<option value="${esc(v)}">${esc(v)} (${fmtN(c)})</option>`).join('');
+    suSel.value=miningF.substance;
+  }
+}
+function drawMining(){
+  const host=$('#mnMap');if(!host)return;
+  if(miningMapObj){try{miningMapObj.remove();}catch(e){}miningMapObj=null;miningLayerObj=null;}
+  if(!MINING){
+    if(!miningLoading){
+      miningLoading=true;
+      host.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-soft);font-size:13px">Chargement de la couche des titres miniers…</div>';
+      fetch('/api/mining-titles').then(r=>r.json()).then(data=>{
+        miningLoading=false;
+        if(!data||!data.features){miningErr=true;if(current==='mining')drawMining();return;}
+        MINING=data;
+        if(current==='mining')drawMining();
+      }).catch(()=>{miningLoading=false;miningErr=true;if(current==='mining')drawMining();});
+    }
+    return;
+  }
+  if(miningErr){host.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-soft);font-size:13px">Impossible de charger cette couche pour le moment. Rechargez la page pour réessayer.</div>';return;}
+  host.innerHTML='';
+  miningMapObj=L.map('mnMap',{preferCanvas:true}).setView([-4.2,23.6],5);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap'}).addTo(miningMapObj);
+  miningFillFilterOptions();
+  miningRenderLayer();
+  const bind=(id,key)=>{const el=$(id);if(el)el.onchange=e=>{miningF[key]=e.target.value;miningRenderLayer();};};
+  bind('#mnStatut','statut');bind('#mnGroupe','groupe');bind('#mnSubstance','substance');
+}
+
 /* Géographie — vraie carte choroplèthe interactive (SVG auto-suffisant) */
 let mapInd='recettes', mapYear=null, mapLevels=new Set(['province','territoire','etd']), mapSel=null, mapEvo=false, mapSelPt=null, mapFs=false, mapEscBound=false;
 function fsStyle(){const viz=$('#mapViz'),host=$('#mapHost'),svg=$('#mapSvg'),btn=$('#mapFull');if(!viz)return;
@@ -2050,6 +2195,7 @@ const THEME_NAV_ICONS={cadre_licences:'⚖',propriete:'◉',entreprises_publique
 const MODULES={
   overview:{t:"Vue d'ensemble",f:mOverview,d:drawOverview},
   geo:{t:"Géographie",f:mGeo,d:drawGeo},
+  mining:{t:"Titres miniers",f:mMining,d:drawMining},
   viz:{t:"Visualisations",f:mViz,d:bindViz},
   explorer:{t:"Explorateur (données complètes)",f:mExplorer,d:renderExplorer},
   model:{t:"Modèle de données",f:mModel,d:drawSchema},
@@ -2071,7 +2217,7 @@ Object.keys(THEME_INFO).forEach(k=>{if(k==='technique')return;
 // publiques ; aucune donnée n'est supprimée, seulement rangée par thème —
 // toujours « ne rien cacher, toutes ces données sont publiques ».
 const NAV=[
-  {g:"Vue d'ensemble",items:[['overview','◧',"Vue d'ensemble"],['geo','◈','Géographie']]},
+  {g:"Vue d'ensemble",items:[['overview','◧',"Vue d'ensemble"],['geo','◈','Géographie'],['mining','⛏','Titres miniers']]},
   {g:'Par thème ITIE',items:Object.keys(THEME_INFO).filter(k=>k!=='technique').map(k=>[k,THEME_NAV_ICONS[k]||'▪',(THEME_INFO[k]||{}).label||k])},
   {g:'Données complètes',items:[['viz','◫','Visualisations'],['explorer','▤','Explorateur'],['model','✳','Modèle de données'],['dict','▥','Dictionnaire'],['qualite','✓','Qualité des données']]},
   {g:'',items:[['reports','▦','Rapports'],['about','ⓘ','À propos']]},
