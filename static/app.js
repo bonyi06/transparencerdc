@@ -28,23 +28,23 @@ let C=RAW.content;
    pour que (a) l'affichage ne soit jamais vide et (b) ces champs deviennent
    éditables comme les autres dès la première sauvegarde (elle enverra la
    version complétée au serveur). */
-C.brand=Object.assign({name:'TransparenceRDC',full:"Initiative pour la Transparence des Industries Extractives",tagline:'',tagline_short:'Entrepôt de données ITIE'},C.brand||{});
+C.brand=Object.assign({name:'TransparenceRDC',full:"Initiative pour la Transparence des Industries Extractives",tagline:'',tagline_short:'Portail de données ITIE'},C.brand||{});
 C.footer=Object.assign({note:'',note_short:'Données publiques ITIE · 2007–2024'},C.footer||{});
 // Métadonnées de gouvernance (page À propos) : date de rafraîchissement,
 // licence de réutilisation, version de l'entrepôt — signalées absentes par
 // le second audit qualité (sept. 2026). Éditables comme le reste du contenu
 // ; la date se réplie sur WH.generated (déjà suivi côté import) tant
 // qu'aucune valeur n'a été saisie explicitement par un admin.
-C.about=Object.assign({titre:"À propos de l'entrepôt",mission:'',gouvernance:'',methodo:'',
-  derniere_maj:'',licence:"Licence ouverte — réutilisation libre à des fins non commerciales, avec mention de la source (ITIE-RDC / TransparenceRDC)",
+C.about=Object.assign({titre:"À propos",mission:'',gouvernance:'',methodo:'',
+  derniere_maj:'',licence:"réutilisation libre à des fins non commerciales, avec mention de la source (ITIE-RDC / TransparenceRDC)",
   version_entrepot:''},C.about||{});
 C.nav_hidden=Array.isArray(C.nav_hidden)?C.nav_hidden:[];
 C.intros=Object.assign({
   explorer:"Filtrez chaque table sur autant de colonnes que voulu simultanément (année, entreprise, flux, régie, entité perceptrice, province, état, produit…), combinez les critères, triez, et lisez les totaux exacts de la sélection.",
-  viz:"Choisissez une table, une dimension, une mesure et un type de graphique. Idéal pour explorer visuellement n'importe quelle donnée de l'entrepôt.",
+  viz:"Choisissez une table, une dimension, une mesure et un type de graphique. Idéal pour explorer visuellement n'importe quelle donnée de la plateforme.",
   geo:"Explorez les données ITIE par province et territoire de la République Démocratique du Congo.",
-  model:"L'entrepôt suit un schéma en étoile : des tables de faits (mesures) reliées à des tables de dimensions (contexte).",
-  dict:"Description complète de chaque table et de chaque colonne de l'entrepôt de données.",
+  model:"La base de données suit un schéma en étoile : des tables de faits (mesures) reliées à des tables de dimensions (contexte).",
+  dict:"Description complète de chaque table et de chaque colonne de la base de données.",
   qualite:"Complétude, doublons et anomalies détectées et traitées lors de l'intégration.",
   reports:"Rapports annuels, thématiques, contextuels, forestiers, d'avancement et de validation publiés par l'ITIE-RDC.",
 },C.intros||{});
@@ -90,7 +90,7 @@ function openSourceModal(tableName){
       ${m&&m.periode?`<div><b>Période</b><br>${esc(m.periode)}</div>`:''}
       ${m&&m.perimetre?`<div><b>Périmètre</b><br>${esc(m.perimetre)}</div>`:''}
       ${m&&m.desagregation?`<div><b>Désagrégation</b><br>${esc(m.desagregation)}</div>`:''}
-      <div><b>Dernière synchronisation de l'entrepôt</b><br>${esc(WH.generated||'non renseignée')}<br><span style="color:var(--ink-faint);font-size:11px">Date du dernier import complet (<code>python import_data.py</code>) ; l'entrepôt étant resynchronisé intégralement à chaque mise à jour, cette date s'applique à toutes les tables.</span></div>
+      <div><b>Dernière synchronisation des données</b><br>${esc(WH.generated||'non renseignée')}<br><span style="color:var(--ink-faint);font-size:11px">Date du dernier import complet (<code>python import_data.py</code>) ; la base de données étant resynchronisée intégralement à chaque mise à jour, cette date s'applique à toutes les tables.</span></div>
       <div><b>Nombre de lignes</b><br>${fmtN(d.rows.length)}</div>
       <div><b>Identifiant technique de la table</b><br><code>${esc(tableName)}</code></div>
     </div>
@@ -1428,23 +1428,24 @@ function mAbout(){const A=C.about,B=C.brand,F=C.footer,CT=C.contact;return `<div
       <div class="card" style="margin-bottom:16px"><h3 style="margin-bottom:10px">Gouvernance des données</h3>
         <div style="font-size:13px;color:var(--ink-soft);line-height:2">
           <div>Dernière actualisation : <b data-edit="about.derniere_maj">${esc(A.derniere_maj||WH.generated||'à renseigner')}</b></div>
-          <div>Version de l'entrepôt : <b data-edit="about.version_entrepot">${esc(A.version_entrepot||'à renseigner')}</b></div>
+          <div>Version de l'application : <b data-edit="about.version_entrepot">${esc(A.version_entrepot||'à renseigner')}</b></div>
           <div>Licence de réutilisation : <span data-edit="about.licence">${esc(A.licence)}</span></div>
         </div>
         ${editing?'<div style="font-size:11.5px;color:var(--ink-soft);margin-top:8px">Ces champs sont visibles publiquement — à tenir à jour à chaque nouvel import de données.</div>':''}
       </div>
-      <div class="card" style="margin-bottom:16px"><h3 style="margin-bottom:10px">Journal des modifications</h3>
+      ${editing?`<div class="card" style="margin-bottom:16px"><h3 style="margin-bottom:10px">Journal des modifications <span style="font-weight:400;font-size:11px;color:var(--ink-faint)">(visible admin uniquement)</span></h3>
         <div style="font-size:12.5px;color:var(--ink-soft);line-height:1.7">
           ${CHANGELOG.map(c=>`<div style="padding:7px 0;border-bottom:1px dashed var(--line)"><b class="mono" style="color:var(--navy)">${esc(c.date)}</b> — ${esc(c.txt)}</div>`).join('')}
         </div>
-        <div style="font-size:11px;color:var(--ink-faint);margin-top:8px">Journal tenu manuellement pour tracer les corrections apportées à l'entrepôt (doublons, encodage, libellés…) — voir aussi la « Version de l'entrepôt » ci-dessus.</div>
+        <div style="font-size:11px;color:var(--ink-faint);margin-top:8px">Journal tenu manuellement pour tracer les corrections apportées à la base de données (doublons, encodage, libellés…) — voir aussi la « Version de l'application » ci-dessus. Réservé au profil admin ; le public voit uniquement le bloc « Gouvernance des données » ci-dessus.</div>
       </div>
-      <details class="srcdetails"><summary>Sources techniques (API)</summary>
+      <details class="srcdetails"><summary>Sources techniques (API) <span style="font-weight:400;font-size:11px;color:var(--ink-faint)">(visible admin uniquement)</span></summary>
         <div class="srcs" style="margin-top:10px">${C.sources.map(s=>`<div class="src"><span class="d"></span><div><b>${esc(s.libelle)}</b><br><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url)}</a></div></div>`).join('')}</div>
-      </details>
+      </details>`:''}
     </div>
   </div>`;}
 const CHANGELOG=[
+  {date:'2026-09-13',txt:"Simplification de la page « À propos » côté public, suite à un retour utilisateur (le terme technique « entrepôt » ne devait plus apparaître dans les textes publics, et certains détails techniques n'avaient pas leur place dans la version publique) : (1) le mot « entrepôt » a été retiré du titre de la page (désormais « À propos »), du sous-titre de la barre latérale (désormais « Portail de données ITIE ») et des textes d'introduction des pages Visualisations/Modèle de données/Dictionnaire/fiche « Source & traçabilité » ; (2) le bloc « Journal des modifications » (historique technique détaillé des correctifs) et le bloc « Sources techniques (API) » ont été retirés de la vue publique et ne sont plus visibles que par les comptes administrateur/éditeur connectés — la vue publique de la page « À propos » se limite désormais aux textes de présentation et au bloc « Gouvernance des données » (dernière actualisation, version de l'application, licence de réutilisation)."},
   {date:'2026-09-10',txt:"Suite à un retour utilisateur sur les tableaux « Paiements et recettes » des régies financières (« gecamines et cami sont des entités totalement différentes à ne pas mélanger », et « les montants différents pour une même entité pour une même année, ce n'est pas clair »), deux corrections : (1) dans le tableau regie_cami (et sa source, ent_revenus_entite), 21 lignes de pas-de-porte/royalties perçus par GECAMINES — entreprise publique minière — avaient été fusionnées à tort sous l'entité harmonisée « CAMI — Cadastre Minier », alors que le Cadastre Minier (autorité d'octroi des titres miniers) et GECAMINES sont deux entités totalement différentes ; ces 21 lignes ont été séparées dans un nouveau tableau public « regie_gecamines », et 4 lignes résiduelles qui n'étaient ni CAMI ni GECAMINES (« Autres AFE », « Entreprises étatiques », « Autres entités publiques ») ont été retirées de regie_cami et ré-étiquetées correctement (elles restent consultables dans ent_revenus_entite) ; (2) sur les 11 tableaux « regie_* » (paiements/recettes par régie), une nouvelle colonne « Type de recette (catégorie de la source) », dérivée du texte réel de la colonne « Tableau / section source » déjà présente dans chaque ligne, explique désormais pourquoi plusieurs montants peuvent coexister pour une même entité et le même exercice (ce ne sont pas des doublons mais des concepts de rapport différents : revenus globaux, revenus budgétaires du Trésor, déclaration unilatérale de l'État, données réconciliées, etc.) ; l'ordre des colonnes de ces 11 tableaux a été revu pour que la vue par défaut (7 colonnes) montre l'exercice, l'entité, ce nouveau type de recette et le montant normalisé en USD (chiffre unique et comparable), plutôt que le montant en unité d'origine mélangeant milliers/unités qui donnait une impression trompeuse de montants incohérents. Correction générale associée : la colonne « Exercice/Année », auparavant parfois absente de la vue par défaut sur les tableaux à plus de 7 colonnes de dimension, est désormais toujours affichée en priorité sur toutes les tables de l'entrepôt."},
   {date:'2026-09-09',txt:"Suite à un retour utilisateur (« il est anormal que certaines tables aient des données manquantes pour 2022 et 2023 alors que les annexes sont très riches »), deux actions : (1) 113 annexes officielles brutes du Rapport ITIE-RDC 2022/2023 (sur 117), jusqu'ici classées par erreur dans l'espace technique et donc invisibles au public alors qu'elles existaient déjà dans l'entrepôt, sont désormais publiées dans leurs rubriques thématiques (Production et exportations, Dépenses sociales et environnementales, Cadre légal/licences, Entreprises publiques, Propriété effective, Transferts infranationaux, Paiements et recettes, Réconciliation, Rapports/méthodologie, Contribution économique) ; (2) 2022 et 2023 ont été intégrés, à partir de ces mêmes annexes réelles, dans les tableaux normalisés « Production », « Exportations », « Propriété effective » et « Effectifs / emploi » (2022 seulement pour ce dernier — voir sa note de qualité). Pour les tableaux composites plus anciens dont la structure de colonnes n'est plus documentée de façon fiable (Dépenses sociales, Dépenses environnementales, Structure du capital, Transactions de troc, Participation publique, Paiements infranationaux « régies », Prêts & subventions), aucune correspondance incertaine n'a été forcée : chacun indique désormais dans sa note de qualité pourquoi 2022/2023 n'y figurent pas et renvoie vers l'annexe source réelle, désormais publique, où consulter les chiffres. Par ailleurs, le texte d'introduction de la page « Géographie de l'extraction », jugé trop dense, a été condensé (les précisions méthodologiques restent disponibles dans un bloc dépliable)."},
   {date:'2026-09-08',txt:"Premier volet de l'audit d'optimisation du 8 sept. 2026 (confiance/traçabilité + recherche transversale, menés en parallèle) : (1) chaque tableau public affiche désormais un bouton « Source & traçabilité » ouvrant sa fiche complète — source (avec liens cliquables), périmètre, désagrégation, date de dernière synchronisation de l'entrepôt et repère technique du fichier importé ; (2) la barre de recherche de l'en-tête devient une vraie recherche transversale (entreprises, entités perceptrices/régies, flux, provinces, exercices, rapports et exigences ITIE 2023, avec suggestions en direct) — choisir une entreprise/régie/flux/province affiche désormais la liste réelle des tableaux publics où elle apparaît (au lieu de présélectionner un seul tableau), et un exercice ou une exigence ITIE renvoie directement vers les tableaux ou la rubrique correspondante ; (3) nouvelle table technique `ref_identifiants_stables` (2 191 lignes) attribuant un identifiant de navigation stable à chaque entreprise/régie/flux/province déjà recensés dans les référentiels canoniques existants — à ne pas confondre avec un numéro d'immatriculation officiel (RCCM, Id-Nat…). Restent à traiter dans les prochains volets : performance du chargement initial, export CSV/XLSX des vues filtrées, matrice de conformité par exigence ITIE, et ergonomie du menu/mobile (voir README, « Feuille de route »)."},
@@ -2090,7 +2091,7 @@ function syncBrandDom(){
   const b=C.brand||{},f=C.footer||{};
   const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val||'';};
   set('sideBrandName',b.name||'TransparenceRDC');
-  set('sideBrandTag',b.tagline_short||'Entrepôt de données ITIE');
+  set('sideBrandTag',b.tagline_short||'Portail de données ITIE');
   set('topBrandName',b.name||'TransparenceRDC');
   set('topBrandTag',b.full||'');
   set('sideFooterNote',f.note_short||'Données publiques ITIE · 2007–2024');
