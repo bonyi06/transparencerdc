@@ -1445,6 +1445,7 @@ function mAbout(){const A=C.about,B=C.brand,F=C.footer,CT=C.contact;return `<div
     </div>
   </div>`;}
 const CHANGELOG=[
+  {date:'2026-09-14',txt:"Nouvelle page « Hydrocarbures » (rubrique Vue d'ensemble) : cartographie interactive du secteur pétrolier et gazier de la RDC pour l'exercice 2022, plus riche que la page « Titres miniers » — 27 entités au total (22 blocs/concessions polygonaux, 3 blocs gaziers indicatifs du Kivu, 1 tracé de gazoduc, la zone de rendus du bassin côtier et les bornes de la concession 180), avec vues rapides par bassin sédimentaire (national, côtier, Albertine, cuvette centrale), filtres par bassin/statut/matière, 5 couches activables indépendamment, et fiches par entité enrichies (le cas échéant) des paiements 2022 (CDF et équivalent USD indicatif) et de la production/exportation 2022 pour les blocs en exploitation. Chaque entité porte l'indicateur de qualité de géoréférencement fourni par la source elle-même (coordonnées exactes / limites reconstituées / position indicative sans coordonnées) ; le seul bloc sans aucune coordonnée exploitable (CC7) est signalé tel quel sous la carte plutôt que masqué ou positionné arbitrairement, conformément au principe « ne rien cacher ». Comme pour les autres jeux de données, un lien « Source & traçabilité de cette couche » précise l'origine exacte (Secrétariat Général aux Hydrocarbures, lettres de cadrage 2023/2024) et le fond de carte (Natural Earth)."},
   {date:'2026-09-13',txt:"Nouvelle page « Titres miniers » (rubrique Territoire) : carte interactive (fond OpenStreetMap) des permis d'exploitation actifs et des demandes en cours sur l'ensemble du territoire — 6 236 titres géoréférencés au total, avec pour chacun le titulaire, le statut, les substances, la superficie, la région et les dates de demande/octroi/expiration, filtrables par statut, type de titre et substance. Cette couche est volumineuse (plusieurs Mo de géométries) : elle est chargée à la demande uniquement à l'ouverture de cette page (nouvel endpoint /api/mining-titles), pas au démarrage général de l'application, pour ne pas ralentir le chargement des autres pages. Comme pour les autres tableaux, un lien discret « Source & traçabilité de cette couche » explique la portée exacte des données (permis d'exploitation et demandes uniquement ; les périmètres de recherche/exploration active ainsi que les données géologiques et administratives n'étaient pas accessibles publiquement au moment de la préparation de cette carte, et ne sont donc pas incluses)."},
   {date:'2026-09-13',txt:"Simplification de la page « À propos » côté public, suite à un retour utilisateur (le terme technique « entrepôt » ne devait plus apparaître dans les textes publics, et certains détails techniques n'avaient pas leur place dans la version publique) : (1) le mot « entrepôt » a été retiré du titre de la page (désormais « À propos »), du sous-titre de la barre latérale (désormais « Portail de données ITIE ») et des textes d'introduction des pages Visualisations/Modèle de données/Dictionnaire/fiche « Source & traçabilité » ; (2) le bloc « Journal des modifications » (historique technique détaillé des correctifs) et le bloc « Sources techniques (API) » ont été retirés de la vue publique et ne sont plus visibles que par les comptes administrateur/éditeur connectés — la vue publique de la page « À propos » se limite désormais aux textes de présentation et au bloc « Gouvernance des données » (dernière actualisation, version de l'application, licence de réutilisation)."},
   {date:'2026-09-10',txt:"Suite à un retour utilisateur sur les tableaux « Paiements et recettes » des régies financières (« gecamines et cami sont des entités totalement différentes à ne pas mélanger », et « les montants différents pour une même entité pour une même année, ce n'est pas clair »), deux corrections : (1) dans le tableau regie_cami (et sa source, ent_revenus_entite), 21 lignes de pas-de-porte/royalties perçus par GECAMINES — entreprise publique minière — avaient été fusionnées à tort sous l'entité harmonisée « CAMI — Cadastre Minier », alors que le Cadastre Minier (autorité d'octroi des titres miniers) et GECAMINES sont deux entités totalement différentes ; ces 21 lignes ont été séparées dans un nouveau tableau public « regie_gecamines », et 4 lignes résiduelles qui n'étaient ni CAMI ni GECAMINES (« Autres AFE », « Entreprises étatiques », « Autres entités publiques ») ont été retirées de regie_cami et ré-étiquetées correctement (elles restent consultables dans ent_revenus_entite) ; (2) sur les 11 tableaux « regie_* » (paiements/recettes par régie), une nouvelle colonne « Type de recette (catégorie de la source) », dérivée du texte réel de la colonne « Tableau / section source » déjà présente dans chaque ligne, explique désormais pourquoi plusieurs montants peuvent coexister pour une même entité et le même exercice (ce ne sont pas des doublons mais des concepts de rapport différents : revenus globaux, revenus budgétaires du Trésor, déclaration unilatérale de l'État, données réconciliées, etc.) ; l'ordre des colonnes de ces 11 tableaux a été revu pour que la vue par défaut (7 colonnes) montre l'exercice, l'entité, ce nouveau type de recette et le montant normalisé en USD (chiffre unique et comparable), plutôt que le montant en unité d'origine mélangeant milliers/unités qui donnait une impression trompeuse de montants incohérents. Correction générale associée : la colonne « Exercice/Année », auparavant parfois absente de la vue par défaut sur les tableaux à plus de 7 colonnes de dimension, est désormais toujours affichée en priorité sur toutes les tables de l'entrepôt."},
@@ -1701,6 +1702,235 @@ function drawMining(){
   miningRenderLayer();
   const bind=(id,key)=>{const el=$(id);if(el)el.onchange=e=>{miningF[key]=e.target.value;miningRenderLayer();};};
   bind('#mnStatut','statut');bind('#mnGroupe','groupe');bind('#mnSubstance','substance');
+}
+
+/* ===== Hydrocarbures — carte interactive (Leaflet, couches multiples) =====
+   Portefeuille des blocs et concessions pétrolières/gazières de la RDC,
+   exercice 2022 (données transmises par le Secrétariat Général aux
+   Hydrocarbures pour le Rapport ITIE-RDC 2022 — voir Source & traçabilité).
+   Contrairement aux Titres miniers (une seule couche de polygones, chargée
+   à la demande car volumineuse), ce jeu de données est petit (27 entités)
+   et déjà inclus dans GEO (clé `hydrocarbures`, servie par /api/geo) : pas
+   de chargement séparé nécessaire. En revanche la carte est plus riche :
+   plusieurs couches activables indépendamment (blocs, blocs gaziers du lac
+   Kivu, gazoduc, zone des Rendus, bornes de la concession 180), des vues
+   pré-cadrées par bassin sédimentaire, un indicateur de qualité de
+   géoréférencement par entité (exact / approximatif / indicatif), et,
+   quand elles existent, les données de paiements/production 2022 associées
+   au bloc dans la fiche. L'entité sans coordonnées publiées (Blocs 7 et 9,
+   Cuvette Centrale) est listée explicitement sous la carte plutôt que
+   silencieusement omise. */
+let hydroF={bassin:'',statut:'',matiere:''};
+let hydroLayers={blocs:true,kivu:true,gazoduc:true,zone:false,bornes:false};
+let hydroMapObj=null, hydroLayerGroups={};
+const HYDRO_BASSIN_VIEWS={
+  national:{c:[-2.5,23.5],z:5},
+  cotier:{c:[-5.9,12.3],z:9},
+  albertine:{c:[0.8,29.9],z:7},
+  cuvette:{c:[-1,20.5],z:6},
+};
+function hydroData(){return (GEO&&GEO.hydrocarbures)||null;}
+function hydroStatutKey(s){
+  s=s||'';
+  if(/^Production/.test(s))return 'production';
+  if(/^Exploration/.test(s))return 'exploration';
+  if(/Repris par l.État/.test(s))return 'etat';
+  if(/Ouvert|attente|Appel d.offres/.test(s))return 'ouvert';
+  if(/Non actif/.test(s))return 'inactif';
+  if(/Transport/.test(s))return 'transport';
+  return 'autre';
+}
+const HYDRO_STATUT_LABEL={production:'Production',exploration:'Exploration',etat:"Repris par l'État",ouvert:"Ouvert / appel d'offres",inactif:'Non actif',transport:'Transport (infrastructure)',autre:'Autre'};
+const HYDRO_STATUT_COLOR={production:'#1a7a3c',exploration:'#1f6fb2',etat:'#7a4fb0',ouvert:'#c47f0a',inactif:'#6b6b6b',transport:'#8a4b1f',autre:'#666'};
+const HYDRO_QUAL_LABEL={'exact':'Exacte (coordonnées publiées)','approx':'Approximative (limites textuelles reconstruites)','indicatif':'Indicative (position sans coordonnées)'};
+function hydroQualKey(q){q=q||'';if(/^exact/.test(q))return 'exact';if(/^approx/.test(q))return 'approx';if(/^indicatif/.test(q))return 'indicatif';return 'approx';}
+function hydroBassinList(){
+  const d=hydroData();if(!d)return [];
+  const c=new Map();
+  d.blocs.features.forEach(f=>{const b=f.properties.bassin;if(!b)return;c.set(b,(c.get(b)||0)+1);});
+  return [...c.entries()].sort((a,b)=>b[1]-a[1]);
+}
+function hydroMatiereList(){
+  const d=hydroData();if(!d)return [];
+  const c=new Map();
+  d.blocs.features.forEach(f=>{const m=f.properties.matiere;if(!m)return;c.set(m,(c.get(m)||0)+1);});
+  return [...c.entries()].sort((a,b)=>b[1]-a[1]);
+}
+function hydroFilteredBlocs(){
+  const d=hydroData();if(!d)return [];
+  return d.blocs.features.filter(f=>{
+    const p=f.properties;
+    if(hydroF.bassin&&p.bassin!==hydroF.bassin)return false;
+    if(hydroF.statut&&hydroStatutKey(p.statut)!==hydroF.statut)return false;
+    if(hydroF.matiere&&p.matiere!==hydroF.matiere)return false;
+    return true;
+  });
+}
+function openHydroSourceModal(){
+  const body=$('#srcModalBody');if(!body)return;
+  const d=hydroData();const m=(d&&d.meta)||{};
+  const src=m.sources||{};
+  body.innerHTML=`
+    <div style="margin-bottom:12px"><b>Blocs et concessions pétrolières/gazières — exercice 2022</b><br><span style="font-size:12.5px;color:var(--ink-soft)">Portefeuille des titres du secteur amont des hydrocarbures (production, exploration, blocs gaziers du lac Kivu, gazoduc de transit).</span></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 16px;font-size:12.5px;margin-bottom:12px">
+      <div><b>Nombre d'entités</b><br>${d?fmtN(d.blocs.features.length+d.kivu_points.features.length+d.gazoduc.features.length+(d.non_georeferences||[]).length):'—'}</div>
+      <div><b>Système de coordonnées</b><br>${esc(m.projection_geometries||'WGS84')}</div>
+      <div><b>Fond de carte</b><br>${esc(m.fond_carte||'—')}</div>
+    </div>
+    <div style="font-size:12.5px;margin-bottom:12px">
+      <b>Sources</b><br>
+      ${src.S1?`S1 — ${esc(src.S1)}<br>`:''}
+      ${src.S2?`S2 — ${esc(src.S2)}<br>`:''}
+      ${src.S3?`S3 — ${esc(src.S3)}`:''}
+    </div>
+    ${m.note_qualite?`<div class="msg warn" style="font-size:12px">${esc(m.note_qualite)}</div>`:''}
+  `;
+  showModal('srcModal');
+}
+window.openHydroSourceModal=openHydroSourceModal;
+function mHydro(){
+  const bassins=hydroBassinList(), matieres=hydroMatiereList();
+  const d=hydroData();
+  const nonGeo=(d&&d.non_georeferences)||[];
+  return `<div class="phead"><div class="eyebrow">Territoire</div><h1>Hydrocarbures</h1>
+    <p>Portefeuille des blocs et concessions pétrolières/gazières de la RDC (exercice 2022) : concessions en production, blocs en exploration, entités reprises par l'État, blocs gaziers du lac Kivu et gazoduc de transit.</p></div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="ch" style="flex-wrap:wrap;gap:8px">
+        <span style="font-size:12px;font-weight:700;color:var(--ink-soft)">Vue :</span>
+        <button type="button" class="lchip on" data-hview="national">Nationale</button>
+        <button type="button" class="lchip" data-hview="cotier">Bassin Côtier</button>
+        <button type="button" class="lchip" data-hview="albertine">Graben Albertine &amp; Kivu</button>
+        <button type="button" class="lchip" data-hview="cuvette">Cuvette Centrale</button>
+      </div>
+      <div class="ch" style="flex-wrap:wrap;gap:10px 16px;margin-top:10px">
+        <label style="font-size:12px;font-weight:700;color:var(--ink-soft);display:flex;flex-direction:column;gap:4px">Bassin
+          <select id="hyBassin" class="sel"><option value="">Tous bassins</option>${bassins.map(([v,c])=>`<option value="${esc(v)}">${esc(v)} (${c})</option>`).join('')}</select></label>
+        <label style="font-size:12px;font-weight:700;color:var(--ink-soft);display:flex;flex-direction:column;gap:4px">Statut
+          <select id="hyStatut" class="sel"><option value="">Tous statuts</option>${Object.entries(HYDRO_STATUT_LABEL).filter(([k])=>k!=='transport'&&k!=='autre').map(([k,l])=>`<option value="${k}">${esc(l)}</option>`).join('')}</select></label>
+        <label style="font-size:12px;font-weight:700;color:var(--ink-soft);display:flex;flex-direction:column;gap:4px">Matière
+          <select id="hyMatiere" class="sel"><option value="">Toutes matières</option>${matieres.map(([v,c])=>`<option value="${esc(v)}">${esc(v)} (${c})</option>`).join('')}</select></label>
+        <span class="grow"></span>
+        <span class="badge" id="hyCount">…</span>
+      </div>
+      <div class="ch" style="flex-wrap:wrap;gap:6px 16px;margin-top:10px;font-size:12px;color:var(--ink-soft)">
+        <span style="font-weight:700">Couches :</span>
+        <label style="display:flex;align-items:center;gap:5px"><input type="checkbox" data-hlayer="blocs" checked> Blocs &amp; concessions</label>
+        <label style="display:flex;align-items:center;gap:5px"><input type="checkbox" data-hlayer="kivu" checked> Blocs gaziers du lac Kivu (indicatifs)</label>
+        <label style="display:flex;align-items:center;gap:5px"><input type="checkbox" data-hlayer="gazoduc" checked> Gazoduc Cabinda–Soyo</label>
+        <label style="display:flex;align-items:center;gap:5px"><input type="checkbox" data-hlayer="zone"> Zone des Rendus (Bassin Côtier)</label>
+        <label style="display:flex;align-items:center;gap:5px"><input type="checkbox" data-hlayer="bornes"> Bornes de la concession 180</label>
+      </div>
+      <div id="hyMap" style="height:600px;border-radius:12px;overflow:hidden;margin-top:12px;background:var(--panel-2)"></div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:12px;font-size:12px;color:var(--ink-soft)">
+        ${Object.entries(HYDRO_STATUT_LABEL).filter(([k])=>k!=='autre').map(([k,l])=>`<span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${HYDRO_STATUT_COLOR[k]};vertical-align:-2px;margin-right:5px"></span>${esc(l)}</span>`).join('')}
+        <span class="grow"></span>
+        <button type="button" class="srclink" onclick="openHydroSourceModal()">ⓘ Source &amp; traçabilité de cette couche</button>
+      </div>
+    </div>
+    <div style="font-size:11.5px;color:var(--ink-faint);margin:-8px 0 16px">Qualité du géoréférencement, par entité : ${Object.entries(HYDRO_QUAL_LABEL).map(([k,l])=>`<b>${k}</b> = ${esc(l)}`).join(' · ')}. Indiqué dans chaque fiche.</div>
+    ${nonGeo.length?`<div class="card" style="margin-bottom:16px"><div class="ch"><h3 style="margin:0">Entité(s) sans coordonnées publiées — non représentée(s) sur la carte</h3></div>
+      ${nonGeo.map(n=>`<div class="msg warn" style="font-size:12.5px">
+        <b>${esc(n.id)} — ${esc(n.nom)}</b><br>${esc(n.bassin)} · ${esc(n.statut)} · ${esc(n.matiere||'')}
+      </div>`).join('')}
+    </div>`:''}`;
+}
+function hydroPopupHtml(p){
+  const row=(k,v)=>(v!==null&&v!==undefined&&v!=='')?`<div style="margin-bottom:4px"><b>${esc(k)}</b> — ${esc(v)}</div>`:'';
+  const qk=hydroQualKey(p.qualite_geom);
+  let html=`<div style="font-size:12.5px;max-width:290px">
+    ${row('Bloc / concession',p.nom)}
+    ${row('Bassin',p.bassin)}${row('Zone',p.zone)}
+    ${row('Type de contrat',p.type_contrat&&p.type_contrat!=='—'?p.type_contrat:null)}
+    ${row('Statut 2022',p.statut)}
+    ${row('Contractant(s)',p.contractant&&p.contractant!=='—'?p.contractant:null)}
+    ${row('Opérateur',p.operateur&&p.operateur!=='—'?p.operateur:null)}
+    ${row('Matière',p.matiere)}
+    ${row('Date de demande',p.date_demande)}
+    ${row('Approbation',p.date_approbation)}
+    ${row('Validité',p.validite)}
+    ${row('Superficie déclarée',p.superficie_km2?`${p.superficie_km2} km²`:null)}
+    ${row('Superficie SIG calculée',p.superficie_calc_km2?`${p.superficie_calc_km2} km²`:null)}
+    ${row('Qualité du géoréférencement',HYDRO_QUAL_LABEL[qk])}
+    ${row('Sources',p.source)}
+  </div>`;
+  if(p.paiements_2022){
+    const pay=p.paiements_2022;
+    html+=`<div style="font-size:12.5px;max-width:290px;margin-top:6px;padding-top:6px;border-top:1px dashed var(--line)">
+      <b>Paiements déclarés 2022</b><br>${fmtN(Math.round(pay.cdf))} CDF (≈ ${fmtN(Math.round(pay.usd_indicatif))} USD indicatif) en ${pay.n_lignes} ligne${pay.n_lignes>1?'s':''}
+    </div>`;
+  }
+  if(p.production_2022){
+    const pr=p.production_2022;
+    html+=`<div style="font-size:12.5px;max-width:290px;margin-top:6px;padding-top:6px;border-top:1px dashed var(--line)">
+      <b>Production fiscalisée 2022</b><br>${fmtN(pr.production_bbl_2022)} bbl produits · ${fmtN(pr.exportation_bbl_2022)} bbl exportés<br><span style="color:var(--ink-faint)">${esc(pr.operateur_principal)}</span>
+    </div>`;
+  }
+  return html;
+}
+function hydroPointPopupHtml(p){
+  const row=(k,v)=>(v!==null&&v!==undefined&&v!=='')?`<div style="margin-bottom:4px"><b>${esc(k)}</b> — ${esc(v)}</div>`:'';
+  return `<div style="font-size:12.5px;max-width:270px">
+    ${row('Bloc',p.nom)}
+    ${row('Bassin / zone',[p.bassin,p.zone].filter(Boolean).join(' · '))}
+    ${row('Statut',p.statut)}
+    ${row('Matière',p.matiere)}
+    ${row('Qualité du géoréférencement',HYDRO_QUAL_LABEL[hydroQualKey(p.qualite_geom)])}
+  </div>`;
+}
+function hydroRenderLayers(){
+  if(!hydroMapObj)return;
+  const d=hydroData();if(!d)return;
+  Object.values(hydroLayerGroups).forEach(l=>{if(l)hydroMapObj.removeLayer(l);});
+  hydroLayerGroups={};
+  if(hydroLayers.blocs){
+    const feats=hydroFilteredBlocs();
+    hydroLayerGroups.blocs=L.geoJSON({type:'FeatureCollection',features:feats},{
+      style:f=>({color:HYDRO_STATUT_COLOR[hydroStatutKey(f.properties.statut)]||'#666',weight:1.5,fillOpacity:.4}),
+      onEachFeature:(f,layer)=>layer.bindPopup(hydroPopupHtml(f.properties)),
+    }).addTo(hydroMapObj);
+    const cnt=$('#hyCount');if(cnt)cnt.textContent=`${fmtN(feats.length)} bloc${feats.length>1?'s':''} affiché${feats.length>1?'s':''} sur ${fmtN(d.blocs.features.length)}`;
+  }
+  if(hydroLayers.kivu){
+    hydroLayerGroups.kivu=L.geoJSON(d.kivu_points,{
+      pointToLayer:(f,latlng)=>L.circleMarker(latlng,{radius:7,color:HYDRO_STATUT_COLOR[hydroStatutKey(f.properties.statut)]||'#666',weight:2,fillOpacity:.5,dashArray:'2,2'}),
+      onEachFeature:(f,layer)=>layer.bindPopup(hydroPointPopupHtml(f.properties)),
+    }).addTo(hydroMapObj);
+  }
+  if(hydroLayers.gazoduc){
+    hydroLayerGroups.gazoduc=L.geoJSON(d.gazoduc,{
+      style:{color:HYDRO_STATUT_COLOR.transport,weight:3,dashArray:'6,5'},
+      onEachFeature:(f,layer)=>layer.bindPopup(hydroPopupHtml(f.properties)),
+    }).addTo(hydroMapObj);
+  }
+  if(hydroLayers.zone){
+    hydroLayerGroups.zone=L.geoJSON(d.zone_rendus,{
+      style:{color:'#999',weight:1,dashArray:'3,4',fillOpacity:.06},
+      onEachFeature:(f,layer)=>layer.bindPopup(`<div style="font-size:12.5px">${esc(f.properties.nom||'Zone des Rendus')}</div>`),
+    }).addTo(hydroMapObj);
+  }
+  if(hydroLayers.bornes){
+    hydroLayerGroups.bornes=L.geoJSON(d.bornes_concession_180,{
+      pointToLayer:(f,latlng)=>L.circleMarker(latlng,{radius:4,color:'#333',weight:1,fillOpacity:.9}),
+      onEachFeature:(f,layer)=>layer.bindPopup(`<div style="font-size:12.5px"><b>Borne</b> — ${esc(f.properties.borne||'')}</div>`),
+    }).addTo(hydroMapObj);
+  }
+}
+function drawHydro(){
+  const host=$('#hyMap');if(!host)return;
+  if(hydroMapObj){try{hydroMapObj.remove();}catch(e){}hydroMapObj=null;hydroLayerGroups={};}
+  const d=hydroData();
+  if(!d){host.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-soft);font-size:13px">Couche non disponible.</div>';return;}
+  hydroMapObj=L.map('hyMap',{preferCanvas:true}).setView(HYDRO_BASSIN_VIEWS.national.c,HYDRO_BASSIN_VIEWS.national.z);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap'}).addTo(hydroMapObj);
+  hydroRenderLayers();
+  const bind=(id,key)=>{const el=$(id);if(el)el.onchange=e=>{hydroF[key]=e.target.value;hydroRenderLayers();};};
+  bind('#hyBassin','bassin');bind('#hyStatut','statut');bind('#hyMatiere','matiere');
+  $$('[data-hlayer]').forEach(cb=>{cb.onchange=e=>{hydroLayers[cb.dataset.hlayer]=cb.checked;hydroRenderLayers();};});
+  $$('[data-hview]').forEach(btn=>{btn.onclick=()=>{
+    const v=HYDRO_BASSIN_VIEWS[btn.dataset.hview];if(!v||!hydroMapObj)return;
+    hydroMapObj.setView(v.c,v.z);
+    $$('[data-hview]').forEach(b=>b.classList.toggle('on',b===btn));
+  };});
 }
 
 /* Géographie — vraie carte choroplèthe interactive (SVG auto-suffisant) */
@@ -2197,6 +2427,7 @@ const MODULES={
   overview:{t:"Vue d'ensemble",f:mOverview,d:drawOverview},
   geo:{t:"Géographie",f:mGeo,d:drawGeo},
   mining:{t:"Titres miniers",f:mMining,d:drawMining},
+  hydro:{t:"Hydrocarbures",f:mHydro,d:drawHydro},
   viz:{t:"Visualisations",f:mViz,d:bindViz},
   explorer:{t:"Explorateur (données complètes)",f:mExplorer,d:renderExplorer},
   model:{t:"Modèle de données",f:mModel,d:drawSchema},
@@ -2218,7 +2449,7 @@ Object.keys(THEME_INFO).forEach(k=>{if(k==='technique')return;
 // publiques ; aucune donnée n'est supprimée, seulement rangée par thème —
 // toujours « ne rien cacher, toutes ces données sont publiques ».
 const NAV=[
-  {g:"Vue d'ensemble",items:[['overview','◧',"Vue d'ensemble"],['geo','◈','Géographie'],['mining','⛏','Titres miniers']]},
+  {g:"Vue d'ensemble",items:[['overview','◧',"Vue d'ensemble"],['geo','◈','Géographie'],['mining','⛏','Titres miniers'],['hydro','🛢','Hydrocarbures']]},
   {g:'Par thème ITIE',items:Object.keys(THEME_INFO).filter(k=>k!=='technique').map(k=>[k,THEME_NAV_ICONS[k]||'▪',(THEME_INFO[k]||{}).label||k])},
   {g:'Données complètes',items:[['viz','◫','Visualisations'],['explorer','▤','Explorateur'],['model','✳','Modèle de données'],['dict','▥','Dictionnaire'],['qualite','✓','Qualité des données']]},
   {g:'',items:[['reports','▦','Rapports'],['about','ⓘ','À propos']]},
