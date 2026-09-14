@@ -1641,6 +1641,7 @@ function mMining(){
 function miningPopupHtml(p){
   const row=(k,v)=>v?`<div style="margin-bottom:4px"><b>${esc(k)}</b> — ${esc(v)}</div>`:'';
   return `<div style="font-size:12.5px;max-width:260px">
+    ${row('N° de permis',p.code)}
     ${row('Type',p.type)}
     ${row('Statut',p.statut)}
     ${row('Titulaire',p.titulaire)}
