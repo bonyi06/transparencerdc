@@ -1445,6 +1445,7 @@ function mAbout(){const A=C.about,B=C.brand,F=C.footer,CT=C.contact;return `<div
     </div>
   </div>`;}
 const CHANGELOG=[
+  {date:'2026-09-14',txt:"La carte « Géographie de l'extraction » (choroplèthe provinces/territoires/ETD, tous indicateurs) passe du rendu SVG « maison » à Leaflet avec fond OpenStreetMap réel, comme les pages « Titres miniers » et « Hydrocarbures » : zoom/pan natifs à la molette et au glisser, contrôles +/−/réinitialiser/plein écran adaptés au nouveau moteur, info-bulles au survol des provinces/territoires/points ETD, sélection au clic avec mise en évidence (contour rouge), étiquettes de province superposées à la carte. Toute la logique existante est conservée à l'identique : choix de la couche (recettes, production, cahiers de charge, dépenses sociales, cadastre minier…), de l'année, du mode Année/Évolution (cumul), des niveaux cumulables national/province/territoire/ETD, le panneau de détail (évolution pluriannuelle, ventilation territoires/ETD, entreprises), la liste des bénéficiaires ETD géolocalisés et le tableau détaillé des paiements infranationaux par entité perceptrice en dessous — rien n'a changé dans les données ni les chiffres affichés, seul le moteur de rendu de la carte a été remplacé."},
   {date:'2026-09-14',txt:"Nouvelle page « Hydrocarbures » (rubrique Vue d'ensemble) : cartographie interactive du secteur pétrolier et gazier de la RDC pour l'exercice 2022, plus riche que la page « Titres miniers » — 27 entités au total (22 blocs/concessions polygonaux, 3 blocs gaziers indicatifs du Kivu, 1 tracé de gazoduc, la zone de rendus du bassin côtier et les bornes de la concession 180), avec vues rapides par bassin sédimentaire (national, côtier, Albertine, cuvette centrale), filtres par bassin/statut/matière, 5 couches activables indépendamment, et fiches par entité enrichies (le cas échéant) des paiements 2022 (CDF et équivalent USD indicatif) et de la production/exportation 2022 pour les blocs en exploitation. Chaque entité porte l'indicateur de qualité de géoréférencement fourni par la source elle-même (coordonnées exactes / limites reconstituées / position indicative sans coordonnées) ; le seul bloc sans aucune coordonnée exploitable (CC7) est signalé tel quel sous la carte plutôt que masqué ou positionné arbitrairement, conformément au principe « ne rien cacher ». Comme pour les autres jeux de données, un lien « Source & traçabilité de cette couche » précise l'origine exacte (Secrétariat Général aux Hydrocarbures, lettres de cadrage 2023/2024) et le fond de carte (Natural Earth)."},
   {date:'2026-09-13',txt:"Nouvelle page « Titres miniers » (rubrique Territoire) : carte interactive (fond OpenStreetMap) des permis d'exploitation actifs et des demandes en cours sur l'ensemble du territoire — 6 236 titres géoréférencés au total, avec pour chacun le titulaire, le statut, les substances, la superficie, la région et les dates de demande/octroi/expiration, filtrables par statut, type de titre et substance. Cette couche est volumineuse (plusieurs Mo de géométries) : elle est chargée à la demande uniquement à l'ouverture de cette page (nouvel endpoint /api/mining-titles), pas au démarrage général de l'application, pour ne pas ralentir le chargement des autres pages. Comme pour les autres tableaux, un lien discret « Source & traçabilité de cette couche » explique la portée exacte des données (permis d'exploitation et demandes uniquement ; les périmètres de recherche/exploration active ainsi que les données géologiques et administratives n'étaient pas accessibles publiquement au moment de la préparation de cette carte, et ne sont donc pas incluses)."},
   {date:'2026-09-13',txt:"Simplification de la page « À propos » côté public, suite à un retour utilisateur (le terme technique « entrepôt » ne devait plus apparaître dans les textes publics, et certains détails techniques n'avaient pas leur place dans la version publique) : (1) le mot « entrepôt » a été retiré du titre de la page (désormais « À propos »), du sous-titre de la barre latérale (désormais « Portail de données ITIE ») et des textes d'introduction des pages Visualisations/Modèle de données/Dictionnaire/fiche « Source & traçabilité » ; (2) le bloc « Journal des modifications » (historique technique détaillé des correctifs) et le bloc « Sources techniques (API) » ont été retirés de la vue publique et ne sont plus visibles que par les comptes administrateur/éditeur connectés — la vue publique de la page « À propos » se limite désormais aux textes de présentation et au bloc « Gouvernance des données » (dernière actualisation, version de l'application, licence de réutilisation)."},
@@ -1935,14 +1936,16 @@ function drawHydro(){
 
 /* Géographie — vraie carte choroplèthe interactive (SVG auto-suffisant) */
 let mapInd='recettes', mapYear=null, mapLevels=new Set(['province','territoire','etd']), mapSel=null, mapEvo=false, mapSelPt=null, mapFs=false, mapEscBound=false;
-function fsStyle(){const viz=$('#mapViz'),host=$('#mapHost'),svg=$('#mapSvg'),btn=$('#mapFull');if(!viz)return;
+// Rendu carte : Leaflet + fond OpenStreetMap réel (zoom/pan natifs), comme les
+// pages « Titres miniers » et « Hydrocarbures » — remplace l'ancienne
+// projection SVG « maison » (conservée pour les autres graphiques du site).
+let geoMapObj=null, geoProvLayers={}, geoProvLayerGroup=null, geoTerrLayerGroup=null, geoEtdLayerGroup=null, geoBaseBounds=null;
+function fsStyle(){const viz=$('#mapViz'),host=$('#mapHost'),btn=$('#mapFull');if(!viz)return;
   if(mapFs){viz.style.cssText='position:fixed;inset:0;z-index:99999;background:var(--bg);padding:12px 16px 8px;margin:0;display:flex;flex-direction:column;box-shadow:0 0 0 100vmax var(--bg)';
-    if(host){host.style.flex='1';host.style.minHeight='0';host.style.display='flex';host.style.alignItems='center';host.style.justifyContent='center';}
-    if(svg){svg.style.height='100%';svg.style.width='100%';svg.style.maxHeight='none';}
+    if(host){host.style.flex='1';host.style.minHeight='0';host.style.height='';}
     if(btn)btn.innerHTML='✕ Quitter le plein écran';document.body.style.overflow='hidden';}
   else{viz.style.cssText='position:relative';
-    if(host){host.style.flex='';host.style.minHeight='';host.style.display='';host.style.alignItems='';host.style.justifyContent='';}
-    if(svg){svg.style.height='auto';svg.style.width='100%';svg.style.maxHeight='';}
+    if(host){host.style.flex='';host.style.minHeight='';host.style.height='560px';}
     if(btn)btn.innerHTML='⛶ Plein écran';document.body.style.overflow='';}}
 function lvlOn(x){return mapLevels.has(x);}
 function toggleLvl(x){if(mapLevels.has(x))mapLevels.delete(x);else mapLevels.add(x);if(!mapLevels.size)mapLevels.add('province');}
@@ -2002,8 +2005,8 @@ function mGeo(){
       </div>
       <div class="sub" id="mapSub">${d?esc(d.label):''}${d&&!yearCovered(curYear())&&!mapEvo?` · <b style="color:var(--red)">aucune donnée en ${curYear()} — couverture : ${indYears()[0]||'—'}–${indYears().slice(-1)[0]||'—'}</b>`:''}</div>
       <div style="display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start" class="mapwrap">
-        <div id="mapViz" style="position:relative"><div id="mapHost" style="width:100%;position:relative;cursor:grab"></div>
-          <div id="mapTip" style="position:absolute;pointer-events:none;display:none;background:var(--navy);color:#fff;padding:8px 11px;border-radius:8px;font-size:12px;z-index:5;box-shadow:0 6px 18px rgba(0,0,0,.3);max-width:240px"></div>
+        <div id="mapViz" style="position:relative"><div id="mapHost" style="width:100%;height:560px;position:relative;border-radius:12px;overflow:hidden;background:var(--panel-2)"></div>
+          <div id="geoNatBadge" style="display:none"></div>
           <div style="display:flex;gap:14px;align-items:center;margin-top:10px;font-size:11.5px;color:var(--ink-soft);flex-wrap:wrap">
             <span id="mapLegend"></span>
             <span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center">Molette : zoom · glisser : déplacer <button class="btn" id="mapZoomOut" style="padding:4px 11px;font-size:14px;line-height:1" aria-label="Dézoomer la carte" title="Dézoomer">−</button><button class="btn" id="mapZoomIn" style="padding:4px 11px;font-size:14px;line-height:1" aria-label="Zoomer la carte" title="Zoomer">+</button><button class="btn" id="mapReset" style="padding:4px 10px">Réinitialiser</button><button class="btn" id="mapFull" style="padding:4px 10px" aria-label="Afficher la carte en plein écran" title="Afficher la carte en plein écran">⛶ Plein écran</button></span>
@@ -2022,115 +2025,110 @@ function mGeo(){
     <div class="card" style="margin-top:18px"><div class="ch"><h3>Paiements infranationaux — détail par entité perceptrice (DRP · ETD · DOT)</h3><span class="badge">Exigence ITIE 4.6</span></div>
       <div class="sub">Paiements <b>directs</b> des entreprises extractives aux entités locales, ventilés par exercice, province, type d'entité perceptrice (régie provinciale DRP, ETD — secteur/chefferie/commune, dotation OS DOT 0,3 %) et montant. Total infranational 2023 : 801,7 M USD (DRP 532,8 · ETD 165,1 · DOT 103,9), somme du détail des annexes. Le tableau de synthèse officiel (Tableau 60) affiche 797,7 M USD ; l’écart d’environ 4 M provient des paiements pétroliers perçus au Kongo Central (DGR-KC). <b>Note :</b> les variantes de casse/orthographe d'un même nom d'ETD (ex. « COMMUNE DE SHITURU » / « Commune de Shituru ») sont regroupées sous un libellé unique, mais une même entité déclarée sous des provinces différentes selon l'exercice (rare, ex. « Commune de Shituru » rattachée au Haut-Katanga la plupart des années et, ponctuellement, au Lualaba) n'est <b>pas</b> réattribuée d'office : la province déclarée dans la source est conservée telle quelle par souci de traçabilité, même quand elle semble incohérente d'une année à l'autre.</div>
       <div id="geoInfra" style="overflow:auto"></div></div>`;}
-// equirectangular projection over DRC bounds
-const DRC_BOUNDS={minLng:11.9,maxLng:31.4,minLat:-13.6,maxLat:5.5};
-function projFactory(W,H){const b=DRC_BOUNDS;const sx=W/(b.maxLng-b.minLng),sy=H/(b.maxLat-b.minLat),s=Math.min(sx,sy);
-  const ox=(W-(b.maxLng-b.minLng)*s)/2, oy=(H-(b.maxLat-b.minLat)*s)/2;
-  return (lng,lat)=>[ox+(lng-b.minLng)*s, oy+(b.maxLat-lat)*s];}
-function ringPath(ring,proj){return ring.map((c,i)=>{const [x,y]=proj(c[0],c[1]);return (i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1);}).join(' ')+'Z';}
-function geoPath(geom,proj){const t=geom.type,c=geom.coordinates;let d='';
-  if(t==='Polygon')c.forEach(r=>d+=ringPath(r,proj));
-  else if(t==='MultiPolygon')c.forEach(p=>p.forEach(r=>d+=ringPath(r,proj)));
-  return d;}
-function geoBBox(geom,proj){let minx=1e9,miny=1e9,maxx=-1e9,maxy=-1e9;const walk=c=>{if(typeof c[0]==='number'){const[x,y]=proj(c[0],c[1]);if(x<minx)minx=x;if(y<miny)miny=y;if(x>maxx)maxx=x;if(y>maxy)maxy=y;}else c.forEach(walk);};walk(geom.coordinates);return[minx,miny,maxx,maxy];}
 function colScale(v,max){const c0=[233,242,250],c1=[0,101,175];const t=max?v/max:0;return `rgb(${c0.map((a,i)=>Math.round(a+(c1[i]-a)*(0.15+0.85*t)).toString()).join(',')})`;}
 function curPoints(){const d=LY();if(!d||!d.points)return null;const y=mapEvo?null:curYear();
   if(mapEvo){const agg={};d.years.forEach(yy=>{(d.points[yy]||[]).forEach(p=>{const k=p.lng+','+p.lat;if(!agg[k])agg[k]={nom:p.nom,lng:p.lng,lat:p.lat,prov_iso:p.prov_iso,v:0};agg[k].v+=p.v;});});return Object.values(agg);}
   return d.points[y]||[];}
-function drawEtdPoints(s,proj,host){
-  const pts=curPoints();if(!pts||!pts.length)return;
-  const isDot=mapInd==='dotations_dot';const col=isDot?css('--amber'):css('--brand');
-  const kindLbl=isDot?'◆ Dotation OS':(mapInd==='infra'?'◆ Bénéficiaire infra':'◆ ETD');
-  const max=Math.max(1,...pts.map(p=>p.v));
-  const sorted=pts.slice().sort((a,b)=>b.v-a.v);
-  // seuil d'étiquetage : les points ≥ 22 % du max, plafonné à 8 étiquettes
-  const labelSet=new Set(sorted.filter((p,i)=>i<8 && p.v/max>=0.22).map(p=>p.lng+','+p.lat));
-  sorted.slice().reverse().forEach(p=>{const [x,y]=proj(p.lng,p.lat);const r=4.5+Math.sqrt(p.v/max)*20;
-    const c=svgEl('circle',{cx:x,cy:y,r:r,fill:col,'fill-opacity':0.7,stroke:'#fff','stroke-width':1.4});
-    c.style.cursor='pointer';c.style.transition='fill-opacity .12s';
-    c.addEventListener('mousemove',e=>{const tip=$('#mapTip');tip.style.display='block';c.setAttribute('fill-opacity','0.92');
-      tip.innerHTML=`<b>${kindLbl} — ${esc(p.nom)}</b><br>${indFmt(p.v)} <span style="opacity:.7">${mapEvo?'· cumul':'· '+curYear()}</span>`;
-      const rr=host.getBoundingClientRect();tip.style.left=(e.clientX-rr.left+12)+'px';tip.style.top=(e.clientY-rr.top+12)+'px';});
-    c.addEventListener('mouseleave',()=>{$('#mapTip').style.display='none';c.setAttribute('fill-opacity','0.7');});
-    c.style.cursor='pointer';c.addEventListener('click',ev=>{ev.stopPropagation();mapSelPt=p;mapSel='PT';drawPanel();});
-    s.appendChild(c);});
-  // étiquettes des plus gros (au-dessus des cercles, avec halo blanc)
-  sorted.filter(p=>labelSet.has(p.lng+','+p.lat)).forEach(p=>{const [x,y]=proj(p.lng,p.lat);const r=4.5+Math.sqrt(p.v/max)*20;
-    const ty=y-r-3;
-    const halo=svgEl('text',{x:x,y:ty,'text-anchor':'middle','font-size':'8.6','font-weight':'700','font-family':'Inter',fill:'#fff','stroke':'#fff','stroke-width':'2.6','stroke-linejoin':'round','pointer-events':'none'});halo.textContent=p.nom;s.appendChild(halo);
-    const tl=svgEl('text',{x:x,y:ty,'text-anchor':'middle','font-size':'8.6','font-weight':'700','font-family':'Inter',fill:isDot?css('--amber'):css('--brand-deep'),'pointer-events':'none'});tl.textContent=p.nom;s.appendChild(tl);});
+// remet en évidence la province sélectionnée (contour rouge) sur la carte
+// Leaflet — appelé après tout changement de sélection (clic sur la carte,
+// sur la liste du panneau, ou retour arrière).
+function highlightProv(){
+  const provFillActive=lvlOn('province')||lvlOn('national');
+  Object.entries(geoProvLayers).forEach(([iso,lyr])=>{
+    const sel=mapSel===iso;
+    lyr.setStyle({weight:sel?3:(provFillActive?1:0.6),color:sel?'#e63946':(provFillActive?'#ffffff':css('--line'))});
+    if(sel)lyr.bringToFront();
+  });
 }
 function drawMap(){
   const host=$('#mapHost');if(!host||!GEO)return;
-  const W=680,H=560,proj=projFactory(W,H);
-  const s=baseSvg(W,H,'Carte choroplèthe dynamique de la RDC');
-  s.style.width='100%';s.style.height='auto';s.setAttribute('id','mapSvg');
-  const vb={x:0,y:0,w:W,h:H};s.setAttribute('viewBox',`0 0 ${W} ${H}`);
-  const provFeats=GEO.geometry.features;
   // niveaux actifs (cumulables). La PROVINCE reste toujours la choroplèthe de base ;
   // le TERRITOIRE se superpose en contours (+ surlignage des territoires bénéficiaires) ;
   // le territoire ne prend le remplissage que si la province est masquée.
   const showProv=lvlOn('province'),showTerr=lvlOn('territoire')&&hasTerr()&&GEO.terr_geom,showEtd=lvlOn('etd'),showNat=lvlOn('national');
   const provFill = showProv || showNat;           // province colorée
   const terrFill = showTerr && !provFill;          // territoire coloré seulement si province masquée
+  const provFeats=GEO.geometry.features;
+
+  // en cas de navigation hors de la page puis retour, mGeo() régénère un
+  // nouveau <div id="mapHost">, détachant l'ancienne instance Leaflet — on
+  // la détruit proprement et on repart d'une carte neuve (comme drawHydro()
+  // / drawMining() le font déjà pour leurs propres pages).
+  if(geoMapObj&&!document.body.contains(geoMapObj.getContainer())){try{geoMapObj.remove();}catch(e){}geoMapObj=null;geoBaseBounds=null;}
+  if(!geoMapObj){
+    geoMapObj=L.map('mapHost',{preferCanvas:true}).setView([-2.9,23.6],5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap'}).addTo(geoMapObj);
+  }
+  [geoProvLayerGroup,geoTerrLayerGroup,geoEtdLayerGroup].forEach(lg=>{if(lg)geoMapObj.removeLayer(lg);});
+  geoProvLayers={};
+
   // --- Couche PROVINCE ---
   const pvals=provFeats.map(f=>unitVal(f.properties.iso));const pmax=Math.max(1,...pvals);
-  provFeats.forEach(f=>{const iso=f.properties.iso,v=unitVal(iso);
-    const fill=provFill?(v>0?colScale(v,pmax):css('--panel-2')):css('--panel');
-    const p=svgEl('path',{d:geoPath(f.geometry,proj),fill,stroke:provFill?'#fff':css('--line'),'stroke-width':provFill?0.8:0.5,'data-iso':iso});
-    if(showProv){p.style.cursor='pointer';p.style.transition='fill .12s';
-      p.addEventListener('mousemove',e=>{const tip=$('#mapTip');tip.style.display='block';tip.innerHTML=`<b>${esc(provName(iso))}</b><br>${v>0?indFmt(v):'—'} <span style="opacity:.7">${mapEvo?'· cumul':'· '+curYear()}</span>`;const r=host.getBoundingClientRect();tip.style.left=(e.clientX-r.left+12)+'px';tip.style.top=(e.clientY-r.top+12)+'px';});
-      p.addEventListener('mouseleave',()=>{$('#mapTip').style.display='none';});
-      p.addEventListener('click',()=>{mapSel=iso;drawPanel();$$('#mapSvg path[data-iso]').forEach(pp=>{const sel=pp.getAttribute('data-iso')===iso;pp.setAttribute('stroke-width',sel?'2.2':(provFill?'0.8':'0.5'));pp.setAttribute('stroke',sel?css('--red'):(provFill?'#fff':css('--line')));});});}
-    s.appendChild(p);
-    if(provFill&&v>0){const b=geoBBox(f.geometry,proj);const cx=(b[0]+b[2])/2,cy=(b[1]+b[3])/2;const t=pmax?v/pmax:0;
-      const tl=svgEl('text',{x:cx,y:cy,'text-anchor':'middle','font-size':'8.5','font-weight':'700','font-family':'Inter',fill:t>0.5?'#fff':css('--ink'),'pointer-events':'none'});tl.textContent=iso.replace('CD-','');s.appendChild(tl);}
-  });
+  geoProvLayerGroup=L.geoJSON({type:'FeatureCollection',features:provFeats},{
+    style:f=>{const v=unitVal(f.properties.iso);
+      const fillColor=provFill?(v>0?colScale(v,pmax):css('--panel-2')):css('--panel');
+      return {fillColor,fillOpacity:provFill?.85:.35,color:provFill?'#fff':css('--line'),weight:provFill?1:0.6};},
+    onEachFeature:(f,layer)=>{const iso=f.properties.iso;geoProvLayers[iso]=layer;
+      if(showProv){const v=unitVal(iso);
+        layer.bindTooltip(`<b>${esc(provName(iso))}</b><br>${v>0?indFmt(v):'—'} <span style="opacity:.7">${mapEvo?'· cumul':'· '+curYear()}</span>`,{sticky:true});
+        layer.on('click',()=>{mapSel=iso;drawPanel();highlightProv();});
+      } else {layer.options.interactive=false;}
+    }
+  }).addTo(geoMapObj);
+  highlightProv();
+  if(provFill){Object.entries(geoProvLayers).forEach(([iso,layer])=>{const v=unitVal(iso);if(v<=0)return;
+    const c=layer.getBounds().getCenter();const t=pmax?v/pmax:0;
+    L.marker(c,{interactive:false,icon:L.divIcon({className:'',html:`<span style="font-size:11px;font-weight:700;font-family:Inter;color:${t>0.5?'#fff':css('--ink')};text-shadow:0 0 3px rgba(0,0,0,.35)">${iso.replace('CD-','')}</span>`,iconSize:[34,16],iconAnchor:[17,8]})}).addTo(geoProvLayerGroup);});}
+  geoBaseBounds=geoProvLayerGroup.getBounds();
+
   // --- Couche TERRITOIRE (superposée) ---
   if(showTerr){const tf=GEO.terr_geom.features;
     const tvals=tf.map(f=>mapEvo?terrSum(f.properties.prov_iso+'|'+f.properties.nom):terrVal(f.properties.prov_iso+'|'+f.properties.nom));
     const tmax=Math.max(1,...tvals);
-    tf.forEach((f,i)=>{const nm=f.properties.nom,piso=f.properties.prov_iso,tk=piso+'|'+nm;const v=tvals[i];
-      let fill,stroke,sw;
-      if(terrFill){fill=v>0?colScale(v,tmax):'transparent';stroke='rgba(10,37,64,0.28)';sw=0.5;}
-      else {fill=v>0?'rgba(224,138,30,0.20)':'transparent';stroke=v>0?css('--amber'):'rgba(10,37,64,0.22)';sw=v>0?1.4:0.4;}  // surlignage ambre des territoires bénéficiaires
-      const p=svgEl('path',{d:geoPath(f.geometry,proj),fill,stroke,'stroke-width':sw,'data-tk':tk});
-      if(v>0){p.style.cursor='pointer';
-        p.addEventListener('mousemove',e=>{const tip=$('#mapTip');tip.style.display='block';tip.innerHTML=`<b>Territoire ${esc(nm)}</b> <span style="opacity:.6">(${esc(provName(piso))})</span><br>${indFmt(v)} <span style="opacity:.7">${mapEvo?'· cumul':'· '+curYear()}</span>`;const r=host.getBoundingClientRect();tip.style.left=(e.clientX-r.left+12)+'px';tip.style.top=(e.clientY-r.top+12)+'px';});
-        p.addEventListener('mouseleave',()=>{$('#mapTip').style.display='none';});
-        p.addEventListener('click',ev=>{ev.stopPropagation();mapSel='T:'+tk;drawPanel();});}
-      else {p.style.pointerEvents='none';}
-      s.appendChild(p);});
+    geoTerrLayerGroup=L.geoJSON({type:'FeatureCollection',features:tf},{
+      style:f=>{const tk=f.properties.prov_iso+'|'+f.properties.nom;const v=mapEvo?terrSum(tk):terrVal(tk);
+        if(terrFill)return {fillColor:v>0?colScale(v,tmax):'transparent',fillOpacity:v>0?.75:0,color:'rgba(10,37,64,0.28)',weight:0.6};
+        return {fillColor:v>0?'#e08a1e':'transparent',fillOpacity:v>0?.2:0,color:v>0?css('--amber'):'rgba(10,37,64,0.22)',weight:v>0?1.6:0.4};},
+      onEachFeature:(f,layer)=>{const nm=f.properties.nom,piso=f.properties.prov_iso,tk=piso+'|'+nm;
+        const v=mapEvo?terrSum(tk):terrVal(tk);
+        if(v>0){layer.bindTooltip(`<b>Territoire ${esc(nm)}</b> <span style="opacity:.6">(${esc(provName(piso))})</span><br>${indFmt(v)} <span style="opacity:.7">${mapEvo?'· cumul':'· '+curYear()}</span>`,{sticky:true});
+          layer.on('click',e=>{L.DomEvent.stopPropagation(e);mapSel='T:'+tk;drawPanel();});
+        } else {layer.options.interactive=false;}}
+    }).addTo(geoMapObj);
   }
   // --- Couche ETD (points géolocalisés) ---
-  if(showEtd)drawEtdPoints(s,proj,host);
-  // --- Couche NATIONALE : total au coin (discret) quand d'autres niveaux sont actifs, ou grand au centre si seul ---
-  if(showNat){const tot=mapEvo?natSum():natTotal();const alone=!showProv&&!showTerr&&!showEtd;
-    if(alone){let minx=1e9,miny=1e9,maxx=-1e9,maxy=-1e9;provFeats.forEach(f=>{const b=geoBBox(f.geometry,proj);minx=Math.min(minx,b[0]);miny=Math.min(miny,b[1]);maxx=Math.max(maxx,b[2]);maxy=Math.max(maxy,b[3]);});
-      const cx=(minx+maxx)/2,cy=(miny+maxy)/2;
-      [['#fff','4'],[css('--brand-deep'),'0']].forEach(([c,sw])=>{const t=svgEl('text',{x:cx,y:cy,'text-anchor':'middle','font-size':'22','font-weight':'800','font-family':'Poppins',fill:c,'pointer-events':'none'});if(sw!=='0'){t.setAttribute('stroke','#fff');t.setAttribute('stroke-width',sw);t.setAttribute('stroke-linejoin','round');}t.textContent=indFmt(tot);s.appendChild(t);});
-      const cap=svgEl('text',{x:cx,y:cy+18,'text-anchor':'middle','font-size':'11','font-weight':'700','font-family':'Inter',fill:css('--navy'),'pointer-events':'none'});cap.textContent='Total national'+(mapEvo?' (cumul)':' '+(curYear()||''));s.appendChild(cap);
-    } else {
-      const bg=svgEl('rect',{x:8,y:8,width:158,height:34,rx:7,fill:css('--brand'),'fill-opacity':0.92});s.appendChild(bg);
-      const t=svgEl('text',{x:16,y:24,'font-size':'13','font-weight':'800','font-family':'Poppins',fill:'#fff','pointer-events':'none'});t.textContent='National : '+indFmt(tot);s.appendChild(t);
-      const c2=svgEl('text',{x:16,y:36,'font-size':'8.5','font-family':'Inter',fill:'#fff','pointer-events':'none'});c2.textContent=(mapEvo?'cumul':curYear()||'');s.appendChild(c2);
+  if(showEtd){const pts=curPoints();
+    if(pts&&pts.length){const isDot=mapInd==='dotations_dot';const col=isDot?css('--amber'):css('--brand');
+      const kindLbl=isDot?'◆ Dotation OS':(mapInd==='infra'?'◆ Bénéficiaire infra':'◆ ETD');
+      const max=Math.max(1,...pts.map(p=>p.v));
+      geoEtdLayerGroup=L.layerGroup(pts.map(p=>{const r=4.5+Math.sqrt(p.v/max)*20;
+        const m=L.circleMarker([p.lat,p.lng],{radius:r,color:'#fff',weight:1.4,fillColor:col,fillOpacity:.7});
+        m.bindTooltip(`<b>${kindLbl} — ${esc(p.nom)}</b><br>${indFmt(p.v)} <span style="opacity:.7">${mapEvo?'· cumul':'· '+curYear()}</span>`,{sticky:true});
+        m.on('click',e=>{L.DomEvent.stopPropagation(e);mapSelPt=p;mapSel='PT';drawPanel();});
+        return m;})).addTo(geoMapObj);
     }
   }
-  host.innerHTML='';host.appendChild(s);
-  let drag=null;
-  s.addEventListener('wheel',e=>{e.preventDefault();const r=s.getBoundingClientRect();const mx=vb.x+(e.clientX-r.left)/r.width*vb.w,my=vb.y+(e.clientY-r.top)/r.height*vb.h;const k=e.deltaY<0?0.85:1.18;vb.w=Math.min(W,Math.max(60,vb.w*k));vb.h=Math.min(H,Math.max(50,vb.h*k));vb.x=Math.max(0,Math.min(W-vb.w,mx-(mx-vb.x)*k));vb.y=Math.max(0,Math.min(H-vb.h,my-(my-vb.y)*k));s.setAttribute('viewBox',`${vb.x} ${vb.y} ${vb.w} ${vb.h}`);},{passive:false});
-  s.addEventListener('mousedown',e=>{drag={x:e.clientX,y:e.clientY};host.style.cursor='grabbing';});
-  window.addEventListener('mouseup',()=>{drag=null;if(host)host.style.cursor='grab';});
-  s.addEventListener('mousemove',e=>{if(!drag)return;const r=s.getBoundingClientRect();const dx=(e.clientX-drag.x)/r.width*vb.w,dy=(e.clientY-drag.y)/r.height*vb.h;vb.x=Math.max(0,Math.min(W-vb.w,vb.x-dx));vb.y=Math.max(0,Math.min(H-vb.h,vb.y-dy));s.setAttribute('viewBox',`${vb.x} ${vb.y} ${vb.w} ${vb.h}`);drag={x:e.clientX,y:e.clientY};});
-  const rst=$('#mapReset');if(rst)rst.onclick=()=>{vb.x=0;vb.y=0;vb.w=W;vb.h=H;s.setAttribute('viewBox',`0 0 ${W} ${H}`);};
-  function zoomBy(k){const cx=vb.x+vb.w/2,cy=vb.y+vb.h/2;vb.w=Math.min(W,Math.max(38,vb.w*k));vb.h=Math.min(H,Math.max(31,vb.h*k));vb.x=Math.max(0,Math.min(W-vb.w,cx-vb.w/2));vb.y=Math.max(0,Math.min(H-vb.h,cy-vb.h/2));s.setAttribute('viewBox',`${vb.x} ${vb.y} ${vb.w} ${vb.h}`);}
-  const zi=$('#mapZoomIn');if(zi)zi.onclick=()=>zoomBy(0.7);
-  const zo=$('#mapZoomOut');if(zo)zo.onclick=()=>zoomBy(1.4);
-  const fbtn=$('#mapFull');if(fbtn)fbtn.onclick=()=>{mapFs=!mapFs;fsStyle();try{const el=$('#mapViz');if(mapFs){if(el&&el.requestFullscreen)el.requestFullscreen().catch(()=>{});}else if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});}catch(e){}};
+  // --- Couche NATIONALE : total au coin (discret) quand d'autres niveaux sont actifs, ou grand au centre si seul ---
+  const badge=$('#geoNatBadge');
+  if(showNat&&badge){const tot=mapEvo?natSum():natTotal();const alone=!showProv&&!showTerr&&!showEtd;
+    badge.style.display='block';
+    if(alone){badge.style.cssText='display:block;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1000;text-align:center;pointer-events:none';
+      badge.innerHTML=`<div style="font-family:'Poppins';font-weight:800;font-size:26px;color:${css('--brand-deep')};text-shadow:0 0 6px #fff,0 0 6px #fff">${indFmt(tot)}</div><div style="font-size:12px;font-weight:700;color:${css('--navy')};text-shadow:0 0 6px #fff">Total national${mapEvo?' (cumul)':' '+(curYear()||'')}</div>`;
+    } else {badge.style.cssText='display:block;position:absolute;top:10px;left:10px;z-index:1000;background:'+css('--brand')+';padding:6px 12px;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,.25);pointer-events:none';
+      badge.innerHTML=`<div style="font-family:'Poppins';font-weight:800;font-size:13px;color:#fff">National : ${indFmt(tot)}</div><div style="font-size:9px;color:#fff;opacity:.85">${mapEvo?'cumul':(curYear()||'')}</div>`;
+    }
+  } else if(badge){badge.style.display='none';badge.innerHTML='';}
+
+  if(!geoMapObj._fitOnce){geoMapObj._fitOnce=true;geoMapObj.fitBounds(geoBaseBounds,{padding:[12,12]});}
+  const rst=$('#mapReset');if(rst)rst.onclick=()=>geoMapObj.fitBounds(geoBaseBounds,{padding:[12,12]});
+  const zi=$('#mapZoomIn');if(zi)zi.onclick=()=>geoMapObj.zoomIn();
+  const zo=$('#mapZoomOut');if(zo)zo.onclick=()=>geoMapObj.zoomOut();
+  const invalidate=()=>{if(geoMapObj)setTimeout(()=>geoMapObj.invalidateSize(),60);};
+  const fbtn=$('#mapFull');if(fbtn)fbtn.onclick=()=>{mapFs=!mapFs;fsStyle();invalidate();try{const el=$('#mapViz');if(mapFs){if(el&&el.requestFullscreen)el.requestFullscreen().catch(()=>{});}else if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});}catch(e){}};
   if(!mapEscBound){mapEscBound=true;
-    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&mapFs){mapFs=false;fsStyle();}});
-    document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&mapFs){mapFs=false;fsStyle();}});}
-  if(mapFs)fsStyle();
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&mapFs){mapFs=false;fsStyle();invalidate();}});
+    document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&mapFs){mapFs=false;fsStyle();invalidate();}});}
+  if(mapFs){fsStyle();invalidate();}
   const lg=$('#mapLegend');if(lg){const pts=curPoints();
     if(pts&&pts.length){const isDot=mapInd==='dotations_dot';const col=isDot?css('--amber'):css('--brand');
       const lbl=isDot?'Dotation OS DOT':(mapInd==='infra'?'Bénéficiaire infranational (ETD/dotation)':'Recette ETD');
@@ -2193,7 +2191,7 @@ function drawPanel(){
       <div style="font-size:12px;color:var(--ink-soft);margin-bottom:12px">${ranked.length? ranked.length+' province(s) avec données · total '+indFmt(tot) : (!yearCovered(curYear())&&!mapEvo?'<b style=\"color:var(--red)\">Aucune donnée en '+curYear()+' pour cette couche.</b>':'Aucune donnée.')}</div>
       ${ranked.map(x=>`<div style="display:flex;justify-content:space-between;gap:8px;font-size:12.5px;padding:5px 0;border-bottom:1px dashed var(--line);cursor:pointer" data-selprov="${x.iso}"><span>${esc(x.nom)}</span><b class="mono">${indFmt(x.v)}</b></div>`).join('')}
       <div style="font-size:11.5px;color:var(--ink-faint);margin-top:10px">Cliquez une province (carte ou liste) pour son évolution et ses territoires.</div></div>`;
-    $$('[data-selprov]').forEach(el=>el.onclick=()=>{mapSel=el.getAttribute('data-selprov');drawPanel();$$('#mapSvg path').forEach(pp=>{const sel=pp.getAttribute('data-iso')===mapSel;pp.setAttribute('stroke-width',sel?'2.2':'0.8');pp.setAttribute('stroke',sel?css('--red'):'#fff');});});
+    $$('[data-selprov]').forEach(el=>el.onclick=()=>{mapSel=el.getAttribute('data-selprov');drawPanel();highlightProv();});
     return;
   }
   const iso=mapSel;const nom=provName(iso);
@@ -2223,7 +2221,7 @@ function drawPanel(){
     ${ent.length&&mapInd==='recettes'?`<div style="font-size:11px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;margin-top:12px">Entreprises</div>${ent.map(e=>`<div style="font-size:12px;padding:2px 0;color:var(--ink)">• ${esc(e)}</div>`).join('')}`:''}
     <div style="margin-top:12px"><button class="btn" data-selprov="" style="padding:4px 10px;font-size:11px">← Toutes les provinces</button></div></div>`;
   if(nonzero.length)evoBars($('#pEvo'),pairs);
-  const back=panel.querySelector('[data-selprov=""]');if(back)back.onclick=()=>{mapSel=null;drawPanel();$$('#mapSvg path').forEach(pp=>{pp.setAttribute('stroke-width','0.8');pp.setAttribute('stroke','#fff');});};
+  const back=panel.querySelector('[data-selprov=""]');if(back)back.onclick=()=>{mapSel=null;drawPanel();highlightProv();};
 }
 function drawGeo(){
   drawMap();
