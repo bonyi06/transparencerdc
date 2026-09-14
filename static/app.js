@@ -1445,6 +1445,8 @@ function mAbout(){const A=C.about,B=C.brand,F=C.footer,CT=C.contact;return `<div
     </div>
   </div>`;}
 const CHANGELOG=[
+  {date:'2026-09-14',txt:"Carte « Géographie de l'extraction », second volet de rapprochement avec Titres miniers/Hydrocarbures (retour utilisateur : l'interactivité restait en retrait) : (1) les bulles ouvertes au clic sur une province, un territoire ou un point ETD/dotation affichent désormais l'essentiel directement sur la carte — valeur, rang parmi les provinces/territoires comparables, mini-historique en barres pour une province, et détail des 3 principaux versements pour un point — sans avoir à regarder le panneau de droite ; (2) un sélecteur « Aller à une province » permet de sauter directement dessus (recentrage + ouverture de sa fiche), utile pour un repérage rapide sans chercher sur la carte ; (3) un nouveau filtre « Provinces avec données uniquement » estompe les provinces sans donnée pour ne garder en évidence que celles couvertes par la couche choisie ; (4) un compteur (nombre de provinces avec données et total) apparaît désormais dans la barre de filtres, comme sur les pages Titres miniers/Hydrocarbures. Aucune donnée ni aucun chiffre affiché n'a changé."},
+  {date:'2026-09-14',txt:"Carte « Géographie de l'extraction » : suite à un retour utilisateur (la comparant, en interactivité, aux nouvelles pages Titres miniers/Hydrocarbures), plusieurs améliorations pour la rapprocher visuellement et fonctionnellement de ces deux pages : (1) boutons de vue rapide par macro-région (Grand Katanga, Grand Kasaï, Kivu & Ituri, Kongo Central & Kinshasa, Équateur & Nord, en plus de la vue Nationale), pour recentrer/zoomer la carte en un clic sans chercher une province au zoom national ; (2) un survol des provinces et territoires les met désormais visuellement en évidence (épaisseur de contour augmentée) avant même le clic ; (3) un clic sur une province, un territoire ou un point ETD/dotation ouvre en plus une bulle d'information compacte directement sur la carte (comme sur les cartes Titres miniers/Hydrocarbures), en complément du panneau de détail déjà existant ; (4) la carte passe de 560 à 600 px de hauteur, comme les deux autres pages. Aucune donnée ni aucun chiffre affiché n'a changé."},
   {date:'2026-09-14',txt:"La carte « Géographie de l'extraction » (choroplèthe provinces/territoires/ETD, tous indicateurs) passe du rendu SVG « maison » à Leaflet avec fond OpenStreetMap réel, comme les pages « Titres miniers » et « Hydrocarbures » : zoom/pan natifs à la molette et au glisser, contrôles +/−/réinitialiser/plein écran adaptés au nouveau moteur, info-bulles au survol des provinces/territoires/points ETD, sélection au clic avec mise en évidence (contour rouge), étiquettes de province superposées à la carte. Toute la logique existante est conservée à l'identique : choix de la couche (recettes, production, cahiers de charge, dépenses sociales, cadastre minier…), de l'année, du mode Année/Évolution (cumul), des niveaux cumulables national/province/territoire/ETD, le panneau de détail (évolution pluriannuelle, ventilation territoires/ETD, entreprises), la liste des bénéficiaires ETD géolocalisés et le tableau détaillé des paiements infranationaux par entité perceptrice en dessous — rien n'a changé dans les données ni les chiffres affichés, seul le moteur de rendu de la carte a été remplacé."},
   {date:'2026-09-14',txt:"Nouvelle page « Hydrocarbures » (rubrique Vue d'ensemble) : cartographie interactive du secteur pétrolier et gazier de la RDC pour l'exercice 2022, plus riche que la page « Titres miniers » — 27 entités au total (22 blocs/concessions polygonaux, 3 blocs gaziers indicatifs du Kivu, 1 tracé de gazoduc, la zone de rendus du bassin côtier et les bornes de la concession 180), avec vues rapides par bassin sédimentaire (national, côtier, Albertine, cuvette centrale), filtres par bassin/statut/matière, 5 couches activables indépendamment, et fiches par entité enrichies (le cas échéant) des paiements 2022 (CDF et équivalent USD indicatif) et de la production/exportation 2022 pour les blocs en exploitation. Chaque entité porte l'indicateur de qualité de géoréférencement fourni par la source elle-même (coordonnées exactes / limites reconstituées / position indicative sans coordonnées) ; le seul bloc sans aucune coordonnée exploitable (CC7) est signalé tel quel sous la carte plutôt que masqué ou positionné arbitrairement, conformément au principe « ne rien cacher ». Comme pour les autres jeux de données, un lien « Source & traçabilité de cette couche » précise l'origine exacte (Secrétariat Général aux Hydrocarbures, lettres de cadrage 2023/2024) et le fond de carte (Natural Earth)."},
   {date:'2026-09-13',txt:"Nouvelle page « Titres miniers » (rubrique Territoire) : carte interactive (fond OpenStreetMap) des permis d'exploitation actifs et des demandes en cours sur l'ensemble du territoire — 6 236 titres géoréférencés au total, avec pour chacun le titulaire, le statut, les substances, la superficie, la région et les dates de demande/octroi/expiration, filtrables par statut, type de titre et substance. Cette couche est volumineuse (plusieurs Mo de géométries) : elle est chargée à la demande uniquement à l'ouverture de cette page (nouvel endpoint /api/mining-titles), pas au démarrage général de l'application, pour ne pas ralentir le chargement des autres pages. Comme pour les autres tableaux, un lien discret « Source & traçabilité de cette couche » explique la portée exacte des données (permis d'exploitation et demandes uniquement ; les périmètres de recherche/exploration active ainsi que les données géologiques et administratives n'étaient pas accessibles publiquement au moment de la préparation de cette carte, et ne sont donc pas incluses)."},
@@ -1939,13 +1941,25 @@ let mapInd='recettes', mapYear=null, mapLevels=new Set(['province','territoire',
 // Rendu carte : Leaflet + fond OpenStreetMap réel (zoom/pan natifs), comme les
 // pages « Titres miniers » et « Hydrocarbures » — remplace l'ancienne
 // projection SVG « maison » (conservée pour les autres graphiques du site).
-let geoMapObj=null, geoProvLayers={}, geoProvLayerGroup=null, geoTerrLayerGroup=null, geoEtdLayerGroup=null, geoBaseBounds=null;
+let geoMapObj=null, geoProvLayers={}, geoProvLayerGroup=null, geoTerrLayerGroup=null, geoEtdLayerGroup=null, geoBaseBounds=null, geoOnlyData=false;
+// vues rapides « macro-régions » (comme les vues par bassin de la page
+// Hydrocarbures) : un raccourci pour recentrer/zoomer la carte sans avoir à
+// chercher une province au zoom national — calculées à partir des mêmes
+// polygones province (pas de géométrie supplémentaire à charger).
+const GEO_REGIONS=[
+  {key:'national',label:'Nationale',isos:null},
+  {key:'katanga',label:'Grand Katanga',isos:['CD-HK','CD-HL','CD-LU','CD-TA']},
+  {key:'kasai',label:'Grand Kasaï',isos:['CD-KS','CD-KE','CD-KC','CD-LO','CD-SA']},
+  {key:'kivu',label:'Kivu & Ituri',isos:['CD-NK','CD-SK','CD-MA','CD-IT']},
+  {key:'ouest',label:'Kongo Central & Kinshasa',isos:['CD-BC','CD-KN','CD-KG','CD-KL','CD-MN']},
+  {key:'nord',label:'Équateur & Nord',isos:['CD-EQ','CD-MO','CD-NU','CD-SU','CD-TU','CD-HU','CD-BU','CD-TO']},
+];
 function fsStyle(){const viz=$('#mapViz'),host=$('#mapHost'),btn=$('#mapFull');if(!viz)return;
   if(mapFs){viz.style.cssText='position:fixed;inset:0;z-index:99999;background:var(--bg);padding:12px 16px 8px;margin:0;display:flex;flex-direction:column;box-shadow:0 0 0 100vmax var(--bg)';
     if(host){host.style.flex='1';host.style.minHeight='0';host.style.height='';}
     if(btn)btn.innerHTML='✕ Quitter le plein écran';document.body.style.overflow='hidden';}
   else{viz.style.cssText='position:relative';
-    if(host){host.style.flex='';host.style.minHeight='';host.style.height='560px';}
+    if(host){host.style.flex='';host.style.minHeight='';host.style.height='600px';}
     if(btn)btn.innerHTML='⛶ Plein écran';document.body.style.overflow='';}}
 function lvlOn(x){return mapLevels.has(x);}
 function toggleLvl(x){if(mapLevels.has(x))mapLevels.delete(x);else mapLevels.add(x);if(!mapLevels.size)mapLevels.add('province');}
@@ -1986,13 +2000,17 @@ function mGeo(){
     ['Cadastre minier',['permis_cami']]];
   const chipHtml=GROUPS.map(([g,keys])=>{const av=keys.filter(k=>GEO.layers[k]);if(!av.length)return '';
     return `<div class="lgroup"><div class="lgttl">${g}</div><div class="lgchips">${av.map(k=>`<button class="lchip ${mapInd===k?'on':''}" data-ind="${k}">${esc(SHORT[k]||GEO.layers[k].label)}</button>`).join('')}</div></div>`;}).join('');
-  return `<div class="phead"><div class="eyebrow">Territoire</div><h1>Géographie de l'extraction</h1><p data-edit="intros.geo">${esc(C.intros.geo)}</p><p>Choisissez une <b>couche</b>, une <b>année</b>, une <b>vue</b> et un <b>niveau</b> (national / province / territoire / ETD) — chaque bénéficiaire ETD/DOT apparaît en point géolocalisé.</p>
+  return `<div class="phead"><div class="eyebrow">Territoire</div><h1>Géographie de l'extraction</h1><p data-edit="intros.geo">${esc(C.intros.geo)}</p><p>Choisissez une <b>couche</b>, une <b>année</b>, une <b>vue</b> et un <b>niveau</b> (national / province / territoire / ETD) — chaque bénéficiaire ETD/DOT apparaît en point géolocalisé. Utilisez « Aller à une province » pour un repérage rapide, ou le filtre « Provinces avec données uniquement » pour alléger la vue.</p>
     <details class="srcdetails" style="margin-top:-4px"><summary style="font-size:12.5px;font-weight:600">ⓘ Précisions méthodologiques (paiements vs transferts infranationaux, couches « Cahiers de charge »)</summary>
       <p style="font-size:12.5px;color:var(--ink-soft);margin-top:6px"><b>Paiements infranationaux (Exigence 4.6)</b> : paiements <b>directs</b> des entreprises aux entités locales — régies provinciales (DRP), ETD (secteurs, chefferies, communes) et dotations OS DOT (0,3 %). Distincts des <b>Transferts infranationaux (Exigence 5.2)</b> : recettes perçues au niveau central puis rétrocédées aux provinces/ETD — et des dépenses sociales/environnementales (section 6.1).</p>
       <p style="font-size:12.5px;color:var(--ink-soft);margin-top:6px"><b>Couches « Cahiers de charge — 2021 (résumé mai 2022) »</b> : proviennent d'un document distinct et ne couvrent que les 14 entreprises de la feuille source « HAUT-KATANGA 2021-2025 », pas l'ensemble du pays — à ne pas confondre avec les couches « Cahiers de charge (nb, statut CPI) » et « (dépenses sociales, $) », qui viennent des annexes officielles des Rapports ITIE (2022-2023) et comptent les <i>cahiers</i> par statut d'approbation (base différente). Détail entreprise par entreprise et projet par projet dans « Dépenses sociales et environnementales ».</p>
     </details></div>
     ${hasGeo?`<div class="card" style="margin-bottom:18px">
       <div class="ch" style="flex-wrap:wrap;gap:10px"><h3 id="mapTitle">Carte</h3></div>
+      <div class="ch" style="flex-wrap:wrap;gap:8px;margin-bottom:6px">
+        <span style="font-size:12px;font-weight:700;color:var(--ink-soft)">Vue :</span>
+        ${GEO_REGIONS.map(r=>`<button type="button" class="lchip ${r.key==='national'?'on':''}" data-gview="${r.key}">${esc(r.label)}</button>`).join('')}
+      </div>
       <div class="lpicker">${chipHtml}</div>
       <div class="filterbar" style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin:2px 0 14px;padding:12px 14px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px">
         <label style="display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--ink-soft);font-weight:600;text-transform:uppercase;letter-spacing:.04em">Année
@@ -2002,10 +2020,15 @@ function mGeo(){
         <label style="display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--ink-soft);font-weight:600;text-transform:uppercase;letter-spacing:.04em">Niveau
           <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="ctype ${lvlOn('national')?'on':''}" data-lvl="national">National</button><button class="ctype ${lvlOn('province')?'on':''}" data-lvl="province">Province</button><button class="ctype ${lvlOn('territoire')?'on':''}" data-lvl="territoire" ${hasTerr()?'':'disabled title="Pas de donnée infra-provinciale pour cette couche"'}>Territoire</button><button class="ctype ${lvlOn('etd')?'on':''}" data-lvl="etd" ${hasEtdPts()?'':'disabled title="Pas de bénéficiaire ETD géolocalisé pour cette couche"'}>ETD</button></div>
           <div style="font-size:10px;color:var(--ink-faint);margin-top:3px">Couches cumulables : activez-en plusieurs pour voir l'imbrication</div></label>
+        <label style="display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--ink-soft);font-weight:600;text-transform:uppercase;letter-spacing:.04em">Aller à une province
+          <select id="mProvJump" class="sel" style="min-width:180px"><option value="">Rechercher…</option>${(GEO&&GEO.prov_ref?Object.entries(GEO.prov_ref):[]).sort((a,b)=>a[1].localeCompare(b[1])).map(([iso,nom])=>`<option value="${iso}">${esc(nom)}</option>`).join('')}</select></label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-soft);font-weight:600;padding-bottom:2px"><input type="checkbox" id="mOnlyData" ${geoOnlyData?'checked':''}> Provinces avec données uniquement</label>
+        <span class="grow"></span>
+        <span class="badge" id="mapCount"></span>
       </div>
       <div class="sub" id="mapSub">${d?esc(d.label):''}${d&&!yearCovered(curYear())&&!mapEvo?` · <b style="color:var(--red)">aucune donnée en ${curYear()} — couverture : ${indYears()[0]||'—'}–${indYears().slice(-1)[0]||'—'}</b>`:''}</div>
       <div style="display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start" class="mapwrap">
-        <div id="mapViz" style="position:relative"><div id="mapHost" style="width:100%;height:560px;position:relative;border-radius:12px;overflow:hidden;background:var(--panel-2)"></div>
+        <div id="mapViz" style="position:relative"><div id="mapHost" style="width:100%;height:600px;position:relative;border-radius:12px;overflow:hidden;background:var(--panel-2)"></div>
           <div id="geoNatBadge" style="display:none"></div>
           <div style="display:flex;gap:14px;align-items:center;margin-top:10px;font-size:11.5px;color:var(--ink-soft);flex-wrap:wrap">
             <span id="mapLegend"></span>
@@ -2049,6 +2072,7 @@ function drawMap(){
   const provFill = showProv || showNat;           // province colorée
   const terrFill = showTerr && !provFill;          // territoire coloré seulement si province masquée
   const provFeats=GEO.geometry.features;
+  const d=LY();
 
   // en cas de navigation hors de la page puis retour, mGeo() régénère un
   // nouveau <div id="mapHost">, détachant l'ancienne instance Leaflet — on
@@ -2064,13 +2088,27 @@ function drawMap(){
 
   // --- Couche PROVINCE ---
   const pvals=provFeats.map(f=>unitVal(f.properties.iso));const pmax=Math.max(1,...pvals);
+  const provRanked=provFeats.map(f=>({iso:f.properties.iso,v:unitVal(f.properties.iso)})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
+  const provRankInfo=iso=>{const idx=provRanked.findIndex(x=>x.iso===iso);return idx>=0?{rank:idx+1,total:provRanked.length}:null;};
+  const sparkHtml=pairs=>{const last=pairs.slice(-6);const max=Math.max(1,...last.map(p=>p[1]));
+    return `<div style="display:flex;align-items:flex-end;gap:2px;height:26px;margin-top:5px">${last.map(([y,v])=>`<div title="${y} : ${indFmt(v)}" style="flex:1;background:var(--sky);opacity:${v>0?1:.25};border-radius:2px 2px 0 0;height:${Math.max(2,Math.round(v/max*24))}px"></div>`).join('')}</div>`;};
   geoProvLayerGroup=L.geoJSON({type:'FeatureCollection',features:provFeats},{
-    style:f=>{const v=unitVal(f.properties.iso);
+    style:f=>{const iso=f.properties.iso,v=unitVal(iso);const dim=geoOnlyData&&v<=0;
       const fillColor=provFill?(v>0?colScale(v,pmax):css('--panel-2')):css('--panel');
-      return {fillColor,fillOpacity:provFill?.85:.35,color:provFill?'#fff':css('--line'),weight:provFill?1:0.6};},
-    onEachFeature:(f,layer)=>{const iso=f.properties.iso;geoProvLayers[iso]=layer;
-      if(showProv){const v=unitVal(iso);
-        layer.bindTooltip(`<b>${esc(provName(iso))}</b><br>${v>0?indFmt(v):'—'} <span style="opacity:.7">${mapEvo?'· cumul':'· '+curYear()}</span>`,{sticky:true});
+      return {fillColor,fillOpacity:dim?0.06:(provFill?.85:.35),color:dim?css('--panel-2'):(provFill?'#fff':css('--line')),weight:provFill?1:0.6};},
+    onEachFeature:(f,layer)=>{const iso=f.properties.iso;geoProvLayers[iso]=layer;const v0=unitVal(iso);
+      if(showProv&&!(geoOnlyData&&v0<=0)){const v=v0;
+        const tipHtml=`<b>${esc(provName(iso))}</b><br>${v>0?indFmt(v):'—'} <span style="opacity:.7">${mapEvo?'· cumul':'· '+curYear()}</span>`;
+        const rk=provRankInfo(iso);const pairs=d.years.map(y=>[y,(d.prov[y]&&d.prov[y][iso])||0]);
+        const popHtml=`<div style="min-width:175px"><b>${esc(provName(iso))}</b><br>
+          <span style="font-size:16px;font-weight:700;color:var(--sky)">${v>0?indFmt(v):'—'}</span> <span style="opacity:.7;font-size:11px">${mapEvo?'· cumul':'· '+curYear()}</span>
+          ${rk?`<div style="font-size:11px;color:var(--ink-soft);margin-top:2px">Rang : <b>${rk.rank}ᵉ</b> / ${rk.total} provinces</div>`:''}
+          ${pairs.some(p=>p[1]>0)?sparkHtml(pairs):''}
+          <div style="margin-top:6px;font-size:10.5px;color:var(--ink-faint)">Cliquer pour le détail complet →</div></div>`;
+        layer.bindTooltip(tipHtml,{sticky:true});
+        layer.bindPopup(popHtml);
+        layer.on('mouseover',()=>{if(mapSel!==iso)layer.setStyle({weight:2});});
+        layer.on('mouseout',()=>{if(mapSel!==iso)highlightProv();});
         layer.on('click',()=>{mapSel=iso;drawPanel();highlightProv();});
       } else {layer.options.interactive=false;}
     }
@@ -2091,7 +2129,17 @@ function drawMap(){
         return {fillColor:v>0?'#e08a1e':'transparent',fillOpacity:v>0?.2:0,color:v>0?css('--amber'):'rgba(10,37,64,0.22)',weight:v>0?1.6:0.4};},
       onEachFeature:(f,layer)=>{const nm=f.properties.nom,piso=f.properties.prov_iso,tk=piso+'|'+nm;
         const v=mapEvo?terrSum(tk):terrVal(tk);
-        if(v>0){layer.bindTooltip(`<b>Territoire ${esc(nm)}</b> <span style="opacity:.6">(${esc(provName(piso))})</span><br>${indFmt(v)} <span style="opacity:.7">${mapEvo?'· cumul':'· '+curYear()}</span>`,{sticky:true});
+        if(v>0){const tipHtml=`<b>Territoire ${esc(nm)}</b> <span style="opacity:.6">(${esc(provName(piso))})</span><br>${indFmt(v)} <span style="opacity:.7">${mapEvo?'· cumul':'· '+curYear()}</span>`;
+          const siblings=tf.filter(x=>x.properties.prov_iso===piso).map(x=>{const xk=piso+'|'+x.properties.nom;return mapEvo?terrSum(xk):terrVal(xk);}).filter(x=>x>0).sort((a,b)=>b-a);
+          const rank=siblings.indexOf(v)+1;
+          const popHtml=`<div style="min-width:170px"><b>Territoire ${esc(nm)}</b><br><span style="opacity:.6;font-size:11px">${esc(provName(piso))}</span><br>
+            <span style="font-size:16px;font-weight:700;color:var(--amber)">${indFmt(v)}</span> <span style="opacity:.7;font-size:11px">${mapEvo?'· cumul':'· '+curYear()}</span>
+            ${rank>0?`<div style="font-size:11px;color:var(--ink-soft);margin-top:2px">Rang dans ${esc(provName(piso))} : <b>${rank}ᵉ</b> / ${siblings.length}</div>`:''}
+            <div style="margin-top:6px;font-size:10.5px;color:var(--ink-faint)">Cliquer pour le détail complet →</div></div>`;
+          layer.bindTooltip(tipHtml,{sticky:true});
+          layer.bindPopup(popHtml);
+          layer.on('mouseover',()=>layer.setStyle({weight:2.4}));
+          layer.on('mouseout',()=>layer.setStyle({weight:terrFill?0.6:1.6}));
           layer.on('click',e=>{L.DomEvent.stopPropagation(e);mapSel='T:'+tk;drawPanel();});
         } else {layer.options.interactive=false;}}
     }).addTo(geoMapObj);
@@ -2103,7 +2151,16 @@ function drawMap(){
       const max=Math.max(1,...pts.map(p=>p.v));
       geoEtdLayerGroup=L.layerGroup(pts.map(p=>{const r=4.5+Math.sqrt(p.v/max)*20;
         const m=L.circleMarker([p.lat,p.lng],{radius:r,color:'#fff',weight:1.4,fillColor:col,fillOpacity:.7});
-        m.bindTooltip(`<b>${kindLbl} — ${esc(p.nom)}</b><br>${indFmt(p.v)} <span style="opacity:.7">${mapEvo?'· cumul':'· '+curYear()}</span>`,{sticky:true});
+        const tipHtml=`<b>${kindLbl} — ${esc(p.nom)}</b><br>${indFmt(p.v)} <span style="opacity:.7">${mapEvo?'· cumul':'· '+curYear()}</span>`;
+        const topItems=(p.items||[]).slice().sort((a,b)=>b.v-a.v).slice(0,3);
+        const popHtml=`<div style="min-width:180px"><b>${kindLbl} — ${esc(p.nom)}</b><br><span style="opacity:.6;font-size:11px">${esc(provName(p.prov_iso))}</span><br>
+          <span style="font-size:16px;font-weight:700;color:${isDot?css('--amber'):css('--brand')}">${indFmt(p.v)}</span> <span style="opacity:.7;font-size:11px">${mapEvo?'· cumul':'· '+curYear()}</span>
+          ${topItems.length?`<div style="margin-top:6px;font-size:11px">${topItems.map(it=>`<div style="display:flex;justify-content:space-between;gap:8px;padding:2px 0"><span>${esc(it.e||'—')}</span><b>${indFmt(it.v)}</b></div>`).join('')}${(p.items||[]).length>3?`<div style="font-size:10px;color:var(--ink-faint)">+ ${(p.items||[]).length-3} autre(s) versement(s)</div>`:''}</div>`:''}
+          <div style="margin-top:6px;font-size:10.5px;color:var(--ink-faint)">Cliquer pour le détail complet →</div></div>`;
+        m.bindTooltip(tipHtml,{sticky:true});
+        m.bindPopup(popHtml);
+        m.on('mouseover',()=>m.setStyle({fillOpacity:.95}));
+        m.on('mouseout',()=>m.setStyle({fillOpacity:.7}));
         m.on('click',e=>{L.DomEvent.stopPropagation(e);mapSelPt=p;mapSel='PT';drawPanel();});
         return m;})).addTo(geoMapObj);
     }
@@ -2121,6 +2178,24 @@ function drawMap(){
 
   if(!geoMapObj._fitOnce){geoMapObj._fitOnce=true;geoMapObj.fitBounds(geoBaseBounds,{padding:[12,12]});}
   const rst=$('#mapReset');if(rst)rst.onclick=()=>geoMapObj.fitBounds(geoBaseBounds,{padding:[12,12]});
+  $$('[data-gview]').forEach(btn=>{btn.onclick=()=>{
+    const r=GEO_REGIONS.find(x=>x.key===btn.dataset.gview);if(!r)return;
+    $$('[data-gview]').forEach(b=>b.classList.toggle('on',b===btn));
+    if(!r.isos){geoMapObj.fitBounds(geoBaseBounds,{padding:[12,12]});return;}
+    const layers=r.isos.map(iso=>geoProvLayers[iso]).filter(Boolean);
+    if(!layers.length)return;
+    let b=layers[0].getBounds();layers.slice(1).forEach(l=>{b=b.extend(l.getBounds());});
+    geoMapObj.fitBounds(b,{padding:[20,20]});
+  };});
+  const pj=$('#mProvJump');if(pj)pj.onchange=e=>{const iso=e.target.value;if(!iso)return;
+    const layer=geoProvLayers[iso];if(!layer)return;
+    geoMapObj.fitBounds(layer.getBounds(),{padding:[40,40],maxZoom:8});
+    mapSel=iso;drawPanel();highlightProv();
+    setTimeout(()=>{try{layer.openPopup();}catch(err){}},350);
+    e.target.value='';};
+  const od=$('#mOnlyData');if(od)od.onchange=e=>{geoOnlyData=e.target.checked;drawGeo();};
+  const mc=$('#mapCount');if(mc){const withData=provRanked.length;const totVal=provRanked.reduce((a,x)=>a+x.v,0);
+    mc.textContent=lvlOn('province')||lvlOn('national')?`${withData} province(s) avec données · total ${indFmt(totVal)}`:'';}
   const zi=$('#mapZoomIn');if(zi)zi.onclick=()=>geoMapObj.zoomIn();
   const zo=$('#mapZoomOut');if(zo)zo.onclick=()=>geoMapObj.zoomOut();
   const invalidate=()=>{if(geoMapObj)setTimeout(()=>geoMapObj.invalidateSize(),60);};
