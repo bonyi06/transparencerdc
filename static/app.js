@@ -1991,13 +1991,14 @@ function mGeo(){
   // groupes de couches (tous visibles, cliquables)
   const SHORT={recettes:'Recettes extractives',production:'Production',exportation:'Exportations',emploi:'Emplois',
     infra:'Total (DRP+ETD+DOT)',paiements_drp:'Régies provinciales (DRP)',recettes_etd:'ETD (secteurs/chefferies/communes)',dotations_dot:'Dotations OS DOT (0,3%)',
-    cahiers_nombre:'Cahiers de charge (nb, statut CPI)',cahiers_montant:'Cahiers de charge (dépenses sociales, $)',
-    cahiers_hklu_budget:'Cahiers de charge — budget engagé (Haut-Katanga & Lualaba, 2020-2024)',
-    cahiers_hklu_nombre:'Cahiers de charge — nombre de cahiers (Haut-Katanga & Lualaba, 2020-2024)',
+    cahiers_nombre:'Nombre de cahiers (statut CPI)',cahiers_montant:'Montant (dépenses sociales, $)',
+    cahiers_hklu_budget:'Budget engagé',
+    cahiers_hklu_nombre:'Nombre de cahiers',
     dep_sociale:'Dépenses sociales',dep_env:'Dépenses environ.',permis_cami:'Permis cadastre'};
   const GROUPS=[['Recettes & activité',['recettes','production','exportation','emploi']],
     ['Paiements infranationaux — 4.6 (paiements directs aux entités locales)',['infra','paiements_drp','recettes_etd','dotations_dot']],
-    ['Cahiers de charge',['cahiers_nombre','cahiers_montant','cahiers_hklu_budget','cahiers_hklu_nombre']],
+    ['Cahiers de charge — annexes officielles ITIE (national, tous secteurs)',['cahiers_nombre','cahiers_montant']],
+    ['Cahiers de charge — corpus Haut-Katanga & Lualaba (54 cahiers dépouillés, 2020-2024, hors annexes ITIE)',['cahiers_hklu_budget','cahiers_hklu_nombre']],
     ['Social & environnement',['dep_sociale','dep_env']],
     ['Cadastre minier',['permis_cami']]];
   const isCahiersHklu=isCahiersLayer();
