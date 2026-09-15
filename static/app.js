@@ -1445,6 +1445,7 @@ function mAbout(){const A=C.about,B=C.brand,F=C.footer,CT=C.contact;return `<div
     </div>
   </div>`;}
 const CHANGELOG=[
+  {date:'2026-09-15',txt:"Refonte complète des couches « Cahiers de charge » de la carte « Géographie de l'extraction », à la demande de l'utilisateur, sur la base d'un nouveau corpus documentaire (dossier « Cahiers des charges Haut-Katanga », 41 documents dépouillés document par document, et résumé administratif KATANGA-LUALABA de juin 2022) : les anciennes couches, limitées aux 14 entreprises du seul résumé de mai 2022 (Haut-Katanga), sont remplacées par deux couches couvrant 54 cahiers des charges (41 Haut-Katanga + 13 Lualaba, 176,2 M USD au total), avec cette fois des points géolocalisés par entreprise (au centroïde de son territoire déclaré, faute de coordonnées précises des sites) et des fiches enrichies (budget, nombre de projets, chronogramme, communautés bénéficiaires, témoin/garant, titres miniers, top 3 des secteurs budgétisés, observations méthodologiques). Les 13 entreprises du Lualaba, dont le territoire n'est pas précisé dans la source administrative disponible, sont comptabilisées dans le total provincial mais listées explicitement sous la carte plutôt que positionnées arbitrairement — même principe de transparence (« ne rien cacher ») que le bloc CC7 de la page Hydrocarbures. Les deux tableaux bruts sous-jacents (synthèse par entreprise, détail des 672 projets) sont publiés intégralement dans l'Explorateur de données, avec liens directs depuis la carte. Par ailleurs, la mention « Leaflet » et le lien vers OpenStreetMap ont été retirés de toutes les cartes du site (Titres miniers, Hydrocarbures, Géographie) ; le fond de carte reste OpenStreetMap."},
   {date:'2026-09-14',txt:"Carte « Géographie de l'extraction », second volet de rapprochement avec Titres miniers/Hydrocarbures (retour utilisateur : l'interactivité restait en retrait) : (1) les bulles ouvertes au clic sur une province, un territoire ou un point ETD/dotation affichent désormais l'essentiel directement sur la carte — valeur, rang parmi les provinces/territoires comparables, mini-historique en barres pour une province, et détail des 3 principaux versements pour un point — sans avoir à regarder le panneau de droite ; (2) un sélecteur « Aller à une province » permet de sauter directement dessus (recentrage + ouverture de sa fiche), utile pour un repérage rapide sans chercher sur la carte ; (3) un nouveau filtre « Provinces avec données uniquement » estompe les provinces sans donnée pour ne garder en évidence que celles couvertes par la couche choisie ; (4) un compteur (nombre de provinces avec données et total) apparaît désormais dans la barre de filtres, comme sur les pages Titres miniers/Hydrocarbures. Aucune donnée ni aucun chiffre affiché n'a changé."},
   {date:'2026-09-14',txt:"Carte « Géographie de l'extraction » : suite à un retour utilisateur (la comparant, en interactivité, aux nouvelles pages Titres miniers/Hydrocarbures), plusieurs améliorations pour la rapprocher visuellement et fonctionnellement de ces deux pages : (1) boutons de vue rapide par macro-région (Grand Katanga, Grand Kasaï, Kivu & Ituri, Kongo Central & Kinshasa, Équateur & Nord, en plus de la vue Nationale), pour recentrer/zoomer la carte en un clic sans chercher une province au zoom national ; (2) un survol des provinces et territoires les met désormais visuellement en évidence (épaisseur de contour augmentée) avant même le clic ; (3) un clic sur une province, un territoire ou un point ETD/dotation ouvre en plus une bulle d'information compacte directement sur la carte (comme sur les cartes Titres miniers/Hydrocarbures), en complément du panneau de détail déjà existant ; (4) la carte passe de 560 à 600 px de hauteur, comme les deux autres pages. Aucune donnée ni aucun chiffre affiché n'a changé."},
   {date:'2026-09-14',txt:"La carte « Géographie de l'extraction » (choroplèthe provinces/territoires/ETD, tous indicateurs) passe du rendu SVG « maison » à Leaflet avec fond OpenStreetMap réel, comme les pages « Titres miniers » et « Hydrocarbures » : zoom/pan natifs à la molette et au glisser, contrôles +/−/réinitialiser/plein écran adaptés au nouveau moteur, info-bulles au survol des provinces/territoires/points ETD, sélection au clic avec mise en évidence (contour rouge), étiquettes de province superposées à la carte. Toute la logique existante est conservée à l'identique : choix de la couche (recettes, production, cahiers de charge, dépenses sociales, cadastre minier…), de l'année, du mode Année/Évolution (cumul), des niveaux cumulables national/province/territoire/ETD, le panneau de détail (évolution pluriannuelle, ventilation territoires/ETD, entreprises), la liste des bénéficiaires ETD géolocalisés et le tableau détaillé des paiements infranationaux par entité perceptrice en dessous — rien n'a changé dans les données ni les chiffres affichés, seul le moteur de rendu de la carte a été remplacé."},
@@ -1699,8 +1700,8 @@ function drawMining(){
   }
   if(miningErr){host.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-soft);font-size:13px">Impossible de charger cette couche pour le moment. Rechargez la page pour réessayer.</div>';return;}
   host.innerHTML='';
-  miningMapObj=L.map('mnMap',{preferCanvas:true}).setView([-4.2,23.6],5);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap'}).addTo(miningMapObj);
+  miningMapObj=L.map('mnMap',{preferCanvas:true,attributionControl:false}).setView([-4.2,23.6],5);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:''}).addTo(miningMapObj);
   miningFillFilterOptions();
   miningRenderLayer();
   const bind=(id,key)=>{const el=$(id);if(el)el.onchange=e=>{miningF[key]=e.target.value;miningRenderLayer();};};
@@ -1923,8 +1924,8 @@ function drawHydro(){
   if(hydroMapObj){try{hydroMapObj.remove();}catch(e){}hydroMapObj=null;hydroLayerGroups={};}
   const d=hydroData();
   if(!d){host.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-soft);font-size:13px">Couche non disponible.</div>';return;}
-  hydroMapObj=L.map('hyMap',{preferCanvas:true}).setView(HYDRO_BASSIN_VIEWS.national.c,HYDRO_BASSIN_VIEWS.national.z);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap'}).addTo(hydroMapObj);
+  hydroMapObj=L.map('hyMap',{preferCanvas:true,attributionControl:false}).setView(HYDRO_BASSIN_VIEWS.national.c,HYDRO_BASSIN_VIEWS.national.z);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:''}).addTo(hydroMapObj);
   hydroRenderLayers();
   const bind=(id,key)=>{const el=$(id);if(el)el.onchange=e=>{hydroF[key]=e.target.value;hydroRenderLayers();};};
   bind('#hyBassin','bassin');bind('#hyStatut','statut');bind('#hyMatiere','matiere');
@@ -1964,6 +1965,7 @@ function fsStyle(){const viz=$('#mapViz'),host=$('#mapHost'),btn=$('#mapFull');i
 function lvlOn(x){return mapLevels.has(x);}
 function toggleLvl(x){if(mapLevels.has(x))mapLevels.delete(x);else mapLevels.add(x);if(!mapLevels.size)mapLevels.add('province');}
 function LY(){return (GEO&&GEO.layers&&GEO.layers[mapInd])||null;}
+function isCahiersLayer(){return mapInd==='cahiers_hklu_budget'||mapInd==='cahiers_hklu_nombre';}
 function indYears(){const d=LY();return d?d.years:[];}
 function curYear(){if(mapYear)return mapYear;const ys=indYears();return ys.length?ys[ys.length-1]:null;}
 function provVal(iso,year){const d=LY();if(!d)return 0;const y=year||curYear();return (d.prov[y]&&d.prov[y][iso])||0;}
@@ -1990,20 +1992,21 @@ function mGeo(){
   const SHORT={recettes:'Recettes extractives',production:'Production',exportation:'Exportations',emploi:'Emplois',
     infra:'Total (DRP+ETD+DOT)',paiements_drp:'Régies provinciales (DRP)',recettes_etd:'ETD (secteurs/chefferies/communes)',dotations_dot:'Dotations OS DOT (0,3%)',
     cahiers_nombre:'Cahiers de charge (nb, statut CPI)',cahiers_montant:'Cahiers de charge (dépenses sociales, $)',
-    cahiers_2021_entreprises:'Cahiers de charge — entreprises engagées 2021 (résumé mai 2022)',
-    cahiers_2021_budget:'Cahiers de charge — budget engagé 2021 (résumé mai 2022)',
+    cahiers_hklu_budget:'Cahiers de charge — budget engagé (Haut-Katanga & Lualaba, 2020-2024)',
+    cahiers_hklu_nombre:'Cahiers de charge — nombre de cahiers (Haut-Katanga & Lualaba, 2020-2024)',
     dep_sociale:'Dépenses sociales',dep_env:'Dépenses environ.',permis_cami:'Permis cadastre'};
   const GROUPS=[['Recettes & activité',['recettes','production','exportation','emploi']],
     ['Paiements infranationaux — 4.6 (paiements directs aux entités locales)',['infra','paiements_drp','recettes_etd','dotations_dot']],
-    ['Cahiers de charge',['cahiers_nombre','cahiers_montant','cahiers_2021_entreprises','cahiers_2021_budget']],
+    ['Cahiers de charge',['cahiers_nombre','cahiers_montant','cahiers_hklu_budget','cahiers_hklu_nombre']],
     ['Social & environnement',['dep_sociale','dep_env']],
     ['Cadastre minier',['permis_cami']]];
+  const isCahiersHklu=isCahiersLayer();
   const chipHtml=GROUPS.map(([g,keys])=>{const av=keys.filter(k=>GEO.layers[k]);if(!av.length)return '';
     return `<div class="lgroup"><div class="lgttl">${g}</div><div class="lgchips">${av.map(k=>`<button class="lchip ${mapInd===k?'on':''}" data-ind="${k}">${esc(SHORT[k]||GEO.layers[k].label)}</button>`).join('')}</div></div>`;}).join('');
   return `<div class="phead"><div class="eyebrow">Territoire</div><h1>Géographie de l'extraction</h1><p data-edit="intros.geo">${esc(C.intros.geo)}</p><p>Choisissez une <b>couche</b>, une <b>année</b>, une <b>vue</b> et un <b>niveau</b> (national / province / territoire / ETD) — chaque bénéficiaire ETD/DOT apparaît en point géolocalisé. Utilisez « Aller à une province » pour un repérage rapide, ou le filtre « Provinces avec données uniquement » pour alléger la vue.</p>
     <details class="srcdetails" style="margin-top:-4px"><summary style="font-size:12.5px;font-weight:600">ⓘ Précisions méthodologiques (paiements vs transferts infranationaux, couches « Cahiers de charge »)</summary>
       <p style="font-size:12.5px;color:var(--ink-soft);margin-top:6px"><b>Paiements infranationaux (Exigence 4.6)</b> : paiements <b>directs</b> des entreprises aux entités locales — régies provinciales (DRP), ETD (secteurs, chefferies, communes) et dotations OS DOT (0,3 %). Distincts des <b>Transferts infranationaux (Exigence 5.2)</b> : recettes perçues au niveau central puis rétrocédées aux provinces/ETD — et des dépenses sociales/environnementales (section 6.1).</p>
-      <p style="font-size:12.5px;color:var(--ink-soft);margin-top:6px"><b>Couches « Cahiers de charge — 2021 (résumé mai 2022) »</b> : proviennent d'un document distinct et ne couvrent que les 14 entreprises de la feuille source « HAUT-KATANGA 2021-2025 », pas l'ensemble du pays — à ne pas confondre avec les couches « Cahiers de charge (nb, statut CPI) » et « (dépenses sociales, $) », qui viennent des annexes officielles des Rapports ITIE (2022-2023) et comptent les <i>cahiers</i> par statut d'approbation (base différente). Détail entreprise par entreprise et projet par projet dans « Dépenses sociales et environnementales ».</p>
+      <p style="font-size:12.5px;color:var(--ink-soft);margin-top:6px"><b>Couches « Cahiers de charge — Haut-Katanga &amp; Lualaba, 2020-2024 »</b> : 54 cahiers des charges de responsabilité sociétale (Code minier révisé de 2018), dont 41 au Haut-Katanga dépouillés document par document (dossier « Cahiers des charges Haut-Katanga », 118,0 M USD, 474 projets, recoupés avec les récapitulatifs administratifs de mai/juin 2022) et 13 au Lualaba inventoriés à partir du résumé administratif de juin 2022 (58,2 M USD sur 12 chiffrés, SICOMINES non chiffrée, granularité moindre : budget par entreprise uniquement). Les entreprises du Haut-Katanga sont géolocalisées au centroïde de leur territoire déclaré (position approximative, faute de coordonnées précises des sites communautaires) ; celles du Lualaba, dont le territoire n'est pas précisé dans la source, sont recensées dans le total provincial et listées sous la carte plutôt que positionnées arbitrairement. À ne pas confondre avec les couches « Cahiers de charge (nb, statut CPI) » et « (dépenses sociales, $) », qui viennent des annexes officielles des Rapports ITIE (2022-2023) et comptent les <i>cahiers</i> par statut d'approbation à l'échelle nationale (base différente). Tableaux bruts : <a href="#" onclick="goExplorerTable('geo_cahiers_hklu_entreprises');return false">synthèse par entreprise</a> · <a href="#" onclick="goExplorerTable('geo_cahiers_hklu_projets');return false">détail des projets</a>.</p>
     </details></div>
     ${hasGeo?`<div class="card" style="margin-bottom:18px">
       <div class="ch" style="flex-wrap:wrap;gap:10px"><h3 id="mapTitle">Carte</h3></div>
@@ -2038,6 +2041,14 @@ function mGeo(){
         <div id="mapPanel"></div>
       </div>
     </div>`:''}
+    ${isCahiersHklu&&d&&d.lualaba_list&&d.lualaba_list.length?`<div class="card" style="margin-bottom:18px">
+      <div class="ch"><h3 style="margin:0">Entreprises du Lualaba — non représentées sur la carte</h3><span class="badge">${d.lualaba_list.length} entreprise(s)</span></div>
+      <p style="font-size:12.5px;color:var(--ink-soft);margin:6px 0 12px">La source administrative disponible pour le Lualaba (résumé de juin 2022) donne un budget par entreprise mais ne précise pas le territoire ni le site des projets — ces 13 cahiers sont donc comptabilisés dans le total de la province du Lualaba (choroplèthe et badge national ci-dessus) mais ne sont pas positionnés sur la carte, plutôt que placés à un endroit arbitraire.</p>
+      <div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:12.5px">
+        <thead><tr style="text-align:left;color:var(--ink-soft);font-size:11px;text-transform:uppercase;letter-spacing:.03em"><th style="padding:4px 8px 4px 0">Entreprise</th><th style="padding:4px 8px">Année</th><th style="padding:4px 8px">Budget total</th><th style="padding:4px 8px">Nb projets</th><th style="padding:4px 8px">Chronogramme</th></tr></thead>
+        <tbody>${d.lualaba_list.slice().sort((a,b)=>(b.budget||0)-(a.budget||0)).map(l=>`<tr style="border-top:1px dashed var(--line)"><td style="padding:5px 8px 5px 0"><b>${esc(l.entreprise)}</b></td><td style="padding:5px 8px">${l.annee?esc(String(l.annee)):'—'}</td><td style="padding:5px 8px">${l.budget!=null?fmtUSD(l.budget):'<span style=\"color:var(--ink-faint)\">non chiffré</span>'}</td><td style="padding:5px 8px">${l.nb_projets!=null?fmtN(l.nb_projets):'—'}</td><td style="padding:5px 8px">${esc(l.duree||'—')}</td></tr>`).join('')}</tbody>
+      </table></div>
+    </div>`:''}
     <div class="card" style="margin-bottom:18px"><div class="ch"><h3>Recettes nationales par régie perceptrice</h3><span class="badge" id="geoNatRegieBadge"></span></div>
       <div class="sub">DGI, DGRAD, DGDA, Trésor public, SGH, CAMI, FOMIN, FONAREV, OCC, CEEC, BCC… — Montant normalisé (USD), lignes de sous-total exclues. Suit le sélecteur Année/Évolution ci-dessus (indépendant de la couche cartographique choisie).</div>
       <div class="chart" id="geoNatRegie" aria-label="Recettes nationales par régie perceptrice"></div></div>
@@ -2050,7 +2061,7 @@ function mGeo(){
       <div id="geoInfra" style="overflow:auto"></div></div>`;}
 function colScale(v,max){const c0=[233,242,250],c1=[0,101,175];const t=max?v/max:0;return `rgb(${c0.map((a,i)=>Math.round(a+(c1[i]-a)*(0.15+0.85*t)).toString()).join(',')})`;}
 function curPoints(){const d=LY();if(!d||!d.points)return null;const y=mapEvo?null:curYear();
-  if(mapEvo){const agg={};d.years.forEach(yy=>{(d.points[yy]||[]).forEach(p=>{const k=p.lng+','+p.lat;if(!agg[k])agg[k]={nom:p.nom,lng:p.lng,lat:p.lat,prov_iso:p.prov_iso,v:0};agg[k].v+=p.v;});});return Object.values(agg);}
+  if(mapEvo){const agg={};d.years.forEach(yy=>{(d.points[yy]||[]).forEach(p=>{const k=p.lng+','+p.lat;if(!agg[k])agg[k]={...p,v:0};agg[k].v+=p.v;});});return Object.values(agg);}
   return d.points[y]||[];}
 // remet en évidence la province sélectionnée (contour rouge) sur la carte
 // Leaflet — appelé après tout changement de sélection (clic sur la carte,
@@ -2080,8 +2091,8 @@ function drawMap(){
   // / drawMining() le font déjà pour leurs propres pages).
   if(geoMapObj&&!document.body.contains(geoMapObj.getContainer())){try{geoMapObj.remove();}catch(e){}geoMapObj=null;geoBaseBounds=null;}
   if(!geoMapObj){
-    geoMapObj=L.map('mapHost',{preferCanvas:true}).setView([-2.9,23.6],5);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap'}).addTo(geoMapObj);
+    geoMapObj=L.map('mapHost',{preferCanvas:true,attributionControl:false}).setView([-2.9,23.6],5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:''}).addTo(geoMapObj);
   }
   [geoProvLayerGroup,geoTerrLayerGroup,geoEtdLayerGroup].forEach(lg=>{if(lg)geoMapObj.removeLayer(lg);});
   geoProvLayers={};
@@ -2145,15 +2156,20 @@ function drawMap(){
     }).addTo(geoMapObj);
   }
   // --- Couche ETD (points géolocalisés) ---
-  if(showEtd){const pts=curPoints();
-    if(pts&&pts.length){const isDot=mapInd==='dotations_dot';const col=isDot?css('--amber'):css('--brand');
-      const kindLbl=isDot?'◆ Dotation OS':(mapInd==='infra'?'◆ Bénéficiaire infra':'◆ ETD');
+  if(showEtd){const pts=curPoints();const isCahiersHklu=isCahiersLayer();
+    if(pts&&pts.length){const isDot=mapInd==='dotations_dot';const col=isCahiersHklu?css('--teal'):(isDot?css('--amber'):css('--brand'));
+      const kindLbl=isCahiersHklu?'◆ Cahier des charges':(isDot?'◆ Dotation OS':(mapInd==='infra'?'◆ Bénéficiaire infra':'◆ ETD'));
       const max=Math.max(1,...pts.map(p=>p.v));
       geoEtdLayerGroup=L.layerGroup(pts.map(p=>{const r=4.5+Math.sqrt(p.v/max)*20;
         const m=L.circleMarker([p.lat,p.lng],{radius:r,color:'#fff',weight:1.4,fillColor:col,fillOpacity:.7});
         const tipHtml=`<b>${kindLbl} — ${esc(p.nom)}</b><br>${indFmt(p.v)} <span style="opacity:.7">${mapEvo?'· cumul':'· '+curYear()}</span>`;
         const topItems=(p.items||[]).slice().sort((a,b)=>b.v-a.v).slice(0,3);
-        const popHtml=`<div style="min-width:180px"><b>${kindLbl} — ${esc(p.nom)}</b><br><span style="opacity:.6;font-size:11px">${esc(provName(p.prov_iso))}</span><br>
+        const popHtml=isCahiersHklu?`<div style="min-width:210px;max-width:270px"><b>${esc(p.nom)}</b><br><span style="opacity:.6;font-size:11px">${esc(p.terr||'')} · ${esc(provName(p.prov_iso))}${p.annee?' · signé '+esc(String(p.annee)):''}</span><br>
+          <span style="font-size:16px;font-weight:700;color:${css('--teal')}">${mapInd==='cahiers_hklu_nombre'?'1 cahier':indFmt(p.v)}</span>
+          ${p.nb_projets!=null?`<div style="font-size:11px;color:var(--ink-soft);margin-top:2px">${fmtN(p.nb_projets)} projet(s)${p.duree?' · '+esc(p.duree):''}</div>`:''}
+          ${topItems.length?`<div style="margin-top:6px;font-size:11px"><b style="color:var(--ink-soft)">Top secteurs (budgétisés)</b>${topItems.map(it=>`<div style="display:flex;justify-content:space-between;gap:8px;padding:2px 0"><span>${esc(it.e||'—')}</span><b>${fmtUSD(it.v)}</b></div>`).join('')}</div>`:''}
+          <div style="margin-top:6px;font-size:10px;color:var(--ink-faint)">${esc(p.position_note||'')}</div>
+          <div style="margin-top:4px;font-size:10.5px;color:var(--ink-faint)">Cliquer pour le détail complet →</div></div>`:`<div style="min-width:180px"><b>${kindLbl} — ${esc(p.nom)}</b><br><span style="opacity:.6;font-size:11px">${esc(provName(p.prov_iso))}</span><br>
           <span style="font-size:16px;font-weight:700;color:${isDot?css('--amber'):css('--brand')}">${indFmt(p.v)}</span> <span style="opacity:.7;font-size:11px">${mapEvo?'· cumul':'· '+curYear()}</span>
           ${topItems.length?`<div style="margin-top:6px;font-size:11px">${topItems.map(it=>`<div style="display:flex;justify-content:space-between;gap:8px;padding:2px 0"><span>${esc(it.e||'—')}</span><b>${indFmt(it.v)}</b></div>`).join('')}${(p.items||[]).length>3?`<div style="font-size:10px;color:var(--ink-faint)">+ ${(p.items||[]).length-3} autre(s) versement(s)</div>`:''}</div>`:''}
           <div style="margin-top:6px;font-size:10.5px;color:var(--ink-faint)">Cliquer pour le détail complet →</div></div>`;
@@ -2204,10 +2220,10 @@ function drawMap(){
     document.addEventListener('keydown',e=>{if(e.key==='Escape'&&mapFs){mapFs=false;fsStyle();invalidate();}});
     document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&mapFs){mapFs=false;fsStyle();invalidate();}});}
   if(mapFs){fsStyle();invalidate();}
-  const lg=$('#mapLegend');if(lg){const pts=curPoints();
-    if(pts&&pts.length){const isDot=mapInd==='dotations_dot';const col=isDot?css('--amber'):css('--brand');
-      const lbl=isDot?'Dotation OS DOT':(mapInd==='infra'?'Bénéficiaire infranational (ETD/dotation)':'Recette ETD');
-      lg.innerHTML=`<span style="display:inline-flex;align-items:center;gap:5px"><span style="width:12px;height:12px;border-radius:50%;background:${col};opacity:.75;border:1px solid #fff;display:inline-block"></span> ${lbl} (aire ∝ montant) — point = localisation officielle CGRDC/OCHA</span>`;}
+  const lg=$('#mapLegend');if(lg){const pts=curPoints();const isCH=isCahiersLayer();
+    if(pts&&pts.length){const isDot=mapInd==='dotations_dot';const col=isCH?css('--teal'):(isDot?css('--amber'):css('--brand'));
+      const lbl=isCH?'Cahier des charges (entreprise)':(isDot?'Dotation OS DOT':(mapInd==='infra'?'Bénéficiaire infranational (ETD/dotation)':'Recette ETD'));
+      lg.innerHTML=`<span style="display:inline-flex;align-items:center;gap:5px"><span style="width:12px;height:12px;border-radius:50%;background:${col};opacity:.75;border:1px solid #fff;display:inline-block"></span> ${lbl} (aire ∝ montant) — ${isCH?'point = centroïde du territoire déclaré (position approximative)':'point = localisation officielle CGRDC/OCHA'}</span>`;}
     else lg.innerHTML=`Faible <span style="display:inline-block;width:90px;height:10px;border-radius:3px;vertical-align:middle;background:linear-gradient(90deg,rgb(233,242,250),rgb(0,101,175))"></span> Élevé · <span style="display:inline-block;width:11px;height:11px;background:var(--panel-2);border:1px solid var(--line);vertical-align:middle;border-radius:2px"></span> pas de donnée`;}
   if(lg&&mapInd==='recettes'&&LY()&&(LY().est_years||[]).includes(String(curYear()))&&!mapEvo){lg.innerHTML+=' · <span style="color:var(--amber);font-weight:600" title="Le total national est le chiffre officiel reconcilie ; la ventilation par province est estimee a partir de la geographie miniere de l-annee reconciliee la plus proche.">ventilation provinciale estimee</span>';}
   const mt=$('#mapTitle');if(mt){const d=LY();mt.textContent=(d?d.label:'Carte')+(mapEvo?' — évolution '+indYears()[0]+'–'+indYears().slice(-1)[0]:' — '+(curYear()||''));}
@@ -2221,6 +2237,28 @@ function evoBars(host,pairs){ // pairs: [[year,val],...]
 function drawPanel(){
   const panel=$('#mapPanel');if(!panel||!GEO)return;const d=LY();if(!d){panel.innerHTML='';return;}
   // ===== détail d'un point ETD/dotation cliqué : entreprises, ETD (nom source), flux, année =====
+  if(mapSel==='PT'&&mapSelPt&&isCahiersLayer()){const p=mapSelPt;const items=p.items||[];
+    const row=(k,v)=>(v!==null&&v!==undefined&&v!=='')?`<div style="margin-bottom:5px;font-size:12px"><b style="color:var(--ink-soft)">${esc(k)}</b><br>${esc(v)}</div>`:'';
+    panel.innerHTML=`<div style="background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center"><h4 style="margin:0;font-size:15px;color:var(--navy)">◆ ${esc(p.nom)}</h4><span class="mono" style="font-size:11px;color:var(--ink-faint)">${esc(p.terr||'')}</span></div>
+      <div style="font-size:11.5px;color:var(--ink-soft);margin-bottom:6px">${esc(provName(p.prov_iso))}${p.annee?' · signé '+esc(String(p.annee)):' · année de signature non renseignée'}</div>
+      <div style="font-family:'IBM Plex Mono';font-size:20px;font-weight:600;color:var(--teal);margin:2px 0 10px">${fmtUSD(p.v)}</div>
+      ${row('Nombre de projets',p.nb_projets!=null?fmtN(p.nb_projets):null)}
+      ${row('Chronogramme / durée',p.duree)}
+      ${row('Nb communautés bénéficiaires',p.nb_communautes!=null?fmtN(p.nb_communautes):null)}
+      ${row('Communautés bénéficiaires',p.communautes)}
+      ${row('Groupement / secteur / commune',p.groupement)}
+      ${row('Témoin / garant',p.temoin)}
+      ${row('Titre(s) minier(s)',p.titres)}
+      ${row('Fichier source',p.fichier)}
+      <div style="font-size:11px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;margin:10px 0 4px">Top secteurs (projets budgétisés)</div>
+      <div style="max-height:200px;overflow:auto">${items.length?items.map(it=>`<div style="display:flex;justify-content:space-between;gap:8px;font-size:12px;padding:4px 0;border-bottom:1px dashed var(--line)"><span>${esc(it.e||'—')}</span><b class="mono">${fmtUSD(it.v)}</b></div>`).join(''):'<div style="font-size:12px;color:var(--ink-faint)">Aucun projet budgétisé identifié dans la source.</div>'}</div>
+      ${p.observations?`<details style="margin-top:8px"><summary style="font-size:11.5px;font-weight:600;cursor:pointer">Observations (méthodologie de dépouillement)</summary><div style="font-size:11.5px;color:var(--ink-soft);margin-top:4px">${esc(p.observations)}</div></details>`:''}
+      <div style="margin-top:8px;font-size:10px;color:var(--ink-faint)">${esc(p.position_note||'')}</div>
+      <div style="margin-top:10px"><button class="btn" data-selprov="" style="padding:4px 10px;font-size:11px">← Retour</button></div></div>`;
+    const back=panel.querySelector('[data-selprov=""]');if(back)back.onclick=()=>{mapSel=null;mapSelPt=null;drawPanel();};
+    return;
+  }
   if(mapSel==='PT'&&mapSelPt){const p=mapSelPt;const items=p.items||[];
     panel.innerHTML=`<div style="background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px">
       <div style="display:flex;justify-content:space-between;align-items:center"><h4 style="margin:0;font-size:15px;color:var(--navy)">◆ ${esc(p.nom)}</h4><span class="mono" style="font-size:11px;color:var(--ink-faint)">${esc(provName(p.prov_iso))}</span></div>
@@ -2251,10 +2289,13 @@ function drawPanel(){
   }
   // ===== niveau ETD : liste classée des bénéficiaires ETD/dotation géolocalisés =====
   if(lvlOn('etd')&&!lvlOn('province')&&!lvlOn('territoire')&&(!mapSel||mapSel.indexOf('T:')===0)){
+    const isCH=isCahiersLayer();
     const pts=(curPoints()||[]).slice().sort((a,b)=>b.v-a.v);const et=pts.reduce((a,x)=>a+x.v,0);
-    panel.innerHTML=`<div style="background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px"><h4 style="margin:0 0 4px;font-size:14px;color:var(--navy)">Bénéficiaires ETD ${mapEvo?'(cumul)':curYear()||''}</h4>
+    const lbl=isCH?'Cahiers des charges géolocalisés':'Bénéficiaires ETD';
+    panel.innerHTML=`<div style="background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px"><h4 style="margin:0 0 4px;font-size:14px;color:var(--navy)">${lbl} ${mapEvo?'(cumul)':curYear()||''}</h4>
       <div style="font-size:12px;color:var(--ink-soft);margin-bottom:10px">${pts.length} entité(s) géolocalisée(s) · total ${indFmt(et)}</div>
-      ${pts.length?pts.map(x=>`<div style="display:flex;justify-content:space-between;gap:8px;font-size:12.5px;padding:5px 0;border-bottom:1px dashed var(--line)"><span>◆ ${esc(x.nom)} <span style="color:var(--ink-faint);font-size:10px">${esc(provName(x.prov_iso))}</span></span><b class="mono">${indFmt(x.v)}</b></div>`).join(''):`<div style="font-size:12px;color:var(--ink-faint)">Aucune donnée ETD${!yearCovered(curYear())&&!mapEvo?' en '+curYear():''}.</div>`}</div>`;
+      ${pts.length?pts.map(x=>`<div style="display:flex;justify-content:space-between;gap:8px;font-size:12.5px;padding:5px 0;border-bottom:1px dashed var(--line);cursor:${isCH?'pointer':'default'}" ${isCH?`data-cahpt="${esc(x.nom)}"`:''}><span>◆ ${esc(x.nom)} <span style="color:var(--ink-faint);font-size:10px">${esc(x.terr||provName(x.prov_iso))}</span></span><b class="mono">${indFmt(x.v)}</b></div>`).join(''):`<div style="font-size:12px;color:var(--ink-faint)">Aucune donnée${!yearCovered(curYear())&&!mapEvo?' en '+curYear():''}.</div>`}</div>`;
+    if(isCH)$$('[data-cahpt]').forEach(el=>el.onclick=()=>{const nm=el.getAttribute('data-cahpt');const p=pts.find(x=>x.nom===nm);if(p){mapSelPt=p;mapSel='PT';drawPanel();}});
     return;
   }
   const ranked=GEO.geometry.features.map(f=>({iso:f.properties.iso,nom:provName(f.properties.iso),v:unitVal(f.properties.iso)})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
@@ -2645,12 +2686,19 @@ document.addEventListener('click',e=>{
   const evo=e.target.closest('[data-evo]');if(evo){mapEvo=evo.dataset.evo==='1';mapSel=null;const yb=$('#mYear');if(yb)yb.disabled=mapEvo;$$('[data-evo]').forEach(b=>b.classList.toggle('on',b===evo));drawGeo();return;}
   const lvl=e.target.closest('[data-lvl]');if(lvl&&!lvl.disabled){toggleLvl(lvl.dataset.lvl);mapSel=null;$$('[data-lvl]').forEach(b=>b.classList.toggle('on',lvlOn(b.dataset.lvl)));drawGeo();return;}
   const ind=e.target.closest('[data-ind]');if(ind){mapInd=ind.dataset.ind;mapSel=null;
+    // couches « Cahiers de charge » Haut-Katanga & Lualaba : chaque entreprise
+    // n'apparaît qu'une seule fois (l'année de son cahier), pas d'un flux
+    // annuel répété — la vue « Évolution (cumul) » (tout afficher d'un coup)
+    // est donc le point d'entrée le plus lisible, plutôt que l'année la plus
+    // récente qui ne montrerait que 3 entreprises sur 54.
+    if(mapInd==='cahiers_hklu_budget'||mapInd==='cahiers_hklu_nombre'){mapEvo=true;mapLevels.add('etd');}
     const ys=indYears();if(ys.indexOf(mapYear)<0)mapYear=ys.length?ys[ys.length-1]:null;
     if(lvlOn('territoire')&&!hasTerr())mapLevels.delete('territoire');if(lvlOn('etd')&&!hasEtdPts())mapLevels.delete('etd');if(!mapLevels.size)mapLevels.add('province');
     $('#app').innerHTML=MODULES.geo.f();requestAnimationFrame(()=>drawGeo());return;}
 });
 document.addEventListener('change',e=>{
   if(e.target.id==='mInd'){mapInd=e.target.value;mapSel=null;
+    if(mapInd==='cahiers_hklu_budget'||mapInd==='cahiers_hklu_nombre'){mapEvo=true;mapLevels.add('etd');}
     const ys=indYears();if(ys.indexOf(mapYear)<0)mapYear=ys.length?ys[ys.length-1]:null;
     if(lvlOn('territoire')&&!hasTerr())mapLevels.delete('territoire');if(lvlOn('etd')&&!hasEtdPts())mapLevels.delete('etd');if(!mapLevels.size)mapLevels.add('province');
     $('#app').innerHTML=MODULES.geo.f();requestAnimationFrame(()=>drawGeo());return;}

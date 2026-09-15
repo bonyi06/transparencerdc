@@ -21677,34 +21677,3498 @@
     "2024"
    ]
   },
-  "cahiers_2021_entreprises": {
-   "label": "Cahiers de charge — entreprises engagées (résumé mai 2022, Haut-Katanga)",
-   "unit": "entreprises",
-   "fmt": "num",
-   "prov": {
-    "2021": {
-     "CD-HK": 14.0
-    }
-   },
-   "terr": {},
-   "etd": {},
-   "years": [
-    "2021"
-   ]
-  },
-  "cahiers_2021_budget": {
-   "label": "Cahiers de charge — budget total engagé (résumé mai 2022, Haut-Katanga)",
+  "cahiers_hklu_budget": {
+   "label": "Cahiers de charge — budget total engagé (Haut-Katanga & Lualaba, 2020-2024)",
    "unit": "USD",
    "fmt": "usd",
+   "years": [
+    "s.d.",
+    "2012",
+    "2020",
+    "2021",
+    "2022",
+    "2023",
+    "2024"
+   ],
    "prov": {
+    "s.d.": {
+     "CD-HK": 7718912.1,
+     "CD-LU": 1258550
+    },
+    "2012": {
+     "CD-LU": 8338949
+    },
+    "2020": {
+     "CD-HK": 10640889.49,
+     "CD-LU": 1609744
+    },
     "2021": {
-     "CD-HK": 30169481.22
+     "CD-HK": 20955602.450000003,
+     "CD-LU": 46437272
+    },
+    "2022": {
+     "CD-HK": 36343500.02,
+     "CD-LU": 550000
+    },
+    "2023": {
+     "CD-HK": 29700292.28
+    },
+    "2024": {
+     "CD-HK": 12640967.99
     }
    },
-   "terr": {},
-   "etd": {},
+   "terr": {
+    "s.d.": {
+     "CD-HK|Kipushi": 7718912.1
+    },
+    "2012": {},
+    "2020": {
+     "CD-HK|Lubumbashi": 10640889.49
+    },
+    "2021": {
+     "CD-HK|Sakania": 9698838,
+     "CD-HK|Kipushi": 6763500,
+     "CD-HK|Kambove": 3065728.85,
+     "CD-HK|Pweto": 1427535.6
+    },
+    "2022": {
+     "CD-HK|Lubumbashi": 6488096.85,
+     "CD-HK|Sakania": 12102384.2,
+     "CD-HK|Kambove": 8119514.77,
+     "CD-HK|Likasi": 8132945.2,
+     "CD-HK|Pweto": 1500559
+    },
+    "2023": {
+     "CD-HK|Kipushi": 4250653.9,
+     "CD-HK|Kambove": 16712973.58,
+     "CD-HK|Likasi": 8258528.62,
+     "CD-HK|Lubumbashi": 478136.18
+    },
+    "2024": {
+     "CD-HK|Kipushi": 7951967.49,
+     "CD-HK|Kambove": 2889000,
+     "CD-HK|Sakania": 1800000.5
+    }
+   },
+   "points": {
+    "s.d.": [
+     {
+      "nom": "MMG Kinsevere SARL",
+      "lng": 27.83357,
+      "lat": -11.64924,
+      "prov_iso": "CD-HK",
+      "terr": "Kipushi",
+      "v": 6000000,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1527982.0
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1415767.0
+       },
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1229071.0
+       }
+      ],
+      "annee": null,
+      "fichier": "MMG (Kambove).pdf",
+      "date_source": null,
+      "groupement": "Kasongo et Shindaika",
+      "nb_communautes": 3,
+      "communautes": "Agglomération de Kifita; Agglomération de Kifumanshi; 26 villages dont Kilongo, Sela, Mumanga, Muombe Mwewa, Ntetema, Kikwesa, Pundu, Lutenge, Mikanga, Misanse, Denis, Kalilanda, Mumba",
+      "duree": "2021-2025 (5 ans)",
+      "nb_projets": 18,
+      "nb_projets_budgetises": 18,
+      "temoin": "Ngombe Kazadi Jean-Marie, Chef de secteur de Bukanda",
+      "titres": "Amodiataire de la fusion des permis PE 528 et PE 7274 de la GECAMINES (arrêté n° 0143/CAB.MIN/MINES/01/2019 du 01/03/2019, valide 04/03/2009 - 03/04/2024, 25 carrés miniers)",
+      "observations": "Attention : malgré le nom du fichier « MMG (Kambove) », le document concerne MMG Kinsevere SARL, secteur de Bukanda, TERRITOIRE DE KIPUSHI (mine de Kinsevere). Communautés représentées par les CLD de Kifita (président Sumaili Masudi Stéphane) et de Kifumanshi (président Kampelembwe Nyeba Tharcisse). Total budget pour 5 ans contrôlé par sommation exacte de toutes les sous-lignes : 6 000 000 USD. Da",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Golden African Resources (GAR) SARL",
+      "lng": 27.73938,
+      "lat": -11.60868,
+      "prov_iso": "CD-HK",
+      "terr": "Kipushi",
+      "v": 1718912.1,
+      "items": [
+       {
+        "e": "Élevage/Pisciculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 410978.27999999997
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 358792.95
+       },
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 339414.6
+       }
+      ],
+      "annee": null,
+      "fichier": "GAR.pdf",
+      "date_source": null,
+      "groupement": "Bukanda",
+      "nb_communautes": 6,
+      "communautes": "Tumbwe Gare; Tumbwe Village; Kamisamba; Kalukalanga; Kanema; Mikalo",
+      "duree": "2024-2028 (5 ans)",
+      "nb_projets": 15,
+      "nb_projets_budgetises": 15,
+      "temoin": "Mwape Kabinda Sébastien, chef de secteur Bukanda",
+      "titres": "PE n° 1063, valide du 05/10/2013 au 04/10/2043 (arrêté n° 00370/CAB.MIN/MINES/01/2021 du 08/10/2021), 251 carrés miniers",
+      "observations": "Pas de date sur la couverture ni dans le nom de fichier ; chronogramme 2024-2028, signature probablement fin 2023/début 2024 (non confirmée dans les pages lues). Tableau synthétique des engagements aux doc pages 9-13 (PDF 10-14), scanné en paysage, 15 projets. TOTAL GÉNÉRAL surligné : 1 718 912,10 USD ; somme des lignes = 1 718 912,08 (écart de 2 centimes d'arrondi). CLD présidé par Tambatamba Tum",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     }
+    ],
+    "2012": [],
+    "2020": [
+     {
+      "nom": "Ruashi Mining SAS",
+      "lng": 27.46991,
+      "lat": -11.65417,
+      "prov_iso": "CD-HK",
+      "terr": "Lubumbashi",
+      "v": 7897078.49,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 2251646.81
+       },
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1129759.81
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 962412.0
+       }
+      ],
+      "annee": 2020,
+      "fichier": "Ruashi Mining_aout20.pdf",
+      "date_source": "août 2020",
+      "groupement": "Ruashi",
+      "nb_communautes": 1,
+      "communautes": "15 quartiers de la commune de Ruashi (dont Wama 3, Kalukuluku 2, Matoleo 1, Bendera 1, Kawama 2/3, Kananba, Shindaika, Luano, Mamba, Tshiazia...)",
+      "duree": "2021-2025 (5 ans)",
+      "nb_projets": 12,
+      "nb_projets_budgetises": 11,
+      "temoin": "Mme Byamungu Muteba Brigitte, bourgmestre de la commune de Ruashi",
+      "titres": "PE n° 578 et PE n° 11751, valides respectivement jusqu'en 2039 et décembre 2029 (arrêtés n° 00272/CAB.MIN/MINES/01/2020 du 13/10/2020 et n° 0851/CAB.MIN/MINES/01/2009 du 11/12/2009), 13 carrés miniers",
+      "observations": "Tableau synthétique des engagements aux doc pages 6-10 (PDF 7-11), scanné en paysage (rotation inverse), 12 projets. TOTAL GÉNÉRAL : 7 897 078,49 USD — somme des lignes (avec eau = N/A) exacte. Le projet eau porte un budget « N/A » (fourniture d'un débit d'eau par l'entreprise, apport en nature) ; l'attribution eau/électricité entre les lignes 1-2 est déduite des descriptions (léger doute sur l'or",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Société pour le Traitement du Terril de Lubumbashi (STL), RCCM 14-B-1890, siège à Lubumbashi",
+      "lng": 27.47547,
+      "lat": -11.70805,
+      "prov_iso": "CD-HK",
+      "terr": "Lubumbashi",
+      "v": 2743811,
+      "items": [
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1020256.0
+       },
+       {
+        "e": "Bâtiments communautaires",
+        "f": "Secteur (projets budgétisés)",
+        "v": 766433.0
+       },
+       {
+        "e": "Ponts",
+        "f": "Secteur (projets budgétisés)",
+        "v": 312671.0
+       }
+      ],
+      "annee": 2020,
+      "fichier": "STL_mai20.pdf",
+      "date_source": "mai 2020 (document signé, signatures manuscrites sur chaque page)",
+      "groupement": "Lubumbashi",
+      "nb_communautes": 5,
+      "communautes": "Quartier Mampala 1; Quartier Mampala 2; Quartier Mumbunda; Quartier Salama; Quartier Lido (Lido Golf)",
+      "duree": "2020-2024 (5 ans)",
+      "nb_projets": 17,
+      "nb_projets_budgetises": 17,
+      "temoin": "Communauté représentée par le Comité de développement communal (représentants des 5 quartiers : Azama Salumu et Albert Kaweji - Mampala 1 ; Azama Tabu Caresse et Kamilongo Mutanga - Mampala 2 ; Mani Kabenga...)",
+      "titres": "Amodiataire (jusqu'au 31/12/2023, renouvelable) sur 4 carrés du Permis d'exploitation PE 481 appartenant à la Gécamines, couvrant le Terril de Lubumbashi ; contrat d'amodiation n° 1876/7210/SG/GC/2019",
+      "observations": "Tableau synthétique des engagements retenus scanné en paysage (pages imprimées 3-8 / PDF 6-11, 17 lignes). BUDGET TOTAL : 2 743 811 USD, confirmé par le tableau « Répartition budgétaire par année pour les 5 ans » (p.3 imprimée : 2020 = 580 113 ; 2021 = 546 795 ; 2022 = 491 921 ; 2023 = 546 092 ; 2024 = 578 890 ; TOTAL = 2 743 811 — sommation annuelle exacte). Contrôle par lignes : les 4 lignes 202",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     }
+    ],
+    "2021": [
+     {
+      "nom": "Frontier SA",
+      "lng": 28.92156,
+      "lat": -12.56783,
+      "prov_iso": "CD-HK",
+      "terr": "Sakania",
+      "v": 9698838,
+      "items": [
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 4652545.8
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 2439124.0
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1410700.0
+       }
+      ],
+      "annee": 2021,
+      "fichier": "FRONTIER_sept21.pdf",
+      "date_source": "septembre 2021 (date du nom de fichier ; version finale paraphée sur chaque page, date exacte de signature non repérée dans les pages consultées)",
+      "groupement": "Katala",
+      "nb_communautes": 6,
+      "communautes": "Cité de Sakania; Kabumba; Kimfumpa; Kaloko; Lukangaba Customs; Lukangaba Mashimu",
+      "duree": "5 ans, avril 2022 - décembre 2026 (« TOTAL BUDGET POUR 5 ANS »)",
+      "nb_projets": 36,
+      "nb_projets_budgetises": 36,
+      "temoin": "Mwema Mulota, Chef de Secteur (Balamba), témoin et garant",
+      "titres": "PE 13080 valide du 31 juillet 2012 au 30 juillet 2042 (arrêté 0435/CAB.MIN/MINES/01/2012 du 31 juillet 2012), 187 carrés",
+      "observations": "Tableau 1 « Tableau synthétique des engagements convenus » (36 lignes, scanné en paysage, printed pp. 1-16) : TOTAL BUDGET POUR 5 ANS imprimé en gras = 9 698 838 USD. Contrôle par sommation des lignes lues : ≈ 9 698 878 USD (écart ~40 USD imputable à la lecture OCR de quelques chiffres sur scans tournés à 90°). Modèle par communauté : mêmes types de projets (maïs+coopérative, haricot, maraîchage, ",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Société Minière du Katanga (SOMIKA) SARL",
+      "lng": 27.79483,
+      "lat": -11.56952,
+      "prov_iso": "CD-HK",
+      "terr": "Kipushi",
+      "v": 6763500,
+      "items": [
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 2300000.0
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1335000.0
+       },
+       {
+        "e": "Eau",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1050000.0
+       }
+      ],
+      "annee": 2021,
+      "fichier": "SOMIKA.pdf",
+      "date_source": "23 février 2021 (cérémonie officielle de signature)",
+      "groupement": "Kaponda (territoire de Kipushi) + commune Annexe (ville de Lubumbashi)",
+      "nb_communautes": 2,
+      "communautes": "Villages Lupoto Rail, Mukoma, Kipopo et Kwampisha (chefferie Kaponda, territoire de Kipushi); Quartiers Somika, Mukunto, Kisanga, Kilima Simba et Triangle (commune Annexe, ville de Lubumbashi)",
+      "duree": "2021-2025 (5 ans, chronogrammes par projet)",
+      "nb_projets": 23,
+      "nb_projets_budgetises": 23,
+      "temoin": "Grand Chef Kaponda Lubenge Bwalya (chef de chefferie Kaponda) et Rémy Munsense Mukoma (Bourgmestre de la commune Annexe), témoins et garants ; signature sous l'égide du Ministre provincial des Mines",
+      "titres": "Concession exploitée via contrat d'amodiation signé avec la Générale des Carrières et des Mines (GCM) ; limites fixées par les titres miniers octroyés par l'État (EIES). RCCM CD/TRICOM/L'SHI/RCCM/13-B-0737, Id. Nat. 6-193-N43777U",
+      "observations": "Document structuré en deux volets : I. engagements avec les communautés de la chefferie Kaponda (8 projets, 2 566 000 USD, somme des lignes contrôlée) et I.2. engagements avec la commune Annexe (15 projets, TOTAL imprimé en gras 4 197 500 USD, contrôlé par sommation exacte des lignes). Budget total général = 2 566 000 + 4 197 500 = 6 763 500 USD (pas de ligne unique « total général » combinant les",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Compagnie Minière de Luisha SAS (COMILU SAS)",
+      "lng": 26.65156,
+      "lat": -11.40649,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 1598768.85,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 731394.97
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 205917.8
+       },
+       {
+        "e": "Bâtiments communautaires",
+        "f": "Secteur (projets budgétisés)",
+        "v": 204939.83000000002
+       }
+      ],
+      "annee": 2021,
+      "fichier": "COMILU_dec21.pdf",
+      "date_source": "décembre 2021",
+      "groupement": "Katanga",
+      "nb_communautes": 4,
+      "communautes": "Village Luisha (zone principale); Village Bungu-Bungu; Village Lukumba; Village Mazembe",
+      "duree": "4e trimestre 2022 - 2026 (5 ans)",
+      "nb_projets": 15,
+      "nb_projets_budgetises": 15,
+      "temoin": "Chef de Secteur de la Lufira, Dominique Savio Mwewa Lubunga Nsambo",
+      "titres": "PE n°526 (6 carrés, valide au 03/04/2024) et PE n°11367 (10 carrés, valide au 14/06/2041), périmètres à 40 km de Likasi et 80 km de Lubumbashi, siège d'exploitation à Luisha",
+      "observations": "OCR Google Drive vide pour ce fichier (scan pur) : extraction faite par lecture visuelle dans le viewer (tableau des engagements pp. 9-12 du document, scanné en paysage). COUT GLOBAL contrôlé par sommation des 15 lignes : 1 598 768,85 USD exactement. Date de signature non vue explicitement dans les pages lues : déduite du nom de fichier (dec21) ; chronogramme démarre au 4e trimestre 2022. Représen",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Excellen Minerals SARL (E.M SARL)",
+      "lng": 26.45638,
+      "lat": -11.36337,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 1466960,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 390000.0
+       },
+       {
+        "e": "Bâtiments communautaires",
+        "f": "Secteur (projets budgétisés)",
+        "v": 240000.0
+       },
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 240000.0
+       }
+      ],
+      "annee": 2021,
+      "fichier": "Excellen_mai21.pdf",
+      "date_source": "mai 2021 (Luisha)",
+      "groupement": "Lufira",
+      "nb_communautes": 3,
+      "communautes": "Luisha; Milando; Kangabwa (75 km)",
+      "duree": "2021-2025 (5 ans, An 1 à An 5)",
+      "nb_projets": 24,
+      "nb_projets_budgetises": 24,
+      "temoin": null,
+      "titres": "PE n° 4881, 20 carrés miniers, durée de 25 ans (société installée depuis le 05 mai 2016)",
+      "observations": "24 projets priorisés (confirmé dans la fiche projet n°1 : « 24 projets ont été priorisés et convenus »). TOTAL du tableau : 1 466 960,00 USD — contrôlé par sommation exacte des 24 lignes (1 466 960). Tableau synthétique aux pages internes 3-9 (PDF 6-12), scanné en paysage. Population bénéficiaire estimée : 59 276 habitants (36 020 à Luisha). Signature manuscrite « François Ilunga » sur la couvertu",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Anvil Mining Congo (AMC) SA",
+      "lng": 28.48107,
+      "lat": -8.61367,
+      "prov_iso": "CD-HK",
+      "terr": "Pweto",
+      "v": 1427535.6,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 642012.5
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 266180.6
+       },
+       {
+        "e": "Ponts",
+        "f": "Secteur (projets budgétisés)",
+        "v": 103000.0
+       }
+      ],
+      "annee": 2021,
+      "fichier": "AMC_dec21.pdf",
+      "date_source": "12 juillet 2021 (signatures « lu et approuvé » du 12/07/2021 ; version finale datée décembre 2021)",
+      "groupement": "M'Pweto",
+      "nb_communautes": 1,
+      "communautes": "Villages Mwashi, Village 25, Kinyanta, Kabangale, Shikasongo, Kazana, Mabenga, Kimpute, Kalankolola, Shikipoka, Shibupe, Kabundi 1, Kabundi 2, Kitwe, Kafunga, Santé, Mukulukusha, Kabala, Somboshi et le centre commercial de Pweto",
+      "duree": "5 ans, janvier 2022 - décembre 2026 (article 4)",
+      "nb_projets": 9,
+      "nb_projets_budgetises": 9,
+      "temoin": "Grand-Chef de la chefferie M'Pweto, Bobo Ngoy François Kunaka Kunaka ; supervision du délégué du ministère provincial en charge des Mines ; facilitation Elba Afrika SARL",
+      "titres": "PE 1697",
+      "observations": "Document rédigé en chapitres/articles (modèle Elba Afrika). Tableau 1 (Synthèse des engagements, rotaté 90°) : Budget total des projets 1 195 535,6 USD + Coordination des projets 232 000 USD = TOTAL GENERAL 1 427 535,6 USD (contrôlé : somme des 9 lignes = 1 195 535,7 ≈ arrondi). Signatures du 12/07/2021 antérieures à la version finale (décembre 2021). Viewer lent (page parfois gelée), plusieurs te",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     }
+    ],
+    "2022": [
+     {
+      "nom": "Chemicals of Africa (CHEMAF) SA",
+      "lng": 27.43672,
+      "lat": -11.62833,
+      "prov_iso": "CD-HK",
+      "terr": "Lubumbashi",
+      "v": 6488096.85,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 2502880.0
+       },
+       {
+        "e": "Assainissement",
+        "f": "Secteur (projets budgétisés)",
+        "v": 974417.6
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 915430.0
+       }
+      ],
+      "annee": 2022,
+      "fichier": "CHEMAF.pdf",
+      "date_source": "non datée (chronogramme 2022-2026)",
+      "groupement": "Annexe, Kampemba, Ruashi (Lubumbashi) + secteur Bukanda (Kipushi)",
+      "nb_communautes": 4,
+      "communautes": "Commune Annexe (La Vallée, Luwowoshi, Kamasaka, Kipanta); Commune Kampemba (Kigoma, Kabetsha, Industriel); Commune Ruashi (8 quartiers : Congo 1 et 2, Kalukuluku 1 et 2, Luano, Shindaika, Matoleo, Bendera); Secteur Bukanda (10 villages : Mamba, Boyonga, Kalubamba, Kyawuma, Luano ",
+      "duree": "2022-2026 (5 ans)",
+      "nb_projets": 21,
+      "nb_projets_budgetises": 21,
+      "temoin": null,
+      "titres": null,
+      "observations": "Document de 459 pages (110 Mo) illisible dans l'aperçu Drive ; données intégrées depuis l'analyse BI fournie par l'utilisateur (OCR + relecture visuelle, réconciliation exacte : somme des 21 lignes = total 6 488 096,85 USD). Périmètre multi-sites : ~4,87 M USD sur la ville de Lubumbashi (communes Annexe, Kampemba, Ruashi) et ~1,61 M USD sur le secteur Bukanda (Kipushi).",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Kinsenda Copper Company (KICC) SA",
+      "lng": 28.88838,
+      "lat": -12.54199,
+      "prov_iso": "CD-HK",
+      "terr": "Sakania",
+      "v": 5774170.2,
+      "items": [
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1839099.46
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1318260.22
+       },
+       {
+        "e": "Ponts",
+        "f": "Secteur (projets budgétisés)",
+        "v": 921496.91
+       }
+      ],
+      "annee": 2022,
+      "fichier": "KICC_mars22.pdf",
+      "date_source": "mars 2022",
+      "groupement": "Kombo",
+      "nb_communautes": 4,
+      "communautes": "Camp Kinsenda-Kitotwe; Bloc Meleki; Bloc Twibombele; Village Kalulu",
+      "duree": "2022-2026 (5 ans)",
+      "nb_projets": 13,
+      "nb_projets_budgetises": 12,
+      "temoin": "Chef de secteur Mwema Mulota",
+      "titres": "PE 101 (valide 15 ans, jusqu'en 2033, 59 carrés / 5 012 ha) et PE 12548 (valide 30 ans, jusqu'en 2042, 67 carrés / 5 691,6 ha)",
+      "observations": "Structure type protocole d'accord (10 pages) + fiches détaillées par projet (alignement programme gouvernement et ODD) + annexes volumineuses (PV consultations, listes de présence). Total général contrôlé : 5 774 170,20 USD.",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Sabwe Mining SARL",
+      "lng": 28.92712,
+      "lat": -12.62171,
+      "prov_iso": "CD-HK",
+      "terr": "Sakania",
+      "v": 4027214,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1124573.65
+       },
+       {
+        "e": "Électricité",
+        "f": "Secteur (projets budgétisés)",
+        "v": 992994.88
+       },
+       {
+        "e": "Autre",
+        "f": "Secteur (projets budgétisés)",
+        "v": 710640.0
+       }
+      ],
+      "annee": 2022,
+      "fichier": "Sabwe_mai22.pdf",
+      "date_source": "mai 2022",
+      "groupement": "Kipilingu",
+      "nb_communautes": 5,
+      "communautes": "Lonshi; Laule; Mwelushi; Miriashi; Lucele-Sabwe",
+      "duree": "2022-2027",
+      "nb_projets": 12,
+      "nb_projets_budgetises": 12,
+      "temoin": "Comité Local de Développement (CLD), président : Chef Nkonde Songe Norbert",
+      "titres": "PE n° 13093, valide jusqu'au 13 juillet 2044",
+      "observations": "TOTAL GÉNÉRAL du tableau : 4 027 214 USD, confirmé en toutes lettres (« Quatre millions vingt-sept mille deux cent quatorze dollars américains »). La sommation des 12 lignes lues donne 4 023 213,90 USD, soit un écart de ~4 000 USD (une ligne du tableau diffère légèrement, probablement une valeur arrondie dans le document). Consultant : Planet Consulting Africa SARL. Structure : tableau synthétique",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Shamitumba SAS (Lubumbashi, Haut-Katanga)",
+      "lng": 26.59125,
+      "lat": -11.29693,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 3247210.56,
+      "items": [
+       {
+        "e": "Électricité",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1521443.1
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 697151.0
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 600014.8300000001
+       }
+      ],
+      "annee": 2022,
+      "fichier": "Shamitumba_oct22.pdf",
+      "date_source": "octobre 2022 (mention manuscrite « Approuvée » sur la couverture)",
+      "groupement": "Mukumbi (chefferie de Bassanga)",
+      "nb_communautes": 4,
+      "communautes": "Mukumbi; Kapemba; Sandra; Kawama",
+      "duree": "2022-2027 (chronogrammes des projets étalés de 2022 à 2027)",
+      "nb_projets": 12,
+      "nb_projets_budgetises": 12,
+      "temoin": "M. Mpande Matthieu Pembamoto Kyala, Chef de la chefferie de Bassanga (témoin et garant)",
+      "titres": "10 permis d'exploitation contigus : PE 10385 (3 carrés, exp. 02/08/2040), PE 12271 (4), PE 12272 (3), PE 12273 (4), PE 12277 (3) — exp. 02/04/2024 ; PE 13236 (13), PE 13237 (5, exp. 07/03/2040), PE 13238 (3), PE 13239 (1), PE 13240 (1) — exp. 02/04/2024",
+      "observations": "Tableau 1 (synthétique des engagements, scanné en paysage, pages imprimées 4-8 / PDF 9-13). TOTAL GÉNÉRAL lu et vérifié par zoom : 3 247 210,56 USD. La sommation de mes lectures des 12 lignes donne 3 248 210,56 (écart de +1 000, soit 0,03 % — une ligne comporte probablement un chiffre des milliers mal lisible dans le scan, p.ex. 1 521 443,10 ou 62 000). CLD déjà constitué (Président Kazadi Mujinga",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Kai Peng Mining SARL",
+      "lng": 26.72956,
+      "lat": -10.97629,
+      "prov_iso": "CD-HK",
+      "terr": "Likasi",
+      "v": 2612353.7,
+      "items": [
+       {
+        "e": "Électricité",
+        "f": "Secteur (projets budgétisés)",
+        "v": 899476.0
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 535655.3
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 337595.0
+       }
+      ],
+      "annee": 2022,
+      "fichier": "Kai Peng (Panda)_dec22.pdf",
+      "date_source": "décembre 2022",
+      "groupement": "Panda",
+      "nb_communautes": 5,
+      "communautes": "Quartier Kakontwe; Quartier Panda Mayi; Quartier Mutchanga; Quartier Kamilapo; Quartier Kiwele",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 9,
+      "nb_projets_budgetises": 9,
+      "temoin": "Bourgmestre de la commune de Panda, représenté par son chef de bureau Kasongo Kabwa Mbayo",
+      "titres": "PE n° 8210, validité du 17 juillet 2015 au 16 juillet 2025",
+      "observations": "Tableau des engagements (doc pages 3-11, PDF 11-19) scanné en paysage, 9 projets. TOTAL en toutes lettres se terminant par « ...cinquante-trois dollars américains et sept centimes » = 2 612 353,70 USD ; somme des 9 lignes = 2 612 353,70 exactement. CLD : vice-présidente Mme Kandu Perpetue (Panda Mayi), secrétaire Kalonge Dominique (Kiwele), trésorier Tshing Louis (Kamilopa) — nom du président non ",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Société Minière du Katanga (SOMIKA SARLU) - Projet Kimpe-Mabaya",
+      "lng": 28.96898,
+      "lat": -12.51525,
+      "prov_iso": "CD-HK",
+      "terr": "Sakania",
+      "v": 2301000,
+      "items": [
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1250000.0
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 375000.0
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 350000.0
+       }
+      ],
+      "annee": 2022,
+      "fichier": "SOMIKA (Kimpe-Mabaya)_juillet22.pdf",
+      "date_source": "juillet 2022",
+      "groupement": "Kombo",
+      "nb_communautes": 6,
+      "communautes": "Village Mabaya; Village Kimpe; Village Musoya; Village Mutwamina; Village Kapapa; Village Kifumpa",
+      "duree": "mi-2021 - 2024 (démarrages échelonnés de juin 2021 à juillet 2022)",
+      "nb_projets": 6,
+      "nb_projets_budgetises": 6,
+      "temoin": "Grand Chef Dieudonné Mwema Mulota Selenge II, Chef de secteur de Balamba",
+      "titres": "PE 12264 et PE 271 à Kimpe ; PE 13158, PE 12263 et PE 13160 à Mabaya ; PE 13159 et PE 13157 à Kapapa",
+      "observations": "Élaboré avec l'accompagnement technique d'Environmental Agency (EA sarl). Le tableau synthétique (p.20-24 du doc, scanné en paysage) ne comporte pas de ligne TOTAL GÉNÉRAL visible ; budget total obtenu par sommation des 6 projets = 2 301 000 USD. CLD présidé par Mujinga Tshabala (Kimpe), 1er vice-président Kabulwe Bushibwa (Mabaya). Signature en présence du Ministre provincial des Mines, du Chef d",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Congo Investments S.A.S. (Congo Investment)",
+      "lng": 26.53637,
+      "lat": -11.38674,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 1764525.02,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 585000.0
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 581950.0
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 352000.0
+       }
+      ],
+      "annee": 2022,
+      "fichier": "Congo investments_juillet22.pdf",
+      "date_source": "16 juillet 2022 (cérémonie officielle de signature)",
+      "groupement": "Mukumbi",
+      "nb_communautes": 3,
+      "communautes": "Ditengwa; Mbaya; Ngeleka",
+      "duree": "5 ans (2024-2028)",
+      "nb_projets": 8,
+      "nb_projets_budgetises": 7,
+      "temoin": "Chef de la Chefferie de Basanga (témoin et garant de la bonne application de l'accord)",
+      "titres": "Titulaire d'un droit minier d'exploitation / autorisation de carrières permanente ; siège d'exploitation : village Ditengwa, groupement Mukumbi, territoire de Kambove (numéro de PE non relevé dans les pages consultées)",
+      "observations": "TOTAL GÉNÉRAL POUR 5 ANS : 1 764 525,02 USD — contrôlé par sommation des 7 lignes du tableau (1 764 525). Tableau synthétique aux pages internes 5-11 (PDF 6-12), scanné en paysage avec un contraste très faible (scan pâle), certaines cellules presque illisibles. Le nom du représentant de l'entreprise et le numéro exact du PE ne figurent pas dans les pages consultées (liminaires) ; signature le 16 j",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Congo Jin Ju Cheng Mining Compagny (CJCMC) SARL",
+      "lng": 26.77698,
+      "lat": -10.92372,
+      "prov_iso": "CD-HK",
+      "terr": "Likasi",
+      "v": 1675075.61,
+      "items": [
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1675075.61
+       }
+      ],
+      "annee": 2022,
+      "fichier": "CJCMC_janv23.pdf",
+      "date_source": "28 décembre 2022 (fait à Likasi ; version finale janvier 2023)",
+      "groupement": "Shituru",
+      "nb_communautes": 2,
+      "communautes": "Quartier Buluo; Quartier Nguya",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 1,
+      "nb_projets_budgetises": 1,
+      "temoin": "Placide Kisokola Mulambwa, Bourgmestre de la Commune de Shituru",
+      "titres": "PE 9469 valide du 25 mai 2016 au 26 mai 2045, 19 carrés (Certificat d'Exploitation CAMI/CF/7043/16 du 27 mai 2016)",
+      "observations": "Projet unique (méga-projet agricole en 3 volets). Total général contrôlé : 108 475,61 + 1 270 000,00 + 296 600,00 = 1 675 075,61 USD. Suivi-évaluation par le Comité Local de Suivi (CLS) présidé par le Maire de Likasi (1 délégué entreprise + 4 représentants communautés) ; contrôle second niveau DPEM, FNPSS, ACE. Extension Chrome indisponible (ordinateur/extension déconnectés) : extraction réalisée ",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Lualaba Mining Resources SAS « LMR SAS » (CD/LSI/RCCM/16-B-095, ID. NAT. 6-128-N11648P)",
+      "lng": 26.46646,
+      "lat": -11.25315,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 1603580,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 505526.12
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 329700.0
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 162467.64
+       }
+      ],
+      "annee": 2022,
+      "fichier": "LMR_sept22.pdf",
+      "date_source": "septembre 2022 (mention manuscrite « Version finale » sur la couverture)",
+      "groupement": "Mukumbi (chefferie des Basanga)",
+      "nb_communautes": 7,
+      "communautes": "Kawama; Mukumbi; Kasansama; Kakonde; Sandala; Lumba-Kinsense; Makungu",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 10,
+      "nb_projets_budgetises": 10,
+      "temoin": "Sa Majesté l'Honorable Pembemoto Kyala Matthieu, Grand Chef de la chefferie des Basanga",
+      "titres": "PE 13260 (25 carrés, minerais cuprocobaltifères, validité 7 ans du 14/04/2017 au 02/04/2024, Arrêté ministériel n° 0102/CAB.MIN/MINES/01/2017), exploitation à ciel ouvert",
+      "observations": "Tableau synthétique scanné en paysage (pages imprimées 3-6 / PDF 6-8). TOTAL affiché en gras et vérifié par zoom : 1 603 580 USD. La sommation des 10 lignes donne 1 603 582,04 (écart de 2,04 USD, arrondi du rédacteur). Le représentant de LMR n'a pas été relevé (paragraphe des parties partiellement sauté). Témoin/garant : Grand Chef de la chefferie des Basanga.",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "La Grande Cimenterie du Katanga (GCK) SAS",
+      "lng": 26.64094,
+      "lat": -10.98962,
+      "prov_iso": "CD-HK",
+      "terr": "Likasi",
+      "v": 1594728.93,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 493417.98
+       },
+       {
+        "e": "Eau",
+        "f": "Secteur (projets budgétisés)",
+        "v": 460100.0
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 289889.15
+       }
+      ],
+      "annee": 2022,
+      "fichier": "GCK.pdf",
+      "date_source": "05/12/2022 (probable ; date manuscrite ambiguë à l'OCR : lue « 05/12/2019 » / « 57/12/2015 », incohérente avec le chronogramme 2023-2027 et les plans datés de juillet 2022)",
+      "groupement": "Panda",
+      "nb_communautes": 1,
+      "communautes": "Quartier Kakontwe (cellules Karisha, Faida, Kapata, Potashi, Minoka, Kampemba)",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 5,
+      "nb_projets_budgetises": 5,
+      "temoin": "Pamphile Kibeka Mofya, Bourgmestre de la Commune de Panda",
+      "titres": "Autorisation d'Exploitation de Carrières Permanente (AECP) n°2364 valide du 07/11/2020 au 07/11/2025 (Arrêté DIV-MIN/354/8.0/2012 du 07/09/2012)",
+      "observations": "Entreprise de carrières (cimenterie), pas de PE minier : AECP 2364. Total général contrôlé : 460 100 + 232 850 + 118 471,80 + 289 889,15 + 493 417,98 = 1 594 728,93 USD. CLS présidé par le Maire de Likasi (1 délégué GCK + 4 représentants + ACE, DPEM, FNPSS). Extension Chrome indisponible : extraction via l'OCR retourné par l'API Google Drive (lecture seule) ; nombre de pages non déterminable par c",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "La Minière de Kasombo (MIKAS) SAS",
+      "lng": 26.63592,
+      "lat": -11.17589,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 1504199.19,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 285501.7
+       },
+       {
+        "e": "Électricité",
+        "f": "Secteur (projets budgétisés)",
+        "v": 223547.38
+       },
+       {
+        "e": "Ponts",
+        "f": "Secteur (projets budgétisés)",
+        "v": 216111.2
+       }
+      ],
+      "annee": 2022,
+      "fichier": "MIKAS_Déc22.pdf",
+      "date_source": "décembre 2022",
+      "groupement": "Commune urbano-rurale de Kambove",
+      "nb_communautes": 7,
+      "communautes": "Quartier Kampemba; Quartier Kiwewe; Quartier Mikuba; Quartier Mitumba; Village Mapendo; Village TP; Village Matembwe",
+      "duree": "2023-2027",
+      "nb_projets": 10,
+      "nb_projets_budgetises": 8,
+      "temoin": null,
+      "titres": "PE n° 13120, valide du 16/06/2014 au 03/10/2043 (arrêté n° 0259/CAB.MIN/MINES/01/2018 du 16/06/2014), 13 carrés miniers",
+      "observations": "COÛT TOTAL DU CAHIER DES CHARGES (surligné dans le tableau) : 1 504 199,19 USD. Contrôle par sommation : les 8 lignes lisibles totalisent 1 235 901,19 USD ; les 2 lignes illisibles (centre de santé Mapendo, intrants agricoles) représentent par différence 268 298,00 USD — ordre de grandeur cohérent. Tableau synthétique scanné en paysage et coupé en deux moitiés par page (PDF 7-11), lecture des corr",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Everbright Mining SARL",
+      "lng": 28.51426,
+      "lat": -8.63951,
+      "prov_iso": "CD-HK",
+      "terr": "Pweto",
+      "v": 1500559,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 270654.0
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 248653.6
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 225390.0
+       }
+      ],
+      "annee": 2022,
+      "fichier": "Everbright_dec22.pdf",
+      "date_source": "décembre 2022",
+      "groupement": "Moero",
+      "nb_communautes": 10,
+      "communautes": "Dikulushi; Lumekete; Mukenge; Musenge; Kanswa; Kabusanzye; Kyanga; Katendeji 1; Katendeji 2; Kilwa",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 14,
+      "nb_projets_budgetises": 14,
+      "temoin": "Chef de chefferie Kyona-Nzini Mukalay Musumba Odilon et chef de secteur Moero Ngela Kabayo Charles",
+      "titres": "PE n° 606, valide du 31 janvier 2022 au 30 janvier 2045, 48 carrés miniers",
+      "observations": "Structure atypique : table des matières listant 12 projets détaillés, mais tableau synthétique des engagements à 14 lignes (doc pages 4-10, PDF pages 9-15), scanné en paysage (tourné 90°). TOTAL en toutes lettres : « un million cinq cent mille cinq cent cinquante-neuf dollars américains » = 1 500 559,00 USD. Somme des lignes lues = 1 500 560,04 (écart de ~1 USD, probable arrondi/décimale). Années ",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "RUBAMIN SARL",
+      "lng": 26.84912,
+      "lat": -10.93918,
+      "prov_iso": "CD-HK",
+      "terr": "Likasi",
+      "v": 1250786.96,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 314251.22
+       },
+       {
+        "e": "Électricité",
+        "f": "Secteur (projets budgétisés)",
+        "v": 237750.0
+       },
+       {
+        "e": "Ponts",
+        "f": "Secteur (projets budgétisés)",
+        "v": 186155.96
+       }
+      ],
+      "annee": 2022,
+      "fichier": "RUBAMIN_aout22.pdf",
+      "date_source": "août 2022",
+      "groupement": "Panda",
+      "nb_communautes": 5,
+      "communautes": "Quartier Kakontwe; Quartier Kamilopa; Quartier Kiwele; Quartier Mutshanga; Quartier Kampemba",
+      "duree": "4e trimestre 2022 - 2e trimestre 2026",
+      "nb_projets": 10,
+      "nb_projets_budgetises": 10,
+      "temoin": null,
+      "titres": "Agrément d'entité de traitement de catégorie B n° 00427/CAB.MIN/MINES/01/2022 du 27 juillet 2022 (usine à Likasi, commune de Panda, route Kakontwe)",
+      "observations": "Communautés des quartiers Kakontwe, Kamilopa, Kiwele, Mutshanga et Kampemba (commune de Panda, ville de Likasi), représentées par Mbav Ndumb Jean-Marie (président) et Musakanya Kabamba Bénédicte (secrétaire) du Comité Local de Développement. Coût global contrôlé par sommation : 1 250 786,96 USD (le montant du projet 08, masqué par une signature, a été déduit = 30 399,53 USD). Date de signature d'a",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Macrolink Jiayuan Mining (MJM) SARLU",
+      "lng": 26.60477,
+      "lat": -10.93251,
+      "prov_iso": "CD-HK",
+      "terr": "Likasi",
+      "v": 1000000,
+      "items": [
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 550000.0
+       },
+       {
+        "e": "Électricité",
+        "f": "Secteur (projets budgétisés)",
+        "v": 350000.0
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 100000.0
+       }
+      ],
+      "annee": 2022,
+      "fichier": "MJM_juillet22.pdf",
+      "date_source": "juillet 2022",
+      "groupement": "Shituru",
+      "nb_communautes": 1,
+      "communautes": "Quartier Buluo",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 3,
+      "nb_projets_budgetises": 3,
+      "temoin": null,
+      "titres": "PE 4690 (valide du 29 août 2015 au 28 août 2045, certificat d'exploitation couvrant 43 carrés miniers)",
+      "observations": "Communautés locales représentées par le CLD : Monga Kabando (1er Vice-Président), Yancen Kabambule (2e Vice-Président), Michette Bibao Kalubi (Secrétaire), Mauwa Sifa et Kahamba (membres). Tableau synthétique des engagements sur une page (PDF p.7, doc p.5, scanné en paysage). TOTAL BUDGET : 1 000 000 USD — contrôlé par sommation (350 000 + 100 000 + 550 000). Témoin/garant non observé dans les pag",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     }
+    ],
+    "2023": [
+     {
+      "nom": "CDM (Congo Dongfang International Mining SARL)",
+      "lng": 27.87543,
+      "lat": -11.54278,
+      "prov_iso": "CD-HK",
+      "terr": "Kipushi",
+      "v": 4250653.9,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1149994.3199999998
+       },
+       {
+        "e": "Autre",
+        "f": "Secteur (projets budgétisés)",
+        "v": 870762.94
+       },
+       {
+        "e": "Assainissement",
+        "f": "Secteur (projets budgétisés)",
+        "v": 695383.8400000001
+       }
+      ],
+      "annee": 2023,
+      "fichier": "CDM_janv23.pdf",
+      "date_source": "janvier 2023 (nom du fichier)",
+      "groupement": "Bukanda + chefferie Kaponda (Kipushi), commune Annexe (Lubumbashi)",
+      "nb_communautes": 4,
+      "communautes": "Village Kawama et villages voisins (secteur Bukanda); Village Kashimbala (chefferie Kaponda); Quartier Kasapa (commune Annexe, Lubumbashi); Quartier Kamatete (commune Annexe, Lubumbashi)",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 26,
+      "nb_projets_budgetises": 26,
+      "temoin": null,
+      "titres": null,
+      "observations": "Document de 320 pages (59 Mo) illisible dans l'aperçu Drive ; données intégrées depuis l'analyse BI fournie par l'utilisateur (OCR + relecture visuelle, réconciliation exacte : somme des 26 lignes = total 4 250 653,90 USD). Périmètre multi-sites : ~2,57 M USD sur Kipushi (Kawama/Bukanda, Kashimbala/Kaponda) et ~1,68 M USD sur Lubumbashi (Kasapa, Kamatete).",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Compagnie Minière de Kambove (COMIKA) SAS",
+      "lng": 26.55807,
+      "lat": -11.2711,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 3245000,
+      "items": [
+       {
+        "e": "Élevage/Pisciculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1500000.0
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 900000.0
+       },
+       {
+        "e": "Bâtiments communautaires",
+        "f": "Secteur (projets budgétisés)",
+        "v": 420000.0
+       }
+      ],
+      "annee": 2023,
+      "fichier": "COMIKA (Kambove)_mai23.pdf",
+      "date_source": "mai 2023 (date de la version finale en couverture ; jour exact non lisible dans le texte OCR disponible)",
+      "groupement": "Commune urbano-rurale de Kambove",
+      "nb_communautes": 4,
+      "communautes": "Quartier Mikuba; Quartier Mitumba; Quartier Kiwewe; Quartier Kampemba",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 7,
+      "nb_projets_budgetises": 7,
+      "temoin": "Pamphile Muyele Musombo Fwifwi, Bourgmestre de la commune urbano-rurale de Kambove",
+      "titres": "PE 11516 (Arrêté 0459/CAB.MIN.MINES/01/2009, 4 carrés) et PE 11517 (Arrêté 0460/CAB.MIN.MINES/01/2009, 11 carrés), tous deux renouvelés pour 15 ans du 15/09/2022 au 14/09/2037",
+      "observations": "Total contrôlé : 178 000 + 135 000 + 1 500 000 + 290 000 + 300 000 + 600 000 + 242 000 = 3 245 000 USD (= TOTAL du tableau). CLS présidé par l'Administrateur du Territoire de Kambove (1 délégué COMIKA + 4 représentants + ACE, DPEM, FNPSS). Extension Chrome indisponible : extraction via l'OCR retourné par l'API Google Drive (lecture seule) ; texte OCR tronqué avant les dispositions finales, date ex",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Kambove Mining SAS",
+      "lng": 26.59681,
+      "lat": -11.35082,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 3008836.2,
+      "items": [
+       {
+        "e": "Ponts",
+        "f": "Secteur (projets budgétisés)",
+        "v": 865701.22
+       },
+       {
+        "e": "Eau",
+        "f": "Secteur (projets budgétisés)",
+        "v": 497650.0
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 450547.99
+       }
+      ],
+      "annee": 2023,
+      "fichier": "Kambove Mining_avril23.pdf",
+      "date_source": "avril 2023",
+      "groupement": "Kambove (urbano-rurale)",
+      "nb_communautes": 4,
+      "communautes": "Quartier Kiwewe; Quartier Mitumba; Quartier Mikuba; Village Kashengeneke (quartier Mitumba)",
+      "duree": "novembre 2022 - 2027 (~5 ans)",
+      "nb_projets": 12,
+      "nb_projets_budgetises": 12,
+      "temoin": null,
+      "titres": "PE n° 465, valide du 16/10/2009 au 02/04/2024, 30 carrés miniers (certificat CAMI/CE/7391/2017) et PE 13832, valide du 22/09/2017 au 04/10/2043, 6 carrés miniers (certificat CAMI/CE/7308/2017)",
+      "observations": "Tableau synthétique des engagements aux doc pages 4-5 (PDF 6-7), scanné en paysage, 12 projets. COÛT TOTAL DU CAHIER DES CHARGES affiché « 3.008.836,2... » (dernières décimales coupées par la rotation) ; somme des lignes = 3 008 836,18-3 008 836,20 selon les centimes de la ligne 8 (363 332,7x). CLD : Mumba Kyembe président (Mikuba), Ilunga Kantenga vice-président (Mitumba), Umba Kantenga secrétair",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Kai Peng Mining SARL (KPM)",
+      "lng": 26.50262,
+      "lat": -11.31026,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 2755729,
+      "items": [
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 801000.0
+       },
+       {
+        "e": "Électricité",
+        "f": "Secteur (projets budgétisés)",
+        "v": 744500.0
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 381767.66000000003
+       }
+      ],
+      "annee": 2023,
+      "fichier": "KAI PENG_nov23.pdf",
+      "date_source": "novembre 2023",
+      "groupement": "Mukumbi",
+      "nb_communautes": 3,
+      "communautes": "Village Mukumbi; Village Kimpese; Village Kawama",
+      "duree": "2023-2028 (env. 5 ans)",
+      "nb_projets": 9,
+      "nb_projets_budgetises": 9,
+      "temoin": "Témoin et garant de la bonne application de l'accord mentionné p.10 (autorité locale, nom non lisible dans les pages lues)",
+      "titres": "PE 13256 (31 carrés miniers, validité du 28 septembre 2017 au 02 avril 2024)",
+      "observations": "IMPORTANT : document distinct de « Kai Peng (Panda)_dec22 » déjà traité — la couverture et les parties confirment que ce cahier des charges de novembre 2023 (élaboré avec Planet Consulting Africa sarl) concerne la communauté du GROUPEMENT MUKUMBI (villages Mukumbi, Kimpese, Kawama), chefferie de Basanga, territoire de Kambove — et non la commune de Panda à Likasi. Siège social de KPM : 33 Route Ka",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Shituru Mining Corporation SAS (SMCO SAS)",
+      "lng": 26.69638,
+      "lat": -10.95046,
+      "prov_iso": "CD-HK",
+      "terr": "Likasi",
+      "v": 2296542.68,
+      "items": [
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 624006.0
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 350000.0
+       },
+       {
+        "e": "Eau",
+        "f": "Secteur (projets budgétisés)",
+        "v": 345185.0
+       }
+      ],
+      "annee": 2023,
+      "fichier": "SMCO_mars23.pdf",
+      "date_source": "mars 2023",
+      "groupement": "Shituru",
+      "nb_communautes": 2,
+      "communautes": "Quartier Buluo (zone principale ; cellules Buluo, Joli-site, Péage, Hewa-Bora, Mutepuka, Mivuka, Sankuru, Swakala); Quartier Kilima (zone environnante ; cellule Munung)",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 9,
+      "nb_projets_budgetises": 9,
+      "temoin": "Mme Anzaka Alima Suraa Asha Laura, Bourgmestre de la commune Shituru (signature en présence du Ministre Provincial des Mines)",
+      "titres": "PE 4725 (superficie de 1 carré, valide au 01 avril 2024), périmètre localisé à 180 km de Kolwezi et 120 km de Lubumbashi (référence dépotoir GECAMINES)",
+      "observations": "CLD des quartiers impactés : Pasteur Makonga Kilenda (Président), Docteur Kamango Hubernatus (Vice-Président), Mme Bibao Kalubi Michette (Secrétaire). Tableau des engagements en portrait, p.7-9 du PDF. COÛT GLOBAL : 2 296 542,68 USD — contrôlé par sommation des 9 lignes, correspondance exacte.",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Boss Mining SAS",
+      "lng": 26.67615,
+      "lat": -11.34284,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 2278385.55,
+      "items": [
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 642500.0
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 504700.0
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 467950.38
+       }
+      ],
+      "annee": 2023,
+      "fichier": "BOSS MINING_aout23.pdf",
+      "date_source": "24 août 2023 (fait à Kambove)",
+      "groupement": "Mubambe",
+      "nb_communautes": 5,
+      "communautes": "Village Mubambe; Village Midingi; Village Kibashi; Village Milebi; Village Mwepu",
+      "duree": "2024-2028 (5 ans)",
+      "nb_projets": 8,
+      "nb_projets_budgetises": 8,
+      "temoin": "Kishimba Mumena Gaspard, Chef de Secteur de Source du Fleuve Congo",
+      "titres": "PE 463, 467, 468 et 469 (valides jusqu'au 02/04/2024) et PE 2589 (valide jusqu'au 02/04/2029), arrêtés ministériels CABIN/MINES/01/967/04 et CABIN/MINES/01/1967/04 du 05/04/2004, 499 carrés miniers dans les territoires de Kambove et Lubudi",
+      "observations": "Tableau 1-1 « Synthèse des engagements convenus » (scanné en paysage) organisé par secteurs avec sous-totaux : Santé 467 950,38 ; Eau 100 000 ; Agriculture 504 700 ; Marché 120 275,85 ; Route 642 500 ; Éducation 442 959,32. Budget total du Cahier des Charges = 2 278 385,55 USD, contrôlé par sommation des lignes ET des colonnes annuelles (2024 : 328 762,25 ; 2025 : 271 971,58 ; 2026 : 459 647,74 ; ",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "CNMC Huachin Mabende Mining SA",
+      "lng": 26.56263,
+      "lat": -11.20645,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 2123145.63,
+      "items": [
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 584739.42
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 436296.18
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 389794.45
+       }
+      ],
+      "annee": 2023,
+      "fichier": "Huachin Mabende_mars23.pdf",
+      "date_source": "mars 2023",
+      "groupement": "Kyembe",
+      "nb_communautes": 12,
+      "communautes": "Mabende (village principal); Kyembe; Makutano; Lwansa; Lwembe 1; Lwembe 2; Kyandwe; Kimanshi; Chila-Tembo (Shilantembo 1/45); Ngombalume; Vietnam; Kimpemba",
+      "duree": "juin 2023 - décembre 2027 (5 ans)",
+      "nb_projets": 12,
+      "nb_projets_budgetises": 12,
+      "temoin": null,
+      "titres": "PE n° 13119, valide du 02/11/2016 au 01/11/2046, 6 carrés miniers (certificat d'exploitation n° 13119 ; PE inscrit d'office par lettre CAMI/DG/098/2016, sans arrêté d'octroi)",
+      "observations": "Tableau synthétique des engagements aux doc pages 6-10 (PDF 7-11), scanné en paysage, 12 projets, TOTAL surligné en vert : 2 123 145,63 USD. Somme des lignes lues = 2 123 146,63 (écart de 1 USD, probable arrondi d'une ligne). CLD : Mme Kabaso Annie Anne-Marie présidente CLD Kyembe, Lusinga Nkonzi Icare vice-président CLD Mabende, Mpoyo wa Mpoyo vice-président CLD Shilantembo 1/45. RCCM CD/LSI/RCCM",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Huachin Metal Leach SA (RCCM CD/LSI/RCCM/14-B-1225, ID.NAT. 6-128-N61015Y, n° impôt A1113665R, siège n°801 Route Kakontwe, Quartier Kakontwe, Commune Panda, Likasi)",
+      "lng": 26.73512,
+      "lat": -11.03018,
+      "prov_iso": "CD-HK",
+      "terr": "Likasi",
+      "v": 1700704.89,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 614902.89
+       },
+       {
+        "e": "Électricité",
+        "f": "Secteur (projets budgétisés)",
+        "v": 233325.0
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 229477.0
+       }
+      ],
+      "annee": 2023,
+      "fichier": "HML_mars23.pdf",
+      "date_source": "mars 2023",
+      "groupement": "Panda (ville de Likasi)",
+      "nb_communautes": 5,
+      "communautes": "Quartier Kakontwe; Quartier Kamilopa; Quartier Kiwele; Quartier Mutshanga; Panda-Mayi/Muchanga",
+      "duree": "juin 2023 - 2027 (5 ans)",
+      "nb_projets": 10,
+      "nb_projets_budgetises": 10,
+      "temoin": "Bourgmestre de la Commune de Panda (garant de la bonne application de l'accord)",
+      "titres": "Permis d'exploitation n° 12094, valide du 03/04/2009 au 02/04/2024 (arrêté ministériel n° 0663/CAB.MIN/MINES/01/2010 du 24/08/2010), 2 carrés miniers",
+      "observations": "Tableau synthétique des engagements convenus scanné en paysage (pages imprimées 10-12 / PDF 12-14). TOTAL GÉNÉRAL surligné : 1 700 704,89 USD — contrôlé par sommation des 10 lignes : exact. Garant : Bourgmestre de la Commune de Panda. Communautés urbaines (quartiers de la commune de Panda, ville de Likasi) — pas de groupement/chefferie.",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "New Minerals Investment SARL (ID.NAT. 05-B0500-N8837N, RCCM CD/LS/RCCM/14-B-00006, NIF A0906593C, siège n°12 av. Lofoi, quartier Golf, Lubumbashi)",
+      "lng": 26.71081,
+      "lat": -11.25982,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 1619702.81,
+      "items": [
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 596716.96
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 447361.64999999997
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 375660.0
+       }
+      ],
+      "annee": 2023,
+      "fichier": "NMI_avril23.pdf",
+      "date_source": "avril 2023 (mention manuscrite « Version finale » sur la couverture)",
+      "groupement": "Mukumbi (chefferie des Basanga)",
+      "nb_communautes": 5,
+      "communautes": "Sandra; Lumba-Kinsense; Makungu; Kawama; Mukumbi",
+      "duree": "2022-2026 (5 ans)",
+      "nb_projets": 6,
+      "nb_projets_budgetises": 6,
+      "temoin": "Sa Majesté Mpemba Moto Mpande Kiala Mathieu, Grand Chef de la chefferie des Basanga (témoin et garant)",
+      "titres": "Deux permis d'exploitation : PE 13235 (valide du 02/07/2016 au 02/04/2024, 3 carrés) et PE 2353 (valide du 12/09/2021 au 07/03/2040, 4 carrés) ; concession située à Sandra, territoire de Kambove",
+      "observations": "Tableau synthétique des engagements convenus scanné en paysage (pages imprimées 4-6 / PDF 7-8). TOTAL : 1 619 702,81 USD — contrôlé par sommation des 6 lignes : exact. Témoin/garant : Grand Chef de la chefferie des Basanga. Document paginé « sur 130 » (141 pages scannées avec couvertures).",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Divine Land Mining SARL",
+      "lng": 26.81446,
+      "lat": -11.0222,
+      "prov_iso": "CD-HK",
+      "terr": "Likasi",
+      "v": 1500285,
+      "items": [
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1012992.0
+       },
+       {
+        "e": "Électricité",
+        "f": "Secteur (projets budgétisés)",
+        "v": 201965.0
+       },
+       {
+        "e": "Ponts",
+        "f": "Secteur (projets budgétisés)",
+        "v": 155015.6
+       }
+      ],
+      "annee": 2023,
+      "fichier": "DivineLand_janv23.pdf",
+      "date_source": "janvier 2023",
+      "groupement": "Shituru",
+      "nb_communautes": 2,
+      "communautes": "Quartier Buluo (cellules Joli Site, Munung, Kipulande, Sankuru); Quartier Kilima",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 5,
+      "nb_projets_budgetises": 5,
+      "temoin": "Bourgmestre de la commune de Shituru",
+      "titres": "PE 12276 (valide du 25 novembre 2010 au 02 avril 2024, renouvellement en cours, 62 carrés miniers appartenant à la GECAMINES, amodiation sur 2 carrés) ; arrêté ministériel N°00119/CAB.MIN/MINES/01/2022 du 14 avril 2022 (entité de traitement type B)",
+      "observations": "Structure type : parties p.6-7, tableau synthétique des engagements p.8-11 (scanné en paysage), fiches détaillées par projet ensuite, annexes (PV). CLD présidé par M. Kisokola Mulambwa Placide. TOTAL GÉNÉRAL affiché : 1 500 285 USD (« un million cinq cent mille deux cent quatre-vingt-cinq dollars américains »). Contrôle par sommation des lignes : 1 012 992,00 + 90 000 + 201 965 + 155 015,60 + 40 1",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Congo Compagnie Minière (CNMCC) SARL",
+      "lng": 26.70094,
+      "lat": -10.88581,
+      "prov_iso": "CD-HK",
+      "terr": "Likasi",
+      "v": 1462559.72,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 330000.0
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 274200.0
+       },
+       {
+        "e": "Bâtiments communautaires",
+        "f": "Secteur (projets budgétisés)",
+        "v": 233059.72
+       }
+      ],
+      "annee": 2023,
+      "fichier": "CNMCC_mai23.pdf",
+      "date_source": "mai 2023",
+      "groupement": "Panda",
+      "nb_communautes": 4,
+      "communautes": "Quartier Kiwele; Quartier Kamilopa; Quartier Pandamayi; Quartier Muchanga",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 8,
+      "nb_projets_budgetises": 8,
+      "temoin": null,
+      "titres": "PE 2356 (valide du 08/03/2010 au 07/03/2040, au nom de la GECAMINES, notification d'inscription d'office n° CAMI/DG/0101/2010) ; contrat d'amodiation partielle sur PE 2356 signé le 30/11/2015 entre GECAMINES SA (amodiante) et CNMC Congo Compagnie Minière SARL (amodiataire), superficie 1 carré minier",
+      "observations": "CLD représenté par M. Mbav (Président), Mme Tshining Tshingambo (Vice-présidente), M. Kalonge Kiwele (Secrétaire Exécutif), M. Anaclet Kabongo (Secrétaire Adjoint), M. Laurent Kamanga (Conseiller). Tableau synthétique des engagements p.7-8 du PDF (scanné en paysage). TOTAL GÉNÉRAL : 1 462 559,72 USD — contrôlé par sommation des 8 lignes, la somme correspond exactement. Témoin/garant non observé ex",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Surya Mines SARL (RCCM 20-B-00967, ID. NAT. 05-B0500-N33756 W, 669 av. Kimbangu, Lubumbashi)",
+      "lng": 26.74971,
+      "lat": -11.32655,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 1382174.39,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 392424.17
+       },
+       {
+        "e": "Bâtiments communautaires",
+        "f": "Secteur (projets budgétisés)",
+        "v": 295014.67
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 288500.0
+       }
+      ],
+      "annee": 2023,
+      "fichier": "Surya Mines_oct23.pdf",
+      "date_source": "octobre 2023",
+      "groupement": "Groupements Mukumbi, Ngalu et Tenke (chefferie des Basanga et secteur de la Lufira)",
+      "nb_communautes": 5,
+      "communautes": "Kitemena/Mukumbi; Kitemena/Ngalu (zone principale); Kamikolo/Mukumbi; Kamikolo/Ngalu; Kawama/Tenke (zone environnante)",
+      "duree": "2024-2028 (5 ans, projets en phases annuelles)",
+      "nb_projets": 8,
+      "nb_projets_budgetises": 8,
+      "temoin": "Ministre provincial des Mines ; Pande Pembamoto Kyala Matthieu, Grand Chef de la chefferie des Basanga ; Eneya Kyamabamba Ruth, Cheffe du secteur de la Lufira",
+      "titres": "Permis d'exploitation n° 754 (110 carrés, valide au 27/09/2043), à 22 km de Likasi et 142 km de Lubumbashi",
+      "observations": "Tableau synthétique des engagements scanné en paysage (pages 7-10 imprimées / PDF 8-11). Total général contrôlé par sommation : 288500 + 202528 + 122423,67 + 270000,50 + 123700 + 80007,55 + 120002,02 + 175012,65 = 1 382 174,39 USD (exact). Signature en présence du Ministre provincial des Mines et des chefs coutumiers (témoins/garants). Date de couverture : octobre 2023.",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "METAL MINES SARL (METM)",
+      "lng": 26.67468,
+      "lat": -11.0661,
+      "prov_iso": "CD-HK",
+      "terr": "Likasi",
+      "v": 1298436.33,
+      "items": [
+       {
+        "e": "Sport/Loisirs",
+        "f": "Secteur (projets budgétisés)",
+        "v": 546971.18
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 403926.0
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 347539.15
+       }
+      ],
+      "annee": 2023,
+      "fichier": "METAL MINES_mai23.pdf",
+      "date_source": "mai 2023",
+      "groupement": "Shituru",
+      "nb_communautes": 6,
+      "communautes": "Cellule Mutepuka; Cellule Hewa Bora; Cellule Joli Site; Cellule Mivuka; Cellule Kimpulande; Cellule Péage (quartier Buluo)",
+      "duree": "avril 2023 - décembre 2026",
+      "nb_projets": 3,
+      "nb_projets_budgetises": 3,
+      "temoin": "Mme Laura, Bourgmestre de la commune de Shituru",
+      "titres": "PE 5152 (site à 120 km au sud-ouest de Likasi, territoire de Kambove, valide 24/01/2014 - 23/01/2044, certificat CAMI/CE/6843/14 du 07/08/2014, 3 carrés miniers)",
+      "observations": "Le viewer Drive n'a chargé que la page 1 (« problème lors du chargement des pages suivantes ») ; extraction réalisée via le texte OCR retourné par l'API Drive (read_file_content), complet et lisible. Version finale, mai 2023, avec accompagnement de EA Sarl. Total des projets contrôlé par sommation exacte : 1 298 436,33 USD. Le document imprime « Page X sur 126 ». Le texte des liminaires contient u",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "IMEC Congo SARL",
+      "lng": 27.51733,
+      "lat": -11.60159,
+      "prov_iso": "CD-HK",
+      "terr": "Lubumbashi",
+      "v": 478136.18,
+      "items": [
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 241280.0
+       },
+       {
+        "e": "Eau",
+        "f": "Secteur (projets budgétisés)",
+        "v": 159996.6
+       },
+       {
+        "e": "Bâtiments communautaires",
+        "f": "Secteur (projets budgétisés)",
+        "v": 76859.58
+       }
+      ],
+      "annee": 2023,
+      "fichier": "IMEC_oct23.pdf",
+      "date_source": "octobre 2023",
+      "groupement": "Commune Annexe",
+      "nb_communautes": 3,
+      "communautes": "Quartier Joli Site; Quartier Futuka; Cellules : Donatien, Petro, Katabe, Kikanda, Daniel, Kapalanga, Sapunga, Kolya",
+      "duree": "2024-2028",
+      "nb_projets": 3,
+      "nb_projets_budgetises": 3,
+      "temoin": "Mme Kileshe Sekwe Mireille, Bourgmestre de la Commune Annexe (témoin et garant)",
+      "titres": "AERCP 10462 et 10463 (autorisations d'exploitation de rejets/carrières permanentes), en cours de validité, inscriptions d'office n° CAMI/DG/051/2021 et CAMI/DG/052/2021, 10 carrés miniers, quartiers Joli Site et Futuka",
+      "observations": "Entreprise de carrières (exploitation des rejets). TOTAL du tableau : 478 136,18 USD — contrôlé par sommation exacte des 3 lignes (76 859,58 + 159 996,60 + 241 280,00 = 478 136,18). Tableau synthétique en PDF page 7 (interne 6/87), roté en paysage. Version finale, signée ; témoin : la Bourgmestre de la Commune Annexe.",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Société Minière du Kongo (SOMINKO) SARLU",
+      "lng": 26.49441,
+      "lat": -11.17985,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 300000,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 155284.19
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 91181.54
+       },
+       {
+        "e": "Bâtiments communautaires",
+        "f": "Secteur (projets budgétisés)",
+        "v": 53534.27
+       }
+      ],
+      "annee": 2023,
+      "fichier": "SOMINKO_oct23.pdf",
+      "date_source": "octobre 2023",
+      "groupement": "Kyembe (village Kapota)",
+      "nb_communautes": 2,
+      "communautes": "Village Kapota; Village Kimpemba",
+      "duree": "2024-2028 (5 ans)",
+      "nb_projets": 3,
+      "nb_projets_budgetises": 3,
+      "temoin": "Madame Ruth, Cheffe de Secteur de Lufira",
+      "titres": "PE N°12469, valide du 19/10/2015 au 18/10/2045, 78 carrés miniers",
+      "observations": "Extraction faite à partir du texte OCR Google Drive (très bonne qualité), total général contrôlé par sommation : 155 284,19 + 91 181,54 + 53 534,27 = 300 000,00 USD exactement (ligne TOTAL du tableau : 300 000,00), puis confirmé visuellement dans le viewer. Orthographe du village variable dans le document : « Kampemba » sur la couverture, « Kimpemba » dans le corps (retenu). Secteur du projet 3 li",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     }
+    ],
+    "2024": [
+     {
+      "nom": "Kipushi Corporation S.A. (KICO)",
+      "lng": 27.82801,
+      "lat": -11.59536,
+      "prov_iso": "CD-HK",
+      "terr": "Kipushi",
+      "v": 7951967.49,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 3714740.1400000006
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1779031.8
+       },
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 878599.34
+       }
+      ],
+      "annee": 2024,
+      "fichier": "KICO_sept24.pdf",
+      "date_source": "septembre 2024 (document daté du 06/09/2024, version V12 finale corrigée)",
+      "groupement": "Kaponda (et commune de Kipushi)",
+      "nb_communautes": 2,
+      "communautes": "10 villages de la chefferie Kaponda : Baya, Kaponda, Kinandu, Kanyaka, Gare Kaponda, Kintu, Kaboko, Mimbulu, Nyunga, Kyamupini; 6 quartiers de la commune de Kipushi : Kalubamba, Kachoma, Kamalenge, Lumumba, Mungoti, Uhuru",
+      "duree": "2024-2030 (chronogrammes par projet de 2024 à 2029/2030)",
+      "nb_projets": 16,
+      "nb_projets_budgetises": 16,
+      "temoin": null,
+      "titres": "PE 12434 (commune de Kipushi, valide du 02/07/2011 au 14/04/2036, arrêté n°0290/CAB.MIN/MINES/01/2011, 7 carrés)",
+      "observations": "Document structuré en rapport (V12 finale corrigée du 06/09/2024, 307 pages) avec table des matières, tableaux synthétiques rotés en paysage. Tableau 3 (synthèse) : chefferie Kaponda 4 145 557,88 USD + commune de Kipushi 3 806 409,61 USD = TOTAL GÉNÉRAL 7 951 967,49 USD (sommation vérifiée). Le sous-total Kaponda est confirmé par sommation des 7 lignes (4 145 557,88). Pour Kipushi, la somme des 9 ",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Société d'Exploitation de Kipoi (SEK) SA",
+      "lng": 26.63867,
+      "lat": -11.24436,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 2889000,
+      "items": [
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1022000.0
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 730000.0
+       },
+       {
+        "e": "Sport/Loisirs",
+        "f": "Secteur (projets budgétisés)",
+        "v": 405000.0
+       }
+      ],
+      "annee": 2024,
+      "fichier": "SEK_mars24.pdf",
+      "date_source": "mars 2024",
+      "groupement": "Katanga",
+      "nb_communautes": 8,
+      "communautes": "Katanga; Bungubungu; Lwafi; Lukutwe; Kangambwa; Kashipo; Kileba; Hewa Bora",
+      "duree": "2024-2028 (5 ans)",
+      "nb_projets": 16,
+      "nb_projets_budgetises": 16,
+      "temoin": null,
+      "titres": "PE 533 (CAMI/CE/360/03, validité 04/04/2024-03/04/2039, 25 carrés), PE 11383 (2 carrés), PE 11384 (9 carrés), PE 11385 (28 carrés), PE 11386 (1 carré), PE 11387 (2 carrés) — tous valides 09/03/2010-08/03/2040",
+      "observations": "Tableau synthétique (doc pages 3-5, PDF 15-17) scanné en paysage, 6 sections avec sous-totaux : Santé 215 000 ; Développement rural 120 000 ; Éducation 810 000 ; Infrastructures/DERU 192 000 ; Sport et loisir 405 000 ; Agriculture 1 147 000. TOTAL GÉNÉRAL contrôlé : 2 889 000,00 USD (somme des colonnes annuelles 2024-2028 : 683 105,50 + 573 815,50 + 589 688,00 + 528 695,50 + 513 695,50). Témoin/ga",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Société d'Exploitation Minière de Musoshi SA (SEM)",
+      "lng": 28.83293,
+      "lat": -12.58115,
+      "prov_iso": "CD-HK",
+      "terr": "Sakania",
+      "v": 1800000.5,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 753971.25
+       },
+       {
+        "e": "Bâtiments communautaires",
+        "f": "Secteur (projets budgétisés)",
+        "v": 265372.75
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 208450.0
+       }
+      ],
+      "annee": 2024,
+      "fichier": "SEM_mars24.pdf",
+      "date_source": "mars 2024",
+      "groupement": null,
+      "nb_communautes": 5,
+      "communautes": "Quartier Sodimico 1; Quartier Sodimico 2; Quartier Sodimico 3; Quartier Kambasa; Quartier Musoshi gare",
+      "duree": "2025-2029",
+      "nb_projets": 10,
+      "nb_projets_budgetises": 10,
+      "temoin": "Comité Local de Développement (CLD), président : Legrand Mbelenge",
+      "titres": "PE n° 14131, valide du 06 octobre 2019 au 05 octobre 2034, 67 carrés miniers",
+      "observations": "Document « Version finale », mars 2024, 137 pages scannées (pagination interne 138). Tableau synthétique des engagements aux pages internes 5-7 (PDF 7-9), roté en paysage. TOTAL GÉNÉRAL : 1 800 000,50 USD — contrôlé par sommation exacte des 10 lignes (1 800 000,50). Représentant SEM : Zou Jiyan ; CLD présidé par Legrand Mbelenge (vice-président Ngoie Kalumba Déo).",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     }
+    ]
+   },
+   "lualaba_list": [
+    {
+     "entreprise": "Tenke Fungurume Mining (TFM) SA",
+     "annee": 2021,
+     "budget": 36386272,
+     "nb_projets": 31,
+     "duree": "2021-2025 (5 ans)",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL"
+    },
+    {
+     "entreprise": "KAMCO",
+     "annee": 2012,
+     "budget": 8338949,
+     "nb_projets": 66,
+     "duree": "2012 à 2042 (31 ans)",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : PROJET N° 51, 52, 53 et 54 ABSENTS"
+    },
+    {
+     "entreprise": "Compagnie Minière de Musonoi (COMMUS) SAS",
+     "annee": 2021,
+     "budget": 4382000,
+     "nb_projets": 20,
+     "duree": "2021-2025 (5 ans)",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL                                                                            les projets : 1 à 6  concernent les communautés des villages Pierre Muteba, Tshizuza, Kapepa et Tshabula. 7 à 20 pour les communautés de la commune de "
+    },
+    {
+     "entreprise": "Metalkol SA (ERG)",
+     "annee": 2021,
+     "budget": 2974000,
+     "nb_projets": 10,
+     "duree": "2021 à 2022 (2 ans)",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL"
+    },
+    {
+     "entreprise": "Société Minière de Deziwa (SOMIDEZ) SAS",
+     "annee": 2021,
+     "budget": 1895000,
+     "nb_projets": 14,
+     "duree": "2021 à 2025 (5 ans)",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL"
+    },
+    {
+     "entreprise": "Kalongwe Mining SA (KMSA)",
+     "annee": 2021,
+     "budget": 800000,
+     "nb_projets": 9,
+     "duree": "2021 à 2025 (5 ans)",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL"
+    },
+    {
+     "entreprise": "La Minière de Kalukundi (LAMIKAL) SA",
+     "annee": null,
+     "budget": 683550,
+     "nb_projets": 8,
+     "duree": "None",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL"
+    },
+    {
+     "entreprise": "Chengtun Congo Ressources (CCR) SARL",
+     "annee": 2020,
+     "budget": 600000,
+     "nb_projets": 3,
+     "duree": "2020 à 2024 (5 ans)",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL"
+    },
+    {
+     "entreprise": "Tengyuan Cobalt & Copper Resources (TCC) SARL",
+     "annee": null,
+     "budget": 575000,
+     "nb_projets": 7,
+     "duree": "None",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL"
+    },
+    {
+     "entreprise": "LCS SAS",
+     "annee": 2022,
+     "budget": 550000,
+     "nb_projets": 6,
+     "duree": "2022 à 2026 (5 ans)",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL"
+    },
+    {
+     "entreprise": "HMC SARL",
+     "annee": 2020,
+     "budget": 550000,
+     "nb_projets": 6,
+     "duree": "2020-2024 (5 ans)",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL"
+    },
+    {
+     "entreprise": "Kisanfu Mining SAS (KIMIN)",
+     "annee": 2020,
+     "budget": 459744,
+     "nb_projets": 6,
+     "duree": "2020-2024 (5 ans)",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL"
+    },
+    {
+     "entreprise": "Sino-Congolaise des Mines (SICOMINES) SA",
+     "annee": null,
+     "budget": null,
+     "nb_projets": 26,
+     "duree": "None",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : Certaines pages sont manquantes; Par conséquent, le nombre des projets est relatif au nombre des projets traités et non au nombre total comme prévoit le cahier des charges en son entièreté. De surcroit, le calcul du budget alloué à ce cahier des charges se voit inopportun                   "
+    }
+   ],
+   "hk_no_year": [
+    "MMG Kinsevere SARL",
+    "Golden African Resources (GAR) SARL"
+   ]
+  },
+  "cahiers_hklu_nombre": {
+   "label": "Cahiers de charge — nombre de cahiers signés (Haut-Katanga & Lualaba, 2020-2024)",
+   "unit": "cahiers",
+   "fmt": "num",
    "years": [
-    "2021"
+    "s.d.",
+    "2012",
+    "2020",
+    "2021",
+    "2022",
+    "2023",
+    "2024"
+   ],
+   "prov": {
+    "s.d.": {
+     "CD-HK": 2,
+     "CD-LU": 3
+    },
+    "2012": {
+     "CD-LU": 1
+    },
+    "2020": {
+     "CD-HK": 2,
+     "CD-LU": 3
+    },
+    "2021": {
+     "CD-HK": 5,
+     "CD-LU": 5
+    },
+    "2022": {
+     "CD-HK": 14,
+     "CD-LU": 1
+    },
+    "2023": {
+     "CD-HK": 15
+    },
+    "2024": {
+     "CD-HK": 3
+    }
+   },
+   "terr": {
+    "s.d.": {
+     "CD-HK|Kipushi": 2
+    },
+    "2012": {},
+    "2020": {
+     "CD-HK|Lubumbashi": 2
+    },
+    "2021": {
+     "CD-HK|Sakania": 1,
+     "CD-HK|Kipushi": 1,
+     "CD-HK|Kambove": 2,
+     "CD-HK|Pweto": 1
+    },
+    "2022": {
+     "CD-HK|Lubumbashi": 1,
+     "CD-HK|Sakania": 3,
+     "CD-HK|Kambove": 4,
+     "CD-HK|Likasi": 5,
+     "CD-HK|Pweto": 1
+    },
+    "2023": {
+     "CD-HK|Kipushi": 1,
+     "CD-HK|Kambove": 8,
+     "CD-HK|Likasi": 5,
+     "CD-HK|Lubumbashi": 1
+    },
+    "2024": {
+     "CD-HK|Kipushi": 1,
+     "CD-HK|Kambove": 1,
+     "CD-HK|Sakania": 1
+    }
+   },
+   "points": {
+    "s.d.": [
+     {
+      "nom": "MMG Kinsevere SARL",
+      "lng": 27.83357,
+      "lat": -11.64924,
+      "prov_iso": "CD-HK",
+      "terr": "Kipushi",
+      "v": 6000000,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1527982.0
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1415767.0
+       },
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1229071.0
+       }
+      ],
+      "annee": null,
+      "fichier": "MMG (Kambove).pdf",
+      "date_source": null,
+      "groupement": "Kasongo et Shindaika",
+      "nb_communautes": 3,
+      "communautes": "Agglomération de Kifita; Agglomération de Kifumanshi; 26 villages dont Kilongo, Sela, Mumanga, Muombe Mwewa, Ntetema, Kikwesa, Pundu, Lutenge, Mikanga, Misanse, Denis, Kalilanda, Mumba",
+      "duree": "2021-2025 (5 ans)",
+      "nb_projets": 18,
+      "nb_projets_budgetises": 18,
+      "temoin": "Ngombe Kazadi Jean-Marie, Chef de secteur de Bukanda",
+      "titres": "Amodiataire de la fusion des permis PE 528 et PE 7274 de la GECAMINES (arrêté n° 0143/CAB.MIN/MINES/01/2019 du 01/03/2019, valide 04/03/2009 - 03/04/2024, 25 carrés miniers)",
+      "observations": "Attention : malgré le nom du fichier « MMG (Kambove) », le document concerne MMG Kinsevere SARL, secteur de Bukanda, TERRITOIRE DE KIPUSHI (mine de Kinsevere). Communautés représentées par les CLD de Kifita (président Sumaili Masudi Stéphane) et de Kifumanshi (président Kampelembwe Nyeba Tharcisse). Total budget pour 5 ans contrôlé par sommation exacte de toutes les sous-lignes : 6 000 000 USD. Da",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Golden African Resources (GAR) SARL",
+      "lng": 27.73938,
+      "lat": -11.60868,
+      "prov_iso": "CD-HK",
+      "terr": "Kipushi",
+      "v": 1718912.1,
+      "items": [
+       {
+        "e": "Élevage/Pisciculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 410978.27999999997
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 358792.95
+       },
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 339414.6
+       }
+      ],
+      "annee": null,
+      "fichier": "GAR.pdf",
+      "date_source": null,
+      "groupement": "Bukanda",
+      "nb_communautes": 6,
+      "communautes": "Tumbwe Gare; Tumbwe Village; Kamisamba; Kalukalanga; Kanema; Mikalo",
+      "duree": "2024-2028 (5 ans)",
+      "nb_projets": 15,
+      "nb_projets_budgetises": 15,
+      "temoin": "Mwape Kabinda Sébastien, chef de secteur Bukanda",
+      "titres": "PE n° 1063, valide du 05/10/2013 au 04/10/2043 (arrêté n° 00370/CAB.MIN/MINES/01/2021 du 08/10/2021), 251 carrés miniers",
+      "observations": "Pas de date sur la couverture ni dans le nom de fichier ; chronogramme 2024-2028, signature probablement fin 2023/début 2024 (non confirmée dans les pages lues). Tableau synthétique des engagements aux doc pages 9-13 (PDF 10-14), scanné en paysage, 15 projets. TOTAL GÉNÉRAL surligné : 1 718 912,10 USD ; somme des lignes = 1 718 912,08 (écart de 2 centimes d'arrondi). CLD présidé par Tambatamba Tum",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     }
+    ],
+    "2012": [],
+    "2020": [
+     {
+      "nom": "Ruashi Mining SAS",
+      "lng": 27.46991,
+      "lat": -11.65417,
+      "prov_iso": "CD-HK",
+      "terr": "Lubumbashi",
+      "v": 7897078.49,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 2251646.81
+       },
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1129759.81
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 962412.0
+       }
+      ],
+      "annee": 2020,
+      "fichier": "Ruashi Mining_aout20.pdf",
+      "date_source": "août 2020",
+      "groupement": "Ruashi",
+      "nb_communautes": 1,
+      "communautes": "15 quartiers de la commune de Ruashi (dont Wama 3, Kalukuluku 2, Matoleo 1, Bendera 1, Kawama 2/3, Kananba, Shindaika, Luano, Mamba, Tshiazia...)",
+      "duree": "2021-2025 (5 ans)",
+      "nb_projets": 12,
+      "nb_projets_budgetises": 11,
+      "temoin": "Mme Byamungu Muteba Brigitte, bourgmestre de la commune de Ruashi",
+      "titres": "PE n° 578 et PE n° 11751, valides respectivement jusqu'en 2039 et décembre 2029 (arrêtés n° 00272/CAB.MIN/MINES/01/2020 du 13/10/2020 et n° 0851/CAB.MIN/MINES/01/2009 du 11/12/2009), 13 carrés miniers",
+      "observations": "Tableau synthétique des engagements aux doc pages 6-10 (PDF 7-11), scanné en paysage (rotation inverse), 12 projets. TOTAL GÉNÉRAL : 7 897 078,49 USD — somme des lignes (avec eau = N/A) exacte. Le projet eau porte un budget « N/A » (fourniture d'un débit d'eau par l'entreprise, apport en nature) ; l'attribution eau/électricité entre les lignes 1-2 est déduite des descriptions (léger doute sur l'or",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Société pour le Traitement du Terril de Lubumbashi (STL), RCCM 14-B-1890, siège à Lubumbashi",
+      "lng": 27.47547,
+      "lat": -11.70805,
+      "prov_iso": "CD-HK",
+      "terr": "Lubumbashi",
+      "v": 2743811,
+      "items": [
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1020256.0
+       },
+       {
+        "e": "Bâtiments communautaires",
+        "f": "Secteur (projets budgétisés)",
+        "v": 766433.0
+       },
+       {
+        "e": "Ponts",
+        "f": "Secteur (projets budgétisés)",
+        "v": 312671.0
+       }
+      ],
+      "annee": 2020,
+      "fichier": "STL_mai20.pdf",
+      "date_source": "mai 2020 (document signé, signatures manuscrites sur chaque page)",
+      "groupement": "Lubumbashi",
+      "nb_communautes": 5,
+      "communautes": "Quartier Mampala 1; Quartier Mampala 2; Quartier Mumbunda; Quartier Salama; Quartier Lido (Lido Golf)",
+      "duree": "2020-2024 (5 ans)",
+      "nb_projets": 17,
+      "nb_projets_budgetises": 17,
+      "temoin": "Communauté représentée par le Comité de développement communal (représentants des 5 quartiers : Azama Salumu et Albert Kaweji - Mampala 1 ; Azama Tabu Caresse et Kamilongo Mutanga - Mampala 2 ; Mani Kabenga...)",
+      "titres": "Amodiataire (jusqu'au 31/12/2023, renouvelable) sur 4 carrés du Permis d'exploitation PE 481 appartenant à la Gécamines, couvrant le Terril de Lubumbashi ; contrat d'amodiation n° 1876/7210/SG/GC/2019",
+      "observations": "Tableau synthétique des engagements retenus scanné en paysage (pages imprimées 3-8 / PDF 6-11, 17 lignes). BUDGET TOTAL : 2 743 811 USD, confirmé par le tableau « Répartition budgétaire par année pour les 5 ans » (p.3 imprimée : 2020 = 580 113 ; 2021 = 546 795 ; 2022 = 491 921 ; 2023 = 546 092 ; 2024 = 578 890 ; TOTAL = 2 743 811 — sommation annuelle exacte). Contrôle par lignes : les 4 lignes 202",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     }
+    ],
+    "2021": [
+     {
+      "nom": "Frontier SA",
+      "lng": 28.92156,
+      "lat": -12.56783,
+      "prov_iso": "CD-HK",
+      "terr": "Sakania",
+      "v": 9698838,
+      "items": [
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 4652545.8
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 2439124.0
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1410700.0
+       }
+      ],
+      "annee": 2021,
+      "fichier": "FRONTIER_sept21.pdf",
+      "date_source": "septembre 2021 (date du nom de fichier ; version finale paraphée sur chaque page, date exacte de signature non repérée dans les pages consultées)",
+      "groupement": "Katala",
+      "nb_communautes": 6,
+      "communautes": "Cité de Sakania; Kabumba; Kimfumpa; Kaloko; Lukangaba Customs; Lukangaba Mashimu",
+      "duree": "5 ans, avril 2022 - décembre 2026 (« TOTAL BUDGET POUR 5 ANS »)",
+      "nb_projets": 36,
+      "nb_projets_budgetises": 36,
+      "temoin": "Mwema Mulota, Chef de Secteur (Balamba), témoin et garant",
+      "titres": "PE 13080 valide du 31 juillet 2012 au 30 juillet 2042 (arrêté 0435/CAB.MIN/MINES/01/2012 du 31 juillet 2012), 187 carrés",
+      "observations": "Tableau 1 « Tableau synthétique des engagements convenus » (36 lignes, scanné en paysage, printed pp. 1-16) : TOTAL BUDGET POUR 5 ANS imprimé en gras = 9 698 838 USD. Contrôle par sommation des lignes lues : ≈ 9 698 878 USD (écart ~40 USD imputable à la lecture OCR de quelques chiffres sur scans tournés à 90°). Modèle par communauté : mêmes types de projets (maïs+coopérative, haricot, maraîchage, ",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Société Minière du Katanga (SOMIKA) SARL",
+      "lng": 27.79483,
+      "lat": -11.56952,
+      "prov_iso": "CD-HK",
+      "terr": "Kipushi",
+      "v": 6763500,
+      "items": [
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 2300000.0
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1335000.0
+       },
+       {
+        "e": "Eau",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1050000.0
+       }
+      ],
+      "annee": 2021,
+      "fichier": "SOMIKA.pdf",
+      "date_source": "23 février 2021 (cérémonie officielle de signature)",
+      "groupement": "Kaponda (territoire de Kipushi) + commune Annexe (ville de Lubumbashi)",
+      "nb_communautes": 2,
+      "communautes": "Villages Lupoto Rail, Mukoma, Kipopo et Kwampisha (chefferie Kaponda, territoire de Kipushi); Quartiers Somika, Mukunto, Kisanga, Kilima Simba et Triangle (commune Annexe, ville de Lubumbashi)",
+      "duree": "2021-2025 (5 ans, chronogrammes par projet)",
+      "nb_projets": 23,
+      "nb_projets_budgetises": 23,
+      "temoin": "Grand Chef Kaponda Lubenge Bwalya (chef de chefferie Kaponda) et Rémy Munsense Mukoma (Bourgmestre de la commune Annexe), témoins et garants ; signature sous l'égide du Ministre provincial des Mines",
+      "titres": "Concession exploitée via contrat d'amodiation signé avec la Générale des Carrières et des Mines (GCM) ; limites fixées par les titres miniers octroyés par l'État (EIES). RCCM CD/TRICOM/L'SHI/RCCM/13-B-0737, Id. Nat. 6-193-N43777U",
+      "observations": "Document structuré en deux volets : I. engagements avec les communautés de la chefferie Kaponda (8 projets, 2 566 000 USD, somme des lignes contrôlée) et I.2. engagements avec la commune Annexe (15 projets, TOTAL imprimé en gras 4 197 500 USD, contrôlé par sommation exacte des lignes). Budget total général = 2 566 000 + 4 197 500 = 6 763 500 USD (pas de ligne unique « total général » combinant les",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Compagnie Minière de Luisha SAS (COMILU SAS)",
+      "lng": 26.65156,
+      "lat": -11.40649,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 1598768.85,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 731394.97
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 205917.8
+       },
+       {
+        "e": "Bâtiments communautaires",
+        "f": "Secteur (projets budgétisés)",
+        "v": 204939.83000000002
+       }
+      ],
+      "annee": 2021,
+      "fichier": "COMILU_dec21.pdf",
+      "date_source": "décembre 2021",
+      "groupement": "Katanga",
+      "nb_communautes": 4,
+      "communautes": "Village Luisha (zone principale); Village Bungu-Bungu; Village Lukumba; Village Mazembe",
+      "duree": "4e trimestre 2022 - 2026 (5 ans)",
+      "nb_projets": 15,
+      "nb_projets_budgetises": 15,
+      "temoin": "Chef de Secteur de la Lufira, Dominique Savio Mwewa Lubunga Nsambo",
+      "titres": "PE n°526 (6 carrés, valide au 03/04/2024) et PE n°11367 (10 carrés, valide au 14/06/2041), périmètres à 40 km de Likasi et 80 km de Lubumbashi, siège d'exploitation à Luisha",
+      "observations": "OCR Google Drive vide pour ce fichier (scan pur) : extraction faite par lecture visuelle dans le viewer (tableau des engagements pp. 9-12 du document, scanné en paysage). COUT GLOBAL contrôlé par sommation des 15 lignes : 1 598 768,85 USD exactement. Date de signature non vue explicitement dans les pages lues : déduite du nom de fichier (dec21) ; chronogramme démarre au 4e trimestre 2022. Représen",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Excellen Minerals SARL (E.M SARL)",
+      "lng": 26.45638,
+      "lat": -11.36337,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 1466960,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 390000.0
+       },
+       {
+        "e": "Bâtiments communautaires",
+        "f": "Secteur (projets budgétisés)",
+        "v": 240000.0
+       },
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 240000.0
+       }
+      ],
+      "annee": 2021,
+      "fichier": "Excellen_mai21.pdf",
+      "date_source": "mai 2021 (Luisha)",
+      "groupement": "Lufira",
+      "nb_communautes": 3,
+      "communautes": "Luisha; Milando; Kangabwa (75 km)",
+      "duree": "2021-2025 (5 ans, An 1 à An 5)",
+      "nb_projets": 24,
+      "nb_projets_budgetises": 24,
+      "temoin": null,
+      "titres": "PE n° 4881, 20 carrés miniers, durée de 25 ans (société installée depuis le 05 mai 2016)",
+      "observations": "24 projets priorisés (confirmé dans la fiche projet n°1 : « 24 projets ont été priorisés et convenus »). TOTAL du tableau : 1 466 960,00 USD — contrôlé par sommation exacte des 24 lignes (1 466 960). Tableau synthétique aux pages internes 3-9 (PDF 6-12), scanné en paysage. Population bénéficiaire estimée : 59 276 habitants (36 020 à Luisha). Signature manuscrite « François Ilunga » sur la couvertu",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Anvil Mining Congo (AMC) SA",
+      "lng": 28.48107,
+      "lat": -8.61367,
+      "prov_iso": "CD-HK",
+      "terr": "Pweto",
+      "v": 1427535.6,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 642012.5
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 266180.6
+       },
+       {
+        "e": "Ponts",
+        "f": "Secteur (projets budgétisés)",
+        "v": 103000.0
+       }
+      ],
+      "annee": 2021,
+      "fichier": "AMC_dec21.pdf",
+      "date_source": "12 juillet 2021 (signatures « lu et approuvé » du 12/07/2021 ; version finale datée décembre 2021)",
+      "groupement": "M'Pweto",
+      "nb_communautes": 1,
+      "communautes": "Villages Mwashi, Village 25, Kinyanta, Kabangale, Shikasongo, Kazana, Mabenga, Kimpute, Kalankolola, Shikipoka, Shibupe, Kabundi 1, Kabundi 2, Kitwe, Kafunga, Santé, Mukulukusha, Kabala, Somboshi et le centre commercial de Pweto",
+      "duree": "5 ans, janvier 2022 - décembre 2026 (article 4)",
+      "nb_projets": 9,
+      "nb_projets_budgetises": 9,
+      "temoin": "Grand-Chef de la chefferie M'Pweto, Bobo Ngoy François Kunaka Kunaka ; supervision du délégué du ministère provincial en charge des Mines ; facilitation Elba Afrika SARL",
+      "titres": "PE 1697",
+      "observations": "Document rédigé en chapitres/articles (modèle Elba Afrika). Tableau 1 (Synthèse des engagements, rotaté 90°) : Budget total des projets 1 195 535,6 USD + Coordination des projets 232 000 USD = TOTAL GENERAL 1 427 535,6 USD (contrôlé : somme des 9 lignes = 1 195 535,7 ≈ arrondi). Signatures du 12/07/2021 antérieures à la version finale (décembre 2021). Viewer lent (page parfois gelée), plusieurs te",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     }
+    ],
+    "2022": [
+     {
+      "nom": "Chemicals of Africa (CHEMAF) SA",
+      "lng": 27.43672,
+      "lat": -11.62833,
+      "prov_iso": "CD-HK",
+      "terr": "Lubumbashi",
+      "v": 6488096.85,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 2502880.0
+       },
+       {
+        "e": "Assainissement",
+        "f": "Secteur (projets budgétisés)",
+        "v": 974417.6
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 915430.0
+       }
+      ],
+      "annee": 2022,
+      "fichier": "CHEMAF.pdf",
+      "date_source": "non datée (chronogramme 2022-2026)",
+      "groupement": "Annexe, Kampemba, Ruashi (Lubumbashi) + secteur Bukanda (Kipushi)",
+      "nb_communautes": 4,
+      "communautes": "Commune Annexe (La Vallée, Luwowoshi, Kamasaka, Kipanta); Commune Kampemba (Kigoma, Kabetsha, Industriel); Commune Ruashi (8 quartiers : Congo 1 et 2, Kalukuluku 1 et 2, Luano, Shindaika, Matoleo, Bendera); Secteur Bukanda (10 villages : Mamba, Boyonga, Kalubamba, Kyawuma, Luano ",
+      "duree": "2022-2026 (5 ans)",
+      "nb_projets": 21,
+      "nb_projets_budgetises": 21,
+      "temoin": null,
+      "titres": null,
+      "observations": "Document de 459 pages (110 Mo) illisible dans l'aperçu Drive ; données intégrées depuis l'analyse BI fournie par l'utilisateur (OCR + relecture visuelle, réconciliation exacte : somme des 21 lignes = total 6 488 096,85 USD). Périmètre multi-sites : ~4,87 M USD sur la ville de Lubumbashi (communes Annexe, Kampemba, Ruashi) et ~1,61 M USD sur le secteur Bukanda (Kipushi).",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Kinsenda Copper Company (KICC) SA",
+      "lng": 28.88838,
+      "lat": -12.54199,
+      "prov_iso": "CD-HK",
+      "terr": "Sakania",
+      "v": 5774170.2,
+      "items": [
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1839099.46
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1318260.22
+       },
+       {
+        "e": "Ponts",
+        "f": "Secteur (projets budgétisés)",
+        "v": 921496.91
+       }
+      ],
+      "annee": 2022,
+      "fichier": "KICC_mars22.pdf",
+      "date_source": "mars 2022",
+      "groupement": "Kombo",
+      "nb_communautes": 4,
+      "communautes": "Camp Kinsenda-Kitotwe; Bloc Meleki; Bloc Twibombele; Village Kalulu",
+      "duree": "2022-2026 (5 ans)",
+      "nb_projets": 13,
+      "nb_projets_budgetises": 12,
+      "temoin": "Chef de secteur Mwema Mulota",
+      "titres": "PE 101 (valide 15 ans, jusqu'en 2033, 59 carrés / 5 012 ha) et PE 12548 (valide 30 ans, jusqu'en 2042, 67 carrés / 5 691,6 ha)",
+      "observations": "Structure type protocole d'accord (10 pages) + fiches détaillées par projet (alignement programme gouvernement et ODD) + annexes volumineuses (PV consultations, listes de présence). Total général contrôlé : 5 774 170,20 USD.",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Sabwe Mining SARL",
+      "lng": 28.92712,
+      "lat": -12.62171,
+      "prov_iso": "CD-HK",
+      "terr": "Sakania",
+      "v": 4027214,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1124573.65
+       },
+       {
+        "e": "Électricité",
+        "f": "Secteur (projets budgétisés)",
+        "v": 992994.88
+       },
+       {
+        "e": "Autre",
+        "f": "Secteur (projets budgétisés)",
+        "v": 710640.0
+       }
+      ],
+      "annee": 2022,
+      "fichier": "Sabwe_mai22.pdf",
+      "date_source": "mai 2022",
+      "groupement": "Kipilingu",
+      "nb_communautes": 5,
+      "communautes": "Lonshi; Laule; Mwelushi; Miriashi; Lucele-Sabwe",
+      "duree": "2022-2027",
+      "nb_projets": 12,
+      "nb_projets_budgetises": 12,
+      "temoin": "Comité Local de Développement (CLD), président : Chef Nkonde Songe Norbert",
+      "titres": "PE n° 13093, valide jusqu'au 13 juillet 2044",
+      "observations": "TOTAL GÉNÉRAL du tableau : 4 027 214 USD, confirmé en toutes lettres (« Quatre millions vingt-sept mille deux cent quatorze dollars américains »). La sommation des 12 lignes lues donne 4 023 213,90 USD, soit un écart de ~4 000 USD (une ligne du tableau diffère légèrement, probablement une valeur arrondie dans le document). Consultant : Planet Consulting Africa SARL. Structure : tableau synthétique",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Shamitumba SAS (Lubumbashi, Haut-Katanga)",
+      "lng": 26.59125,
+      "lat": -11.29693,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 3247210.56,
+      "items": [
+       {
+        "e": "Électricité",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1521443.1
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 697151.0
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 600014.8300000001
+       }
+      ],
+      "annee": 2022,
+      "fichier": "Shamitumba_oct22.pdf",
+      "date_source": "octobre 2022 (mention manuscrite « Approuvée » sur la couverture)",
+      "groupement": "Mukumbi (chefferie de Bassanga)",
+      "nb_communautes": 4,
+      "communautes": "Mukumbi; Kapemba; Sandra; Kawama",
+      "duree": "2022-2027 (chronogrammes des projets étalés de 2022 à 2027)",
+      "nb_projets": 12,
+      "nb_projets_budgetises": 12,
+      "temoin": "M. Mpande Matthieu Pembamoto Kyala, Chef de la chefferie de Bassanga (témoin et garant)",
+      "titres": "10 permis d'exploitation contigus : PE 10385 (3 carrés, exp. 02/08/2040), PE 12271 (4), PE 12272 (3), PE 12273 (4), PE 12277 (3) — exp. 02/04/2024 ; PE 13236 (13), PE 13237 (5, exp. 07/03/2040), PE 13238 (3), PE 13239 (1), PE 13240 (1) — exp. 02/04/2024",
+      "observations": "Tableau 1 (synthétique des engagements, scanné en paysage, pages imprimées 4-8 / PDF 9-13). TOTAL GÉNÉRAL lu et vérifié par zoom : 3 247 210,56 USD. La sommation de mes lectures des 12 lignes donne 3 248 210,56 (écart de +1 000, soit 0,03 % — une ligne comporte probablement un chiffre des milliers mal lisible dans le scan, p.ex. 1 521 443,10 ou 62 000). CLD déjà constitué (Président Kazadi Mujinga",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Kai Peng Mining SARL",
+      "lng": 26.72956,
+      "lat": -10.97629,
+      "prov_iso": "CD-HK",
+      "terr": "Likasi",
+      "v": 2612353.7,
+      "items": [
+       {
+        "e": "Électricité",
+        "f": "Secteur (projets budgétisés)",
+        "v": 899476.0
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 535655.3
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 337595.0
+       }
+      ],
+      "annee": 2022,
+      "fichier": "Kai Peng (Panda)_dec22.pdf",
+      "date_source": "décembre 2022",
+      "groupement": "Panda",
+      "nb_communautes": 5,
+      "communautes": "Quartier Kakontwe; Quartier Panda Mayi; Quartier Mutchanga; Quartier Kamilapo; Quartier Kiwele",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 9,
+      "nb_projets_budgetises": 9,
+      "temoin": "Bourgmestre de la commune de Panda, représenté par son chef de bureau Kasongo Kabwa Mbayo",
+      "titres": "PE n° 8210, validité du 17 juillet 2015 au 16 juillet 2025",
+      "observations": "Tableau des engagements (doc pages 3-11, PDF 11-19) scanné en paysage, 9 projets. TOTAL en toutes lettres se terminant par « ...cinquante-trois dollars américains et sept centimes » = 2 612 353,70 USD ; somme des 9 lignes = 2 612 353,70 exactement. CLD : vice-présidente Mme Kandu Perpetue (Panda Mayi), secrétaire Kalonge Dominique (Kiwele), trésorier Tshing Louis (Kamilopa) — nom du président non ",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Société Minière du Katanga (SOMIKA SARLU) - Projet Kimpe-Mabaya",
+      "lng": 28.96898,
+      "lat": -12.51525,
+      "prov_iso": "CD-HK",
+      "terr": "Sakania",
+      "v": 2301000,
+      "items": [
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1250000.0
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 375000.0
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 350000.0
+       }
+      ],
+      "annee": 2022,
+      "fichier": "SOMIKA (Kimpe-Mabaya)_juillet22.pdf",
+      "date_source": "juillet 2022",
+      "groupement": "Kombo",
+      "nb_communautes": 6,
+      "communautes": "Village Mabaya; Village Kimpe; Village Musoya; Village Mutwamina; Village Kapapa; Village Kifumpa",
+      "duree": "mi-2021 - 2024 (démarrages échelonnés de juin 2021 à juillet 2022)",
+      "nb_projets": 6,
+      "nb_projets_budgetises": 6,
+      "temoin": "Grand Chef Dieudonné Mwema Mulota Selenge II, Chef de secteur de Balamba",
+      "titres": "PE 12264 et PE 271 à Kimpe ; PE 13158, PE 12263 et PE 13160 à Mabaya ; PE 13159 et PE 13157 à Kapapa",
+      "observations": "Élaboré avec l'accompagnement technique d'Environmental Agency (EA sarl). Le tableau synthétique (p.20-24 du doc, scanné en paysage) ne comporte pas de ligne TOTAL GÉNÉRAL visible ; budget total obtenu par sommation des 6 projets = 2 301 000 USD. CLD présidé par Mujinga Tshabala (Kimpe), 1er vice-président Kabulwe Bushibwa (Mabaya). Signature en présence du Ministre provincial des Mines, du Chef d",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Congo Investments S.A.S. (Congo Investment)",
+      "lng": 26.53637,
+      "lat": -11.38674,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 1764525.02,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 585000.0
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 581950.0
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 352000.0
+       }
+      ],
+      "annee": 2022,
+      "fichier": "Congo investments_juillet22.pdf",
+      "date_source": "16 juillet 2022 (cérémonie officielle de signature)",
+      "groupement": "Mukumbi",
+      "nb_communautes": 3,
+      "communautes": "Ditengwa; Mbaya; Ngeleka",
+      "duree": "5 ans (2024-2028)",
+      "nb_projets": 8,
+      "nb_projets_budgetises": 7,
+      "temoin": "Chef de la Chefferie de Basanga (témoin et garant de la bonne application de l'accord)",
+      "titres": "Titulaire d'un droit minier d'exploitation / autorisation de carrières permanente ; siège d'exploitation : village Ditengwa, groupement Mukumbi, territoire de Kambove (numéro de PE non relevé dans les pages consultées)",
+      "observations": "TOTAL GÉNÉRAL POUR 5 ANS : 1 764 525,02 USD — contrôlé par sommation des 7 lignes du tableau (1 764 525). Tableau synthétique aux pages internes 5-11 (PDF 6-12), scanné en paysage avec un contraste très faible (scan pâle), certaines cellules presque illisibles. Le nom du représentant de l'entreprise et le numéro exact du PE ne figurent pas dans les pages consultées (liminaires) ; signature le 16 j",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Congo Jin Ju Cheng Mining Compagny (CJCMC) SARL",
+      "lng": 26.77698,
+      "lat": -10.92372,
+      "prov_iso": "CD-HK",
+      "terr": "Likasi",
+      "v": 1675075.61,
+      "items": [
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1675075.61
+       }
+      ],
+      "annee": 2022,
+      "fichier": "CJCMC_janv23.pdf",
+      "date_source": "28 décembre 2022 (fait à Likasi ; version finale janvier 2023)",
+      "groupement": "Shituru",
+      "nb_communautes": 2,
+      "communautes": "Quartier Buluo; Quartier Nguya",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 1,
+      "nb_projets_budgetises": 1,
+      "temoin": "Placide Kisokola Mulambwa, Bourgmestre de la Commune de Shituru",
+      "titres": "PE 9469 valide du 25 mai 2016 au 26 mai 2045, 19 carrés (Certificat d'Exploitation CAMI/CF/7043/16 du 27 mai 2016)",
+      "observations": "Projet unique (méga-projet agricole en 3 volets). Total général contrôlé : 108 475,61 + 1 270 000,00 + 296 600,00 = 1 675 075,61 USD. Suivi-évaluation par le Comité Local de Suivi (CLS) présidé par le Maire de Likasi (1 délégué entreprise + 4 représentants communautés) ; contrôle second niveau DPEM, FNPSS, ACE. Extension Chrome indisponible (ordinateur/extension déconnectés) : extraction réalisée ",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Lualaba Mining Resources SAS « LMR SAS » (CD/LSI/RCCM/16-B-095, ID. NAT. 6-128-N11648P)",
+      "lng": 26.46646,
+      "lat": -11.25315,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 1603580,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 505526.12
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 329700.0
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 162467.64
+       }
+      ],
+      "annee": 2022,
+      "fichier": "LMR_sept22.pdf",
+      "date_source": "septembre 2022 (mention manuscrite « Version finale » sur la couverture)",
+      "groupement": "Mukumbi (chefferie des Basanga)",
+      "nb_communautes": 7,
+      "communautes": "Kawama; Mukumbi; Kasansama; Kakonde; Sandala; Lumba-Kinsense; Makungu",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 10,
+      "nb_projets_budgetises": 10,
+      "temoin": "Sa Majesté l'Honorable Pembemoto Kyala Matthieu, Grand Chef de la chefferie des Basanga",
+      "titres": "PE 13260 (25 carrés, minerais cuprocobaltifères, validité 7 ans du 14/04/2017 au 02/04/2024, Arrêté ministériel n° 0102/CAB.MIN/MINES/01/2017), exploitation à ciel ouvert",
+      "observations": "Tableau synthétique scanné en paysage (pages imprimées 3-6 / PDF 6-8). TOTAL affiché en gras et vérifié par zoom : 1 603 580 USD. La sommation des 10 lignes donne 1 603 582,04 (écart de 2,04 USD, arrondi du rédacteur). Le représentant de LMR n'a pas été relevé (paragraphe des parties partiellement sauté). Témoin/garant : Grand Chef de la chefferie des Basanga.",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "La Grande Cimenterie du Katanga (GCK) SAS",
+      "lng": 26.64094,
+      "lat": -10.98962,
+      "prov_iso": "CD-HK",
+      "terr": "Likasi",
+      "v": 1594728.93,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 493417.98
+       },
+       {
+        "e": "Eau",
+        "f": "Secteur (projets budgétisés)",
+        "v": 460100.0
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 289889.15
+       }
+      ],
+      "annee": 2022,
+      "fichier": "GCK.pdf",
+      "date_source": "05/12/2022 (probable ; date manuscrite ambiguë à l'OCR : lue « 05/12/2019 » / « 57/12/2015 », incohérente avec le chronogramme 2023-2027 et les plans datés de juillet 2022)",
+      "groupement": "Panda",
+      "nb_communautes": 1,
+      "communautes": "Quartier Kakontwe (cellules Karisha, Faida, Kapata, Potashi, Minoka, Kampemba)",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 5,
+      "nb_projets_budgetises": 5,
+      "temoin": "Pamphile Kibeka Mofya, Bourgmestre de la Commune de Panda",
+      "titres": "Autorisation d'Exploitation de Carrières Permanente (AECP) n°2364 valide du 07/11/2020 au 07/11/2025 (Arrêté DIV-MIN/354/8.0/2012 du 07/09/2012)",
+      "observations": "Entreprise de carrières (cimenterie), pas de PE minier : AECP 2364. Total général contrôlé : 460 100 + 232 850 + 118 471,80 + 289 889,15 + 493 417,98 = 1 594 728,93 USD. CLS présidé par le Maire de Likasi (1 délégué GCK + 4 représentants + ACE, DPEM, FNPSS). Extension Chrome indisponible : extraction via l'OCR retourné par l'API Google Drive (lecture seule) ; nombre de pages non déterminable par c",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "La Minière de Kasombo (MIKAS) SAS",
+      "lng": 26.63592,
+      "lat": -11.17589,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 1504199.19,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 285501.7
+       },
+       {
+        "e": "Électricité",
+        "f": "Secteur (projets budgétisés)",
+        "v": 223547.38
+       },
+       {
+        "e": "Ponts",
+        "f": "Secteur (projets budgétisés)",
+        "v": 216111.2
+       }
+      ],
+      "annee": 2022,
+      "fichier": "MIKAS_Déc22.pdf",
+      "date_source": "décembre 2022",
+      "groupement": "Commune urbano-rurale de Kambove",
+      "nb_communautes": 7,
+      "communautes": "Quartier Kampemba; Quartier Kiwewe; Quartier Mikuba; Quartier Mitumba; Village Mapendo; Village TP; Village Matembwe",
+      "duree": "2023-2027",
+      "nb_projets": 10,
+      "nb_projets_budgetises": 8,
+      "temoin": null,
+      "titres": "PE n° 13120, valide du 16/06/2014 au 03/10/2043 (arrêté n° 0259/CAB.MIN/MINES/01/2018 du 16/06/2014), 13 carrés miniers",
+      "observations": "COÛT TOTAL DU CAHIER DES CHARGES (surligné dans le tableau) : 1 504 199,19 USD. Contrôle par sommation : les 8 lignes lisibles totalisent 1 235 901,19 USD ; les 2 lignes illisibles (centre de santé Mapendo, intrants agricoles) représentent par différence 268 298,00 USD — ordre de grandeur cohérent. Tableau synthétique scanné en paysage et coupé en deux moitiés par page (PDF 7-11), lecture des corr",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Everbright Mining SARL",
+      "lng": 28.51426,
+      "lat": -8.63951,
+      "prov_iso": "CD-HK",
+      "terr": "Pweto",
+      "v": 1500559,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 270654.0
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 248653.6
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 225390.0
+       }
+      ],
+      "annee": 2022,
+      "fichier": "Everbright_dec22.pdf",
+      "date_source": "décembre 2022",
+      "groupement": "Moero",
+      "nb_communautes": 10,
+      "communautes": "Dikulushi; Lumekete; Mukenge; Musenge; Kanswa; Kabusanzye; Kyanga; Katendeji 1; Katendeji 2; Kilwa",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 14,
+      "nb_projets_budgetises": 14,
+      "temoin": "Chef de chefferie Kyona-Nzini Mukalay Musumba Odilon et chef de secteur Moero Ngela Kabayo Charles",
+      "titres": "PE n° 606, valide du 31 janvier 2022 au 30 janvier 2045, 48 carrés miniers",
+      "observations": "Structure atypique : table des matières listant 12 projets détaillés, mais tableau synthétique des engagements à 14 lignes (doc pages 4-10, PDF pages 9-15), scanné en paysage (tourné 90°). TOTAL en toutes lettres : « un million cinq cent mille cinq cent cinquante-neuf dollars américains » = 1 500 559,00 USD. Somme des lignes lues = 1 500 560,04 (écart de ~1 USD, probable arrondi/décimale). Années ",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "RUBAMIN SARL",
+      "lng": 26.84912,
+      "lat": -10.93918,
+      "prov_iso": "CD-HK",
+      "terr": "Likasi",
+      "v": 1250786.96,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 314251.22
+       },
+       {
+        "e": "Électricité",
+        "f": "Secteur (projets budgétisés)",
+        "v": 237750.0
+       },
+       {
+        "e": "Ponts",
+        "f": "Secteur (projets budgétisés)",
+        "v": 186155.96
+       }
+      ],
+      "annee": 2022,
+      "fichier": "RUBAMIN_aout22.pdf",
+      "date_source": "août 2022",
+      "groupement": "Panda",
+      "nb_communautes": 5,
+      "communautes": "Quartier Kakontwe; Quartier Kamilopa; Quartier Kiwele; Quartier Mutshanga; Quartier Kampemba",
+      "duree": "4e trimestre 2022 - 2e trimestre 2026",
+      "nb_projets": 10,
+      "nb_projets_budgetises": 10,
+      "temoin": null,
+      "titres": "Agrément d'entité de traitement de catégorie B n° 00427/CAB.MIN/MINES/01/2022 du 27 juillet 2022 (usine à Likasi, commune de Panda, route Kakontwe)",
+      "observations": "Communautés des quartiers Kakontwe, Kamilopa, Kiwele, Mutshanga et Kampemba (commune de Panda, ville de Likasi), représentées par Mbav Ndumb Jean-Marie (président) et Musakanya Kabamba Bénédicte (secrétaire) du Comité Local de Développement. Coût global contrôlé par sommation : 1 250 786,96 USD (le montant du projet 08, masqué par une signature, a été déduit = 30 399,53 USD). Date de signature d'a",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Macrolink Jiayuan Mining (MJM) SARLU",
+      "lng": 26.60477,
+      "lat": -10.93251,
+      "prov_iso": "CD-HK",
+      "terr": "Likasi",
+      "v": 1000000,
+      "items": [
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 550000.0
+       },
+       {
+        "e": "Électricité",
+        "f": "Secteur (projets budgétisés)",
+        "v": 350000.0
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 100000.0
+       }
+      ],
+      "annee": 2022,
+      "fichier": "MJM_juillet22.pdf",
+      "date_source": "juillet 2022",
+      "groupement": "Shituru",
+      "nb_communautes": 1,
+      "communautes": "Quartier Buluo",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 3,
+      "nb_projets_budgetises": 3,
+      "temoin": null,
+      "titres": "PE 4690 (valide du 29 août 2015 au 28 août 2045, certificat d'exploitation couvrant 43 carrés miniers)",
+      "observations": "Communautés locales représentées par le CLD : Monga Kabando (1er Vice-Président), Yancen Kabambule (2e Vice-Président), Michette Bibao Kalubi (Secrétaire), Mauwa Sifa et Kahamba (membres). Tableau synthétique des engagements sur une page (PDF p.7, doc p.5, scanné en paysage). TOTAL BUDGET : 1 000 000 USD — contrôlé par sommation (350 000 + 100 000 + 550 000). Témoin/garant non observé dans les pag",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     }
+    ],
+    "2023": [
+     {
+      "nom": "CDM (Congo Dongfang International Mining SARL)",
+      "lng": 27.87543,
+      "lat": -11.54278,
+      "prov_iso": "CD-HK",
+      "terr": "Kipushi",
+      "v": 4250653.9,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1149994.3199999998
+       },
+       {
+        "e": "Autre",
+        "f": "Secteur (projets budgétisés)",
+        "v": 870762.94
+       },
+       {
+        "e": "Assainissement",
+        "f": "Secteur (projets budgétisés)",
+        "v": 695383.8400000001
+       }
+      ],
+      "annee": 2023,
+      "fichier": "CDM_janv23.pdf",
+      "date_source": "janvier 2023 (nom du fichier)",
+      "groupement": "Bukanda + chefferie Kaponda (Kipushi), commune Annexe (Lubumbashi)",
+      "nb_communautes": 4,
+      "communautes": "Village Kawama et villages voisins (secteur Bukanda); Village Kashimbala (chefferie Kaponda); Quartier Kasapa (commune Annexe, Lubumbashi); Quartier Kamatete (commune Annexe, Lubumbashi)",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 26,
+      "nb_projets_budgetises": 26,
+      "temoin": null,
+      "titres": null,
+      "observations": "Document de 320 pages (59 Mo) illisible dans l'aperçu Drive ; données intégrées depuis l'analyse BI fournie par l'utilisateur (OCR + relecture visuelle, réconciliation exacte : somme des 26 lignes = total 4 250 653,90 USD). Périmètre multi-sites : ~2,57 M USD sur Kipushi (Kawama/Bukanda, Kashimbala/Kaponda) et ~1,68 M USD sur Lubumbashi (Kasapa, Kamatete).",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Compagnie Minière de Kambove (COMIKA) SAS",
+      "lng": 26.55807,
+      "lat": -11.2711,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 3245000,
+      "items": [
+       {
+        "e": "Élevage/Pisciculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1500000.0
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 900000.0
+       },
+       {
+        "e": "Bâtiments communautaires",
+        "f": "Secteur (projets budgétisés)",
+        "v": 420000.0
+       }
+      ],
+      "annee": 2023,
+      "fichier": "COMIKA (Kambove)_mai23.pdf",
+      "date_source": "mai 2023 (date de la version finale en couverture ; jour exact non lisible dans le texte OCR disponible)",
+      "groupement": "Commune urbano-rurale de Kambove",
+      "nb_communautes": 4,
+      "communautes": "Quartier Mikuba; Quartier Mitumba; Quartier Kiwewe; Quartier Kampemba",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 7,
+      "nb_projets_budgetises": 7,
+      "temoin": "Pamphile Muyele Musombo Fwifwi, Bourgmestre de la commune urbano-rurale de Kambove",
+      "titres": "PE 11516 (Arrêté 0459/CAB.MIN.MINES/01/2009, 4 carrés) et PE 11517 (Arrêté 0460/CAB.MIN.MINES/01/2009, 11 carrés), tous deux renouvelés pour 15 ans du 15/09/2022 au 14/09/2037",
+      "observations": "Total contrôlé : 178 000 + 135 000 + 1 500 000 + 290 000 + 300 000 + 600 000 + 242 000 = 3 245 000 USD (= TOTAL du tableau). CLS présidé par l'Administrateur du Territoire de Kambove (1 délégué COMIKA + 4 représentants + ACE, DPEM, FNPSS). Extension Chrome indisponible : extraction via l'OCR retourné par l'API Google Drive (lecture seule) ; texte OCR tronqué avant les dispositions finales, date ex",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Kambove Mining SAS",
+      "lng": 26.59681,
+      "lat": -11.35082,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 3008836.2,
+      "items": [
+       {
+        "e": "Ponts",
+        "f": "Secteur (projets budgétisés)",
+        "v": 865701.22
+       },
+       {
+        "e": "Eau",
+        "f": "Secteur (projets budgétisés)",
+        "v": 497650.0
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 450547.99
+       }
+      ],
+      "annee": 2023,
+      "fichier": "Kambove Mining_avril23.pdf",
+      "date_source": "avril 2023",
+      "groupement": "Kambove (urbano-rurale)",
+      "nb_communautes": 4,
+      "communautes": "Quartier Kiwewe; Quartier Mitumba; Quartier Mikuba; Village Kashengeneke (quartier Mitumba)",
+      "duree": "novembre 2022 - 2027 (~5 ans)",
+      "nb_projets": 12,
+      "nb_projets_budgetises": 12,
+      "temoin": null,
+      "titres": "PE n° 465, valide du 16/10/2009 au 02/04/2024, 30 carrés miniers (certificat CAMI/CE/7391/2017) et PE 13832, valide du 22/09/2017 au 04/10/2043, 6 carrés miniers (certificat CAMI/CE/7308/2017)",
+      "observations": "Tableau synthétique des engagements aux doc pages 4-5 (PDF 6-7), scanné en paysage, 12 projets. COÛT TOTAL DU CAHIER DES CHARGES affiché « 3.008.836,2... » (dernières décimales coupées par la rotation) ; somme des lignes = 3 008 836,18-3 008 836,20 selon les centimes de la ligne 8 (363 332,7x). CLD : Mumba Kyembe président (Mikuba), Ilunga Kantenga vice-président (Mitumba), Umba Kantenga secrétair",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Kai Peng Mining SARL (KPM)",
+      "lng": 26.50262,
+      "lat": -11.31026,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 2755729,
+      "items": [
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 801000.0
+       },
+       {
+        "e": "Électricité",
+        "f": "Secteur (projets budgétisés)",
+        "v": 744500.0
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 381767.66000000003
+       }
+      ],
+      "annee": 2023,
+      "fichier": "KAI PENG_nov23.pdf",
+      "date_source": "novembre 2023",
+      "groupement": "Mukumbi",
+      "nb_communautes": 3,
+      "communautes": "Village Mukumbi; Village Kimpese; Village Kawama",
+      "duree": "2023-2028 (env. 5 ans)",
+      "nb_projets": 9,
+      "nb_projets_budgetises": 9,
+      "temoin": "Témoin et garant de la bonne application de l'accord mentionné p.10 (autorité locale, nom non lisible dans les pages lues)",
+      "titres": "PE 13256 (31 carrés miniers, validité du 28 septembre 2017 au 02 avril 2024)",
+      "observations": "IMPORTANT : document distinct de « Kai Peng (Panda)_dec22 » déjà traité — la couverture et les parties confirment que ce cahier des charges de novembre 2023 (élaboré avec Planet Consulting Africa sarl) concerne la communauté du GROUPEMENT MUKUMBI (villages Mukumbi, Kimpese, Kawama), chefferie de Basanga, territoire de Kambove — et non la commune de Panda à Likasi. Siège social de KPM : 33 Route Ka",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Shituru Mining Corporation SAS (SMCO SAS)",
+      "lng": 26.69638,
+      "lat": -10.95046,
+      "prov_iso": "CD-HK",
+      "terr": "Likasi",
+      "v": 2296542.68,
+      "items": [
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 624006.0
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 350000.0
+       },
+       {
+        "e": "Eau",
+        "f": "Secteur (projets budgétisés)",
+        "v": 345185.0
+       }
+      ],
+      "annee": 2023,
+      "fichier": "SMCO_mars23.pdf",
+      "date_source": "mars 2023",
+      "groupement": "Shituru",
+      "nb_communautes": 2,
+      "communautes": "Quartier Buluo (zone principale ; cellules Buluo, Joli-site, Péage, Hewa-Bora, Mutepuka, Mivuka, Sankuru, Swakala); Quartier Kilima (zone environnante ; cellule Munung)",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 9,
+      "nb_projets_budgetises": 9,
+      "temoin": "Mme Anzaka Alima Suraa Asha Laura, Bourgmestre de la commune Shituru (signature en présence du Ministre Provincial des Mines)",
+      "titres": "PE 4725 (superficie de 1 carré, valide au 01 avril 2024), périmètre localisé à 180 km de Kolwezi et 120 km de Lubumbashi (référence dépotoir GECAMINES)",
+      "observations": "CLD des quartiers impactés : Pasteur Makonga Kilenda (Président), Docteur Kamango Hubernatus (Vice-Président), Mme Bibao Kalubi Michette (Secrétaire). Tableau des engagements en portrait, p.7-9 du PDF. COÛT GLOBAL : 2 296 542,68 USD — contrôlé par sommation des 9 lignes, correspondance exacte.",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Boss Mining SAS",
+      "lng": 26.67615,
+      "lat": -11.34284,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 2278385.55,
+      "items": [
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 642500.0
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 504700.0
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 467950.38
+       }
+      ],
+      "annee": 2023,
+      "fichier": "BOSS MINING_aout23.pdf",
+      "date_source": "24 août 2023 (fait à Kambove)",
+      "groupement": "Mubambe",
+      "nb_communautes": 5,
+      "communautes": "Village Mubambe; Village Midingi; Village Kibashi; Village Milebi; Village Mwepu",
+      "duree": "2024-2028 (5 ans)",
+      "nb_projets": 8,
+      "nb_projets_budgetises": 8,
+      "temoin": "Kishimba Mumena Gaspard, Chef de Secteur de Source du Fleuve Congo",
+      "titres": "PE 463, 467, 468 et 469 (valides jusqu'au 02/04/2024) et PE 2589 (valide jusqu'au 02/04/2029), arrêtés ministériels CABIN/MINES/01/967/04 et CABIN/MINES/01/1967/04 du 05/04/2004, 499 carrés miniers dans les territoires de Kambove et Lubudi",
+      "observations": "Tableau 1-1 « Synthèse des engagements convenus » (scanné en paysage) organisé par secteurs avec sous-totaux : Santé 467 950,38 ; Eau 100 000 ; Agriculture 504 700 ; Marché 120 275,85 ; Route 642 500 ; Éducation 442 959,32. Budget total du Cahier des Charges = 2 278 385,55 USD, contrôlé par sommation des lignes ET des colonnes annuelles (2024 : 328 762,25 ; 2025 : 271 971,58 ; 2026 : 459 647,74 ; ",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "CNMC Huachin Mabende Mining SA",
+      "lng": 26.56263,
+      "lat": -11.20645,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 2123145.63,
+      "items": [
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 584739.42
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 436296.18
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 389794.45
+       }
+      ],
+      "annee": 2023,
+      "fichier": "Huachin Mabende_mars23.pdf",
+      "date_source": "mars 2023",
+      "groupement": "Kyembe",
+      "nb_communautes": 12,
+      "communautes": "Mabende (village principal); Kyembe; Makutano; Lwansa; Lwembe 1; Lwembe 2; Kyandwe; Kimanshi; Chila-Tembo (Shilantembo 1/45); Ngombalume; Vietnam; Kimpemba",
+      "duree": "juin 2023 - décembre 2027 (5 ans)",
+      "nb_projets": 12,
+      "nb_projets_budgetises": 12,
+      "temoin": null,
+      "titres": "PE n° 13119, valide du 02/11/2016 au 01/11/2046, 6 carrés miniers (certificat d'exploitation n° 13119 ; PE inscrit d'office par lettre CAMI/DG/098/2016, sans arrêté d'octroi)",
+      "observations": "Tableau synthétique des engagements aux doc pages 6-10 (PDF 7-11), scanné en paysage, 12 projets, TOTAL surligné en vert : 2 123 145,63 USD. Somme des lignes lues = 2 123 146,63 (écart de 1 USD, probable arrondi d'une ligne). CLD : Mme Kabaso Annie Anne-Marie présidente CLD Kyembe, Lusinga Nkonzi Icare vice-président CLD Mabende, Mpoyo wa Mpoyo vice-président CLD Shilantembo 1/45. RCCM CD/LSI/RCCM",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Huachin Metal Leach SA (RCCM CD/LSI/RCCM/14-B-1225, ID.NAT. 6-128-N61015Y, n° impôt A1113665R, siège n°801 Route Kakontwe, Quartier Kakontwe, Commune Panda, Likasi)",
+      "lng": 26.73512,
+      "lat": -11.03018,
+      "prov_iso": "CD-HK",
+      "terr": "Likasi",
+      "v": 1700704.89,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 614902.89
+       },
+       {
+        "e": "Électricité",
+        "f": "Secteur (projets budgétisés)",
+        "v": 233325.0
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 229477.0
+       }
+      ],
+      "annee": 2023,
+      "fichier": "HML_mars23.pdf",
+      "date_source": "mars 2023",
+      "groupement": "Panda (ville de Likasi)",
+      "nb_communautes": 5,
+      "communautes": "Quartier Kakontwe; Quartier Kamilopa; Quartier Kiwele; Quartier Mutshanga; Panda-Mayi/Muchanga",
+      "duree": "juin 2023 - 2027 (5 ans)",
+      "nb_projets": 10,
+      "nb_projets_budgetises": 10,
+      "temoin": "Bourgmestre de la Commune de Panda (garant de la bonne application de l'accord)",
+      "titres": "Permis d'exploitation n° 12094, valide du 03/04/2009 au 02/04/2024 (arrêté ministériel n° 0663/CAB.MIN/MINES/01/2010 du 24/08/2010), 2 carrés miniers",
+      "observations": "Tableau synthétique des engagements convenus scanné en paysage (pages imprimées 10-12 / PDF 12-14). TOTAL GÉNÉRAL surligné : 1 700 704,89 USD — contrôlé par sommation des 10 lignes : exact. Garant : Bourgmestre de la Commune de Panda. Communautés urbaines (quartiers de la commune de Panda, ville de Likasi) — pas de groupement/chefferie.",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "New Minerals Investment SARL (ID.NAT. 05-B0500-N8837N, RCCM CD/LS/RCCM/14-B-00006, NIF A0906593C, siège n°12 av. Lofoi, quartier Golf, Lubumbashi)",
+      "lng": 26.71081,
+      "lat": -11.25982,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 1619702.81,
+      "items": [
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 596716.96
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 447361.64999999997
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 375660.0
+       }
+      ],
+      "annee": 2023,
+      "fichier": "NMI_avril23.pdf",
+      "date_source": "avril 2023 (mention manuscrite « Version finale » sur la couverture)",
+      "groupement": "Mukumbi (chefferie des Basanga)",
+      "nb_communautes": 5,
+      "communautes": "Sandra; Lumba-Kinsense; Makungu; Kawama; Mukumbi",
+      "duree": "2022-2026 (5 ans)",
+      "nb_projets": 6,
+      "nb_projets_budgetises": 6,
+      "temoin": "Sa Majesté Mpemba Moto Mpande Kiala Mathieu, Grand Chef de la chefferie des Basanga (témoin et garant)",
+      "titres": "Deux permis d'exploitation : PE 13235 (valide du 02/07/2016 au 02/04/2024, 3 carrés) et PE 2353 (valide du 12/09/2021 au 07/03/2040, 4 carrés) ; concession située à Sandra, territoire de Kambove",
+      "observations": "Tableau synthétique des engagements convenus scanné en paysage (pages imprimées 4-6 / PDF 7-8). TOTAL : 1 619 702,81 USD — contrôlé par sommation des 6 lignes : exact. Témoin/garant : Grand Chef de la chefferie des Basanga. Document paginé « sur 130 » (141 pages scannées avec couvertures).",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Divine Land Mining SARL",
+      "lng": 26.81446,
+      "lat": -11.0222,
+      "prov_iso": "CD-HK",
+      "terr": "Likasi",
+      "v": 1500285,
+      "items": [
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1012992.0
+       },
+       {
+        "e": "Électricité",
+        "f": "Secteur (projets budgétisés)",
+        "v": 201965.0
+       },
+       {
+        "e": "Ponts",
+        "f": "Secteur (projets budgétisés)",
+        "v": 155015.6
+       }
+      ],
+      "annee": 2023,
+      "fichier": "DivineLand_janv23.pdf",
+      "date_source": "janvier 2023",
+      "groupement": "Shituru",
+      "nb_communautes": 2,
+      "communautes": "Quartier Buluo (cellules Joli Site, Munung, Kipulande, Sankuru); Quartier Kilima",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 5,
+      "nb_projets_budgetises": 5,
+      "temoin": "Bourgmestre de la commune de Shituru",
+      "titres": "PE 12276 (valide du 25 novembre 2010 au 02 avril 2024, renouvellement en cours, 62 carrés miniers appartenant à la GECAMINES, amodiation sur 2 carrés) ; arrêté ministériel N°00119/CAB.MIN/MINES/01/2022 du 14 avril 2022 (entité de traitement type B)",
+      "observations": "Structure type : parties p.6-7, tableau synthétique des engagements p.8-11 (scanné en paysage), fiches détaillées par projet ensuite, annexes (PV). CLD présidé par M. Kisokola Mulambwa Placide. TOTAL GÉNÉRAL affiché : 1 500 285 USD (« un million cinq cent mille deux cent quatre-vingt-cinq dollars américains »). Contrôle par sommation des lignes : 1 012 992,00 + 90 000 + 201 965 + 155 015,60 + 40 1",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Congo Compagnie Minière (CNMCC) SARL",
+      "lng": 26.70094,
+      "lat": -10.88581,
+      "prov_iso": "CD-HK",
+      "terr": "Likasi",
+      "v": 1462559.72,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 330000.0
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 274200.0
+       },
+       {
+        "e": "Bâtiments communautaires",
+        "f": "Secteur (projets budgétisés)",
+        "v": 233059.72
+       }
+      ],
+      "annee": 2023,
+      "fichier": "CNMCC_mai23.pdf",
+      "date_source": "mai 2023",
+      "groupement": "Panda",
+      "nb_communautes": 4,
+      "communautes": "Quartier Kiwele; Quartier Kamilopa; Quartier Pandamayi; Quartier Muchanga",
+      "duree": "2023-2027 (5 ans)",
+      "nb_projets": 8,
+      "nb_projets_budgetises": 8,
+      "temoin": null,
+      "titres": "PE 2356 (valide du 08/03/2010 au 07/03/2040, au nom de la GECAMINES, notification d'inscription d'office n° CAMI/DG/0101/2010) ; contrat d'amodiation partielle sur PE 2356 signé le 30/11/2015 entre GECAMINES SA (amodiante) et CNMC Congo Compagnie Minière SARL (amodiataire), superficie 1 carré minier",
+      "observations": "CLD représenté par M. Mbav (Président), Mme Tshining Tshingambo (Vice-présidente), M. Kalonge Kiwele (Secrétaire Exécutif), M. Anaclet Kabongo (Secrétaire Adjoint), M. Laurent Kamanga (Conseiller). Tableau synthétique des engagements p.7-8 du PDF (scanné en paysage). TOTAL GÉNÉRAL : 1 462 559,72 USD — contrôlé par sommation des 8 lignes, la somme correspond exactement. Témoin/garant non observé ex",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Surya Mines SARL (RCCM 20-B-00967, ID. NAT. 05-B0500-N33756 W, 669 av. Kimbangu, Lubumbashi)",
+      "lng": 26.74971,
+      "lat": -11.32655,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 1382174.39,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 392424.17
+       },
+       {
+        "e": "Bâtiments communautaires",
+        "f": "Secteur (projets budgétisés)",
+        "v": 295014.67
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 288500.0
+       }
+      ],
+      "annee": 2023,
+      "fichier": "Surya Mines_oct23.pdf",
+      "date_source": "octobre 2023",
+      "groupement": "Groupements Mukumbi, Ngalu et Tenke (chefferie des Basanga et secteur de la Lufira)",
+      "nb_communautes": 5,
+      "communautes": "Kitemena/Mukumbi; Kitemena/Ngalu (zone principale); Kamikolo/Mukumbi; Kamikolo/Ngalu; Kawama/Tenke (zone environnante)",
+      "duree": "2024-2028 (5 ans, projets en phases annuelles)",
+      "nb_projets": 8,
+      "nb_projets_budgetises": 8,
+      "temoin": "Ministre provincial des Mines ; Pande Pembamoto Kyala Matthieu, Grand Chef de la chefferie des Basanga ; Eneya Kyamabamba Ruth, Cheffe du secteur de la Lufira",
+      "titres": "Permis d'exploitation n° 754 (110 carrés, valide au 27/09/2043), à 22 km de Likasi et 142 km de Lubumbashi",
+      "observations": "Tableau synthétique des engagements scanné en paysage (pages 7-10 imprimées / PDF 8-11). Total général contrôlé par sommation : 288500 + 202528 + 122423,67 + 270000,50 + 123700 + 80007,55 + 120002,02 + 175012,65 = 1 382 174,39 USD (exact). Signature en présence du Ministre provincial des Mines et des chefs coutumiers (témoins/garants). Date de couverture : octobre 2023.",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "METAL MINES SARL (METM)",
+      "lng": 26.67468,
+      "lat": -11.0661,
+      "prov_iso": "CD-HK",
+      "terr": "Likasi",
+      "v": 1298436.33,
+      "items": [
+       {
+        "e": "Sport/Loisirs",
+        "f": "Secteur (projets budgétisés)",
+        "v": 546971.18
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 403926.0
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 347539.15
+       }
+      ],
+      "annee": 2023,
+      "fichier": "METAL MINES_mai23.pdf",
+      "date_source": "mai 2023",
+      "groupement": "Shituru",
+      "nb_communautes": 6,
+      "communautes": "Cellule Mutepuka; Cellule Hewa Bora; Cellule Joli Site; Cellule Mivuka; Cellule Kimpulande; Cellule Péage (quartier Buluo)",
+      "duree": "avril 2023 - décembre 2026",
+      "nb_projets": 3,
+      "nb_projets_budgetises": 3,
+      "temoin": "Mme Laura, Bourgmestre de la commune de Shituru",
+      "titres": "PE 5152 (site à 120 km au sud-ouest de Likasi, territoire de Kambove, valide 24/01/2014 - 23/01/2044, certificat CAMI/CE/6843/14 du 07/08/2014, 3 carrés miniers)",
+      "observations": "Le viewer Drive n'a chargé que la page 1 (« problème lors du chargement des pages suivantes ») ; extraction réalisée via le texte OCR retourné par l'API Drive (read_file_content), complet et lisible. Version finale, mai 2023, avec accompagnement de EA Sarl. Total des projets contrôlé par sommation exacte : 1 298 436,33 USD. Le document imprime « Page X sur 126 ». Le texte des liminaires contient u",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "IMEC Congo SARL",
+      "lng": 27.51733,
+      "lat": -11.60159,
+      "prov_iso": "CD-HK",
+      "terr": "Lubumbashi",
+      "v": 478136.18,
+      "items": [
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 241280.0
+       },
+       {
+        "e": "Eau",
+        "f": "Secteur (projets budgétisés)",
+        "v": 159996.6
+       },
+       {
+        "e": "Bâtiments communautaires",
+        "f": "Secteur (projets budgétisés)",
+        "v": 76859.58
+       }
+      ],
+      "annee": 2023,
+      "fichier": "IMEC_oct23.pdf",
+      "date_source": "octobre 2023",
+      "groupement": "Commune Annexe",
+      "nb_communautes": 3,
+      "communautes": "Quartier Joli Site; Quartier Futuka; Cellules : Donatien, Petro, Katabe, Kikanda, Daniel, Kapalanga, Sapunga, Kolya",
+      "duree": "2024-2028",
+      "nb_projets": 3,
+      "nb_projets_budgetises": 3,
+      "temoin": "Mme Kileshe Sekwe Mireille, Bourgmestre de la Commune Annexe (témoin et garant)",
+      "titres": "AERCP 10462 et 10463 (autorisations d'exploitation de rejets/carrières permanentes), en cours de validité, inscriptions d'office n° CAMI/DG/051/2021 et CAMI/DG/052/2021, 10 carrés miniers, quartiers Joli Site et Futuka",
+      "observations": "Entreprise de carrières (exploitation des rejets). TOTAL du tableau : 478 136,18 USD — contrôlé par sommation exacte des 3 lignes (76 859,58 + 159 996,60 + 241 280,00 = 478 136,18). Tableau synthétique en PDF page 7 (interne 6/87), roté en paysage. Version finale, signée ; témoin : la Bourgmestre de la Commune Annexe.",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Société Minière du Kongo (SOMINKO) SARLU",
+      "lng": 26.49441,
+      "lat": -11.17985,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 300000,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 155284.19
+       },
+       {
+        "e": "Santé",
+        "f": "Secteur (projets budgétisés)",
+        "v": 91181.54
+       },
+       {
+        "e": "Bâtiments communautaires",
+        "f": "Secteur (projets budgétisés)",
+        "v": 53534.27
+       }
+      ],
+      "annee": 2023,
+      "fichier": "SOMINKO_oct23.pdf",
+      "date_source": "octobre 2023",
+      "groupement": "Kyembe (village Kapota)",
+      "nb_communautes": 2,
+      "communautes": "Village Kapota; Village Kimpemba",
+      "duree": "2024-2028 (5 ans)",
+      "nb_projets": 3,
+      "nb_projets_budgetises": 3,
+      "temoin": "Madame Ruth, Cheffe de Secteur de Lufira",
+      "titres": "PE N°12469, valide du 19/10/2015 au 18/10/2045, 78 carrés miniers",
+      "observations": "Extraction faite à partir du texte OCR Google Drive (très bonne qualité), total général contrôlé par sommation : 155 284,19 + 91 181,54 + 53 534,27 = 300 000,00 USD exactement (ligne TOTAL du tableau : 300 000,00), puis confirmé visuellement dans le viewer. Orthographe du village variable dans le document : « Kampemba » sur la couverture, « Kimpemba » dans le corps (retenu). Secteur du projet 3 li",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     }
+    ],
+    "2024": [
+     {
+      "nom": "Kipushi Corporation S.A. (KICO)",
+      "lng": 27.82801,
+      "lat": -11.59536,
+      "prov_iso": "CD-HK",
+      "terr": "Kipushi",
+      "v": 7951967.49,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 3714740.1400000006
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1779031.8
+       },
+       {
+        "e": "Routes/Voirie",
+        "f": "Secteur (projets budgétisés)",
+        "v": 878599.34
+       }
+      ],
+      "annee": 2024,
+      "fichier": "KICO_sept24.pdf",
+      "date_source": "septembre 2024 (document daté du 06/09/2024, version V12 finale corrigée)",
+      "groupement": "Kaponda (et commune de Kipushi)",
+      "nb_communautes": 2,
+      "communautes": "10 villages de la chefferie Kaponda : Baya, Kaponda, Kinandu, Kanyaka, Gare Kaponda, Kintu, Kaboko, Mimbulu, Nyunga, Kyamupini; 6 quartiers de la commune de Kipushi : Kalubamba, Kachoma, Kamalenge, Lumumba, Mungoti, Uhuru",
+      "duree": "2024-2030 (chronogrammes par projet de 2024 à 2029/2030)",
+      "nb_projets": 16,
+      "nb_projets_budgetises": 16,
+      "temoin": null,
+      "titres": "PE 12434 (commune de Kipushi, valide du 02/07/2011 au 14/04/2036, arrêté n°0290/CAB.MIN/MINES/01/2011, 7 carrés)",
+      "observations": "Document structuré en rapport (V12 finale corrigée du 06/09/2024, 307 pages) avec table des matières, tableaux synthétiques rotés en paysage. Tableau 3 (synthèse) : chefferie Kaponda 4 145 557,88 USD + commune de Kipushi 3 806 409,61 USD = TOTAL GÉNÉRAL 7 951 967,49 USD (sommation vérifiée). Le sous-total Kaponda est confirmé par sommation des 7 lignes (4 145 557,88). Pour Kipushi, la somme des 9 ",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Société d'Exploitation de Kipoi (SEK) SA",
+      "lng": 26.63867,
+      "lat": -11.24436,
+      "prov_iso": "CD-HK",
+      "terr": "Kambove",
+      "v": 2889000,
+      "items": [
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 1022000.0
+       },
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 730000.0
+       },
+       {
+        "e": "Sport/Loisirs",
+        "f": "Secteur (projets budgétisés)",
+        "v": 405000.0
+       }
+      ],
+      "annee": 2024,
+      "fichier": "SEK_mars24.pdf",
+      "date_source": "mars 2024",
+      "groupement": "Katanga",
+      "nb_communautes": 8,
+      "communautes": "Katanga; Bungubungu; Lwafi; Lukutwe; Kangambwa; Kashipo; Kileba; Hewa Bora",
+      "duree": "2024-2028 (5 ans)",
+      "nb_projets": 16,
+      "nb_projets_budgetises": 16,
+      "temoin": null,
+      "titres": "PE 533 (CAMI/CE/360/03, validité 04/04/2024-03/04/2039, 25 carrés), PE 11383 (2 carrés), PE 11384 (9 carrés), PE 11385 (28 carrés), PE 11386 (1 carré), PE 11387 (2 carrés) — tous valides 09/03/2010-08/03/2040",
+      "observations": "Tableau synthétique (doc pages 3-5, PDF 15-17) scanné en paysage, 6 sections avec sous-totaux : Santé 215 000 ; Développement rural 120 000 ; Éducation 810 000 ; Infrastructures/DERU 192 000 ; Sport et loisir 405 000 ; Agriculture 1 147 000. TOTAL GÉNÉRAL contrôlé : 2 889 000,00 USD (somme des colonnes annuelles 2024-2028 : 683 105,50 + 573 815,50 + 589 688,00 + 528 695,50 + 513 695,50). Témoin/ga",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     },
+     {
+      "nom": "Société d'Exploitation Minière de Musoshi SA (SEM)",
+      "lng": 28.83293,
+      "lat": -12.58115,
+      "prov_iso": "CD-HK",
+      "terr": "Sakania",
+      "v": 1800000.5,
+      "items": [
+       {
+        "e": "Éducation",
+        "f": "Secteur (projets budgétisés)",
+        "v": 753971.25
+       },
+       {
+        "e": "Bâtiments communautaires",
+        "f": "Secteur (projets budgétisés)",
+        "v": 265372.75
+       },
+       {
+        "e": "Agriculture",
+        "f": "Secteur (projets budgétisés)",
+        "v": 208450.0
+       }
+      ],
+      "annee": 2024,
+      "fichier": "SEM_mars24.pdf",
+      "date_source": "mars 2024",
+      "groupement": null,
+      "nb_communautes": 5,
+      "communautes": "Quartier Sodimico 1; Quartier Sodimico 2; Quartier Sodimico 3; Quartier Kambasa; Quartier Musoshi gare",
+      "duree": "2025-2029",
+      "nb_projets": 10,
+      "nb_projets_budgetises": 10,
+      "temoin": "Comité Local de Développement (CLD), président : Legrand Mbelenge",
+      "titres": "PE n° 14131, valide du 06 octobre 2019 au 05 octobre 2034, 67 carrés miniers",
+      "observations": "Document « Version finale », mars 2024, 137 pages scannées (pagination interne 138). Tableau synthétique des engagements aux pages internes 5-7 (PDF 7-9), roté en paysage. TOTAL GÉNÉRAL : 1 800 000,50 USD — contrôlé par sommation exacte des 10 lignes (1 800 000,50). Représentant SEM : Zou Jiyan ; CLD présidé par Legrand Mbelenge (vice-président Ngoie Kalumba Déo).",
+      "position_note": "Position approximative : centroïde du territoire déclaré (aucune coordonnée précise du site communautaire dans la source)."
+     }
+    ]
+   },
+   "lualaba_list": [
+    {
+     "entreprise": "Tenke Fungurume Mining (TFM) SA",
+     "annee": 2021,
+     "budget": 36386272,
+     "nb_projets": 31,
+     "duree": "2021-2025 (5 ans)",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL"
+    },
+    {
+     "entreprise": "KAMCO",
+     "annee": 2012,
+     "budget": 8338949,
+     "nb_projets": 66,
+     "duree": "2012 à 2042 (31 ans)",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : PROJET N° 51, 52, 53 et 54 ABSENTS"
+    },
+    {
+     "entreprise": "Compagnie Minière de Musonoi (COMMUS) SAS",
+     "annee": 2021,
+     "budget": 4382000,
+     "nb_projets": 20,
+     "duree": "2021-2025 (5 ans)",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL                                                                            les projets : 1 à 6  concernent les communautés des villages Pierre Muteba, Tshizuza, Kapepa et Tshabula. 7 à 20 pour les communautés de la commune de "
+    },
+    {
+     "entreprise": "Metalkol SA (ERG)",
+     "annee": 2021,
+     "budget": 2974000,
+     "nb_projets": 10,
+     "duree": "2021 à 2022 (2 ans)",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL"
+    },
+    {
+     "entreprise": "Société Minière de Deziwa (SOMIDEZ) SAS",
+     "annee": 2021,
+     "budget": 1895000,
+     "nb_projets": 14,
+     "duree": "2021 à 2025 (5 ans)",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL"
+    },
+    {
+     "entreprise": "Kalongwe Mining SA (KMSA)",
+     "annee": 2021,
+     "budget": 800000,
+     "nb_projets": 9,
+     "duree": "2021 à 2025 (5 ans)",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL"
+    },
+    {
+     "entreprise": "La Minière de Kalukundi (LAMIKAL) SA",
+     "annee": null,
+     "budget": 683550,
+     "nb_projets": 8,
+     "duree": "None",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL"
+    },
+    {
+     "entreprise": "Chengtun Congo Ressources (CCR) SARL",
+     "annee": 2020,
+     "budget": 600000,
+     "nb_projets": 3,
+     "duree": "2020 à 2024 (5 ans)",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL"
+    },
+    {
+     "entreprise": "Tengyuan Cobalt & Copper Resources (TCC) SARL",
+     "annee": null,
+     "budget": 575000,
+     "nb_projets": 7,
+     "duree": "None",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL"
+    },
+    {
+     "entreprise": "LCS SAS",
+     "annee": 2022,
+     "budget": 550000,
+     "nb_projets": 6,
+     "duree": "2022 à 2026 (5 ans)",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL"
+    },
+    {
+     "entreprise": "HMC SARL",
+     "annee": 2020,
+     "budget": 550000,
+     "nb_projets": 6,
+     "duree": "2020-2024 (5 ans)",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL"
+    },
+    {
+     "entreprise": "Kisanfu Mining SAS (KIMIN)",
+     "annee": 2020,
+     "budget": 459744,
+     "nb_projets": 6,
+     "duree": "2020-2024 (5 ans)",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : CONFORME POUR L'ESSENTIEL"
+    },
+    {
+     "entreprise": "Sino-Congolaise des Mines (SICOMINES) SA",
+     "annee": null,
+     "budget": null,
+     "nb_projets": 26,
+     "duree": "None",
+     "observations": "Inventaire administratif (juin 2022) — budgets par projet non détaillés dans la source. Observation source : Certaines pages sont manquantes; Par conséquent, le nombre des projets est relatif au nombre des projets traités et non au nombre total comme prévoit le cahier des charges en son entièreté. De surcroit, le calcul du budget alloué à ce cahier des charges se voit inopportun                   "
+    }
+   ],
+   "hk_no_year": [
+    "MMG Kinsevere SARL",
+    "Golden African Resources (GAR) SARL"
    ]
   }
  },

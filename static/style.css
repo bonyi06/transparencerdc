@@ -368,3 +368,5 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   .burger{min-width:40px;min-height:40px}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+/* Masque tout contrôle d'attribution Leaflet/OpenStreetMap résiduel sur toutes les cartes du site. */
+.leaflet-control-attribution{display:none!important}
