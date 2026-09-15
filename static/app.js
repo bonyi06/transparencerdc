@@ -1939,6 +1939,8 @@ function drawHydro(){
 
 /* Géographie — vraie carte choroplèthe interactive (SVG auto-suffisant) */
 let mapInd='recettes', mapYear=null, mapLevels=new Set(['province','territoire','etd']), mapSel=null, mapEvo=false, mapSelPt=null, mapFs=false, mapEscBound=false;
+let cahDetailQ='';
+function isCahiersItieDetail(){return mapInd==='cahiers_nombre'||mapInd==='cahiers_montant';}
 // Rendu carte : Leaflet + fond OpenStreetMap réel (zoom/pan natifs), comme les
 // pages « Titres miniers » et « Hydrocarbures » — remplace l'ancienne
 // projection SVG « maison » (conservée pour les autres graphiques du site).
@@ -2049,6 +2051,14 @@ function mGeo(){
         <thead><tr style="text-align:left;color:var(--ink-soft);font-size:11px;text-transform:uppercase;letter-spacing:.03em"><th style="padding:4px 8px 4px 0">Entreprise</th><th style="padding:4px 8px">Année</th><th style="padding:4px 8px">Budget total</th><th style="padding:4px 8px">Nb projets</th><th style="padding:4px 8px">Chronogramme</th></tr></thead>
         <tbody>${d.lualaba_list.slice().sort((a,b)=>(b.budget||0)-(a.budget||0)).map(l=>`<tr style="border-top:1px dashed var(--line)"><td style="padding:5px 8px 5px 0"><b>${esc(l.entreprise)}</b></td><td style="padding:5px 8px">${l.annee?esc(String(l.annee)):'—'}</td><td style="padding:5px 8px">${l.budget!=null?fmtUSD(l.budget):'<span style=\"color:var(--ink-faint)\">non chiffré</span>'}</td><td style="padding:5px 8px">${l.nb_projets!=null?fmtN(l.nb_projets):'—'}</td><td style="padding:5px 8px">${esc(l.duree||'—')}</td></tr>`).join('')}</tbody>
       </table></div>
+    </div>`:''}
+    ${isCahiersItieDetail()&&d?`<div class="card" style="margin-bottom:18px">
+      <div class="ch" style="flex-wrap:wrap;gap:8px"><h3 style="margin:0">Détail par entreprise — ${mapInd==='cahiers_nombre'?'statut CPI des cahiers de charge':'dépenses sociales obligatoires déclarées'}</h3><span class="badge" id="cahDetailCount"></span></div>
+      <p style="font-size:12.5px;color:var(--ink-soft);margin:6px 0 10px">${mapInd==='cahiers_nombre'
+        ?"Cette liste restitue, entreprise par entreprise, le statut d'approbation (CPI) de chaque cahier des charges tel que nommé dans les annexes officielles des Rapports ITIE-RDC 2022 et 2023 (les décomptes affichés sur la carte, ex. « 15 », « 26 »… sont le chiffre annoncé par l'annexe pour chaque case ; la liste ci-dessous est obtenue en découpant le texte de la même case, dont la ponctuation d'origine — virgules, « et », « ; » mêlés — ne coïncide pas toujours exactement avec ce chiffre annoncé)."
+        :"Cette liste restitue, ligne par ligne, les dépenses sociales obligatoires déclarées par chaque entreprise dans les annexes officielles des Rapports ITIE-RDC 2022 et 2023 (secteurs minier et pétrolier). L'annexe distingue 4 colonnes de montant non équivalentes — paiement en numéraire (total de la dépense / coût imputable à l'année) et paiement en nature (coût de l'infrastructure / coût imputable à l'année) — renseignées de façon inégale d'une entreprise à l'autre : elles sont reproduites telles quelles, sans être additionnées en un total unique qui mélangerait des bases différentes. La somme de ces lignes ne correspond donc pas nécessairement à l'agrégat par province affiché sur la carte ci-dessus."}</p>
+      <div class="exsearch" style="max-width:360px;margin-bottom:10px"><span class="si" aria-hidden="true">⌕</span><input id="cahDetailQ" placeholder="Rechercher une entreprise…" value="${esc(cahDetailQ)}" aria-label="Rechercher une entreprise dans le détail des cahiers de charge"></div>
+      <div id="cahDetailList" style="overflow:auto"></div>
     </div>`:''}
     <div class="card" style="margin-bottom:18px"><div class="ch"><h3>Recettes nationales par régie perceptrice</h3><span class="badge" id="geoNatRegieBadge"></span></div>
       <div class="sub">DGI, DGRAD, DGDA, Trésor public, SGH, CAMI, FOMIN, FONAREV, OCC, CEEC, BCC… — Montant normalisé (USD), lignes de sous-total exclues. Suit le sélecteur Année/Évolution ci-dessus (indépendant de la couche cartographique choisie).</div>
@@ -2340,8 +2350,41 @@ function drawPanel(){
   if(nonzero.length)evoBars($('#pEvo'),pairs);
   const back=panel.querySelector('[data-selprov=""]');if(back)back.onclick=()=>{mapSel=null;drawPanel();highlightProv();};
 }
+function cahDetailRows(){
+  const d=LY();if(!d)return [];
+  if(mapInd==='cahiers_nombre')return d.entreprises_detail||[];
+  if(mapInd==='cahiers_montant')return d.entreprises_detail||[];
+  return [];
+}
+function renderCahDetailList(){
+  const host=$('#cahDetailList');if(!host)return;
+  const all=cahDetailRows();
+  const q=stripAccents(cahDetailQ).toLowerCase();
+  let rows=q?all.filter(r=>stripAccents(r.entreprise||'').toLowerCase().includes(q)):all;
+  const cnt=$('#cahDetailCount');if(cnt)cnt.textContent=fmtN(rows.length)+(q?` / ${fmtN(all.length)}`:'')+' ligne'+(rows.length>1?'s':'');
+  if(mapInd==='cahiers_nombre'){
+    rows=rows.slice().sort((a,b)=>stripAccents(a.entreprise).localeCompare(stripAccents(b.entreprise),'fr')||(a.annee>b.annee?-1:1));
+    host.innerHTML=rows.length?`<table style="width:100%;border-collapse:collapse;font-size:12.5px;min-width:520px">
+      <thead><tr style="text-align:left;color:var(--ink-soft);font-size:11px;text-transform:uppercase;letter-spacing:.03em"><th style="padding:4px 8px 4px 0">Entreprise</th><th style="padding:4px 8px">Province</th><th style="padding:4px 8px">Année</th><th style="padding:4px 8px">Statut CPI</th></tr></thead>
+      <tbody>${rows.map(r=>`<tr style="border-top:1px dashed var(--line)"><td style="padding:5px 8px 5px 0"><b>${esc(r.entreprise)}</b></td><td style="padding:5px 8px">${esc(r.province_nom||'—')}</td><td style="padding:5px 8px">${esc(r.annee||'—')}</td><td style="padding:5px 8px">${esc(r.statut_label||'—')}</td></tr>`).join('')}</tbody>
+    </table>`:'<div class="empty" style="padding:16px">Aucune entreprise ne correspond à cette recherche.</div>';
+  }else if(mapInd==='cahiers_montant'){
+    rows=rows.slice().sort((a,b)=>stripAccents(a.entreprise).localeCompare(stripAccents(b.entreprise),'fr')||(a.annee>b.annee?-1:1));
+    const usdOrDash=v=>v!=null?fmtUSD(v):'<span style="color:var(--ink-faint)">—</span>';
+    host.innerHTML=rows.length?`<table style="width:100%;border-collapse:collapse;font-size:12.5px;min-width:920px">
+      <thead><tr style="text-align:left;color:var(--ink-soft);font-size:11px;text-transform:uppercase;letter-spacing:.03em"><th style="padding:4px 8px 4px 0">Entreprise</th><th style="padding:4px 8px">Année</th><th style="padding:4px 8px">Description de la dépense</th><th style="padding:4px 8px">Numéraire — total dépense</th><th style="padding:4px 8px">Numéraire — coût projet (année)</th><th style="padding:4px 8px">Nature — coût infra.</th><th style="padding:4px 8px">Nature — coût projet (année)</th><th style="padding:4px 8px">Région du bénéficiaire</th></tr></thead>
+      <tbody>${rows.map(r=>`<tr style="border-top:1px dashed var(--line)"><td style="padding:5px 8px 5px 0"><b>${esc(r.entreprise)}</b></td><td style="padding:5px 8px">${esc(r.annee||'—')}</td><td style="padding:5px 8px;max-width:260px">${esc(r.description||'—')}</td><td style="padding:5px 8px">${usdOrDash(r.montant_numeraire_total)}</td><td style="padding:5px 8px">${usdOrDash(r.montant_numeraire_annee)}</td><td style="padding:5px 8px">${usdOrDash(r.montant_nature_infra)}</td><td style="padding:5px 8px">${usdOrDash(r.montant_nature_annee)}</td><td style="padding:5px 8px">${esc(r.region||'—')}</td></tr>`).join('')}</tbody>
+    </table>`:'<div class="empty" style="padding:16px">Aucune entreprise ne correspond à cette recherche.</div>';
+  }
+}
+function bindCahDetail(){
+  const inp=$('#cahDetailQ');if(!inp)return;
+  renderCahDetailList();
+  inp.oninput=e=>{cahDetailQ=e.target.value;renderCahDetailList();const el=$('#cahDetailQ');if(el){el.focus();el.setSelectionRange(e.target.value.length,e.target.value.length);}};
+}
 function drawGeo(){
   drawMap();
+  if(isCahiersItieDetail())bindCahDetail();
   const nrHost=$('#geoNatRegie');
   if(nrHost){
     const y=mapEvo?null:curYear();
@@ -2686,7 +2729,7 @@ document.addEventListener('click',e=>{
   const chip=e.target.closest('.chip[data-f]');if(chip){repFilter=chip.dataset.f;$$('.chip').forEach(c=>c.classList.toggle('on',c===chip));renderReports();if(editing)markEditable(true);return;}
   const evo=e.target.closest('[data-evo]');if(evo){mapEvo=evo.dataset.evo==='1';mapSel=null;const yb=$('#mYear');if(yb)yb.disabled=mapEvo;$$('[data-evo]').forEach(b=>b.classList.toggle('on',b===evo));drawGeo();return;}
   const lvl=e.target.closest('[data-lvl]');if(lvl&&!lvl.disabled){toggleLvl(lvl.dataset.lvl);mapSel=null;$$('[data-lvl]').forEach(b=>b.classList.toggle('on',lvlOn(b.dataset.lvl)));drawGeo();return;}
-  const ind=e.target.closest('[data-ind]');if(ind){mapInd=ind.dataset.ind;mapSel=null;
+  const ind=e.target.closest('[data-ind]');if(ind){mapInd=ind.dataset.ind;mapSel=null;cahDetailQ='';
     // couches « Cahiers de charge » Haut-Katanga & Lualaba : chaque entreprise
     // n'apparaît qu'une seule fois (l'année de son cahier), pas d'un flux
     // annuel répété — la vue « Évolution (cumul) » (tout afficher d'un coup)
@@ -2698,7 +2741,7 @@ document.addEventListener('click',e=>{
     $('#app').innerHTML=MODULES.geo.f();requestAnimationFrame(()=>drawGeo());return;}
 });
 document.addEventListener('change',e=>{
-  if(e.target.id==='mInd'){mapInd=e.target.value;mapSel=null;
+  if(e.target.id==='mInd'){mapInd=e.target.value;mapSel=null;cahDetailQ='';
     if(mapInd==='cahiers_hklu_budget'||mapInd==='cahiers_hklu_nombre'){mapEvo=true;mapLevels.add('etd');}
     const ys=indYears();if(ys.indexOf(mapYear)<0)mapYear=ys.length?ys[ys.length-1]:null;
     if(lvlOn('territoire')&&!hasTerr())mapLevels.delete('territoire');if(lvlOn('etd')&&!hasEtdPts())mapLevels.delete('etd');if(!mapLevels.size)mapLevels.add('province');

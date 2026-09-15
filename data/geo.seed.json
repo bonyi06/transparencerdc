@@ -21408,6 +21408,2061 @@
    "years": [
     "2022",
     "2023"
+   ],
+   "statut_detail": {
+    "2022": [
+     {
+      "province_nom": "Haut-Katanga",
+      "province_iso": "CD-HK",
+      "total_declare": 56.0,
+      "statuts": [
+       {
+        "key": "approuve_autorite",
+        "label": "Approuvés par l'autorité compétente",
+        "count_declare": 15,
+        "entreprises": [
+         "SOMIKA",
+         "SOCIETE DE TRAITEMENT DU TERRIL DE LUBUMBASHI",
+         "MMG KINSEVERE",
+         "EXCELLEN MINING MINERALS",
+         "FRONTIER",
+         "RUBAMIN",
+         "ANVIL MINING CONGO",
+         "KISENDA COPPER COMPANY",
+         "COMILU",
+         "SABWE MINING",
+         "KAIPENG MINING",
+         "SHAMITUMBA",
+         "DIVINE LAND MINING SARL",
+         "SOMIKA SARLU/Projet KIMPE-MABAYA",
+         "CHEMAF (PE 577)"
+        ],
+        "raw": "15 : SOMIKA, SOCIETE DE TRAITEMENT DU TERRIL DE LUBUMBASHI, MMG KINSEVERE, EXCELLEN MINING MINERALS, FRONTIER, RUBAMIN, ANVIL MINING CONGO, KISENDA COPPER COMPANY, COMILU, SABWE MINING, KAIPENG MINING, SHAMITUMBA, DIVINE LAND MINING SARL, SOMIKA SARLU/Projet KIMPE-MABAYA, CHEMAF (PE 577)"
+       },
+       {
+        "key": "approuve_cpi_attente_autorite",
+        "label": "Approuvés par la CPI, en attente de l'autorité compétente",
+        "count_declare": 26,
+        "entreprises": [
+         "MINIERE DE KASOMBO",
+         "COMIKA",
+         "NEW MINERALS INVESTMENT(1305)",
+         "CONGO JIN JU CHENG",
+         "EVERBRIGHT MINING",
+         "METAL MINES",
+         "KAMBOVE MINING",
+         "CNMC CONGO COMPAGNIE MINIERE",
+         "LUALABA MINING RESSOURCES",
+         "SHITURU MINING CORPORATION",
+         "MACROLINK JIAYUAN MINING",
+         "CONGO DONG FANG INTERNATIONAL MINING",
+         "CNMC HUACHIN METAL LEACH(12094)",
+         "CNMC HUACHIN MABENDE MINING(PE1060)",
+         "SHAMITUMBA",
+         "SMCO",
+         "RUBAMIN",
+         "ETT MJM",
+         "MIKAS (PE13120)",
+         "CHEMAF 577",
+         "RUASHI MINING (PE578)",
+         "KICC (PE101)",
+         "SOMIKA LUPOPO",
+         "SOMIKA KIMPE",
+         "CNMC CONGO COMPAGNIE (PE2356)",
+         "KAIPENG MINING ETT"
+        ],
+        "raw": "26 : MINIERE DE KASOMBO, COMIKA, NEW MINERALS INVESTMENT(1305), CONGO JIN JU CHENG, EVERBRIGHT MINING, METAL MINES, KAMBOVE MINING, CNMC CONGO COMPAGNIE MINIERE, LUALABA MINING RESSOURCES, SHITURU MINING CORPORATION, MACROLINK JIAYUAN MINING, CONGO DONG FANG INTERNATIONAL MINING, CNMC HUACHIN METAL LEACH(12094), CNMC HUACHIN MABENDE MINING(PE1060), SHAMITUMBA, SMCO, RUBAMIN, ETT MJM, MIKAS (PE13120), CHEMAF 577, RUASHI MINING (PE578), KICC (PE101), SOMIKA LUPOPO, SOMIKA KIMPE, CNMC CONGO COMPAGNIE (PE2356), KAIPENG MINING ETT"
+       },
+       {
+        "key": "en_instruction",
+        "label": "En cours d'instruction",
+        "count_declare": 7,
+        "entreprises": [
+         "GRANDE CIMENTERIE DU KATANGA",
+         "CONGO INVESTMENT CORPORATION",
+         "GOLDEN AFRICA RESSOURCES",
+         "SOURYA MINING",
+         "SODIMICO",
+         "SOMINKO SARLU",
+         "BOSS MINING"
+        ],
+        "raw": "7 : GRANDE CIMENTERIE DU KATANGA, CONGO INVESTMENT CORPORATION, GOLDEN AFRICA RESSOURCES, SOURYA MINING, SODIMICO, SOMINKO SARLU, BOSS MINING"
+       },
+       {
+        "key": "en_negociation",
+        "label": "En cours de négociation",
+        "count_declare": 7,
+        "entreprises": [
+         "OM METAL RESSOURCES",
+         "MINIERE DE KASONTA",
+         "FMR DEVELOPEMENT",
+         "MINING PROGRESS COMPANY",
+         "ENTREPRISE GENERALE MALTA FOREST"
+        ],
+        "raw": "7 : OM METAL RESSOURCES, MINIERE DE KASONTA, FMR DEVELOPEMENT, MINING PROGRESS COMPANY, ENTREPRISE GENERALE MALTA FOREST"
+       },
+       {
+        "key": "signe_non_transmis_cpi",
+        "label": "Signés avec les communautés, non transmis à la CPI",
+        "count_declare": 1,
+        "entreprises": [
+         "KIPUSHI CORPORATION"
+        ],
+        "raw": "KIPUSHI CORPORATION"
+       }
+      ]
+     },
+     {
+      "province_nom": "Lualaba",
+      "province_iso": "CD-LU",
+      "total_declare": 31.0,
+      "statuts": [
+       {
+        "key": "approuve_autorite",
+        "label": "Approuvés par l'autorité compétente",
+        "count_declare": 21,
+        "entreprises": [
+         "KAMOA COPPER",
+         "METALKOL SA",
+         "MKM",
+         "COMMUS SAS",
+         "SICOMINES S.A",
+         "CARRILU",
+         "CMOC KINSAFU I",
+         "COMIDE",
+         "LUILU RESSOURCES",
+         "LCS",
+         "KCC",
+         "SOMIDEZ SAS",
+         "MUTANDA MINING",
+         "TFM",
+         "HMC",
+         "CCR",
+         "LAMIKAL",
+         "KISANFU MINING",
+         "KALONGWE MINING",
+         "CMOC KINSAFU II",
+         "TCC"
+        ],
+        "raw": "21 : KAMOA COPPER, METALKOL SA, MKM, COMMUS SAS, SICOMINES S.A, CARRILU, CMOC KINSAFU I, COMIDE, LUILU RESSOURCES, LCS, KCC, SOMIDEZ SAS, MUTANDA MINING, TFM, HMC, CCR, LAMIKAL, KISANFU MINING, KALONGWE MINING, CMOC KINSAFU II et TCC"
+       },
+       {
+        "key": "approuve_cpi_attente_autorite",
+        "label": "Approuvés par la CPI, en attente de l'autorité compétente",
+        "count_declare": 2,
+        "entreprises": [
+         "KAMOTO COPPER COMPANY",
+         "CJCMC ETT"
+        ],
+        "raw": "2 : KAMOTO COPPER COMPANY ET CJCMC ETT"
+       },
+       {
+        "key": "en_instruction",
+        "label": "En cours d'instruction",
+        "count_declare": 4,
+        "entreprises": [
+         "COMIDE",
+         "SURYA MINING",
+         "BOSS MINING",
+         "MMT",
+         "EGMF"
+        ],
+        "raw": "4 : COMIDE ; SURYA MINING, BOSS MINING, MMT, EGMF"
+       },
+       {
+        "key": "en_negociation",
+        "label": "En cours de négociation",
+        "count_declare": 4,
+        "entreprises": [
+         "CHEMAF",
+         "THOMAS MINING",
+         "ENTREPRISE GENERALE MALTA FOREST",
+         "MMT"
+        ],
+        "raw": "4 : CHEMAF, THOMAS MINING, ENTREPRISE GENERALE MALTA FOREST, MMT"
+       },
+       {
+        "key": "signe_non_transmis_cpi",
+        "label": "Signés avec les communautés, non transmis à la CPI",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       }
+      ]
+     },
+     {
+      "province_nom": "Kasai-Oriental",
+      "province_iso": "CD-KE",
+      "total_declare": 1.0,
+      "statuts": [
+       {
+        "key": "approuve_autorite",
+        "label": "Approuvés par l'autorité compétente",
+        "count_declare": 1,
+        "entreprises": [
+         "SACIM"
+        ],
+        "raw": "SACIM"
+       },
+       {
+        "key": "approuve_cpi_attente_autorite",
+        "label": "Approuvés par la CPI, en attente de l'autorité compétente",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "en_instruction",
+        "label": "En cours d'instruction",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "en_negociation",
+        "label": "En cours de négociation",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "signe_non_transmis_cpi",
+        "label": "Signés avec les communautés, non transmis à la CPI",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       }
+      ]
+     },
+     {
+      "province_nom": "Haut-Uele",
+      "province_iso": "CD-HU",
+      "total_declare": 1.0,
+      "statuts": [
+       {
+        "key": "approuve_autorite",
+        "label": "Approuvés par l'autorité compétente",
+        "count_declare": 1,
+        "entreprises": [
+         "KIBALI GOLDMINE"
+        ],
+        "raw": "KIBALI GOLDMINE"
+       },
+       {
+        "key": "approuve_cpi_attente_autorite",
+        "label": "Approuvés par la CPI, en attente de l'autorité compétente",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "en_instruction",
+        "label": "En cours d'instruction",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "en_negociation",
+        "label": "En cours de négociation",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "signe_non_transmis_cpi",
+        "label": "Signés avec les communautés, non transmis à la CPI",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       }
+      ]
+     },
+     {
+      "province_nom": "Ville de Kinshasa",
+      "province_iso": "CD-KN",
+      "total_declare": 2.0,
+      "statuts": [
+       {
+        "key": "approuve_autorite",
+        "label": "Approuvés par l'autorité compétente",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "approuve_cpi_attente_autorite",
+        "label": "Approuvés par la CPI, en attente de l'autorité compétente",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "en_instruction",
+        "label": "En cours d'instruction",
+        "count_declare": 1,
+        "entreprises": [
+         "CARRIGRES"
+        ],
+        "raw": "CARRIGRES"
+       },
+       {
+        "key": "en_negociation",
+        "label": "En cours de négociation",
+        "count_declare": 1,
+        "entreprises": [
+         "1"
+        ],
+        "raw": "1"
+       },
+       {
+        "key": "signe_non_transmis_cpi",
+        "label": "Signés avec les communautés, non transmis à la CPI",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       }
+      ]
+     },
+     {
+      "province_nom": "Kongo-Central",
+      "province_iso": "CD-BC",
+      "total_declare": 0.0,
+      "statuts": [
+       {
+        "key": "approuve_autorite",
+        "label": "Approuvés par l'autorité compétente",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "approuve_cpi_attente_autorite",
+        "label": "Approuvés par la CPI, en attente de l'autorité compétente",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "en_instruction",
+        "label": "En cours d'instruction",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "en_negociation",
+        "label": "En cours de négociation",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "signe_non_transmis_cpi",
+        "label": "Signés avec les communautés, non transmis à la CPI",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       }
+      ]
+     },
+     {
+      "province_nom": "Nord-Kivu",
+      "province_iso": "CD-NK",
+      "total_declare": 1.0,
+      "statuts": [
+       {
+        "key": "approuve_autorite",
+        "label": "Approuvés par l'autorité compétente",
+        "count_declare": 1,
+        "entreprises": [
+         "ALPHAMIN BISIE"
+        ],
+        "raw": "ALPHAMIN BISIE"
+       },
+       {
+        "key": "approuve_cpi_attente_autorite",
+        "label": "Approuvés par la CPI, en attente de l'autorité compétente",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "en_instruction",
+        "label": "En cours d'instruction",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "en_negociation",
+        "label": "En cours de négociation",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "signe_non_transmis_cpi",
+        "label": "Signés avec les communautés, non transmis à la CPI",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       }
+      ]
+     }
+    ],
+    "2023": [
+     {
+      "province_nom": "Haut-Katanga",
+      "province_iso": "CD-HK",
+      "total_declare": 39.0,
+      "statuts": [
+       {
+        "key": "approuve_autorite",
+        "label": "Approuvés par l'autorité compétente",
+        "count_declare": 16,
+        "entreprises": [
+         "RUASHI MINING",
+         "SOMIKA",
+         "SOCIETE DE TRAITEMENT DU TERRIL DE LUBUMBASHI",
+         "MMG KINSEVERE",
+         "EXCELLENT MINING MINERALS",
+         "FRONTIER",
+         "RUBAMIN",
+         "ANVIL MINING CONGO",
+         "KISENDA COPPER COMPANY",
+         "COMILU",
+         "SABWE MINING",
+         "KAIPENG MINING",
+         "SHAMITUMBA",
+         "DIVINE LAND MINING SARL",
+         "SOMIKA SARLU/Projet KIMPE-MABAYA",
+         "CHEMAF (PE 577)"
+        ],
+        "raw": "16 : RUASHI MINING, SOMIKA, SOCIETE DE TRAITEMENT DU TERRIL DE LUBUMBASHI, MMG KINSEVERE, EXCELLENT MINING MINERALS, FRONTIER, RUBAMIN, ANVIL MINING CONGO, KISENDA COPPER COMPANY, COMILU, SABWE MINING, KAIPENG MINING, SHAMITUMBA, DIVINE LAND MINING SARL, SOMIKA SARLU/Projet KIMPE-MABAYA, CHEMAF (PE 577)"
+       },
+       {
+        "key": "approuve_cpi_attente_autorite",
+        "label": "Approuvés par la CPI, en attente de l'autorité compétente",
+        "count_declare": 14,
+        "entreprises": [
+         "MINIERE DE KASOMBO",
+         "COMIKA",
+         "NEW MINERALS INVESTMENT",
+         "CONGO JIN JU CHENG",
+         "EVERBRIGHT MINING",
+         "METAL MINES",
+         "KAMBOVE MINING",
+         "CNMC CONGO COMPAGNIE MINIERE",
+         "LUALABA MINING RESSOURCES",
+         "SHITURU MINING CORPORATION",
+         "MACROLINK JIAYUAN MINING",
+         "CONGO DONG FANG INTERNATIONAL MINING",
+         "CNMC HUACHIN METAL LEACH",
+         "CNMC HUACHIN MABENDE MINING"
+        ],
+        "raw": "14 : MINIERE DE KASOMBO, COMIKA, NEW MINERALS INVESTMENT, CONGO JIN JU CHENG, EVERBRIGHT MINING, METAL MINES, KAMBOVE MINING, CNMC CONGO COMPAGNIE MINIERE, LUALABA MINING RESSOURCES, SHITURU MINING CORPORATION, MACROLINK JIAYUAN MINING, CONGO DONG FANG INTERNATIONAL MINING, CNMC HUACHIN METAL LEACH, CNMC HUACHIN MABENDE MINING"
+       },
+       {
+        "key": "en_instruction",
+        "label": "En cours d'instruction",
+        "count_declare": 2,
+        "entreprises": [
+         "GRANDE CIMENTERIE DU KATANGA",
+         "CONGO INVESTMENT CORPORATION"
+        ],
+        "raw": "2 : GRANDE CIMENTERIE DU KATANGA, CONGO INVESTMENT CORPORATION"
+       },
+       {
+        "key": "en_negociation",
+        "label": "En cours de négociation",
+        "count_declare": 6,
+        "entreprises": [
+         "OM METAL RESSOURCES",
+         "GOLDEN AFRICA RESSOURCES",
+         "MINIERE DE KASONTA",
+         "FMR DEVELOPEMENT",
+         "MINING PROGRESS COMPANY",
+         "ENTREPRISE GENERALE MALTA FOREST"
+        ],
+        "raw": "6 : OM METAL RESSOURCES, GOLDEN AFRICA RESSOURCES, MINIERE DE KASONTA, FMR DEVELOPEMENT, MINING PROGRESS COMPANY, ENTREPRISE GENERALE MALTA FOREST"
+       },
+       {
+        "key": "signe_non_transmis_cpi",
+        "label": "Signés avec les communautés, non transmis à la CPI",
+        "count_declare": 1,
+        "entreprises": [
+         "KIPUSHI CORPORATION"
+        ],
+        "raw": "KIPUSHI CORPORATION"
+       }
+      ]
+     },
+     {
+      "province_nom": "Lualaba",
+      "province_iso": "CD-LU",
+      "total_declare": 25.0,
+      "statuts": [
+       {
+        "key": "approuve_autorite",
+        "label": "Approuvés par l'autorité compétente",
+        "count_declare": 7,
+        "entreprises": [
+         "KAMOA COPPER",
+         "METALKOL SA",
+         "MKM",
+         "COMMUS SAS",
+         "SICOMINES S.A",
+         "SOMIDEZ SAS",
+         "LUALABA COPPER SMELTER"
+        ],
+        "raw": "7 : KAMOA COPPER, METALKOL SA, MKM, COMMUS SAS, SICOMINES S.A, SOMIDEZ SAS, LUALABA COPPER SMELTER"
+       },
+       {
+        "key": "approuve_cpi_attente_autorite",
+        "label": "Approuvés par la CPI, en attente de l'autorité compétente",
+        "count_declare": 12,
+        "entreprises": [
+         "CMOC KINSAFU",
+         "KALONGWE MINING",
+         "KISANFU MINING",
+         "LAMIKAL",
+         "CCR",
+         "HMC",
+         "TCC",
+         "TFM",
+         "MUTANDA MINING",
+         "CARRILU",
+         "KAMOTO COPPER COMPANY",
+         "LUILU RESSOURCES"
+        ],
+        "raw": "12 : CMOC KINSAFU, KALONGWE MINING, KISANFU MINING, LAMIKAL, CCR, HMC, TCC, TFM, MUTANDA MINING, CARRILU, KAMOTO COPPER COMPANY et LUILU RESSOURCES"
+       },
+       {
+        "key": "en_instruction",
+        "label": "En cours d'instruction",
+        "count_declare": 1,
+        "entreprises": [
+         "COMIDE"
+        ],
+        "raw": "COMIDE"
+       },
+       {
+        "key": "en_negociation",
+        "label": "En cours de négociation",
+        "count_declare": 4,
+        "entreprises": [
+         "CHEMAF",
+         "THOMAS MINING",
+         "ENTREPRISE GENERALE MALTA FOREST",
+         "MMT"
+        ],
+        "raw": "4 : CHEMAF, THOMAS MINING, ENTREPRISE GENERALE MALTA FOREST, MMT"
+       },
+       {
+        "key": "signe_non_transmis_cpi",
+        "label": "Signés avec les communautés, non transmis à la CPI",
+        "count_declare": 1,
+        "entreprises": [
+         "BOSS MINING"
+        ],
+        "raw": "BOSS MINING"
+       }
+      ]
+     },
+     {
+      "province_nom": "Kasai-Oriental",
+      "province_iso": "CD-KE",
+      "total_declare": 1.0,
+      "statuts": [
+       {
+        "key": "approuve_autorite",
+        "label": "Approuvés par l'autorité compétente",
+        "count_declare": 1,
+        "entreprises": [
+         "SACIM"
+        ],
+        "raw": "SACIM"
+       },
+       {
+        "key": "approuve_cpi_attente_autorite",
+        "label": "Approuvés par la CPI, en attente de l'autorité compétente",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "en_instruction",
+        "label": "En cours d'instruction",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "en_negociation",
+        "label": "En cours de négociation",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "signe_non_transmis_cpi",
+        "label": "Signés avec les communautés, non transmis à la CPI",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       }
+      ]
+     },
+     {
+      "province_nom": "Haut-Uele",
+      "province_iso": "CD-HU",
+      "total_declare": 1.0,
+      "statuts": [
+       {
+        "key": "approuve_autorite",
+        "label": "Approuvés par l'autorité compétente",
+        "count_declare": 1,
+        "entreprises": [
+         "KIBALI GOLDMINE"
+        ],
+        "raw": "KIBALI GOLDMINE"
+       },
+       {
+        "key": "approuve_cpi_attente_autorite",
+        "label": "Approuvés par la CPI, en attente de l'autorité compétente",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "en_instruction",
+        "label": "En cours d'instruction",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "en_negociation",
+        "label": "En cours de négociation",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "signe_non_transmis_cpi",
+        "label": "Signés avec les communautés, non transmis à la CPI",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       }
+      ]
+     },
+     {
+      "province_nom": "Ville de Kinshasa",
+      "province_iso": "CD-KN",
+      "total_declare": 1.0,
+      "statuts": [
+       {
+        "key": "approuve_autorite",
+        "label": "Approuvés par l'autorité compétente",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "approuve_cpi_attente_autorite",
+        "label": "Approuvés par la CPI, en attente de l'autorité compétente",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "en_instruction",
+        "label": "En cours d'instruction",
+        "count_declare": 1,
+        "entreprises": [
+         "CARRIGRES"
+        ],
+        "raw": "CARRIGRES"
+       },
+       {
+        "key": "en_negociation",
+        "label": "En cours de négociation",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "signe_non_transmis_cpi",
+        "label": "Signés avec les communautés, non transmis à la CPI",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       }
+      ]
+     },
+     {
+      "province_nom": "Kongo-Central",
+      "province_iso": "CD-BC",
+      "total_declare": 0.0,
+      "statuts": [
+       {
+        "key": "approuve_autorite",
+        "label": "Approuvés par l'autorité compétente",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "approuve_cpi_attente_autorite",
+        "label": "Approuvés par la CPI, en attente de l'autorité compétente",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "en_instruction",
+        "label": "En cours d'instruction",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "en_negociation",
+        "label": "En cours de négociation",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "signe_non_transmis_cpi",
+        "label": "Signés avec les communautés, non transmis à la CPI",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       }
+      ]
+     },
+     {
+      "province_nom": "Nord-Kivu",
+      "province_iso": "CD-NK",
+      "total_declare": 1.0,
+      "statuts": [
+       {
+        "key": "approuve_autorite",
+        "label": "Approuvés par l'autorité compétente",
+        "count_declare": 1,
+        "entreprises": [
+         "ALPHAMIN BISIE"
+        ],
+        "raw": "ALPHAMIN BISIE"
+       },
+       {
+        "key": "approuve_cpi_attente_autorite",
+        "label": "Approuvés par la CPI, en attente de l'autorité compétente",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "en_instruction",
+        "label": "En cours d'instruction",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "en_negociation",
+        "label": "En cours de négociation",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       },
+       {
+        "key": "signe_non_transmis_cpi",
+        "label": "Signés avec les communautés, non transmis à la CPI",
+        "count_declare": 0,
+        "entreprises": [],
+        "raw": "0"
+       }
+      ]
+     }
+    ]
+   },
+   "entreprises_detail": [
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "SOMIKA"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "SOCIETE DE TRAITEMENT DU TERRIL DE LUBUMBASHI"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "MMG KINSEVERE"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "EXCELLEN MINING MINERALS"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "FRONTIER"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "RUBAMIN"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "ANVIL MINING CONGO"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "KISENDA COPPER COMPANY"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "COMILU"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "SABWE MINING"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "KAIPENG MINING"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "SHAMITUMBA"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "DIVINE LAND MINING SARL"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "SOMIKA SARLU/Projet KIMPE-MABAYA"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "CHEMAF (PE 577)"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "MINIERE DE KASOMBO"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "COMIKA"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "NEW MINERALS INVESTMENT(1305)"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "CONGO JIN JU CHENG"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "EVERBRIGHT MINING"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "METAL MINES"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "KAMBOVE MINING"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "CNMC CONGO COMPAGNIE MINIERE"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "LUALABA MINING RESSOURCES"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "SHITURU MINING CORPORATION"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "MACROLINK JIAYUAN MINING"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "CONGO DONG FANG INTERNATIONAL MINING"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "CNMC HUACHIN METAL LEACH(12094)"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "CNMC HUACHIN MABENDE MINING(PE1060)"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "SHAMITUMBA"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "SMCO"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "RUBAMIN"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "ETT MJM"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "MIKAS (PE13120)"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "CHEMAF 577"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "RUASHI MINING (PE578)"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "KICC (PE101)"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "SOMIKA LUPOPO"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "SOMIKA KIMPE"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "CNMC CONGO COMPAGNIE (PE2356)"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "KAIPENG MINING ETT"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "en_instruction",
+     "statut_label": "En cours d'instruction",
+     "entreprise": "GRANDE CIMENTERIE DU KATANGA"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "en_instruction",
+     "statut_label": "En cours d'instruction",
+     "entreprise": "CONGO INVESTMENT CORPORATION"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "en_instruction",
+     "statut_label": "En cours d'instruction",
+     "entreprise": "GOLDEN AFRICA RESSOURCES"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "en_instruction",
+     "statut_label": "En cours d'instruction",
+     "entreprise": "SOURYA MINING"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "en_instruction",
+     "statut_label": "En cours d'instruction",
+     "entreprise": "SODIMICO"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "en_instruction",
+     "statut_label": "En cours d'instruction",
+     "entreprise": "SOMINKO SARLU"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "en_instruction",
+     "statut_label": "En cours d'instruction",
+     "entreprise": "BOSS MINING"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "en_negociation",
+     "statut_label": "En cours de négociation",
+     "entreprise": "OM METAL RESSOURCES"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "en_negociation",
+     "statut_label": "En cours de négociation",
+     "entreprise": "MINIERE DE KASONTA"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "en_negociation",
+     "statut_label": "En cours de négociation",
+     "entreprise": "FMR DEVELOPEMENT"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "en_negociation",
+     "statut_label": "En cours de négociation",
+     "entreprise": "MINING PROGRESS COMPANY"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "en_negociation",
+     "statut_label": "En cours de négociation",
+     "entreprise": "ENTREPRISE GENERALE MALTA FOREST"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "signe_non_transmis_cpi",
+     "statut_label": "Signés avec les communautés, non transmis à la CPI",
+     "entreprise": "KIPUSHI CORPORATION"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "KAMOA COPPER"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "METALKOL SA"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "MKM"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "COMMUS SAS"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "SICOMINES S.A"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "CARRILU"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "CMOC KINSAFU I"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "COMIDE"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "LUILU RESSOURCES"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "LCS"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "KCC"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "SOMIDEZ SAS"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "MUTANDA MINING"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "TFM"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "HMC"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "CCR"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "LAMIKAL"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "KISANFU MINING"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "KALONGWE MINING"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "CMOC KINSAFU II"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "TCC"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "KAMOTO COPPER COMPANY"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "CJCMC ETT"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "en_instruction",
+     "statut_label": "En cours d'instruction",
+     "entreprise": "COMIDE"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "en_instruction",
+     "statut_label": "En cours d'instruction",
+     "entreprise": "SURYA MINING"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "en_instruction",
+     "statut_label": "En cours d'instruction",
+     "entreprise": "BOSS MINING"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "en_instruction",
+     "statut_label": "En cours d'instruction",
+     "entreprise": "MMT"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "en_instruction",
+     "statut_label": "En cours d'instruction",
+     "entreprise": "EGMF"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "en_negociation",
+     "statut_label": "En cours de négociation",
+     "entreprise": "CHEMAF"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "en_negociation",
+     "statut_label": "En cours de négociation",
+     "entreprise": "THOMAS MINING"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "en_negociation",
+     "statut_label": "En cours de négociation",
+     "entreprise": "ENTREPRISE GENERALE MALTA FOREST"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "en_negociation",
+     "statut_label": "En cours de négociation",
+     "entreprise": "MMT"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Kasai-Oriental",
+     "province_iso": "CD-KE",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "SACIM"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Haut-Uele",
+     "province_iso": "CD-HU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "KIBALI GOLDMINE"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Ville de Kinshasa",
+     "province_iso": "CD-KN",
+     "statut_key": "en_instruction",
+     "statut_label": "En cours d'instruction",
+     "entreprise": "CARRIGRES"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Ville de Kinshasa",
+     "province_iso": "CD-KN",
+     "statut_key": "en_negociation",
+     "statut_label": "En cours de négociation",
+     "entreprise": "1"
+    },
+    {
+     "annee": "2022",
+     "province_nom": "Nord-Kivu",
+     "province_iso": "CD-NK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "ALPHAMIN BISIE"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "RUASHI MINING"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "SOMIKA"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "SOCIETE DE TRAITEMENT DU TERRIL DE LUBUMBASHI"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "MMG KINSEVERE"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "EXCELLENT MINING MINERALS"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "FRONTIER"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "RUBAMIN"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "ANVIL MINING CONGO"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "KISENDA COPPER COMPANY"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "COMILU"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "SABWE MINING"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "KAIPENG MINING"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "SHAMITUMBA"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "DIVINE LAND MINING SARL"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "SOMIKA SARLU/Projet KIMPE-MABAYA"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "CHEMAF (PE 577)"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "MINIERE DE KASOMBO"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "COMIKA"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "NEW MINERALS INVESTMENT"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "CONGO JIN JU CHENG"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "EVERBRIGHT MINING"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "METAL MINES"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "KAMBOVE MINING"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "CNMC CONGO COMPAGNIE MINIERE"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "LUALABA MINING RESSOURCES"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "SHITURU MINING CORPORATION"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "MACROLINK JIAYUAN MINING"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "CONGO DONG FANG INTERNATIONAL MINING"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "CNMC HUACHIN METAL LEACH"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "CNMC HUACHIN MABENDE MINING"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "en_instruction",
+     "statut_label": "En cours d'instruction",
+     "entreprise": "GRANDE CIMENTERIE DU KATANGA"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "en_instruction",
+     "statut_label": "En cours d'instruction",
+     "entreprise": "CONGO INVESTMENT CORPORATION"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "en_negociation",
+     "statut_label": "En cours de négociation",
+     "entreprise": "OM METAL RESSOURCES"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "en_negociation",
+     "statut_label": "En cours de négociation",
+     "entreprise": "GOLDEN AFRICA RESSOURCES"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "en_negociation",
+     "statut_label": "En cours de négociation",
+     "entreprise": "MINIERE DE KASONTA"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "en_negociation",
+     "statut_label": "En cours de négociation",
+     "entreprise": "FMR DEVELOPEMENT"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "en_negociation",
+     "statut_label": "En cours de négociation",
+     "entreprise": "MINING PROGRESS COMPANY"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "en_negociation",
+     "statut_label": "En cours de négociation",
+     "entreprise": "ENTREPRISE GENERALE MALTA FOREST"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Katanga",
+     "province_iso": "CD-HK",
+     "statut_key": "signe_non_transmis_cpi",
+     "statut_label": "Signés avec les communautés, non transmis à la CPI",
+     "entreprise": "KIPUSHI CORPORATION"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "KAMOA COPPER"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "METALKOL SA"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "MKM"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "COMMUS SAS"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "SICOMINES S.A"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "SOMIDEZ SAS"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "LUALABA COPPER SMELTER"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "CMOC KINSAFU"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "KALONGWE MINING"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "KISANFU MINING"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "LAMIKAL"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "CCR"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "HMC"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "TCC"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "TFM"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "MUTANDA MINING"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "CARRILU"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "KAMOTO COPPER COMPANY"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "approuve_cpi_attente_autorite",
+     "statut_label": "Approuvés par la CPI, en attente de l'autorité compétente",
+     "entreprise": "LUILU RESSOURCES"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "en_instruction",
+     "statut_label": "En cours d'instruction",
+     "entreprise": "COMIDE"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "en_negociation",
+     "statut_label": "En cours de négociation",
+     "entreprise": "CHEMAF"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "en_negociation",
+     "statut_label": "En cours de négociation",
+     "entreprise": "THOMAS MINING"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "en_negociation",
+     "statut_label": "En cours de négociation",
+     "entreprise": "ENTREPRISE GENERALE MALTA FOREST"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "en_negociation",
+     "statut_label": "En cours de négociation",
+     "entreprise": "MMT"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Lualaba",
+     "province_iso": "CD-LU",
+     "statut_key": "signe_non_transmis_cpi",
+     "statut_label": "Signés avec les communautés, non transmis à la CPI",
+     "entreprise": "BOSS MINING"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Kasai-Oriental",
+     "province_iso": "CD-KE",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "SACIM"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Haut-Uele",
+     "province_iso": "CD-HU",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "KIBALI GOLDMINE"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Ville de Kinshasa",
+     "province_iso": "CD-KN",
+     "statut_key": "en_instruction",
+     "statut_label": "En cours d'instruction",
+     "entreprise": "CARRIGRES"
+    },
+    {
+     "annee": "2023",
+     "province_nom": "Nord-Kivu",
+     "province_iso": "CD-NK",
+     "statut_key": "approuve_autorite",
+     "statut_label": "Approuvés par l'autorité compétente",
+     "entreprise": "ALPHAMIN BISIE"
+    }
    ]
   },
   "cahiers_montant": {
@@ -21430,6 +23485,2744 @@
    "years": [
     "2022",
     "2023"
+   ],
+   "entreprises_detail": [
+    {
+     "annee": "2022",
+     "entreprise": "TENKE FUNGURUME MINING (TFM)",
+     "description": "Programme de crédit Mais",
+     "entite_beneficiaire": "Participants au Programme",
+     "region": "Concession TFM",
+     "base_juridique": "Arreté Provincial Numéro 2008/0008/katanga du 22 mars 2008 portant mesures d'encadrement de la production agricole dans la province du Katanga",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2022",
+     "entreprise": "TENKE FUNGURUME MINING (TFM)",
+     "description": "Réinstallation",
+     "entite_beneficiaire": "Personnes affectees par le Projet",
+     "region": "Concession TFM",
+     "base_juridique": "La politique de réinstallation de TFM et son engagement à l'ESIA (Environmental and Social Impact Assessments)",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 21884116.59
+    },
+    {
+     "annee": "2022",
+     "entreprise": "LA COMPAGNIE MINIERE DE MUSONOIE GLOBAL",
+     "description": "Cahier des charges",
+     "entite_beneficiaire": "toutes les 8 communautes environnantes (Depenses de 2024) (Quartier :BIASHARA Musonoie Kanina GCM) (Villages:TSHABULA PIERRE-MUTEBA TSHIZUZA KAPEPA)",
+     "region": "groupement et commune",
+     "base_juridique": "cahier des charges",
+     "montant_numeraire_total": 4259691.976,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "COMPAGNIE D'EXPLOITATION DES REJETS DE KINGAMYAMBO SARL",
+     "description": "Mise en oeuvre des projets du cahier des charges",
+     "entite_beneficiaire": "9 Communautes impactees par le projet minier de Metalkol SA",
+     "region": "Territoire de Mutshtsha /Secteur Luilu/Groupement Kazembe",
+     "base_juridique": "Cahier des charges de Responsabilites Societales",
+     "montant_numeraire_total": 2950000.0,
+     "montant_numeraire_annee": 2030761.94,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE MINIERE DE DEZIWA SAS (SOMIDEZ)",
+     "description": "approvisionnement intrants et matériels agricoles",
+     "entite_beneficiaire": "village TSHIKALA, village Mumpaja",
+     "region": "Secteur de Luilu",
+     "base_juridique": "cahier des charges",
+     "montant_numeraire_total": 400000.0,
+     "montant_numeraire_annee": 101207.4,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "FRONTIER SA",
+     "description": "Soutien apporté à la culture semimécanisée du maïs au sein de la coopérative agricole Chawama.",
+     "entite_beneficiaire": "Cooperative des agricole Chawama",
+     "region": "Sakania _Sec de Balamba _Gpt Katala",
+     "base_juridique": "CDC",
+     "montant_numeraire_total": 133347.0,
+     "montant_numeraire_annee": 133347.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "FRONTIER SA",
+     "description": "Organisation d'une formation agro- pastorale dans le cadre du cahier des charges.",
+     "entite_beneficiaire": "CLD",
+     "region": "Province du Haut-Katanga Territoire de Sakania Secteur Balamba",
+     "base_juridique": "CDC",
+     "montant_numeraire_total": 16613.0,
+     "montant_numeraire_annee": 16613.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "MUTANDA MINING (MUMI)",
+     "description": "Dons aux vulnérables, assistances mensuelles régulières (assistance hôpitaux, centres de santé), appui aux chefs locaux, sport, mangeurs de cuivre, etc.",
+     "entite_beneficiaire": "Hopituaux, centre des sante, chefs locaux",
+     "region": "Secteur de Luilu",
+     "base_juridique": "SPRL",
+     "montant_numeraire_total": 138582.1,
+     "montant_numeraire_annee": 138583.1,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 138583.1
+    },
+    {
+     "annee": "2022",
+     "entreprise": "MUTANDA MINING (MUMI)",
+     "description": "Appui à l’Agriculture Vivrière (Culture de Maïs, Arachide, Haricot, Soja) et à la mécanisation agricole.",
+     "entite_beneficiaire": "(50 associations et",
+     "region": "Secteur de Luilu",
+     "base_juridique": "",
+     "montant_numeraire_total": 1320053.0,
+     "montant_numeraire_annee": 1320053.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 1320053.0
+    },
+    {
+     "annee": "2022",
+     "entreprise": "MUTANDA MINING (MUMI)",
+     "description": "Education",
+     "entite_beneficiaire": "Assistance Financiere aux enseignants,construction aires de jeux, don materiels didactiques aux enseignants et aux eleves",
+     "region": "Secteur de Luilu",
+     "base_juridique": "ETABLISSEMENT, SARL",
+     "montant_numeraire_total": 470408.89,
+     "montant_numeraire_annee": 470408.89,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 470408.89
+    },
+    {
+     "annee": "2022",
+     "entreprise": "MUTANDA MINING (MUMI)",
+     "description": "Santé",
+     "entite_beneficiaire": "Assistance aux structures de Sante de lEtat. (ZS), et donation en nature pour la lutte contre le cholera, VIH, Paludisme",
+     "region": "Secteur de Luilu",
+     "base_juridique": "ETABLISSEMENT, SARL",
+     "montant_numeraire_total": 289009.0,
+     "montant_numeraire_annee": 289009.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 289009.0
+    },
+    {
+     "annee": "2022",
+     "entreprise": "MUTANDA MINING (MUMI)",
+     "description": "Genre",
+     "entite_beneficiaire": "Formation assosciations des femmes sur le genre et le developpement et violence",
+     "region": "Secteur de Luilu",
+     "base_juridique": "ASBL",
+     "montant_numeraire_total": 27929.3,
+     "montant_numeraire_annee": 27929.3,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 27929.0
+    },
+    {
+     "annee": "2022",
+     "entreprise": "COMPAGNIE MINIERE DE KAMBOVE SARL (COMIKA)",
+     "description": "Célebration du mois de la femme",
+     "entite_beneficiaire": "Travailleurs",
+     "region": "Kambove",
+     "base_juridique": "Aide Sociale",
+     "montant_numeraire_total": 1750.0,
+     "montant_numeraire_annee": 1750.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "COMPAGNIE MINIERE DE KAMBOVE SARL (COMIKA)",
+     "description": "Colis de fin d'année",
+     "entite_beneficiaire": "Travailleurs",
+     "region": "Kambove",
+     "base_juridique": "Aide Sociale",
+     "montant_numeraire_total": 106100.0,
+     "montant_numeraire_annee": 106100.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "MMG KINSEVERE SARL (MMG)",
+     "description": "Construction du pont Sur la Riviere Kifumanshi a Kilongo",
+     "entite_beneficiaire": "Communautes environnantes de la Mine",
+     "region": "Kipushi / Bukanda/Groupement Kasongo",
+     "base_juridique": "Cahier des Charges de l'Entreprise MMG dans le Secteur de Bukanda",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 246903.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "MMG KINSEVERE SARL (MMG)",
+     "description": "Réhabilitation et extension du réseau électrique dans le village de Kilongo",
+     "entite_beneficiaire": "Communautes du village Kilongo",
+     "region": "Kipushi / Bukanda/Groupement Kasongo",
+     "base_juridique": "Cahier des Charges de l'Entreprise MMG dans le Secteur de Bukanda",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 191453.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "MMG KINSEVERE SARL (MMG)",
+     "description": "Construction et équipement d'un bureau d'administration du village Kifita",
+     "entite_beneficiaire": "Communautes du village Kifita",
+     "region": "Kipushi / Bukanda/Groupement Kasongo",
+     "base_juridique": "Cahier des Charges de l'Entreprise MMG dans le Secteur de Bukanda",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 46671.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "MMG KINSEVERE SARL (MMG)",
+     "description": "Programme d'assistance aux agriculteurs",
+     "entite_beneficiaire": "Communaute environnantes de la Mine / Agriculteurs",
+     "region": "Kipushi / Bukanda",
+     "base_juridique": "Cahier des Charges de l'Entreprise MMG dans le Secteur de Bukanda",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 220590.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "MMG KINSEVERE SARL (MMG)",
+     "description": "Cultures maraîchères",
+     "entite_beneficiaire": "Communautes environnantes de la Mine",
+     "region": "Kipushi / Bukanda",
+     "base_juridique": "Cahier des Charges de l'Entreprise MMG dans le Secteur de Bukanda",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 52270.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "MMG KINSEVERE SARL (MMG)",
+     "description": "Élevage et amélioration du bétail",
+     "entite_beneficiaire": "Communautes environnantes de la Mine",
+     "region": "Kipushi / Bukanda",
+     "base_juridique": "Cahier des Charges de l'Entreprise MMG dans le Secteur de Bukanda",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 23983.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "MMG KINSEVERE SARL (MMG)",
+     "description": "Programme de reboisement communautaire",
+     "entite_beneficiaire": "Communautes environnantes de la Mine",
+     "region": "Kipushi / Bukanda",
+     "base_juridique": "Cahier des Charges de l'Entreprise MMG dans le Secteur de Bukanda",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 9.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "MMG KINSEVERE SARL (MMG)",
+     "description": "Construction et équipement du centre de santé de Kifita",
+     "entite_beneficiaire": "Communautes environnantes de la Mine",
+     "region": "Kipushi / Bukanda",
+     "base_juridique": "Cahier des Charges de l'Entreprise MMG dans le Secteur de Bukanda",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 404367.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "MMG KINSEVERE SARL (MMG)",
+     "description": "Construction et équipement du post de santé de Sela",
+     "entite_beneficiaire": "Communautes environnantes de la Mine",
+     "region": "Kipushi / Bukanda",
+     "base_juridique": "Cahier des Charges de l'Entreprise MMG dans le Secteur de Bukanda",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 27939.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "MMG KINSEVERE SARL (MMG)",
+     "description": "Construction et équipement de l'ecole secondaire de Kifita",
+     "entite_beneficiaire": "Communautes environnantes de la Mine",
+     "region": "Kipushi / Bukanda",
+     "base_juridique": "Cahier des Charges de l'Entreprise MMG dans le Secteur de Bukanda",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 287177.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "MMG KINSEVERE SARL (MMG)",
+     "description": "Paiement mensuel des enseignants",
+     "entite_beneficiaire": "Communautes environnantes de la Mine",
+     "region": "Kipushi / Bukanda",
+     "base_juridique": "Cahier des Charges de l'Entreprise MMG dans le Secteur de Bukanda",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 44467.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "MMG KINSEVERE SARL (MMG)",
+     "description": "Renforcement des capacites et formation des enseignants",
+     "entite_beneficiaire": "Communautes environnantes de la Mine",
+     "region": "Kipushi / Bukanda",
+     "base_juridique": "Cahier des Charges de l'Entreprise MMG dans le Secteur de Bukanda",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 10115.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "MMG KINSEVERE SARL (MMG)",
+     "description": "Bourses Kinsevere pour le niveau secondaire",
+     "entite_beneficiaire": "Communautes environnantes de la Mine",
+     "region": "Kipushi / Bukanda",
+     "base_juridique": "Cahier des Charges de l'Entreprise MMG dans le Secteur de Bukanda",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 132201.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "MMG KINSEVERE SARL (MMG)",
+     "description": "Programme d'alphabetisation des adultes",
+     "entite_beneficiaire": "Communautes environnantes de la Mine",
+     "region": "Kipushi / Bukanda",
+     "base_juridique": "Cahier des Charges de l'Entreprise MMG dans le Secteur de Bukanda",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 22679.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "MMG KINSEVERE SARL (MMG)",
+     "description": "Amélioration des latrines",
+     "entite_beneficiaire": "Communautes environnantes de la Mine",
+     "region": "Kipushi / Bukanda",
+     "base_juridique": "Cahier des Charges de l'Entreprise MMG dans le Secteur de Bukanda",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 4993.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "MMG KINSEVERE SARL (MMG)",
+     "description": "Acces a l'eau potable (Forage et installation de pompes à eau & Nettoyage et désinfection des puits d'eau et sensibilisation aux maladies transmises par l'eau",
+     "entite_beneficiaire": "Communautes environnantes de la Mine",
+     "region": "Kipushi / Bukanda",
+     "base_juridique": "Cahier des Charges de l'Entreprise MMG dans le Secteur de Bukanda",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 188883.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "RUASHI MINING",
+     "description": "Project d' Agricultures",
+     "entite_beneficiaire": "22 Ongs",
+     "region": "Haut Katanga",
+     "base_juridique": "CAHIER DE CHARGES",
+     "montant_numeraire_total": 350000.0,
+     "montant_numeraire_annee": 350000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "RUASHI MINING",
+     "description": "Project d' Eletrifiction luano",
+     "entite_beneficiaire": "Quartier Luano",
+     "region": "Haut Katanga",
+     "base_juridique": "CAHIER DE CHARGES",
+     "montant_numeraire_total": 390000.0,
+     "montant_numeraire_annee": 390000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "RUASHI MINING",
+     "description": "Construction Ecole Primaire",
+     "entite_beneficiaire": "Quartier KANAMBA",
+     "region": "Haut Katanga",
+     "base_juridique": "CAHIER DE CHARGES",
+     "montant_numeraire_total": 250000.0,
+     "montant_numeraire_annee": 250000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "RUASHI MINING",
+     "description": "Construction Clinic Luano",
+     "entite_beneficiaire": "Quartier Luano",
+     "region": "Haut Katanga",
+     "base_juridique": "CAHIER DE CHARGES",
+     "montant_numeraire_total": 200000.0,
+     "montant_numeraire_annee": 200000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "RUASHI MINING",
+     "description": "Equipements medicales clinic Ruashi HAKIKA",
+     "entite_beneficiaire": "Ruashi",
+     "region": "Haut Katanga",
+     "base_juridique": "CAHIER DE CHARGES",
+     "montant_numeraire_total": 150000.0,
+     "montant_numeraire_annee": 150000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "KISENDA COPPER COMPAGNY (KICC)",
+     "description": "ETUDES TOPOGRAPHIQUE,ELABORATION DU DOCUMET CAHIER DES CHAERGES",
+     "entite_beneficiaire": "Communaute de Kinsenda",
+     "region": "Kinsdenda kitotwe territoire de sakania",
+     "base_juridique": "Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 34000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE DE TRAITEMENT DE TERRIL DE LUBUMBASHI (STL)",
+     "description": "Aménagement des Poteaux",
+     "entite_beneficiaire": "Les cinq quartiers impactes par les",
+     "region": "",
+     "base_juridique": "Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE DE TRAITEMENT DE TERRIL DE LUBUMBASHI (STL)",
+     "description": "au quartier Q/MAMPALA 2",
+     "entite_beneficiaire": "activites de STL",
+     "region": "",
+     "base_juridique": "",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 105449.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE DE TRAITEMENT DE TERRIL DE LUBUMBASHI (STL)",
+     "description": "Aménagement de l’Avenue",
+     "entite_beneficiaire": "",
+     "region": "",
+     "base_juridique": "",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE DE TRAITEMENT DE TERRIL DE LUBUMBASHI (STL)",
+     "description": "des écoles Q/SALAMA",
+     "entite_beneficiaire": "",
+     "region": "",
+     "base_juridique": "",
+     "montant_numeraire_total": 85644.0,
+     "montant_numeraire_annee": 285481.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE DE TRAITEMENT DE TERRIL DE LUBUMBASHI (STL)",
+     "description": "du marchés Q/MaMPALA2",
+     "entite_beneficiaire": "",
+     "region": "",
+     "base_juridique": "",
+     "montant_numeraire_total": 165024.0,
+     "montant_numeraire_annee": 183360.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE DE TRAITEMENT DE TERRIL DE LUBUMBASHI (STL)",
+     "description": "Aménagement de l’avenue",
+     "entite_beneficiaire": "",
+     "region": "",
+     "base_juridique": "",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE DE TRAITEMENT DE TERRIL DE LUBUMBASHI (STL)",
+     "description": "Mulamba Nyunyi",
+     "entite_beneficiaire": "",
+     "region": "",
+     "base_juridique": "",
+     "montant_numeraire_total": 117663.0,
+     "montant_numeraire_annee": 416685.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE DE TRAITEMENT DE TERRIL DE LUBUMBASHI (STL)",
+     "description": "Construction de 4 bureaux de quartiers",
+     "entite_beneficiaire": "",
+     "region": "",
+     "base_juridique": "",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE DE TRAITEMENT DE TERRIL DE LUBUMBASHI (STL)",
+     "description": "MUMBUNDA",
+     "entite_beneficiaire": "",
+     "region": "",
+     "base_juridique": "",
+     "montant_numeraire_total": 44260.0,
+     "montant_numeraire_annee": 49178.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE DE TRAITEMENT DE TERRIL DE LUBUMBASHI (STL)",
+     "description": "MAMPLA2",
+     "entite_beneficiaire": "",
+     "region": "",
+     "base_juridique": "",
+     "montant_numeraire_total": 65642.0,
+     "montant_numeraire_annee": 72935.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE DE TRAITEMENT DE TERRIL DE LUBUMBASHI (STL)",
+     "description": "SALAMA",
+     "entite_beneficiaire": "",
+     "region": "",
+     "base_juridique": "",
+     "montant_numeraire_total": 33643.0,
+     "montant_numeraire_annee": 37381.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE DE TRAITEMENT DE TERRIL DE LUBUMBASHI (STL)",
+     "description": "LIDO",
+     "entite_beneficiaire": "",
+     "region": "",
+     "base_juridique": "",
+     "montant_numeraire_total": 29872.0,
+     "montant_numeraire_annee": 33191.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE DE TRAITEMENT DE TERRIL DE LUBUMBASHI (STL)",
+     "description": "Réhabilitation du bureau de",
+     "entite_beneficiaire": "",
+     "region": "",
+     "base_juridique": "",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE DE TRAITEMENT DE TERRIL DE LUBUMBASHI (STL)",
+     "description": "Q/MAMPALA 1",
+     "entite_beneficiaire": "",
+     "region": "",
+     "base_juridique": "",
+     "montant_numeraire_total": 38217.0,
+     "montant_numeraire_annee": 42463.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE MINIERE DU KATANGA (SOMIKA)",
+     "description": "REHABILITATION DES ROUTES DANS LES CELLULES (23KM)",
+     "entite_beneficiaire": "Commune Annexe",
+     "region": "",
+     "base_juridique": "CAHIEER DES CHARGES",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 400000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE MINIERE DU KATANGA (SOMIKA)",
+     "description": "ALIMENTATION EN EAU POTABLE QUARTIER MUKUNTO (5 FORAGES)",
+     "entite_beneficiaire": "Commune Annexe",
+     "region": "",
+     "base_juridique": "CAHIEER DES CHARGES",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 100000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE MINIERE DU KATANGA (SOMIKA)",
+     "description": "APPUI AUX ELEVEURS DE POULETS ( 2000 POUSSINS)",
+     "entite_beneficiaire": "Commune Annexe",
+     "region": "",
+     "base_juridique": "CAHIEER DES CHARGES",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 75000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE MINIERE DU KATANGA (SOMIKA)",
+     "description": "FOURNITURE DES TUYAUX DES TRANSFORMATEURS ET CABLES (3 TRANSFO)",
+     "entite_beneficiaire": "Commune Annexe",
+     "region": "",
+     "base_juridique": "CAHIEER DES CHARGES",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 60000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE MINIERE DU KATANGA (SOMIKA)",
+     "description": "APPUI AUX ACTIVITES DE CULTURE MARAICHERE ( 50 Ha)",
+     "entite_beneficiaire": "Commune Annexe",
+     "region": "",
+     "base_juridique": "CAHIEER DES CHARGES",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 30000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE MINIERE DU KATANGA (SOMIKA)",
+     "description": "ALIMENTATION EN EAU POTABLE QUARTIER MUKUNTO (6 FORAGES)",
+     "entite_beneficiaire": "Chefferie Kaponda",
+     "region": "",
+     "base_juridique": "CAHIEER DES CHARGES",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 120000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE MINIERE DU KATANGA (SOMIKA)",
+     "description": "CONSTRUCTION DE QUATRE ECOLES PRIMAIRES",
+     "entite_beneficiaire": "Chefferie Kaponda",
+     "region": "",
+     "base_juridique": "CAHIEER DES CHARGES",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 350000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE MINIERE DU KATANGA (SOMIKA)",
+     "description": "CONSTRUCTION DE QUATRE POSTES DE SANTE",
+     "entite_beneficiaire": "Chefferie Kaponda",
+     "region": "",
+     "base_juridique": "CAHIEER DES CHARGES",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 125000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SOCIETE MINIERE DU KATANGA (SOMIKA)",
+     "description": "APPUI AUX PRODUCTEURS DE Maïs",
+     "entite_beneficiaire": "Chefferie Kaponda",
+     "region": "",
+     "base_juridique": "CAHIEER DES CHARGES",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 55000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SINO CONGOLAISE DES MINES SA (SICOMINES)",
+     "description": "卡巴达医院建设项目 Projet de construction d'un hôpital du quartier Kapata",
+     "entite_beneficiaire": "Quartier Kapata",
+     "region": "Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 969640.0,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SINO CONGOLAISE DES MINES SA (SICOMINES)",
+     "description": "卡巴达技术中学建设项目 Projet de construction d'une école technique du quartier Kapata",
+     "entite_beneficiaire": "Quartier Kapata",
+     "region": "Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 1255390.0,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SINO CONGOLAISE DES MINES SA (SICOMINES)",
+     "description": "农业机械化项目 Projet de mécanisation agriculture",
+     "entite_beneficiaire": "Quartier Kapata et secteur de Luilu",
+     "region": "Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 200000.0,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SINO CONGOLAISE DES MINES SA (SICOMINES)",
+     "description": "玉米扶持项目 Projet d'appui aux producteur de maïs",
+     "entite_beneficiaire": "Quartier Kapata et secteur de Luilu",
+     "region": "Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 280000.0,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SINO CONGOLAISE DES MINES SA (SICOMINES)",
+     "description": "卡巴达B6堤坝修复项目 Projet de réhabilitation de la digue B6 du quartier Kapata",
+     "entite_beneficiaire": "Quartier Kapata",
+     "region": "Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 150000.0,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SINO CONGOLAISE DES MINES SA (SICOMINES)",
+     "description": "绿路区MUTAKA堤坝修复项目 Projet de réhabnilitation de la digue Mutaka du secteur de Luilu",
+     "entite_beneficiaire": "Secteur de Luilu",
+     "region": "Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 200000.0,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SINO CONGOLAISE DES MINES SA (SICOMINES)",
+     "description": "卡巴达村长办公室修复项目 Projet de réhabilitation du bureau quartier Kapata",
+     "entite_beneficiaire": "Quartier Kapata",
+     "region": "Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 100000.0,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SINO CONGOLAISE DES MINES SA (SICOMINES)",
+     "description": "绿路区饮用水供应项目 Projet d'alimentation en eau potable du secteur de Luilu",
+     "entite_beneficiaire": "Secteur de Luilu",
+     "region": "Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 520000.0,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SINO CONGOLAISE DES MINES SA (SICOMINES)",
+     "description": "绿路区足球场平整项目 Projet amenagement des terrains de football du secteur de Luilu",
+     "entite_beneficiaire": "Secteur de Luilu",
+     "region": "Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 160000.0,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SINO CONGOLAISE DES MINES SA (SICOMINES)",
+     "description": "卡巴达4所学校长凳配备和修复项目 Projet de réhabilitation et équipement en bancs 4 écoles du Quartier Kapata",
+     "entite_beneficiaire": "Quartier Kapata",
+     "region": "Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 528000.0,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SINO CONGOLAISE DES MINES SA (SICOMINES)",
+     "description": "绿路区三所小学建设项目 Projet de construction de 3 écoles primaires du secteur de Luilu",
+     "entite_beneficiaire": "Secteur de Luilu",
+     "region": "Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 900000.0,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "SINO CONGOLAISE DES MINES SA (SICOMINES)",
+     "description": "绿路区泥土路修复项目 Projet de réhabilitation des routes en terre battue du secteur de Luilu",
+     "entite_beneficiaire": "Secteur de Luilu",
+     "region": "Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 1050000.0,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "CMOC KISANFU MINING SARL (Ex. PHELPS DODGE CONGO SARL)",
+     "description": "Formation agricole et intrants agricoles",
+     "entite_beneficiaire": "*09 villages impactes par le projet KFM",
+     "region": "*09 villages impactes par le projet KFM",
+     "base_juridique": "Cahier des Charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 194870.5,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "CMOC KISANFU MINING SARL (Ex. PHELPS DODGE CONGO SARL)",
+     "description": "Réparation puits d'eau",
+     "entite_beneficiaire": "Mayeba",
+     "region": "Mayeba",
+     "base_juridique": "Cahier des Charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 3294.55,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "CMOC KISANFU MINING SARL (Ex. PHELPS DODGE CONGO SARL)",
+     "description": "Etude de faisabilité d'électrificaiton Kisanfu",
+     "entite_beneficiaire": "Kisanfu Koni,Kisanfu Gare",
+     "region": "Kisanfu Koni,Kisanfu Gare",
+     "base_juridique": "Cahier des Charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 10440.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "CMOC KISANFU MINING SARL (Ex. PHELPS DODGE CONGO SARL)",
+     "description": "Services de santé",
+     "entite_beneficiaire": "*09 villages impactes par le projet KFM",
+     "region": "*09 villages impactes par le projet KFM",
+     "base_juridique": "Cahier des Charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 22815.88,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "CMOC KISANFU MINING SARL (Ex. PHELPS DODGE CONGO SARL)",
+     "description": "Puits solaire Kisanfu",
+     "entite_beneficiaire": "Kisanfu Koni",
+     "region": "Kisanfu Koni",
+     "base_juridique": "Cahier des Charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 33640.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "CMOC KISANFU MINING SARL (Ex. PHELPS DODGE CONGO SARL)",
+     "description": "Electrification Kisanfu",
+     "entite_beneficiaire": "Kisanfu Gare",
+     "region": "Kisanfu Gare",
+     "base_juridique": "Cahier des Charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 200147.42,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "CMOC KISANFU MINING SARL (Ex. PHELPS DODGE CONGO SARL)",
+     "description": "Alphabétisation",
+     "entite_beneficiaire": "*09 villages impactes par le projet KFM",
+     "region": "*09 villages impactes par le projet KFM",
+     "base_juridique": "Cahier des Charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 15775.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "CMOC KISANFU MINING SARL (Ex. PHELPS DODGE CONGO SARL)",
+     "description": "Extension école Mayeba et dotation des articles scolaires",
+     "entite_beneficiaire": "Mayeba",
+     "region": "Mayeba",
+     "base_juridique": "Cahier des Charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 102872.76,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "CMOC KISANFU MINING SARL (Ex. PHELPS DODGE CONGO SARL)",
+     "description": "Formation technique",
+     "entite_beneficiaire": "*09 villages impactes par le projet KFM",
+     "region": "*09 villages impactes par le projet KFM",
+     "base_juridique": "Cahier des Charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 13500.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "CMOC KISANFU MINING SARL (Ex. PHELPS DODGE CONGO SARL)",
+     "description": "Eau,hygiene et assainissement",
+     "entite_beneficiaire": "*09 villages impactes par le projet KFM",
+     "region": "*09 villages impactes par le projet KFM",
+     "base_juridique": "Cahier des Charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 36155.2,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2022",
+     "entreprise": "CMOC KISANFU MINING SARL (Ex. PHELPS DODGE CONGO SARL)",
+     "description": "Education/Formation santé",
+     "entite_beneficiaire": "*09 villages impactes par le projet KFM",
+     "region": "*09 villages impactes par le projet KFM",
+     "base_juridique": "Cahier des Charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 13500.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "TENKE FUNGURUME MINING",
+     "description": "Programme de crédit Mais",
+     "entite_beneficiaire": "Participants au Programme",
+     "region": "Concession TFM",
+     "base_juridique": "Arrêté Provincial Numéro 2008/0008/katanga du 22 mars 2008 portant mesures d'encadrement de la production agricole dans la province du Katanga",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 0.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 28021.510000000002
+    },
+    {
+     "annee": "2023",
+     "entreprise": "TENKE FUNGURUME MINING",
+     "description": "Réinstallation",
+     "entite_beneficiaire": "Personnes affectées par le Projet",
+     "region": "Concession TFM",
+     "base_juridique": "La politique de réinstallation de TFM et son engagement à l'ESIA (Environmental and Social Impact Assessments)",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 0.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 8128965.140000002
+    },
+    {
+     "annee": "2023",
+     "entreprise": "TENKE FUNGURUME MINING",
+     "description": "Financement Projets de developpement communautaire local",
+     "entite_beneficiaire": "TFM Social Community Fund",
+     "region": "Concession TFM",
+     "base_juridique": "Article 21 de la convention Minière Amendée et reformée du 28 Septembre 2005",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 0.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "LA COMPAGNIE MINIERE DE MUSONOIE GLOBAL",
+     "description": "Construction des salles d'internements et d'une salle de maternité en extension du centre de santé PNC DILALA",
+     "entite_beneficiaire": "RDC",
+     "region": "VILLAGE DE KAPEPA, PIEERE MUTEBA, TSHABULA, TSHIZUZA",
+     "base_juridique": "cahier des charges",
+     "montant_numeraire_total": 106225.0,
+     "montant_numeraire_annee": 56318.0,
+     "montant_nature_infra": 0.0,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "LA COMPAGNIE MINIERE DE MUSONOIE GLOBAL",
+     "description": "CONSTRUCTION DU MARCHE JEAN MARIE KASEYA",
+     "entite_beneficiaire": "RDC",
+     "region": "QUARTIER KANINA",
+     "base_juridique": "cahier des charges",
+     "montant_numeraire_total": 194316.0,
+     "montant_numeraire_annee": 89638.0,
+     "montant_nature_infra": 0.0,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "LA COMPAGNIE MINIERE DE MUSONOIE GLOBAL",
+     "description": "Construction d'une école primaire et secondaire",
+     "entite_beneficiaire": "RDC",
+     "region": "QUARTIER MUSONOIE",
+     "base_juridique": "cahier des charges",
+     "montant_numeraire_total": 651200.0,
+     "montant_numeraire_annee": 65200.0,
+     "montant_nature_infra": 0.0,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "LA COMPAGNIE MINIERE DE MUSONOIE GLOBAL",
+     "description": "PROJET DE REHABILITATION ET MODERNISATION DU MARCHE CENTRAL DE LA CITE GCM KZI",
+     "entite_beneficiaire": "RDC",
+     "region": "QUARTIER GECAMINES-KOLWEZI",
+     "base_juridique": "cahier des charges",
+     "montant_numeraire_total": 131757.0,
+     "montant_numeraire_annee": 23200.0,
+     "montant_nature_infra": 0.0,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "LA COMPAGNIE MINIERE DE MUSONOIE GLOBAL",
+     "description": "Construction d'une école primaire et secondaire",
+     "entite_beneficiaire": "RDC",
+     "region": "VILLAGE DE KAPEPA",
+     "base_juridique": "cahier des charges",
+     "montant_numeraire_total": 588200.0,
+     "montant_numeraire_annee": 47000.0,
+     "montant_nature_infra": 0.0,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "LA COMPAGNIE MINIERE DE MUSONOIE GLOBAL",
+     "description": "Projet d'appui aux producteurs de maïs",
+     "entite_beneficiaire": "RDC",
+     "region": "VILLAGE DE KAPEPA, PIEERE MUTEBA, TSHABULA, TSHIZUZA",
+     "base_juridique": "cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 2536.0,
+     "montant_nature_infra": 0.0,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "LA COMPAGNIE MINIERE DE MUSONOIE GLOBAL",
+     "description": "L’installation de 6 points de forage d’eau potable",
+     "entite_beneficiaire": "RDC",
+     "region": "QUARTIER KANINA",
+     "base_juridique": "cahier des charges",
+     "montant_numeraire_total": 142988.0,
+     "montant_numeraire_annee": 142988.0,
+     "montant_nature_infra": 0.0,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "LA COMPAGNIE MINIERE DE MUSONOIE GLOBAL",
+     "description": "DOTATION DE 0.3% DES CHIFFRES D'AFFAIRES",
+     "entite_beneficiaire": "RDC",
+     "region": "VILLAGE DE KAPEPA, PIEERE MUTEBA, TSHABULA, TSHIZUZA QUARTIER GECAMINES-KOLWEZI QUARTIER MUSONOIE QUARTIER KANINA QUARTIER BIASHARA",
+     "base_juridique": "DOT COMMUS",
+     "montant_numeraire_total": 13390254.36,
+     "montant_numeraire_annee": 2957396.56,
+     "montant_nature_infra": 0.0,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "COMPAGNIE D'EXPLOITATION DES REJETS DE KINGAMYAMBO SARL",
+     "description": "Solde Frais de service de l'interimaire pour la mise ne ouevre des projets du cahier des charges",
+     "entite_beneficiaire": "9 Communautes impactees par le projet minier de Metalkol SA",
+     "region": "Territoire de Mutshatsha / secteur de Luilu/ Groupement Kazembe",
+     "base_juridique": "Cahier des charges de Responsabilites Societales",
+     "montant_numeraire_total": 130000.0,
+     "montant_numeraire_annee": 67285.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "COMPAGNIE D'EXPLOITATION DES REJETS DE KINGAMYAMBO SARL",
+     "description": "Elaboration du nouveau cahier des charges devant couvrir les 5 prochaines annees",
+     "entite_beneficiaire": "09 Communautes impactees par le projet minier de Metalkol SA",
+     "region": "Territoire de Mutshatsha / secteur de Luilu/ Groupement Kazembe",
+     "base_juridique": "Cahier des charges de Responsabilites Societales",
+     "montant_numeraire_total": 70000.0,
+     "montant_numeraire_annee": 0.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "SOCIETE MINIERE DE DEZIWA SAS",
+     "description": "Approvisionnement en intrants agricoles et materiels aratoires",
+     "entite_beneficiaire": "LocaliteTshikala:VillageTshikalaet Village Kapaso;Localite Mumpaja VillageKanyenze,Village Kanteba Village Kinsenda,VillageTshikala et Quartier Commercial et Localite MwanzaMinda:village Masumbu",
+     "region": "territoire mutchatcha， secteur luilu， Groupement mwanfwe",
+     "base_juridique": "cahier des charges",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 0.0,
+     "montant_nature_infra": 0.0,
+     "montant_nature_annee": 100930.52
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Organiser les paysans en coopératives",
+     "entite_beneficiaire": "S’appuyer sur les Associations paysannes de Musokantanda et Kaponda ; 02 pools",
+     "region": "Lufupa",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 4500.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Construire et équiper les poulaillers mécanisés",
+     "entite_beneficiaire": "Muvunda / Ndizi Salama",
+     "region": "Lufupa",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 157000.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Appuyer les poullaliers en aliment",
+     "entite_beneficiaire": "Muvunda / Ndizi Salama",
+     "region": "Lufupa",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 68400.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Construire et appuyer la construction des étangs à partir des bas-fonds (avec toute la chaîne d’activités y relatives : alevins, produits vétérinaires, vétérinaire, commercialisation)",
+     "entite_beneficiaire": "Kamisangi, Tshimbunji (Cité Maseka) et Musokantanda",
+     "region": "Lufupa",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 260000.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Appuyer en aliment les étangs",
+     "entite_beneficiaire": "Kamisangi, Tshimbunji (Cité Maseka) et Musokantanda",
+     "region": "Lufupa",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 273421.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Appuyer en intrants agricoles (semences améliorées, insecticides…), sous forme de crédits agricoles",
+     "entite_beneficiaire": "Associations paysannes du groupement Musokantanda",
+     "region": "Lufupa",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 145200.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Grouper les agriculteurs en fonction des cultures/spéculations porteuses/rentables (manioc, mais,….)",
+     "entite_beneficiaire": "Axe1: Musokantanda - Kamisange; axe2 : cité maseka - Muvunda; axe3: Kaponda - Mundjendje; axe4: Katayi- Venance",
+     "region": "Lufupa",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 1000.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Organiser des sessions de formation sur les différentes techniques de production (protection/recyclage du sol, sélection des semences, fertilisation, agroforesterie, reboisement, le contrôle des ennemis : maladies, gardiennage)",
+     "entite_beneficiaire": "Formation par Axe : Axe1: Musokantanda - Kamisange; Axe2 : cité Maseka - Muvunda; Axe3: Kaponda - Mundjendje; Axe4: Katayi - Venance",
+     "region": "Lufupa",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 1000.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Aménager les points d’eau potables ( cartographie de villages desservis)",
+     "entite_beneficiaire": "Les villages impactés ci-après: Musokantanda, Mulemena, Tshimbunji, Kavuma, Cité Maseka, Kaponda I, Kaponda II, Chinde Chinde, Mahamba, Venance, Mawawa, Cité Musoka, Tshomeka, Muvunda et partout ailleurs",
+     "region": "Lufupa",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 330000.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Mettre en place les structures communautaires de gestion de points d’eau et leur renforcer en capacités sur les techniques d’entretien",
+     "entite_beneficiaire": "En fonction du rythme des aménagements des points d'eau",
+     "region": "Lufupa",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 900.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Accorder les bourses d’études aux meilleurs élèves, aux filles et élèves vulnérables.",
+     "entite_beneficiaire": "08 écoles : Institut Kampemba, Mwinkeu, Kamisange, Muvunda, ITA, et 02 écoles primaires de Musokantanda",
+     "region": "Lufupa",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 56025.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Equiper les Centres d’Eveil Communautaire (CEC) en matériel didactique",
+     "entite_beneficiaire": "Muvunda, Musokantanda et Kaponda",
+     "region": "Lufupa",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 1260.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Mettre les cantines scolaires dans tous les Centres d’Eveil Communautaire (CEC)",
+     "entite_beneficiaire": "Musokantanda, Muvunda, Kaponda Voir description détaillée II.01",
+     "region": "Lufupa",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 2178.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Construire les infrastructures scolaires remplissant les normes exigées et les équiper (6 classes, Direction, bloc sanitaire à 6 boxes)",
+     "entite_beneficiaire": "01 (une) école secondaire à Muvunda et 01 (une) école primaire à Musokantanda",
+     "region": "Lufupa",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 267149.38
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Organiser les centres d’alphabétisation fonctionnelle",
+     "entite_beneficiaire": "Les sites de localisation seront successivement déterminés après évaluations avec experts du partenaire de mise en œuvre du projet.",
+     "region": "Lufupa",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 22740.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Construire et équiper les infrastructures sanitaires (centre de santé de référence et postes de santé) et leur appuyer en produits pharmaceutiques, officine pharmaceutique; et préparation de plates formes pour un HGR",
+     "entite_beneficiaire": "Muvunda, Mundjendje, Kamisange, Musokantanda (Plate forme pour le HGR)",
+     "region": "Lufupa",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 324090.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Appuyer la facilitation des dialogues périodiques autour de questions clés entre les leaders communautaires de la communauté et Kamoa Copper SA (via le bureau de Développement Durable).",
+     "entite_beneficiaire": "Forum mensuels de discussion et évaluation avec les CLD LUFUPA sur les développements communautaire et l’avancement du projet Kamoa Copper SA",
+     "region": "Lufupa",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 19842.5
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Organiser les paysans en coopératives",
+     "entite_beneficiaire": "S’appuyer sur les Associations paysannes de Mwilu",
+     "region": "Luilu",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 4500.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Construire et appuyer la construction des étangs à partir des bas-fonds (avec toute la chaîne d’activités y relatives : alevins, produits vétérinaires, vétérinaire, commercialisation)",
+     "entite_beneficiaire": "Mpala, Mupenda",
+     "region": "Luilu",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 16000.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Appuyer en aliment les étangs",
+     "entite_beneficiaire": "Mpala, Mupenda",
+     "region": "Luilu",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 13860.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Appuyer en intrants agricoles (semences améliorées, insecticides…), sous forme de crédits agricoles et système d'irrigation à goute avec réservoir, pompe)",
+     "entite_beneficiaire": "Associations paysannes",
+     "region": "Luilu",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 145200.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Grouper les agriculteurs en fonction des cultures/spéculations porteuses/rentables (manioc, mais,….)",
+     "entite_beneficiaire": "Axe 1 : Walemba - Chamadingi, Axe 2 : Kalundu – Rabi, Axe 3 : Mupenda",
+     "region": "Luilu",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 1500.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Organiser des sessions de formation sur les différentes techniques de production (protection/recyclage du sol, sélection des semences, fertilisation, agroforesterie, reboisement, le contrôle des ennemis : maladies, gardiennage..)",
+     "entite_beneficiaire": "Formation par Axe : Axe 1 : Walemba - Chamadingi, Axe 2 : Kalundu – Rabi (Kamoa mission), Axe 3 : Mupenda",
+     "region": "Luilu",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 500.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Aménager les points d’eau potables ( cartographie de villages desservis)",
+     "entite_beneficiaire": "Tous les villages impactés par le projet (voir EIES) y compris Walemba, Mpala, Mwilu",
+     "region": "Luilu",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 180000.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Mettre en place les structures communautaires de gestion de points d’eau et leur renforcer en capacités sur les techniques d’entretien",
+     "entite_beneficiaire": "En fonction du rythme des aménagements des points d'eau",
+     "region": "Luilu",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 900.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Accorder les bourses d’études aux meilleurs élèves, aux filles et élèves vulnérables.",
+     "entite_beneficiaire": "02 (deux) écoles : Walemba, Mpala",
+     "region": "Luilu",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 35663.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Equiper Centres d’Eveil Communautaire (CEC) en matériel didactique",
+     "entite_beneficiaire": "Cité Musoka, Walemba, Mupenda",
+     "region": "Luilu",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 1260.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Mettre les cantines scolaires dans tous les Centres d’Eveil Communautaire (CEC)",
+     "entite_beneficiaire": "Cité Musoka, Walemba, Mupenda Voir description détaillée II.01",
+     "region": "Luilu",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 2178.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Construire les infrastructures scolaires remplissant les normes exigées et les équiper (6 classes, Direction, bloc sanitaire à 6 boxes)",
+     "entite_beneficiaire": "Cité Mwilu, Mupenda",
+     "region": "Luilu",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 276047.29000000004
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Appuyer l'organisation des centres d’alphabétisation fonctionnelle",
+     "entite_beneficiaire": "Les sites de localisation seront successivement déterminés après évaluations avec experts du partenaire de mise en œuvre du projet.",
+     "region": "Luilu",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 22740.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Construire et équiper les infrastructures sanitaires (centres de santé et poste de santé) et leur appuyer en produits pharmaceutiques, officine pharmaceutique",
+     "entite_beneficiaire": "Chamadingi, Mupenda, Mpala, Mwilu",
+     "region": "Luilu",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 288412.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KAMOA COPPER SA (ex. BARBADOS)",
+     "description": "Appuyer la facilitation des dialogues périodiques autour de questions clés entre les leaders communautaires de la communauté et Kamoa Copper SA (via le bureau de Développement Durable).",
+     "entite_beneficiaire": "Forum mensuels de discussion et évaluation avec les CLD Muilu sur les développements communautaire et l’avancement du projet Kamoa Copper SA",
+     "region": "Luilu",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 19842.5
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KIBALI GOLD MINES",
+     "description": "Construction du Centre de Formation de MAKORO",
+     "entite_beneficiaire": "MAKORO",
+     "region": "FARADJE, LOGO DOKA",
+     "base_juridique": "PO",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 116639.34,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KIBALI GOLD MINES",
+     "description": "Construction du Pont Doo",
+     "entite_beneficiaire": "KIRAKA",
+     "region": "FARADJE, LOGO DOKA",
+     "base_juridique": "PO",
+     "montant_numeraire_total": 81619.6,
+     "montant_numeraire_annee": 43258.39,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KIBALI GOLD MINES",
+     "description": "Construction du Pont TURE",
+     "entite_beneficiaire": "MANGBUTU",
+     "region": "WATSA, MANGBUTU",
+     "base_juridique": "PO",
+     "montant_numeraire_total": 106106.0,
+     "montant_numeraire_annee": 58047.92,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KIBALI GOLD MINES",
+     "description": "Etudes de Faisabilites des Ponts",
+     "entite_beneficiaire": "Watsa et Faradje",
+     "region": "WATSA et Faradje",
+     "base_juridique": "PO",
+     "montant_numeraire_total": 975567.24,
+     "montant_numeraire_annee": 219636.24,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KIBALI GOLD MINES",
+     "description": "Travaux de Finition de l'Hopital de Faradje.",
+     "entite_beneficiaire": "Faradje",
+     "region": "FARADJE, LOGO Ogambi",
+     "base_juridique": "PO",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 76668.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KIBALI GOLD MINES",
+     "description": "Construction du Marche Moderne MOKU",
+     "entite_beneficiaire": "MARIMINZA",
+     "region": "WATSA,MARIMINZA, MOKU",
+     "base_juridique": "PO",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 290665.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KIBALI GOLD MINES",
+     "description": "CONSTRUCTION DU MARCHE MODERNE NZOPI",
+     "entite_beneficiaire": "FARADJE",
+     "region": "FARADJE, LOGO OGAMBI, NZOPI",
+     "base_juridique": "PO",
+     "montant_numeraire_total": 205995.52,
+     "montant_numeraire_annee": 136049.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KIBALI GOLD MINES",
+     "description": "PLANTATION DU CACAO",
+     "entite_beneficiaire": "Faradje",
+     "region": "FARADJE, LOGO OGAMBI",
+     "base_juridique": "PO",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 79219.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KIBALI GOLD MINES",
+     "description": "CONSTRUCTION DU PONT LOWA",
+     "entite_beneficiaire": "Faradje",
+     "region": "FARADJE, LOGO DOKA",
+     "base_juridique": "PO",
+     "montant_numeraire_total": 347096.47,
+     "montant_numeraire_annee": 12220.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KIBALI GOLD MINES",
+     "description": "REHABILITATION DE LA ROUTE DIX PAS",
+     "entite_beneficiaire": "Faradje",
+     "region": "FARADJE, LOGO DOKA",
+     "base_juridique": "PO",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 292356.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KIBALI GOLD MINES",
+     "description": "REHABILITATION DE LA ROUTE KOKORO AWILABA",
+     "entite_beneficiaire": "Watsa",
+     "region": "WATSA, MANGBUTU",
+     "base_juridique": "PO",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 254345.7,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MUTANDA MINING",
+     "description": "Construction et rehabilitation du centre de sante BUMI a Kawama",
+     "entite_beneficiaire": "Village Kawama",
+     "region": "Mutshasha/Luilu",
+     "base_juridique": "Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 192807.0,
+     "montant_nature_annee": 69420.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MUTANDA MINING",
+     "description": "Appui aux agriculteurs communautaires",
+     "entite_beneficiaire": "Les agriculteurs de 15 Communautes autour de MUMI",
+     "region": "Mutshasha/Luilu",
+     "base_juridique": "Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 774920.0,
+     "montant_nature_annee": 740480.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MUTANDA MINING",
+     "description": "Amelioration de l'acces a l'eau potable",
+     "entite_beneficiaire": "Villages Kawama et Kisenda",
+     "region": "Mutshasha/Luilu",
+     "base_juridique": "Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 432375.0,
+     "montant_nature_annee": 153000.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MUTANDA MINING",
+     "description": "Construction d'un poulailler a Kapaso",
+     "entite_beneficiaire": "Village Kapaso",
+     "region": "Mutshasha/Luilu",
+     "base_juridique": "Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 123963.2,
+     "montant_nature_annee": 65423.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MUTANDA MINING",
+     "description": "Construction d'une ecole secondaire a Kahindu",
+     "entite_beneficiaire": "Village Kahindu",
+     "region": "Mutshasha/Luilu",
+     "base_juridique": "Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 261914.0,
+     "montant_nature_annee": 69114.9
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MUTANDA MINING",
+     "description": "Renforcement des capacites des agriculteurs en gestion financiere",
+     "entite_beneficiaire": "Les agriculteurs de 15 Communautes autour de MUMI",
+     "region": "Mutshasha/Luilu",
+     "base_juridique": "Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 42945.0,
+     "montant_nature_annee": 21472.5
+    },
+    {
+     "annee": "2023",
+     "entreprise": "COMPAGNIE MINIERE DE KAMBOVE",
+     "description": "Don à l'équipe fiminine de foot",
+     "entite_beneficiaire": "Equipe de foot fiminine kambove",
+     "region": "KAMBOVE",
+     "base_juridique": "CAHIER DE CHARGE",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 1500.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "COMPAGNIE MINIERE DE KAMBOVE",
+     "description": "Assistance communautaire",
+     "entite_beneficiaire": "Cultivateur",
+     "region": "KAMBOVE",
+     "base_juridique": "CAHIER DE CHARGE",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 25460.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 0.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "RUASHI MINING",
+     "description": "Forage industril 200metre",
+     "entite_beneficiaire": "Regideso , Ruashi Commune",
+     "region": "Haut Katanga",
+     "base_juridique": "Cahier des charges",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 500000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "RUASHI MINING",
+     "description": "Progarmme agricole",
+     "entite_beneficiaire": "commune Ruashi Ngo's",
+     "region": "Haut Katanga",
+     "base_juridique": "cahier des charges juin 2023",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 145000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "RUASHI MINING",
+     "description": "Dessert en Energie Electrique",
+     "entite_beneficiaire": "Ruashi Luano",
+     "region": "Haut Katanga",
+     "base_juridique": "Cahier des charges",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 390000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "RUASHI MINING",
+     "description": "Construction Ecole KANAMBA",
+     "entite_beneficiaire": "Ruashi KANAMBA",
+     "region": "Haut Katanga",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 0.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "LA MINIERE DE KASOMBO",
+     "description": "Appui en intrants agricoles",
+     "entite_beneficiaire": "Population dans quatiers KIWEWE、MIKUBA、MITUMBA Villages MAPENDO、MATEMBWE、TP",
+     "region": "territoire",
+     "base_juridique": "cahier des charges et protocoles",
+     "montant_numeraire_total": 10525.0,
+     "montant_numeraire_annee": 10525.0,
+     "montant_nature_infra": 14475.0,
+     "montant_nature_annee": 14475.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "LA MINIERE DE KASOMBO",
+     "description": "Construction de l'école MAPENDO",
+     "entite_beneficiaire": "les enfants de ±6 ans à ± 12 ans vivants au village MAPENDO et ses environs.",
+     "region": "territoire",
+     "base_juridique": "cahier des charges et protocoles",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 55841.71,
+     "montant_nature_annee": 55841.71
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KISENDA COPPER COMPAGNY",
+     "description": "CONSTRUCTION DE LA MORGUE",
+     "entite_beneficiaire": "COMMUNAUTE DE KINSENDA",
+     "region": "Kinsdenda kitotwe territoire de sakania",
+     "base_juridique": "Cahier de charge",
+     "montant_numeraire_total": 49155.0,
+     "montant_numeraire_annee": 49155.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KISENDA COPPER COMPAGNY",
+     "description": "CONSTRUCTION DE L'ECOLE TECHNIQUE TWIBOMBELE",
+     "entite_beneficiaire": "COMMUNAUTE DE KINSENDA",
+     "region": "Kinsdenda kitotwe territoire de sakania",
+     "base_juridique": "Cahier de charge",
+     "montant_numeraire_total": 64390.0,
+     "montant_numeraire_annee": 64390.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KISENDA COPPER COMPAGNY",
+     "description": "CONSTRUCTION DE L'ECOLE PRIMAIRE KITOTWE",
+     "entite_beneficiaire": "COMMUNAUTE DE KINSENDA",
+     "region": "Kinsdenda kitotwe territoire de sakania",
+     "base_juridique": "Cahier de charge",
+     "montant_numeraire_total": 68459.0,
+     "montant_numeraire_annee": 68459.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KISENDA COPPER COMPAGNY",
+     "description": "CONSTRUCTION DE L'ECOLE FUNDAMINA",
+     "entite_beneficiaire": "COMMUNAUTE DE KINSENDA",
+     "region": "Kinsdenda kitotwe territoire de sakania",
+     "base_juridique": "Cahier de charge",
+     "montant_numeraire_total": 47041.0,
+     "montant_numeraire_annee": 47041.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KISENDA COPPER COMPAGNY",
+     "description": "RÉHABILITATION DE L'ÉCOLE PRIMAIRE DE KITOTWE",
+     "entite_beneficiaire": "COMMUNAUTE DE KINSENDA",
+     "region": "Kinsdenda kitotwe territoire de sakania",
+     "base_juridique": "Cahier de charge",
+     "montant_numeraire_total": 8664.0,
+     "montant_numeraire_annee": 8664.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KISENDA COPPER COMPAGNY",
+     "description": "RÉHABILITATION DE L'ÉCOLE PRIMAIRE DE TWIBOMBELE",
+     "entite_beneficiaire": "COMMUNAUTE DE KINSENDA",
+     "region": "Kinsdenda kitotwe territoire de sakania",
+     "base_juridique": "Cahier de charge",
+     "montant_numeraire_total": 5725.0,
+     "montant_numeraire_annee": 5725.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KISENDA COPPER COMPAGNY",
+     "description": "CONSTRUCTION D'ENTREPÔT AGRICOLE",
+     "entite_beneficiaire": "COMMUNAUTE DE KINSENDA",
+     "region": "Kinsdenda kitotwe territoire de sakania",
+     "base_juridique": "Cahier de charge",
+     "montant_numeraire_total": 14173.68,
+     "montant_numeraire_annee": 14173.68,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "KISENDA COPPER COMPAGNY",
+     "description": "AUTRES",
+     "entite_beneficiaire": "COMMUNAUTE DE KINSENDA",
+     "region": "Kinsdenda kitotwe territoire de sakania",
+     "base_juridique": "Cahier de charge",
+     "montant_numeraire_total": 3500.0,
+     "montant_numeraire_annee": 3500.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "SINO CONGOLAISE DES MINES",
+     "description": "绿路区饮用水供应项目 Projet d'alimentation en eau potable du secteur de Luilu",
+     "entite_beneficiaire": "绿路社区 Secteur de Luilu",
+     "region": "科卢韦齐市 Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 343130.0,
+     "montant_nature_annee": 343130.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "SINO CONGOLAISE DES MINES",
+     "description": "卡巴达4所学校长凳配备和修复项目 Projet de réhabilitation et équipement en bancs 4 écoles du Quartier Kapata",
+     "entite_beneficiaire": "卡巴达社区 Quartier Kapata",
+     "region": "科卢韦齐市 Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 193207.0,
+     "montant_nature_annee": 193207.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "SINO CONGOLAISE DES MINES",
+     "description": "绿路区三所小学建设项目 Projet de construction de 3 écoles primaires du secteur de Luilu",
+     "entite_beneficiaire": "绿路社区 Secteur de Luilu",
+     "region": "科卢韦齐市 Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 329178.0,
+     "montant_nature_annee": 329178.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "SINO CONGOLAISE DES MINES",
+     "description": "卡巴达村长办公室修复项目 Projet de réhabilitation du bureau quartier Kapata",
+     "entite_beneficiaire": "卡巴达社区 Quartier Kapata",
+     "region": "科卢韦齐市 Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 85337.0,
+     "montant_nature_annee": 85337.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "SINO CONGOLAISE DES MINES",
+     "description": "卡巴达B6堤坝修复项目 Projet de réhabilitation de la digue B6 du quartier Kapata",
+     "entite_beneficiaire": "卡巴达社区 Quartier Kapata",
+     "region": "科卢韦齐市 Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 1000.0,
+     "montant_nature_annee": 1000.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "SINO CONGOLAISE DES MINES",
+     "description": "绿路区MUTAKA堤坝修复项目 Projet de réhabnilitation de la digue Mutaka du secteur de Luilu",
+     "entite_beneficiaire": "绿路社区 Secteur de Luilu",
+     "region": "科卢韦齐市 Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 38720.0,
+     "montant_nature_annee": 38720.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "SINO CONGOLAISE DES MINES",
+     "description": "卡巴达技术中学设备供应及安装项目 Projet de fourniture des équipements et installations à l’institut technique industriel du quartier Kapata",
+     "entite_beneficiaire": "卡巴达社区 Quartier Kapata",
+     "region": "科卢韦齐市 Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 162850.98,
+     "montant_nature_annee": 162850.98
+    },
+    {
+     "annee": "2023",
+     "entreprise": "SINO CONGOLAISE DES MINES",
+     "description": "卡巴达饮用水供应项目 Projet d'amélioration de l'accès à l'eau Potable",
+     "entite_beneficiaire": "卡巴达社区 Quartier Kapata",
+     "region": "科卢韦齐市 Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 354553.92,
+     "montant_nature_annee": 354553.92
+    },
+    {
+     "annee": "2023",
+     "entreprise": "SINO CONGOLAISE DES MINES",
+     "description": "卡巴达道路修复项目 Projet de réhabilitation des routes du quartier Kapata",
+     "entite_beneficiaire": "卡巴达社区 Quartier Kapata",
+     "region": "科卢韦齐市 Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 200378.71,
+     "montant_nature_annee": 200378.71
+    },
+    {
+     "annee": "2023",
+     "entreprise": "SINO CONGOLAISE DES MINES",
+     "description": "绿路区泥土路修复项目 Projet de réhabilitation des routes en terre battue du secteur de Luilu",
+     "entite_beneficiaire": "绿路社区 Secteur de Luilu",
+     "region": "科卢韦齐市 Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 356327.22,
+     "montant_nature_annee": 356327.22
+    },
+    {
+     "annee": "2023",
+     "entreprise": "SINO CONGOLAISE DES MINES",
+     "description": "卡巴达技术中学建设项目 Projet de construction d'une école technique du quartier Kapata",
+     "entite_beneficiaire": "卡巴达社区 Quartier Kapata",
+     "region": "科卢韦齐市 Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 588.0,
+     "montant_nature_annee": 588.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "SINO CONGOLAISE DES MINES",
+     "description": "卡巴达变压器、断路器和电缆供应项目 Projet de fourniture des transformateurs, disjoncteurs et câbles électriques du quartier Kapata",
+     "entite_beneficiaire": "卡巴达社区 Quartier Kapata",
+     "region": "科卢韦齐市 Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 264518.92,
+     "montant_nature_annee": 264518.92
+    },
+    {
+     "annee": "2023",
+     "entreprise": "SINO CONGOLAISE DES MINES",
+     "description": "卡巴达医院建设项目 Projet de construction d'un hôpital du quartier Kapata",
+     "entite_beneficiaire": "卡巴达社区 Quartier Kapata",
+     "region": "科卢韦齐市 Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 130571.0,
+     "montant_nature_annee": 130571.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "SINO CONGOLAISE DES MINES",
+     "description": "玉米扶持项目 Projet d'appui aux producteur de maïs",
+     "entite_beneficiaire": "卡巴达社区和绿路社区 Quartier Kapata et secteur de Luilu",
+     "region": "科卢韦齐市 Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 95875.0,
+     "montant_nature_annee": 95875.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "SINO CONGOLAISE DES MINES",
+     "description": "绿路区足球场平整项目 Projet amenagement des terrains de football du secteur de Luilu",
+     "entite_beneficiaire": "绿路社区 Secteur de Luilu",
+     "region": "科卢韦齐市 Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 31673.0,
+     "montant_nature_annee": 31673.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "SINO CONGOLAISE DES MINES",
+     "description": "卡巴达警察局修复项目 Projet de réhabilitation du bureau police Kapata",
+     "entite_beneficiaire": "卡巴达社区 Quartier Kapata",
+     "region": "科卢韦齐市 Ville de Kolwezi",
+     "base_juridique": "社会责任书 Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 99102.12,
+     "montant_nature_annee": 99102.12
+    },
+    {
+     "annee": "2023",
+     "entreprise": "EXCELLEN MINERALS",
+     "description": "Appui à l'éducation des jeunes par l'octroi des bourses d'études",
+     "entite_beneficiaire": "5 étudiants à LUISHA et 5 autres à MILANDO",
+     "region": "Province : Haut-Katanga，Territoire : Kambove, Luisha",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": 17500.0,
+     "montant_numeraire_annee": 17500.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "EXCELLEN MINERALS",
+     "description": "Construction de 1 Bureau de localité, l'un à Luisha",
+     "entite_beneficiaire": "Communauté de Luisha",
+     "region": "Province : Haut-Katanga，Territoire : Kambove, Luisha",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 54942.75,
+     "montant_nature_annee": 54942.75
+    },
+    {
+     "annee": "2023",
+     "entreprise": "EXCELLEN MINERALS",
+     "description": "Appui en intrants agricoles aux agriculteurs à Luisha et à Kangambwa",
+     "entite_beneficiaire": "Communauté de Luisha et Kangambwa",
+     "region": "Province : Haut-Katanga，Territoire : Kambove, Luisha et Kangambwa",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 64832.5,
+     "montant_nature_annee": 259330.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "EXCELLEN MINERALS",
+     "description": "Adduction d'eau potable",
+     "entite_beneficiaire": "Communauté de Luisha, Kangambwa et Milando",
+     "region": "Province : Haut-Katanga，Territoire : Kambove, Luisha, Kangambwa et Milando",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": null,
+     "montant_nature_infra": 41640.0,
+     "montant_nature_annee": 41640.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "CMOC KISANFU MINING SARL (EX. PHELPS DODGE CONGO)",
+     "description": "Appui logistique à la Zone de Santé de Lualaba",
+     "entite_beneficiaire": "Aire de Santé de Kisanfu",
+     "region": "Territoire de Lubudi, Chefferie des Bayeke, Groupement Nguba",
+     "base_juridique": "Cahier des charges",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 4000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "CMOC KISANFU MINING SARL (EX. PHELPS DODGE CONGO)",
+     "description": "Formation éducation à la santé",
+     "entite_beneficiaire": "Zone d'influence du projet KFM",
+     "region": "Territoire de Lubudi, Chefferie des Bayeke, Groupement Nguba",
+     "base_juridique": "Cahier des charges",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 15000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "CMOC KISANFU MINING SARL (EX. PHELPS DODGE CONGO)",
+     "description": "Formation agricole",
+     "entite_beneficiaire": "Zone d'influence du projet KFM",
+     "region": "Territoire de Lubudi, Chefferie des Bayeke, Groupement Nguba",
+     "base_juridique": "Cahier des charges",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 15000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "CMOC KISANFU MINING SARL (EX. PHELPS DODGE CONGO)",
+     "description": "Alphabétisation",
+     "entite_beneficiaire": "Zone d'influence du projet KFM",
+     "region": "Territoire de Lubudi, Chefferie des Bayeke, Groupement Nguba",
+     "base_juridique": "Cahier des charges",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 10000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "CMOC KISANFU MINING SARL (EX. PHELPS DODGE CONGO)",
+     "description": "Formation professionnelle Technique",
+     "entite_beneficiaire": "Zone d'influence du projet KFM",
+     "region": "Territoire de Lubudi, Chefferie des Bayeke, Groupement Nguba",
+     "base_juridique": "Cahier des charges",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 25000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "CMOC KISANFU MINING SARL (EX. PHELPS DODGE CONGO)",
+     "description": "Travaux d'examen et de révision du CDC",
+     "entite_beneficiaire": "Zone d'influence du projet KFM",
+     "region": "Territoire de Lubudi, Chefferie des Bayeke, Groupement Nguba",
+     "base_juridique": "Protocole d’accord (paiement intellectuel des prestations du processus de révision du Cahier de Charges de CMOC KFM)",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 97935.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "CMOC KISANFU MINING SARL (EX. PHELPS DODGE CONGO)",
+     "description": "Réunion communautaire trimestrielle",
+     "entite_beneficiaire": "Zone d'influence du projet KFM",
+     "region": "Territoire de Lubudi, Chefferie des Bayeke, Groupement Nguba",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 0.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 4000.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "CMOC KISANFU MINING SARL (EX. PHELPS DODGE CONGO)",
+     "description": "Perdiem lié au travail communautaire",
+     "entite_beneficiaire": "Zone d'influence du projet KFM",
+     "region": "Territoire de Lubudi, Chefferie des Bayeke, Groupement Nguba",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 0.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": 7670.0
+    },
+    {
+     "annee": "2023",
+     "entreprise": "SOCIETE CNMC CONGO COMPAGNIE MINIERE SARL",
+     "description": "Adduction en eau",
+     "entite_beneficiaire": "Commune de Panda",
+     "region": "Commune de Panda",
+     "base_juridique": "Cahier des charges",
+     "montant_numeraire_total": 121800.0,
+     "montant_numeraire_annee": 121800.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "SOCIETE CNMC CONGO COMPAGNIE MINIERE SARL",
+     "description": "Dotation des intrant agricoles",
+     "entite_beneficiaire": "Commune de Panda",
+     "region": "Commune de Panda",
+     "base_juridique": "Cahier des charges",
+     "montant_numeraire_total": 31500.0,
+     "montant_numeraire_annee": 31500.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "TENGYUAN COBALT & COPPER RESOURCES",
+     "description": "construction1 poulailler",
+     "entite_beneficiaire": "Village de Kamimbi",
+     "region": "Kazembe",
+     "base_juridique": "cahier des charges",
+     "montant_numeraire_total": 70000.0,
+     "montant_numeraire_annee": 70000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "TENGYUAN COBALT & COPPER RESOURCES",
+     "description": "construction1 porcherie",
+     "entite_beneficiaire": "Village de Samukinda",
+     "region": "Kazembe",
+     "base_juridique": "cahier des charges",
+     "montant_numeraire_total": 85000.0,
+     "montant_numeraire_annee": 85000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "HANRUI METAL CONGO SARL",
+     "description": "CONSTRUCTION DES LOGEMENTS DU PERSONNEL SOIGNANT DU CENTRE DE SANTE",
+     "entite_beneficiaire": "KAMIMBI ET SAMUKINDA",
+     "region": "MUTSHATSHA/SECTEUR LUILU/KAZEMBE",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": 85000.0,
+     "montant_numeraire_annee": 85000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "HANRUI METAL CONGO SARL",
+     "description": "FOURNITURE ET EQUIPEMENT DU CENTRE DE SANTE",
+     "entite_beneficiaire": "KAMIMBI ET SAMUKINDA",
+     "region": "MUTSHATSHA/SECTEUR LUILU/KAZEMBE",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": 65000.0,
+     "montant_numeraire_annee": 65000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "LUALABA COPPER SMELTER SAS",
+     "description": "赖成文付捐建学校工程款Faire un don pour construire une école",
+     "entite_beneficiaire": "N/c",
+     "region": "N/c",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": 100000.0,
+     "montant_numeraire_annee": 100000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "LUALABA COPPER SMELTER SAS",
+     "description": "赖成文付捐建水井合工程尾款Responsabilité sociale Construire des puits d'eau",
+     "entite_beneficiaire": "N/c",
+     "region": "N/c",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": 39000.0,
+     "montant_numeraire_annee": 39000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "LUALABA COPPER SMELTER SAS",
+     "description": "张雨付矿业沙龙捐赠费sponsorat au Salon minier de lualaba",
+     "entite_beneficiaire": "N/c",
+     "region": "N/c",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": 2000.0,
+     "montant_numeraire_annee": 2000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "LUALABA COPPER SMELTER SAS",
+     "description": "赖成文报销社会责任农业扶持种子采购捐赠Faites un don de semences",
+     "entite_beneficiaire": "N/c",
+     "region": "N/c",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": 60343.2,
+     "montant_numeraire_annee": 60343.2,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "CHEMICAL OF AFRICA Sarl",
+     "description": "Paiement DOT",
+     "entite_beneficiaire": "DOT",
+     "region": "HAUT KATANGA",
+     "base_juridique": "N/c",
+     "montant_numeraire_total": 200000.0,
+     "montant_numeraire_annee": 200000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MMG KINSEVERE SPRL",
+     "description": "Construction d'un pont entre les villages Denis et Mikanga",
+     "entite_beneficiaire": "Villages Sela , Gaston ,Denis et Mikanga",
+     "region": "Kipushi,Bukanda,Kasongo",
+     "base_juridique": "Cahier des charges, Protocoled'accord CW 2259448",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 180317.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MMG KINSEVERE SPRL",
+     "description": "Rehabilitation de la route Poteau93- village Kilongo",
+     "entite_beneficiaire": "Villages Poteau 93,Denis,Kalilanda, Mpundu , Ernest ,Sela ,Denis et Mikanga",
+     "region": "Kipushi,Bukanda,Kasongo",
+     "base_juridique": "Cahier des charges, Protocole d'accord CW 2259449",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 259920.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MMG KINSEVERE SPRL",
+     "description": "Achat equipement additionnel du batiment administratif Kilongo",
+     "entite_beneficiaire": "Villages Kifita,Kalunda, Poteau 93,Ntetema,Kapeshi,Kampelembe",
+     "region": "Kipushi,Bukanda,Kasongo",
+     "base_juridique": "Cahier des charges, PO",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 2331.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MMG KINSEVERE SPRL",
+     "description": "Achat et distribution des intrants agricoles et suivi des planteurs",
+     "entite_beneficiaire": "Villages Kifita,Kalunda, Poteau 93,Ntetema,Kapeshi,Kampelembe, Kandulwe ,Kiswishi ,Muombe,Ngongo, Mumba,Mumanga,Kilongo,Sela Kalilanda,Denis ,Ernest ,Mikanga ,Misanse",
+     "region": "Kipushi,Bukanda,Kasongo",
+     "base_juridique": "cahier des charges, Purchase Orders (PO)",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 413513.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MMG KINSEVERE SPRL",
+     "description": "Suite de la formation des pisciculteurs",
+     "entite_beneficiaire": "Villages Muombe,Mumanga,Mumba,Kilongo",
+     "region": "Kipushi,Bukanda,Kasongo",
+     "base_juridique": "cahier des charges",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 2200.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MMG KINSEVERE SPRL",
+     "description": "Idenfication formation des maraichers . Achat et distribution des outils et equipements aux maraichers",
+     "entite_beneficiaire": "Kifita,Kalunda ,Mumba, Kilongo , Kalilanda ,Sela ,Denis",
+     "region": "Kipushi,Bukanda,Kasongo",
+     "base_juridique": "cahier des charges",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 38988.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MMG KINSEVERE SPRL",
+     "description": "Fin travaux de construction et Achat équipement et medicament du centre de sante de Kifita",
+     "entite_beneficiaire": "Villages Kifita,Kapeshi,Kalunda ,Poteau 93 ,Ntetema,Kampelembe",
+     "region": "Kipushi,Bukanda,Kasongo",
+     "base_juridique": "Cahier des charges, Protocole d'accord CW2254392 et Purchase orders (PO)",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 73701.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MMG KINSEVERE SPRL",
+     "description": "Travaux de construction et Achat équipement et medicament du Poste de Santé de Sela",
+     "entite_beneficiaire": "Sela , Denis ,Mikanga ,Gaston",
+     "region": "Kipushi,Bukanda,Kasongo",
+     "base_juridique": "Cahier des charges, Protocole d'accord CW 2257424",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 32865.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MMG KINSEVERE SPRL",
+     "description": "Distribution des plantules pour le reboisement communautaire",
+     "entite_beneficiaire": "Ecoles et villages",
+     "region": "Kipushi,Bukanda,Kasongo",
+     "base_juridique": "",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 3039.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MMG KINSEVERE SPRL",
+     "description": "construction école secondaire Kilongo",
+     "entite_beneficiaire": "Kifita ,Kalunda,Emma , Kikwesa ,Ntetema,",
+     "region": "Kipushi,Bukanda,Kasongo",
+     "base_juridique": "Cahier des charges, Protocole d'accord CW 2259452",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 76141.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MMG KINSEVERE SPRL",
+     "description": "Payement de la prime mensuelle des enseignants des écoles primaires",
+     "entite_beneficiaire": "Ecoles primaires Kifita ,Kinsevere, Kimba ,Sela , Mumanga , Neema",
+     "region": "Kipushi,Bukanda,Kasongo",
+     "base_juridique": "Cahier des charges",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 42300.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MMG KINSEVERE SPRL",
+     "description": "payement bourses scolaires secondaires",
+     "entite_beneficiaire": "villages autour de la mine Kinsevere",
+     "region": "Kipushi,Bukanda,Kasongo",
+     "base_juridique": "Cahier des charges PO",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 79069.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MMG KINSEVERE SPRL",
+     "description": "Alphabetisiation des adultes",
+     "entite_beneficiaire": "villages autour de la mine Kinsevere",
+     "region": "Kipushi,Bukanda,Kasongo",
+     "base_juridique": "Cahier des charges PO",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 12640.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MMG KINSEVERE SPRL",
+     "description": "Maintenance et reparation des pompes des puits",
+     "entite_beneficiaire": "villages autour de la mine Kinsevere",
+     "region": "Kipushi,Bukanda,Kasongo",
+     "base_juridique": "Cahier des charges PO",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 18701.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MMG KINSEVERE SPRL",
+     "description": "Nettoyage et desinfection des puits",
+     "entite_beneficiaire": "villages autour de la mine Kinsevere",
+     "region": "Kipushi,Bukanda,Kasongo",
+     "base_juridique": "Cahier des charges PO",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 18418.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "FRONTIER SA",
+     "description": "Construction du Poulailler",
+     "entite_beneficiaire": "Coopérative Chawama",
+     "region": "Kimfumpa _Sec de Balamba _Gpt Katala",
+     "base_juridique": "CDC",
+     "montant_numeraire_total": 91296.9,
+     "montant_numeraire_annee": 75466.64,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "FRONTIER SA",
+     "description": "Construction du Poulailler",
+     "entite_beneficiaire": "Coopérative Intulo",
+     "region": "Lukangaba Custom-Sec de Balamba -Gpt Katala",
+     "base_juridique": "CDC",
+     "montant_numeraire_total": 100111.69,
+     "montant_numeraire_annee": 40044.67,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "FRONTIER SA",
+     "description": "Construction du Poulailler",
+     "entite_beneficiaire": "Coopérative Tuibombele",
+     "region": "Sakania- Sec de Balamba -Gpt Katala",
+     "base_juridique": "CDC",
+     "montant_numeraire_total": 158043.66,
+     "montant_numeraire_annee": 134337.11,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "FRONTIER SA",
+     "description": "Construction du Poulailler",
+     "entite_beneficiaire": "Coopérative Eden",
+     "region": "Lukangaba Mashimu-Sec de Balamba -Gpt Katala",
+     "base_juridique": "CDC",
+     "montant_numeraire_total": 100111.69,
+     "montant_numeraire_annee": 40044.67,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "FRONTIER SA",
+     "description": "Construction du Poulailler",
+     "entite_beneficiaire": "Cooperative Twimine Pamo",
+     "region": "Kaloko-Sec de Balamba -Gpt Katala",
+     "base_juridique": "CDC",
+     "montant_numeraire_total": 91296.9,
+     "montant_numeraire_annee": 75466.64,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "FRONTIER SA",
+     "description": "Construction du Poulailler",
+     "entite_beneficiaire": "Coopérative Buyantashi",
+     "region": "Kabumba- Sec de Balamba -Gpt Katala",
+     "base_juridique": "CDC",
+     "montant_numeraire_total": 91296.9,
+     "montant_numeraire_annee": 75466.64,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "FRONTIER SA",
+     "description": "Réhabilitation de l'Hopital Général",
+     "entite_beneficiaire": "Sakania",
+     "region": "Sakania- Sec de Balamba -Gpt Katala",
+     "base_juridique": "CDC",
+     "montant_numeraire_total": 662409.49,
+     "montant_numeraire_annee": 436589.25,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "FRONTIER SA",
+     "description": "ouverture du terrain champ Lukangaba Customs",
+     "entite_beneficiaire": "Coopérative Intulo",
+     "region": "Lukangaba Custom-Sec de Balamba -Gpt Katala",
+     "base_juridique": "CDC",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 0.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "FRONTIER SA",
+     "description": "ouverture du terrain champ Kaloko",
+     "entite_beneficiaire": "Cooperative Twimine Pamo",
+     "region": "Kaloko-Sec de Balamba -Gpt Katala",
+     "base_juridique": "CDC",
+     "montant_numeraire_total": 0.0,
+     "montant_numeraire_annee": 0.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "FRONTIER SA",
+     "description": "Forage et installation de puits d'irrigation",
+     "entite_beneficiaire": "Coopérative Chawama",
+     "region": "Kimfumpa _Sec de Balamba _Gpt Katala",
+     "base_juridique": "CDC",
+     "montant_numeraire_total": 55431.11,
+     "montant_numeraire_annee": 55431.11,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "FRONTIER SA",
+     "description": "Contruction de la cloture à l'hopital général de Sakania",
+     "entite_beneficiaire": "Sakania",
+     "region": "Sakania- Sec de Balamba -Gpt Katala",
+     "base_juridique": "CDC",
+     "montant_numeraire_total": 321093.26,
+     "montant_numeraire_annee": 232229.93,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "MUANDA INTERNATIONAL OIL COMPANY",
+     "description": "DOMAINE SOCIAL (ECOLE/SANTE)",
+     "entite_beneficiaire": "COMMUNAUTE DU TERRITOIRE DE MUANDA",
+     "region": "TERRITOIRE DE MUANDA",
+     "base_juridique": "AVENANT 8 / CONVENTION PETROLIERE <=> Budget annuel de 400,000 USD pour toute l’Association JV Offshore et sont financés en raison de 50 % (MIOC), 32.28%(TEIKOKU) et 17.72%(PERENCO ODS)",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 400000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    },
+    {
+     "annee": "2023",
+     "entreprise": "PERENCO RECHERCHE ET EXPLOITATION PETROLIERE",
+     "description": "DOMAINE SOCIAL (ECOLE/SANTE)",
+     "entite_beneficiaire": "COMMUNAUTE DU TERRITOIRE DE MUANDA",
+     "region": "TERRITOIRE DE MUANDA",
+     "base_juridique": "AVENANT 9 / CONVENTION PETROLIERE <=> Budget annuel de 200,000 USD pour toute l’Association JV Onshore et sont financés en raison de 54,5455 % (PERENCO REP) et 45,4545%(LIREX)",
+     "montant_numeraire_total": null,
+     "montant_numeraire_annee": 200000.0,
+     "montant_nature_infra": null,
+     "montant_nature_annee": null
+    }
    ]
   },
   "permis_cami": {
