@@ -48,6 +48,15 @@ C.intros=Object.assign({
   qualite:"Complétude, doublons et anomalies détectées et traitées lors de l'intégration.",
   reports:"Rapports annuels, thématiques, contextuels, forestiers, d'avancement et de validation publiés par l'ITIE-RDC.",
 },C.intros||{});
+// Intégrations externes (page Rapports) : dossier Google Drive officiel
+// ITIE-RDC lu en direct par l'API Google Drive v3 depuis le navigateur, afin
+// que tout nouveau document ajouté dans ce dossier apparaisse automatiquement
+// sur le site sans intervention technique (retour utilisateur, sept. 2026 :
+// certains liens vers itierdc.net étaient rompus ; puiser systématiquement
+// dans le dossier Drive officiel plutôt que dans une liste figée de liens).
+// La clé API doit être restreinte (referrer HTTP) au domaine du site, et le
+// dossier partagé en lecture seule "Toute personne disposant du lien".
+C.integrations=Object.assign({gdrive_folder_id:'14bSc8C68AloU3eIhYkpMENt_89dtizN6',gdrive_api_key:''},C.integrations||{});
 const DS=WH.datasets, AGG=WH.agg, O=WH.officiel2023, STATS=WH.stats;
 /* ===== Rubriques publiques alignées sur la Norme ITIE 2023 (sept. 2026) =====
    Chaque table de l'entrepôt porte désormais une métadonnée `meta` (thème,
@@ -1389,24 +1398,159 @@ function drawSchema(){
   $$('[data-openex]').forEach(el=>el.onclick=()=>{exState.ds=el.dataset.openex;exState.page=0;exState.sort=null;exState.q='';exState.filters={};go('explorer');});
 }
 
-/* Reports */
-const CATS={rapport_itie:'Rapport annuel',thematique:'Thématique',forestier:'Secteur forestier',raa:'Avancement',validation:'Validation',annexe_donnees:'Annexe de données',summary_data:'Données récap.',contextuel:'Contextuel'};
-let repFilter='all';
-function mReports(){const cats=[...new Set(C.reports.map(r=>r.categorie))];
-  const chips=`<div class="filters"><button class="chip ${repFilter==='all'?'on':''}" data-f="all">Tous</button>`+cats.map(c=>`<button class="chip ${repFilter===c?'on':''}" data-f="${c}">${esc(CATS[c]||c)}</button>`).join('')+`</div>`;
-  return `<div class="phead"><div class="eyebrow">Documents</div><h1>Rapports &amp; publications</h1><p data-edit="intros.reports">${esc(C.intros.reports)}</p></div>${chips}<div class="msg warn" style="display:block;margin-bottom:12px">Certains liens vers itierdc.net peuvent être temporairement inaccessibles (site source) — réessayez plus tard ou consultez eiti.org.</div><div class="reports" id="repList"></div>`;}
-// Un lien qui pointe vers une page de listing générique (ex. ".../rapports/"
-// sans nom de fichier) n'est pas un téléchargement direct : l'étiqueter
-// « ↓ Télécharger » induit en erreur (audit sept. 2026 : deux rapports de
-// catégories différentes pointant tous deux vers la même page générique du
-// site source). On distingue donc le libellé selon la forme de l'URL plutôt
-// que de prétendre à un fichier précis qu'on ne peut pas garantir.
-function isGenericListingUrl(u){return /\/(rapports|publications)\/?$/i.test(String(u||'').split(/[?#]/)[0]);}
-function renderReports(){const list=$('#repList');if(!list)return;
-  const rs=C.reports.filter(r=>repFilter==='all'||r.categorie===repFilter).sort((a,b)=>String(b.annees_couvertes).localeCompare(String(a.annees_couvertes)));
-  list.innerHTML=rs.map(r=>{const url=r.url&&r.url!=='#'?r.url:null;const generic=url&&isGenericListingUrl(url);
-    const linkHtml=url?(generic?`<br><a class="dl" href="${esc(url)}" target="_blank" rel="noopener">↗ Voir sur le site source (${esc((r.format||'pdf').toUpperCase())})</a>`:`<br><a class="dl" href="${esc(url)}" target="_blank" rel="noopener">↓ Télécharger (${esc((r.format||'pdf').toUpperCase())})</a>`):'';
-    return `<div class="rep"><div class="yr">${esc(r.annees_couvertes||'')}</div><div><div class="t">${esc(r.titre)}</div><span class="cat">${esc(CATS[r.categorie]||r.categorie)}</span>${linkHtml}</div></div>`;}).join('')||`<div class="empty">Aucun rapport dans cette catégorie.</div>`;}
+/* Reports — lus en direct depuis le dossier Google Drive officiel ITIE-RDC
+   (C.integrations.gdrive_folder_id) via l'API Google Drive v3, publique et
+   restreinte en lecture seule par referrer. Remplace l'ancienne liste figée
+   de liens vers itierdc.net (dont plusieurs étaient rompus, audit sept.
+   2026) : ici, tout nouveau dossier ou fichier ajouté dans le dossier Drive
+   apparaît automatiquement, classé par rubrique (= dossier Drive) et par
+   type de document, sans intervention technique ni redéploiement. */
+let gdrive={status:'idle',items:[],error:null,loadedAt:null,folderId:null};
+let repF={cat:'all',year:'all',type:'all',q:''};
+const GDRIVE_FOLDER_MIME='application/vnd.google-apps.folder';
+function driveTypeInfo(mime){
+  if(/pdf/i.test(mime))return{key:'pdf',label:'PDF'};
+  if(/spreadsheet|ms-excel|excel/i.test(mime))return{key:'xlsx',label:'Excel'};
+  if(/wordprocessingml|msword/i.test(mime))return{key:'doc',label:'Word'};
+  if(/presentation/i.test(mime))return{key:'ppt',label:'Présentation'};
+  return{key:'autre',label:'Autre document'};
+}
+// Nom normalisé pour repérer les doublons (le même fichier existe parfois
+// dans plusieurs dossiers Drive, ex. "Données resumées" en double d'un
+// dossier annuel) — sans jamais rien supprimer côté Drive : on n'affiche
+// simplement pas deux fois la même entrée sur cette page.
+function normalizeReportName(name){
+  return stripAccents(String(name||'').toLowerCase())
+    .replace(/\.[a-z0-9]{2,5}$/,'')
+    .replace(/[\s_-]*\((?:\d+|copie|copy)\)\s*$/,'')
+    .replace(/[\s_-]+(copie|copy)\s*$/,'')
+    .replace(/[^a-z0-9]+/g,' ')
+    .trim();
+}
+function extractYear(...texts){for(const t of texts){const m=String(t||'').match(/\b(19|20)\d{2}\b/);if(m)return m[0];}return null;}
+async function gdriveListPage(parentId,apiKey,pageToken){
+  const q=encodeURIComponent(`'${parentId}' in parents and trashed=false`);
+  const fields=encodeURIComponent('files(id,name,mimeType,webViewLink,modifiedTime),nextPageToken');
+  let url=`https://www.googleapis.com/drive/v3/files?q=${q}&fields=${fields}&pageSize=1000&key=${encodeURIComponent(apiKey)}`;
+  if(pageToken)url+=`&pageToken=${encodeURIComponent(pageToken)}`;
+  const r=await fetch(url);
+  if(!r.ok){const j=await r.json().catch(()=>({}));throw new Error((j.error&&j.error.message)||('HTTP '+r.status));}
+  return r.json();
+}
+async function gdriveListAll(parentId,apiKey){
+  let out=[],token;
+  do{const page=await gdriveListPage(parentId,apiKey,token);out=out.concat(page.files||[]);token=page.nextPageToken;}while(token);
+  return out;
+}
+async function gdriveCrawl(rootId,apiKey){
+  const topLevel=await gdriveListAll(rootId,apiKey);
+  // Les dossiers portant une année dans leur nom (ex. "Rapport ITIE RDC
+  // 2023") sont explorés avant les dossiers fourre-tout (ex. "Données
+  // resumées", "annexes") : en cas de doublon, c'est la copie du dossier
+  // annuel qui est conservée, ce qui donne un classement plus parlant.
+  topLevel.sort((a,b)=>{
+    const ya=extractYear(a.name),yb=extractYear(b.name);
+    if(ya&&!yb)return -1;if(!ya&&yb)return 1;
+    if(ya&&yb)return yb.localeCompare(ya);
+    return a.name.localeCompare(b.name,'fr');
+  });
+  const items=[],seen=new Set();
+  function addItem(f,rubrique){
+    const norm=normalizeReportName(f.name);
+    if(seen.has(norm))return;
+    seen.add(norm);
+    const type=driveTypeInfo(f.mimeType||'');
+    items.push({id:f.id,name:f.name,rubrique,year:extractYear(f.name,rubrique),
+      type:type.key,typeLabel:type.label,
+      url:f.webViewLink||`https://drive.google.com/file/d/${f.id}/view`,
+      modified:f.modifiedTime||null});
+  }
+  async function walk(folderId,rubrique){
+    const children=await gdriveListAll(folderId,apiKey);
+    for(const f of children){
+      if(f.mimeType===GDRIVE_FOLDER_MIME){await walk(f.id,rubrique);}
+      else addItem(f,rubrique);
+    }
+  }
+  for(const top of topLevel){
+    if(top.mimeType===GDRIVE_FOLDER_MIME)await walk(top.id,top.name);
+    else addItem(top,'Autres documents');
+  }
+  return items;
+}
+async function ensureGdriveLoaded(force){
+  const cfg=C.integrations||{};
+  const folderId=(cfg.gdrive_folder_id||'').trim(),apiKey=(cfg.gdrive_api_key||'').trim();
+  if(!folderId||!apiKey){gdrive={status:'unconfigured',items:[],error:null,loadedAt:null,folderId};renderReportsPage();return;}
+  if(!force&&gdrive.status==='ready'&&gdrive.folderId===folderId)return;
+  gdrive={status:'loading',items:gdrive.items,error:null,loadedAt:gdrive.loadedAt,folderId};
+  renderReportsPage();
+  try{
+    const items=await gdriveCrawl(folderId,apiKey);
+    items.sort((a,b)=>String(b.year||'').localeCompare(String(a.year||''))||a.name.localeCompare(b.name,'fr'));
+    gdrive={status:'ready',items,error:null,loadedAt:new Date(),folderId};
+  }catch(err){
+    gdrive={status:'error',items:[],error:(err&&err.message)||String(err),loadedAt:null,folderId};
+  }
+  if(current==='reports')renderReportsPage();
+}
+function mReports(){const cfg=C.integrations||{};
+  const adminBox=editing?`<div class="card" style="margin-bottom:16px">
+    <h3 style="margin-bottom:8px">Source des rapports — dossier Google Drive ITIE-RDC</h3>
+    <p style="font-size:12.5px;color:var(--ink-soft);margin-bottom:10px">Les documents ci-dessous sont lus automatiquement dans ce dossier Google Drive : tout nouveau fichier ou dossier qui y est ajouté apparaît ici sans intervention. Le dossier doit être partagé « Lecteur — toute personne disposant du lien », et une clé API Google Drive (v3), restreinte au domaine du site, doit être renseignée ci-dessous.</p>
+    <div style="display:grid;gap:8px;font-size:13px;margin-bottom:10px">
+      <div>ID du dossier Google Drive : <b data-edit="integrations.gdrive_folder_id" style="word-break:break-all">${esc(cfg.gdrive_folder_id||'')}</b></div>
+      <div>Clé API Google Drive : <b data-edit="integrations.gdrive_api_key" style="word-break:break-all">${esc(cfg.gdrive_api_key||'')}</b></div>
+    </div>
+    <button class="btn" type="button" id="repReloadBtn">🔄 Recharger depuis Google Drive</button>
+  </div>`:'';
+  return `<div class="phead"><div class="eyebrow">Documents</div><h1>Rapports &amp; publications</h1><p data-edit="intros.reports">${esc(C.intros.reports)}</p></div>${adminBox}<div id="repBody"></div>`;}
+function renderReportsPage(){
+  const body=$('#repBody');if(!body)return;
+  if(gdrive.status==='unconfigured'){
+    body.innerHTML=`<div class="empty">${editing?'Renseignez le dossier Google Drive et la clé API ci-dessus pour afficher les rapports.':'Liste des rapports temporairement indisponible.'}</div>`;return;}
+  if(gdrive.status==='loading'||gdrive.status==='idle'){
+    body.innerHTML=`<div class="empty">Chargement de la liste des rapports depuis Google Drive…</div>`;return;}
+  if(gdrive.status==='error'){
+    body.innerHTML=`<div class="msg err" style="display:block">Impossible de charger la liste des rapports depuis Google Drive${editing&&gdrive.error?(' : '+esc(gdrive.error)):''}. Réessayez plus tard, ou consultez directement le <a href="https://drive.google.com/drive/folders/${esc(gdrive.folderId||'')}" target="_blank" rel="noopener">dossier officiel sur Google Drive</a>.</div>`;return;}
+  const items=gdrive.items;
+  const rubriques=[...new Set(items.map(i=>i.rubrique))].sort((a,b)=>a.localeCompare(b,'fr'));
+  const years=[...new Set(items.map(i=>i.year).filter(Boolean))].sort((a,b)=>b.localeCompare(a));
+  const typeLabels={};items.forEach(i=>{typeLabels[i.type]=i.typeLabel;});
+  const types=Object.keys(typeLabels);
+  const q=stripAccents(repF.q.toLowerCase());
+  const filtered=items.filter(i=>
+    (repF.cat==='all'||i.rubrique===repF.cat)&&
+    (repF.year==='all'||i.year===repF.year)&&
+    (repF.type==='all'||i.type===repF.type)&&
+    (!q||stripAccents(i.name.toLowerCase()).includes(q)));
+  const chips=`<div class="filters"><button class="chip ${repF.cat==='all'?'on':''}" data-f="all">Toutes les rubriques</button>${rubriques.map(r=>`<button class="chip ${repF.cat===r?'on':''}" data-f="${esc(r)}">${esc(r)}</button>`).join('')}</div>`;
+  const selects=`<div class="filters" style="margin-top:8px">
+    <select id="repYearSel"><option value="all">Toutes les années</option>${years.map(y=>`<option value="${y}" ${repF.year===y?'selected':''}>${y}</option>`).join('')}</select>
+    <select id="repTypeSel"><option value="all">Tous les types</option>${types.map(t=>`<option value="${esc(t)}" ${repF.type===t?'selected':''}>${esc(typeLabels[t])}</option>`).join('')}</select>
+    <div class="exsearch" style="max-width:280px"><span class="si" aria-hidden="true">⌕</span><input id="repSearchQ" placeholder="Rechercher un document…" value="${esc(repF.q)}" aria-label="Rechercher un document dans les rapports"></div>
+  </div>`;
+  const byRub={};filtered.forEach(i=>{(byRub[i.rubrique]=byRub[i.rubrique]||[]).push(i);});
+  const groups=Object.keys(byRub).sort((a,b)=>a.localeCompare(b,'fr')).map(r=>`
+    <div class="card" style="margin-bottom:14px">
+      <h3 style="margin-bottom:8px">${esc(r)} <span class="badge">${byRub[r].length}</span></h3>
+      <div class="reports">${byRub[r].map(i=>`<div class="rep"><div class="yr">${esc(i.year||'—')}</div><div><div class="t">${esc(i.name)}</div><span class="cat">${esc(i.typeLabel)}</span><br><a class="dl" href="${esc(i.url)}" target="_blank" rel="noopener">↗ Ouvrir sur Google Drive</a></div></div>`).join('')}</div>
+    </div>`).join('')||`<div class="empty">Aucun document ne correspond à ces filtres.</div>`;
+  body.innerHTML=`${chips}${selects}<div style="font-size:11.5px;color:var(--ink-soft);margin:10px 0">${items.length} document(s) trouvé(s) dans le dossier officiel ITIE-RDC${gdrive.loadedAt?(' · actualisé '+gdrive.loadedAt.toLocaleTimeString('fr-FR')):''}.</div>${groups}`;
+  const yearSel=$('#repYearSel');if(yearSel)yearSel.onchange=e=>{repF.year=e.target.value;renderReportsPage();};
+  const typeSel=$('#repTypeSel');if(typeSel)typeSel.onchange=e=>{repF.type=e.target.value;renderReportsPage();};
+  const searchInp=$('#repSearchQ');if(searchInp)searchInp.oninput=e=>{repF.q=e.target.value;renderReportsPage();const el=$('#repSearchQ');if(el){el.focus();el.setSelectionRange(e.target.value.length,e.target.value.length);}};
+}
+function drawReportsPage(){
+  ensureGdriveLoaded();
+  const btn=$('#repReloadBtn');if(btn)btn.onclick=()=>{
+    const fEl=document.querySelector('[data-edit="integrations.gdrive_folder_id"]');
+    const kEl=document.querySelector('[data-edit="integrations.gdrive_api_key"]');
+    if(fEl)C.integrations.gdrive_folder_id=fEl.textContent.trim();
+    if(kEl)C.integrations.gdrive_api_key=kEl.textContent.trim();
+    ensureGdriveLoaded(true);
+  };
+}
 
 /* About */
 function mAbout(){const A=C.about,B=C.brand,F=C.footer,CT=C.contact;return `<div class="phead"><div class="eyebrow">Informations</div><h1 data-edit="about.titre">${esc(A.titre)}</h1></div>
@@ -2591,7 +2735,7 @@ const MODULES={
   model:{t:"Modèle de données",f:mModel,d:drawSchema},
   dict:{t:"Dictionnaire de données",f:mDict,d:renderDict},
   qualite:{t:"Qualité des données",f:mQualite,d:drawQualite},
-  reports:{t:"Rapports",f:mReports,d:renderReports},
+  reports:{t:"Rapports",f:mReports,d:drawReportsPage},
   about:{t:"À propos",f:mAbout,d:()=>{}},
 };
 Object.keys(THEME_INFO).forEach(k=>{if(k==='technique')return;
@@ -2726,7 +2870,7 @@ document.addEventListener('click',e=>{
     return;
   }
   const ds=e.target.closest('[data-ds]');if(ds){exState.ds=ds.dataset.ds;exState.page=0;exState.sort=null;exState.q='';exState.filters={};$$('#exMain');$$('.dsitem').forEach(x=>x.classList.toggle('on',x===ds));renderExplorer();return;}
-  const chip=e.target.closest('.chip[data-f]');if(chip){repFilter=chip.dataset.f;$$('.chip').forEach(c=>c.classList.toggle('on',c===chip));renderReports();if(editing)markEditable(true);return;}
+  const chip=e.target.closest('.chip[data-f]');if(chip&&current==='reports'){repF.cat=chip.dataset.f;renderReportsPage();if(editing)markEditable(true);return;}
   const evo=e.target.closest('[data-evo]');if(evo){mapEvo=evo.dataset.evo==='1';mapSel=null;const yb=$('#mYear');if(yb)yb.disabled=mapEvo;$$('[data-evo]').forEach(b=>b.classList.toggle('on',b===evo));drawGeo();return;}
   const lvl=e.target.closest('[data-lvl]');if(lvl&&!lvl.disabled){toggleLvl(lvl.dataset.lvl);mapSel=null;$$('[data-lvl]').forEach(b=>b.classList.toggle('on',lvlOn(b.dataset.lvl)));drawGeo();return;}
   const ind=e.target.closest('[data-ind]');if(ind){mapInd=ind.dataset.ind;mapSel=null;cahDetailQ='';
@@ -2985,7 +3129,6 @@ async function saveAndPublish(){
   finally{btn.disabled=false;}
 }
 $('#saveBtn').onclick=saveAndPublish;
-$('#repMgrBtn').onclick=()=>{renderRM();showModal('repModal');};
 
 /* ===== Gestion des rubriques (menu) ===== */
 function renderNavMgr(){
@@ -3064,12 +3207,6 @@ $('#enAppend').onclick=async()=>{if(!enParsed)return;const t=$('#enTable').value
 $('#enExport').onclick=()=>{saveFile('transparencerdc_donnees_enrichies.json',JSON.stringify(WH,null,1));};
 $('#enExportCsv').onclick=()=>{const t=$('#enTable').value,d=DS[t];const esc2=v=>v==null?'':/[",;\n]/.test(''+v)?'"'+(''+v).replace(/"/g,'""')+'"':''+v;
   const csv=[d.cols.join(';')].concat(d.rows.map(r=>r.map(esc2).join(';'))).join('\n');saveFile(t+'_enrichi.csv',csv);};
-$('#repModal').onclick=e=>{if(e.target.id==='repModal')hideModal('repModal');};
-$('#rmDone').onclick=()=>{hideModal('repModal');if(current==='reports')renderReports();};
-$('#rmAdd').onclick=()=>{C.reports.unshift({titre:'Nouveau rapport',categorie:'rapport_itie',annees_couvertes:'',date_publication:'',url:'',format:'pdf'});renderRM();};
-function renderRM(){$('#rmList').innerHTML=C.reports.map((r,i)=>`<div class="rm-item" data-i="${i}"><div class="g" style="grid-column:1/2"><input data-k="titre" value="${esc(r.titre)}" placeholder="Titre" style="grid-column:1/3"><input data-k="annees_couvertes" value="${esc(r.annees_couvertes||'')}" placeholder="Années"><select data-k="categorie">${Object.keys(CATS).map(c=>`<option value="${c}" ${r.categorie===c?'selected':''}>${esc(CATS[c])}</option>`).join('')}</select><input data-k="url" value="${esc(r.url||'')}" placeholder="URL PDF" style="grid-column:1/3"></div><button class="rm-del" data-del="${i}" aria-label="Supprimer ce rapport" title="Supprimer">✕</button></div>`).join('');}
-$('#rmList').addEventListener('input',e=>{const it=e.target.closest('.rm-item');if(!it)return;const i=+it.dataset.i,k=e.target.dataset.k;if(k)C.reports[i][k]=e.target.value;});
-$('#rmList').addEventListener('click',e=>{const del=e.target.closest('[data-del]');if(del){C.reports.splice(+del.dataset.del,1);renderRM();}});
 
 /* ===== BOOT =====
    (l'ancienne capture de PRISTINE_BODY servait uniquement à réexporter la
