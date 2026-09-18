@@ -56008,19 +56008,64 @@
    {
     "type": "Feature",
     "properties": {
-     "id": "RN5_LSHI_KASOMENO",
-     "designation": "Terrassement et bitumage RN5 Lubumbashi–Kasomeno (137 km)",
-     "lieu": "Haut-Katanga — axe Lubumbashi–Kasomeno",
-     "entreprise": "CREC 7",
-     "cout_usd": 162283871.42,
-     "statut": "Réception définitive 17/12/2016",
-     "eligible_annexe_c": "ND (non précisé dans la source)",
-     "note": "Point placé à l'extrémité Kasomeno de l'axe : le tracé réel des 137 km bitumés n'est pas représenté (aucune géométrie de route publiée par les sources ITIE-RDC).",
-     "source_donnees": "Rapport ITIE-RDC 2020-2021, tableau 24",
+     "id": "P01",
+     "designation": "Route Lutundele",
+     "lieu": "Kinshasa",
+     "quantite": "4,5 Km",
+     "cout_usd": 21007915.3,
+     "phase": "Phase 1",
+     "note": "Localisation donnée au niveau de la ville (Kinshasa) uniquement ; point indicatif au centre de la commune de la Gombe, pas l'emplacement réel de cette avenue.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "indicatif",
+     "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      15.30333,
+      -4.30306
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P02",
+     "designation": "Avenue du Tourisme",
+     "lieu": "Kinshasa",
+     "quantite": "6,8 Km",
+     "cout_usd": 29344191.97,
+     "phase": "Phase 1",
+     "note": "Localisation donnée au niveau de la ville (Kinshasa) uniquement ; point indicatif, pas l'emplacement réel de cette avenue.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "indicatif",
+     "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      15.30333,
+      -4.30306
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P03",
+     "designation": "Bitumage de la RN5 Lubumbashi-Kasomeno",
+     "lieu": "Haut-Katanga",
+     "quantite": "137 Km",
+     "cout_usd": 93210305.71,
+     "phase": "Phase 1",
+     "note": "Point placé à l'extrémité Kasomeno de l'axe Lubumbashi-Kasomeno ; le tracé réel des 137 km n'est pas représenté.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
      "qualite_geom": "approx",
      "source_coordonnees": "mapcarta.com — localité de Kasomeno (Haut-Katanga)",
-     "distance_km": 137,
-     "superficie_m2": null,
      "photo_url": null,
      "photo_credit": null
     },
@@ -56035,46 +56080,40 @@
    {
     "type": "Feature",
     "properties": {
-     "id": "RN5_KASOMENO_KASENGA",
-     "designation": "RN5 Lubumbashi–Kasomeno / Kasomeno–Kasenga (ligne budgétaire complémentaire)",
-     "lieu": "Haut-Katanga — prolongement vers Kasenga",
-     "entreprise": null,
-     "cout_usd": 69073565.06,
-     "statut": "Achevé (cumul encouru = budget)",
-     "eligible_annexe_c": "ND (non précisé dans la source)",
-     "note": "Ligne budgétaire distincte de celle de l'axe Lubumbashi–Kasomeno, rattachée au même corridor routier ; placée à Kasenga faute de tracé publié.",
-     "source_donnees": "Rapport ITIE-RDC 2020-2021, tableau 26",
+     "id": "P04",
+     "designation": "Terrassement de la RN5 Lubumbashi-Kasomeno",
+     "lieu": "Haut-Katanga",
+     "quantite": "137 Km",
+     "cout_usd": 69073563.8,
+     "phase": "Phase 1",
+     "note": "Projet distinct du précédent (terrassement, pas bitumage) sur le même axe ; même point d'ancrage (Kasomeno).",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
      "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Kasenga Airport, qui dessert la ville de Kasenga (Haut-Katanga)",
-     "distance_km": null,
-     "superficie_m2": null,
+     "source_coordonnees": "mapcarta.com — localité de Kasomeno (Haut-Katanga)",
      "photo_url": null,
      "photo_credit": null
     },
     "geometry": {
      "type": "Point",
      "coordinates": [
-      28.61667,
-      -10.35556
+      28.28025,
+      -10.75475
      ]
     }
    },
    {
     "type": "Feature",
     "properties": {
-     "id": "RN4_BENI_NIANIA",
-     "designation": "Bitumage RN4 Beni–Niania (60 km réalisés sur 410 km prévus à l'Annexe C)",
-     "lieu": "Nord-Kivu / Ituri — axe Beni–Niania",
-     "entreprise": "SINOHYDRO 14",
-     "cout_usd": 57768563.94,
-     "statut": "Réception définitive 11/11/2011",
-     "eligible_annexe_c": "Oui",
-     "note": "Seuls 60 km sur les 410 km prévus à l'Annexe C ont été réalisés ; le solde (350 km) figure dans la liste des routes non exécutées en entier (voir « non géoréférencées » ci-dessous).",
-     "source_donnees": "Rapport ITIE-RDC 2020-2021, tableau 24 ; Rapport thématique SICOMINES §19",
+     "id": "P05",
+     "designation": "Bitumage RN4 Beni-Niania",
+     "lieu": "Nord-Kivu",
+     "quantite": "60 Km",
+     "cout_usd": 57782941.03,
+     "phase": "Phase 1",
+     "note": "Point placé à Nia Nia (Niania), extrémité de l'axe Beni-Niania ; le tracé réel des 60 km n'est pas représenté.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
      "qualite_geom": "approx",
      "source_coordonnees": "mapcarta.com — localité de Nia Nia / Niania (Ituri), sur la RN4",
-     "distance_km": 60,
-     "superficie_m2": null,
      "photo_url": null,
      "photo_credit": null
     },
@@ -56089,19 +56128,40 @@
    {
     "type": "Feature",
     "properties": {
-     "id": "HOPITAL_CINQUANTENAIRE",
-     "designation": "Hôpital du Cinquantenaire (500 lits)",
+     "id": "P06",
+     "designation": "Construction et achèvement de l'Hôpital centre-ville (Hôpital du Centenaire)",
+     "lieu": "Kinshasa",
+     "quantite": "4 500 m²",
+     "cout_usd": 114901200.0,
+     "phase": "Phase 1",
+     "note": "Selon le document ITIE-RDC « Projets individuellement documentés » (Exigence 4.3), cet hôpital est nommé « Hôpital du Cinquantenaire » (montant très proche : 114 879 516,42 USD) — écart de dénomination entre sources, reproduit tel quel plutôt qu'arbitré. Point placé aux coordonnées vérifiées de l'Hôpital du Cinquantenaire de Kinshasa.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      15.30333,
+      -4.30306
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P06b",
+     "designation": "Construction et achèvement de l'Hôpital centre-ville — coordonnée du bâtiment identifié (Hôpital du Cinquantenaire)",
      "lieu": "Kinshasa (Mont Ngafula)",
-     "entreprise": "SINOHYDRO 2",
-     "cout_usd": 114879516.42,
-     "statut": "Réception définitive 27/08/2014",
-     "eligible_annexe_c": "ND (non précisé dans la source)",
-     "note": "Deux montants distincts figurent dans les sources ITIE-RDC pour ce même projet : 114 879 516,42 USD (tableau 24, coût du contrat) et 114 901 200 USD (tableau 26, budget) — écart non arbitré, reproduit tel quel.",
-     "source_donnees": "Rapport ITIE-RDC 2020-2021, tableaux 24 et 26",
+     "quantite": "4 500 m²",
+     "cout_usd": null,
+     "phase": "Phase 1",
+     "note": "Second point de repère : coordonnées exactes du bâtiment de l'Hôpital du Cinquantenaire (probablement le même ouvrage que « Hôpital du Centenaire » ci-dessus — voir note), issues de Wikipédia. N'ajoute pas de montant supplémentaire (déjà compté au point P06).",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
      "qualite_geom": "approx",
      "source_coordonnees": "Wikipédia (en) — L'hôpital du Cinquantenaire de Kinshasa (infobox géographique)",
-     "distance_km": null,
-     "superficie_m2": null,
      "photo_url": "https://www.flickr.com/photos/rdcbenelux/5549662665",
      "photo_credit": "Flickr — Ambassade de la RDC (compte officiel), « L'hôpital du Cinquantenaire à Kinshasa »"
     },
@@ -56116,46 +56176,16 @@
    {
     "type": "Feature",
     "properties": {
-     "id": "ESPLANADE_PALAIS_PEUPLE",
-     "designation": "Esplanade du Palais du Peuple (24 300 m²)",
-     "lieu": "Kinshasa (Lingwala)",
-     "entreprise": "SINOHYDRO 2",
-     "cout_usd": 24255299.12,
-     "statut": "Réceptionné en 2011",
-     "eligible_annexe_c": "Non",
-     "note": "Le rapport thématique ITIE-RDC juge l'urgence de ce projet injustifiée.",
-     "source_donnees": "Rapport ITIE-RDC 2020-2021 ; Rapport thématique SICOMINES §19",
-     "qualite_geom": "approx",
-     "source_coordonnees": "latitude.to — Palais du Peuple (Kinshasa), répertoire de coordonnées de lieux nommés",
-     "distance_km": null,
-     "superficie_m2": 24300,
-     "photo_url": "https://commons.wikimedia.org/wiki/Category:Palais_du_Peuple_(Kinshasa)",
-     "photo_credit": "Wikimedia Commons — Category:Palais du Peuple (Kinshasa)"
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      15.3031,
-      -4.3322
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "BLVD_30_JUIN",
-     "designation": "Boulevard du 30 juin (lots 1 et 2), boulevards Sendwe et Triomphal, avenue Tourisme, route Lutendele",
-     "lieu": "Kinshasa (Gombe et communes voisines)",
-     "entreprise": "CREC 7 / CREC 8",
-     "cout_usd": null,
-     "statut": "Réceptionnés entre 2011 et 2014",
-     "eligible_annexe_c": "ND (non précisé dans la source)",
-     "note": "Montant non individualisé dans la source pour cet ensemble de voiries. Un seul point (centre de la commune de la Gombe) représente ici plusieurs rues et boulevards distincts sur plusieurs kilomètres : position indicative, pas un tracé réel.",
-     "source_donnees": "Rapport ITIE-RDC 2020-2021, tableau 24",
+     "id": "P07",
+     "designation": "Modernisation du Boulevard du 30 juin lot 1",
+     "lieu": "Kinshasa",
+     "quantite": "5,38 Km",
+     "cout_usd": 25973618.36,
+     "phase": "Phase 2",
+     "note": "Point indicatif (centre de la commune de la Gombe) : ne représente pas le tracé réel de ce boulevard sur plusieurs km.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
      "qualite_geom": "indicatif",
      "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
-     "distance_km": null,
-     "superficie_m2": null,
      "photo_url": "https://commons.wikimedia.org/wiki/File:Boulevard_du_30_juin,_Kinshasa.jpg",
      "photo_credit": "Wikimedia Commons — File:Boulevard du 30 juin, Kinshasa.jpg"
     },
@@ -56170,73 +56200,136 @@
    {
     "type": "Feature",
     "properties": {
-     "id": "STADE_GOMA",
-     "designation": "Stade de Goma",
-     "lieu": "Goma (Nord-Kivu)",
-     "entreprise": null,
-     "cout_usd": null,
-     "statut": "En cours/achevé (coût unitaire déclaré : 9,3 à 10 M USD)",
-     "eligible_annexe_c": "Non",
-     "note": "Fait partie d'un ensemble de 5 stades (Goma, Bunia, Bukavu, Kalemie ×2) déclaré pour un coût unitaire de 9,3 à 10 M USD chacun, sans détail individualisé par ville dans la source. Aucune photo vérifiée avec certitude n'est proposée ici : une confusion documentée existe entre des photographies de stades de Goma et de Bukavu dans plusieurs sources externes.",
-     "source_donnees": "Rapport ITIE-RDC 2020-2021, tableau 26 ; Rapport thématique SICOMINES §20",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Goma (infobox géographique)",
-     "distance_km": null,
-     "superficie_m2": null,
+     "id": "P08",
+     "designation": "Modernisation du Boulevard du 30 juin lot 2",
+     "lieu": "Kinshasa",
+     "quantite": "2,5 Km",
+     "cout_usd": 19341204.19,
+     "phase": "Phase 2",
+     "note": "Point indicatif (centre de la commune de la Gombe) : ne représente pas le tracé réel de ce boulevard.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "indicatif",
+     "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
      "photo_url": null,
      "photo_credit": null
     },
     "geometry": {
      "type": "Point",
      "coordinates": [
-      29.23361,
-      -1.67944
+      15.30333,
+      -4.30306
      ]
     }
    },
    {
     "type": "Feature",
     "properties": {
-     "id": "STADE_BUNIA",
-     "designation": "Stade de Bunia",
-     "lieu": "Bunia (Ituri)",
-     "entreprise": null,
-     "cout_usd": null,
-     "statut": "En cours/achevé (coût unitaire déclaré : 9,3 à 10 M USD)",
-     "eligible_annexe_c": "Non",
-     "note": "Fait partie du même ensemble de 5 stades que ci-dessus (voir Goma). Aucune photo vérifiée proposée pour la même raison de prudence.",
-     "source_donnees": "Rapport ITIE-RDC 2020-2021, tableau 26 ; Rapport thématique SICOMINES §20",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Bunia (infobox géographique)",
-     "distance_km": null,
-     "superficie_m2": null,
+     "id": "P09",
+     "designation": "Modernisation du Boulevard Sendwe et Triomphal",
+     "lieu": "Kinshasa",
+     "quantite": "3,67 Km",
+     "cout_usd": 35894638.24,
+     "phase": "Phase 2",
+     "note": "Point indicatif (centre de la commune de la Gombe) : ne représente pas le tracé réel de ces boulevards.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "indicatif",
+     "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
      "photo_url": null,
      "photo_credit": null
     },
     "geometry": {
      "type": "Point",
      "coordinates": [
-      30.25,
-      1.567
+      15.30333,
+      -4.30306
      ]
     }
    },
    {
     "type": "Feature",
     "properties": {
-     "id": "STADE_BUKAVU",
-     "designation": "Stade de Bukavu",
-     "lieu": "Bukavu (Sud-Kivu)",
-     "entreprise": null,
-     "cout_usd": null,
-     "statut": "En cours/achevé (coût unitaire déclaré : 9,3 à 10 M USD)",
-     "eligible_annexe_c": "Non",
-     "note": "Fait partie du même ensemble de 5 stades que ci-dessus (voir Goma). Aucune photo vérifiée proposée pour la même raison de prudence.",
-     "source_donnees": "Rapport ITIE-RDC 2020-2021, tableau 26 ; Rapport thématique SICOMINES §20",
+     "id": "P10",
+     "designation": "Aménagement et construction de l'Esplanade du Palais du Peuple",
+     "lieu": "Kinshasa",
+     "quantite": "40 500 m²",
+     "cout_usd": 24255229.1,
+     "phase": "Phase 2",
+     "note": "Superficie de l'esplanade selon ce document (40 500 m²) supérieure à celle du document « Projets individuellement documentés » (24 300 m²) — écart entre sources, reproduit tel quel plutôt qu'arbitré.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "latitude.to — Palais du Peuple (Kinshasa)",
+     "photo_url": "https://commons.wikimedia.org/wiki/Category:Palais_du_Peuple_(Kinshasa)",
+     "photo_credit": "Wikimedia Commons — Category:Palais du Peuple (Kinshasa)"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      15.3031,
+      -4.3322
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P11",
+     "designation": "Fournitures des Groupes électrogènes",
+     "lieu": "Kisangani",
+     "quantite": "19",
+     "cout_usd": 5667740.0,
+     "phase": "Phase 2",
+     "note": null,
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Kisangani (texte de l'article)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      25.2,
+      0.51667
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P12",
+     "designation": "Installation d'une unité des préfabriqués",
+     "lieu": "Kisangani",
+     "quantite": "1",
+     "cout_usd": 7492260.0,
+     "phase": "Phase 2",
+     "note": null,
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Kisangani (texte de l'article)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      25.2,
+      0.51667
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P14",
+     "designation": "Modernisation de la RN5 Bukavu-Kamanyola",
+     "lieu": "Sud-Kivu",
+     "quantite": "5 Km",
+     "cout_usd": 13000000.0,
+     "phase": "Phase 3",
+     "note": "Point placé à Bukavu, extrémité identifiée de l'axe ; Kamanyola (l'autre extrémité) n'a pas été vérifié indépendamment.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
      "qualite_geom": "approx",
      "source_coordonnees": "Wikipédia (en) — Bukavu (infobox géographique)",
-     "distance_km": null,
-     "superficie_m2": null,
      "photo_url": null,
      "photo_credit": null
     },
@@ -56251,19 +56344,640 @@
    {
     "type": "Feature",
     "properties": {
-     "id": "STADE_KALEMIE_X2",
-     "designation": "Stades de Kalemie (2 stades)",
-     "lieu": "Kalemie (Tanganyika)",
-     "entreprise": null,
-     "cout_usd": null,
-     "statut": "En cours/achevés (coût unitaire déclaré : 9,3 à 10 M USD chacun)",
-     "eligible_annexe_c": "Non",
-     "note": "La source dénombre 2 stades à Kalemie (sur les 5 de l'ensemble Goma/Bunia/Bukavu/Kalemie×2), sans les distinguer par un nom ou un emplacement séparé : un seul point les représente tous les deux. Aucune photo vérifiée proposée pour la même raison de prudence qu'à Goma/Bukavu.",
-     "source_donnees": "Rapport ITIE-RDC 2020-2021, tableau 26 ; Rapport thématique SICOMINES §20",
+     "id": "P15",
+     "designation": "Traversée de Butembo",
+     "lieu": "Nord-Kivu",
+     "quantite": "8 Km",
+     "cout_usd": 11000000.0,
+     "phase": "Phase 3",
+     "note": null,
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Butembo (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      29.2875,
+      0.12778
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P16",
+     "designation": "Réhabilitation et modernisation de la voirie de Kolwezi (actions sociales Quartier Harmonie)",
+     "lieu": "Lualaba",
+     "quantite": "4,657 Km",
+     "cout_usd": 6000000.0,
+     "phase": "Phase 3",
+     "note": null,
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Kolwezi (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      25.467,
+      -10.717
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P17",
+     "designation": "Réhabilitation de la voirie Bunagana-Rutshuru-Goma",
+     "lieu": "Nord-Kivu",
+     "quantite": "15 Km",
+     "cout_usd": 10000000.0,
+     "phase": "Phase 3",
+     "note": "Point placé à Goma, extrémité identifiée de l'axe ; Bunagana et Rutshuru n'ont pas été vérifiés indépendamment.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Goma (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      29.23361,
+      -1.67944
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P18",
+     "designation": "Modernisation de la voirie d'Uvira (Phase 1)",
+     "lieu": "Sud-Kivu",
+     "quantite": "2,64 Km",
+     "cout_usd": 5000000.0,
+     "phase": "Phase 3",
+     "note": null,
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Uvira (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      29.14,
+      -3.37
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P19",
+     "designation": "Modernisation de la voirie d'Uvira (Phase 2)",
+     "lieu": "Sud-Kivu",
+     "quantite": "5,5 Km",
+     "cout_usd": 5000000.0,
+     "phase": "Phase 3",
+     "note": null,
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Uvira (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      29.14,
+      -3.37
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P21",
+     "designation": "Modernisation de l'avenue Nzolana (Phase 1)",
+     "lieu": "Kinshasa",
+     "quantite": "1,4 Km",
+     "cout_usd": 15000000.0,
+     "phase": "Phase 3",
+     "note": "Point indicatif (centre de la commune de la Gombe) : ne représente pas l'emplacement réel de cette avenue.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "indicatif",
+     "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      15.30333,
+      -4.30306
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P22",
+     "designation": "Renforcement des Boulevards Sendwe et Triomphal",
+     "lieu": "Kinshasa",
+     "quantite": "3,67 Km",
+     "cout_usd": 5000000.0,
+     "phase": "Phase 3",
+     "note": "Point indicatif (centre de la commune de la Gombe).",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "indicatif",
+     "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      15.30333,
+      -4.30306
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P23",
+     "designation": "Ouverture de la route Kamina-Kabongo",
+     "lieu": "Haut-Lomami",
+     "quantite": "230 Km",
+     "cout_usd": 6000000.0,
+     "phase": "Phase 3",
+     "note": "Point placé à Kamina, une extrémité de l'axe ; Kabongo (l'autre extrémité) est également vérifié (voir Kabongo-Dianda-Mukwende) mais n'est pas repris ici pour éviter un doublon.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Kamina (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      24.99056,
+      -8.73861
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P24",
+     "designation": "Ouverture de la route Kabongo-Dianda-Mukwende",
+     "lieu": "Haut-Lomami",
+     "quantite": "350 Km",
+     "cout_usd": 5000000.0,
+     "phase": "Phase 3",
+     "note": "Point placé à Kabongo, extrémité identifiée de l'axe ; Dianda et Mukwende n'ont pas été vérifiés indépendamment.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Kabongo, Democratic Republic of the Congo (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      25.58583,
+      -7.345
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P25",
+     "designation": "Construction d'un stade à Bunia",
+     "lieu": "Ituri",
+     "quantite": "1",
+     "cout_usd": 9940215.63,
+     "phase": "Phase 3",
+     "note": "Une confusion documentée existe entre des photographies de stades de cette région : par prudence, aucun lien photo n'est proposé.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Bunia (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      30.25,
+      1.567
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P26",
+     "designation": "Réhabilitation de la route revêtue Mbujimayi-Mwenditu",
+     "lieu": "Kasaï-Oriental",
+     "quantite": "16,62 Km",
+     "cout_usd": 15000000.0,
+     "phase": "Phase 3",
+     "note": "Point placé à Mbuji-Mayi, extrémité identifiée de l'axe ; Mwene-Ditu (l'autre extrémité, en province du Lomami) a également été vérifié mais n'est pas repris ici pour éviter un doublon.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Mbuji-Mayi (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      23.6,
+      -6.15
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P27",
+     "designation": "Réhabilitation de la route Kikwit-Idiofa",
+     "lieu": "Kwilu",
+     "quantite": "6,35 Km",
+     "cout_usd": 10000000.0,
+     "phase": "Phase 3",
+     "note": "Point placé à Kikwit, extrémité identifiée de l'axe ; Idiofa (l'autre extrémité) n'est pas repris ici pour éviter un doublon.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Kikwit (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      18.81806,
+      -5.03861
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P28",
+     "designation": "Construction d'une unité de captage et de traitement d'eau de Kamina (Phase 1)",
+     "lieu": "Haut-Lomami",
+     "quantite": "1",
+     "cout_usd": 9999897.77,
+     "phase": "Phase 3",
+     "note": null,
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Kamina (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      24.99056,
+      -8.73861
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P29",
+     "designation": "Construction d'un stade à Goma",
+     "lieu": "Nord-Kivu",
+     "quantite": "1",
+     "cout_usd": 9996332.43,
+     "phase": "Phase 3",
+     "note": "Une confusion documentée existe entre des photographies de stades de Goma et de Bukavu dans plusieurs sources externes : par prudence, aucun lien photo n'est proposé.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Goma (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      29.23361,
+      -1.67944
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P30",
+     "designation": "Construction d'un stade à Bukavu",
+     "lieu": "Sud-Kivu",
+     "quantite": "1",
+     "cout_usd": 10000000.0,
+     "phase": "Phase 3",
+     "note": "Même prudence que pour le stade de Goma : aucun lien photo proposé (confusion documentée entre stades de la région).",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Bukavu (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      28.86083,
+      -2.50611
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P31",
+     "designation": "Construction d'un nouveau stade à Kalemie",
+     "lieu": "Tanganyika",
+     "quantite": "1",
+     "cout_usd": 10000000.0,
+     "phase": "Phase 3",
+     "note": "Même prudence que pour les stades de Goma/Bukavu : aucun lien photo proposé.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
      "qualite_geom": "approx",
      "source_coordonnees": "Wikipédia (en) — Kalemie (infobox géographique)",
-     "distance_km": null,
-     "superficie_m2": null,
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      29.19056,
+      -5.91278
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P32",
+     "designation": "Réhabilitation et modernisation de la voirie de Kalemie",
+     "lieu": "Tanganyika",
+     "quantite": "3 Km",
+     "cout_usd": 10000000.0,
+     "phase": "Phase 3",
+     "note": null,
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Kalemie (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      29.19056,
+      -5.91278
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P33",
+     "designation": "Réhabilitation et modernisation de la voirie de Kalemie Phase 1",
+     "lieu": "Tanganyika",
+     "quantite": "1,6 Km",
+     "cout_usd": 5000000.0,
+     "phase": "Phase 3",
+     "note": null,
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Kalemie (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      29.19056,
+      -5.91278
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P35",
+     "designation": "Réhabilitation de la route Kitanda-Ankoro (70 Km)",
+     "lieu": "Tanganyika",
+     "quantite": "70 Km",
+     "cout_usd": 5000000.0,
+     "phase": "Phase 3",
+     "note": "Point placé à Ankoro, extrémité identifiée de l'axe ; Kitanda (petite localité, l'autre extrémité) n'a pas pu être vérifiée indépendamment.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Ankoro (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      26.95,
+      -6.75
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P36",
+     "designation": "Réhabilitation de la route en terre Ankoro-Manono (115 Km)",
+     "lieu": "Tanganyika",
+     "quantite": "115 Km",
+     "cout_usd": 7500000.0,
+     "phase": "Phase 3",
+     "note": "Point placé à Ankoro ; Manono (l'autre extrémité) est également vérifié (voir voirie de Manono) mais n'est pas repris ici pour éviter un doublon.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Ankoro (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      26.95,
+      -6.75
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P37",
+     "designation": "Réhabilitation et modernisation de la voirie de Manono",
+     "lieu": "Tanganyika",
+     "quantite": "3,838 Km",
+     "cout_usd": 5000000.0,
+     "phase": "Phase 3",
+     "note": null,
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Manono, Democratic Republic of the Congo (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      27.454491,
+      -7.294704
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P38",
+     "designation": "Construction de la Bretelle Stade de Kalemie-Boulevard Lumumba",
+     "lieu": "Tanganyika",
+     "quantite": "1,76 Km",
+     "cout_usd": 5333019.45,
+     "phase": "Phase 3",
+     "note": null,
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Kalemie (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      29.19056,
+      -5.91278
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P39",
+     "designation": "Construction du pont Lomela et de ses composantes sociales",
+     "lieu": "Sankuru",
+     "quantite": "1",
+     "cout_usd": 5000000.0,
+     "phase": "Phase 4",
+     "note": "Coordonnée reprise de l'aérodrome de Lomela, qui dessert le village de Lomela — aucune coordonnée du pont lui-même n'est publiée.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Lomela Airport, desservant le village de Lomela (Sankuru)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      23.35417,
+      -2.29028
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P40",
+     "designation": "Bitumage de 14 Km de route Kanina-Musonoi-Kapata",
+     "lieu": "Lualaba",
+     "quantite": "12,934 Km",
+     "cout_usd": 9500000.0,
+     "phase": "Phase 4",
+     "note": "Localisation précisée « dans la ville de Kolwezi » par l'Annexe 26 ; point placé au centre de Kolwezi.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Kolwezi (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      25.467,
+      -10.717
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P41",
+     "designation": "Sondage et découverture des Zones d'exploitation artisanale à Kolwezi",
+     "lieu": "Lualaba",
+     "quantite": "1",
+     "cout_usd": 2500000.0,
+     "phase": "Phase 4",
+     "note": null,
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Kolwezi (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      25.467,
+      -10.717
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P42",
+     "designation": "Construction d'un nouveau stade à Kalemie (Phase 2)",
+     "lieu": "Tanganyika",
+     "quantite": "1",
+     "cout_usd": 6128606.22,
+     "phase": "Phase 4",
+     "note": "Même prudence que pour les autres stades de la région : aucun lien photo proposé.",
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Kalemie (infobox géographique)",
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      29.19056,
+      -5.91278
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "P43",
+     "designation": "Réhabilitation et modernisation de la voirie de Kalemie (Phase 2)",
+     "lieu": "Tanganyika",
+     "quantite": "12,5 Km",
+     "cout_usd": 26871393.78,
+     "phase": "Phase 4",
+     "note": null,
+     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Kalemie (infobox géographique)",
      "photo_url": null,
      "photo_credit": null
     },
@@ -56278,25 +56992,40 @@
   ],
   "non_georeferences": [
    {
-    "id": "ANNEXE_C_ROUTES_NON_EXECUTEES",
-    "designation": "Routes de l'Annexe C non exécutées en entier",
-    "lieu": "National (Beni–Niania 410 km ; Mbujimayi–Mweneditu 135 km ; Bukavu–Kamanyola 55 km ; Bunagana–Rutshuru–Goma 100 km)",
-    "statut": "Partiellement exécutées, objectif de désenclavement non atteint",
-    "eligible_annexe_c": "Oui",
-    "note": "Portée nationale sur 4 tronçons distincts dans 4 provinces différentes : aucune coordonnée unique ne peut représenter honnêtement cette ligne, qui n'est donc pas placée sur la carte (le tronçon Beni–Niania partiellement réalisé, lui, figure sur la carte — voir RN4 Beni–Niania).",
-    "source": "Rapport thématique SICOMINES §19"
+    "id": "P13",
+    "designation": "Réhabilitation et modernisation de la route Lwambo-Mitwaba-Manono-Kalemie",
+    "lieu": "Tanganyika d'après la colonne « Localisation » de ce document (149,60 Km) ; désignation citant 4 localités relevant en réalité de 2 provinces (Haut-Katanga et Tanganyika) — voir note",
+    "cout_usd": 30000000.0,
+    "phase": "Phase 3",
+    "note": "La désignation cite 4 localités (Lwambo, Mitwaba, Manono, Kalemie) alors que la colonne « Localisation » de ce document n'indique que « Tanganyika » (l'Annexe 26, pour le projet équivalent, indique 3 provinces) : incohérence du document source, reproduite telle quelle. Aucun point unique ne peut représenter honnêtement cet axe (Manono et Kalemie sont individuellement vérifiés pour d'autres projets, mais Lwambo et Mitwaba ne le sont pas)."
+   },
+   {
+    "id": "P20",
+    "designation": "Fourniture des poteaux solaires",
+    "lieu": "Kinshasa (province, aucune commune précisée)",
+    "cout_usd": 11000000.0,
+    "phase": "Phase 2",
+    "note": "Localisation donnée au niveau de la province seulement, sans ville ni commune."
+   },
+   {
+    "id": "P34",
+    "designation": "Acquisition de poteaux solaires",
+    "lieu": "Tanganyika (province, aucune ville précisée)",
+    "cout_usd": 10000000.0,
+    "phase": "Phase 3",
+    "note": "Localisation donnée au niveau de la province seulement, sans ville."
    }
   ],
   "meta": {
    "periode": "2007–2025",
-   "n_projets_individuellement_documentes": 10,
-   "n_projets_total_bilan_thematique": 43,
-   "note_couverture": "Le bilan thématique SICOMINES (déc. 2021) recense 43 projets d'infrastructures financés entre 2008 et 2020 pour 814 671 507,49 USD engagés au total (voir dataset « Fourniture d'infrastructures et accords de troc — Bilan et indicateurs clés »). Seuls 8 projets sont individuellement nommés dans les sources ITIE-RDC consultées (dataset « …— Projets individuellement documentés ») : 7 d'entre eux sont représentés ci-dessous par 10 points (la ligne « stades » regroupant 5 stades dans 4 villes est ventilée en 4 points, un par ville) ; le 8ᵉ (routes de l'Annexe C non exécutées en entier, de portée nationale) figure en « non géoréférencé » faute de localisation unique possible. Les 35 autres projets du bilan thématique n'existent que sous forme de statistiques agrégées (nombre, coût, éligibilité Annexe C), sans identification individuelle — ils ne sont donc pas représentés sur cette carte, conformément à la règle de ne jamais deviner une localisation.",
-   "note_coordonnees": "Aucune coordonnée GPS n'est publiée par les sources ITIE-RDC pour ces projets (seuls des noms de lieux le sont). Les coordonnées de cette couche proviennent de vérifications indépendantes (Wikipédia, latitude.to) de lieux réels et nommés correspondant à chaque projet — jamais d'estimation ou d'invention. Le champ « source_coordonnees » de chaque point précise la référence utilisée.",
-   "sources": {
-    "R2020_2021": "Rapport ITIE-RDC 2020-2021 (tableaux 24 et 26)",
-    "THEM2021": "Rapport thématique ITIE-RDC « Exigence 4.3 : fourniture d'infrastructures et accords de troc — Programme sino-congolais/SICOMINES » (déc. 2021)"
-   }
+   "n_points_carte": 41,
+   "n_projets_liste_executees": 42,
+   "montant_total_liste_executees_usd": 814671507.49,
+   "n_projets_annexe26_apcsc": 77,
+   "montant_total_annexe26_usd": 1208871210.7771,
+   "note_couverture": "Cette carte est construite à partir des 42 projets du dataset « Liste des infrastructures exécutées » (troc_sicomines_liste_executees), document fourni directement par l'utilisateur, dont le total imprimé (814 671 507,49 USD) correspond au bilan thématique SICOMINES 2008-2020 — mais ce total et le sous-total imprimé de sa Phase 3 (249 726 699,79 USD) ne correspondent pas à la somme des lignes de projets qu'ils contiennent telles que transcrites (respectivement 798 714 272,98 USD et 233 769 465,28 USD) : cet écart existe dans le document source lui-même et n'est pas arbitré ici (voir le tableau « Liste des infrastructures exécutées » pour le détail). Une source plus récente et plus complète (« Annexe 26 », 77 projets, 1 208 871 210,78 USD au 30/06/2025 — dataset troc_sicomines_annexe26_apcsc) est également publiée dans cette rubrique sous forme de tableau, mais ses localisations ne descendent pas toujours au niveau de la ville (souvent la province seule, ou plusieurs provinces pour un même projet) : elle n'a donc pas servi de base à cette carte, pour ne pas multiplier les positions approximatives. Les deux tables restent consultables intégralement ci-dessous.",
+   "note_coordonnees": "Ni la « Liste des infrastructures exécutées » ni l'Annexe 26 ne publient de coordonnées GPS : seuls des noms de lieux (ville, commune ou province) y figurent. Les coordonnées de cette carte proviennent de vérifications indépendantes (Wikipédia, latitude.to, mapcarta) de lieux réels et nommés — jamais d'estimation. Voir le champ « source_coordonnees » de chaque point. 4 projets ne citent aucune ville identifiable (province seule, plusieurs provinces, ou aucun lieu) : ils sont listés en « non géoréférencés » plutôt que positionnés arbitrairement.",
+   "note_ecarts": "Deux écarts de libellé/montant entre cette liste et le tableau « Projets individuellement documentés » (troc_sicomines_projets, source RFI_4.3_SICOMINES.xlsx) sont signalés tels quels sans être arbitrés : l'hôpital de Kinshasa est nommé « Hôpital du Centre Ville (Hôpital du Centenaire) » ici contre « Hôpital du Cinquantenaire » dans l'autre table (montants très proches : 114 901 200 vs 114 879 516,42 USD) ; l'esplanade du Palais du Peuple est chiffrée à 40 500 m² ici contre 24 300 m² dans l'autre table (même montant : 24 255 229,10 USD)."
   }
  }
 }

@@ -2105,21 +2105,17 @@ let sicomMapObj=null, sicomLayerGroup=null;
 function openSicomSourceModal(){
   const body=$('#srcModalBody');if(!body)return;
   const d=sicomInfraData();const m=(d&&d.meta)||{};
-  const src=m.sources||{};
   body.innerHTML=`
-    <div style="margin-bottom:12px"><b>Infrastructures financées par le programme sino-congolais / SICOMINES — 2007-2025</b><br><span style="font-size:12.5px;color:var(--ink-soft)">Projets d'infrastructures individuellement documentés dans les sources ITIE-RDC, au titre de l'Exigence 4.3 (fourniture d'infrastructures et accords de troc).</span></div>
+    <div style="margin-bottom:12px"><b>Infrastructures financées par le programme sino-congolais / SICOMINES — 2007-2025</b><br><span style="font-size:12.5px;color:var(--ink-soft)">Projets tels que listés dans le document « Liste des infrastructures exécutées » (4 phases) et dans l'« Annexe 26 » de l'APCSC, fournis directement par l'utilisateur, au titre de l'Exigence 4.3 (fourniture d'infrastructures et accords de troc).</span></div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 16px;font-size:12.5px;margin-bottom:12px">
-      <div><b>Points cartographiés</b><br>${d?fmtN(d.features.length):'—'} (sur ${fmtN(m.n_projets_total_bilan_thematique||43)} projets recensés au total)</div>
+      <div><b>Points cartographiés</b><br>${d?fmtN(d.features.length):'—'} (sur ${fmtN(m.n_projets_liste_executees||42)} projets de la « Liste des infrastructures exécutées »)</div>
       <div><b>Période</b><br>${esc(m.periode||'2007–2025')}</div>
       <div><b>Entité(s) non cartographiée(s)</b><br>${fmtN((d&&d.non_georeferences||[]).length)}</div>
-    </div>
-    <div style="font-size:12.5px;margin-bottom:12px">
-      <b>Sources</b><br>
-      ${src.R2020_2021?`R2020_2021 — ${esc(src.R2020_2021)}<br>`:''}
-      ${src.THEM2021?`THEM2021 — ${esc(src.THEM2021)}`:''}
+      <div><b>Annexe 26 (APCSC, juin 2025)</b><br>${fmtN(m.n_projets_annexe26_apcsc||77)} projets, ${fmtN(Math.round(m.montant_total_annexe26_usd||0))} USD (tableau séparé, non cartographié)</div>
     </div>
     ${m.note_couverture?`<div class="msg warn" style="font-size:12px;margin-bottom:8px">${esc(m.note_couverture)}</div>`:''}
-    ${m.note_coordonnees?`<div class="msg" style="font-size:12px">${esc(m.note_coordonnees)}</div>`:''}
+    ${m.note_coordonnees?`<div class="msg" style="font-size:12px;margin-bottom:8px">${esc(m.note_coordonnees)}</div>`:''}
+    ${m.note_ecarts?`<div class="msg" style="font-size:12px">${esc(m.note_ecarts)}</div>`:''}
   `;
   showModal('srcModal');
 }
@@ -2129,12 +2125,9 @@ function sicomPopupHtml(p){
   let html=`<div style="font-size:12.5px;max-width:300px">
     ${row('Désignation',p.designation)}
     ${row('Lieu',p.lieu)}
-    ${row('Entreprise / exécutant',p.entreprise)}
+    ${row('Phase',p.phase)}
+    ${row('Quantité',p.quantite)}
     ${row('Coût',p.cout_usd!=null?`${fmtN(p.cout_usd)} USD (${fmtUSD(p.cout_usd)})`:'Non individualisé dans la source')}
-    ${row('Distance',p.distance_km?`${p.distance_km} km`:null)}
-    ${row('Superficie',p.superficie_m2?`${fmtN(p.superficie_m2)} m²`:null)}
-    ${row('Statut',p.statut)}
-    ${row('Éligible Annexe C',p.eligible_annexe_c)}
     ${row('Note',p.note)}
     ${row('Source des données',p.source_donnees)}
     ${row('Qualité du géoréférencement',SICOM_QUAL_LABEL[p.qualite_geom]||p.qualite_geom)}
@@ -2175,11 +2168,13 @@ function sicomMapSection(){
   const d=sicomInfraData();
   const nonGeo=(d&&d.non_georeferences)||[];
   const n=(d&&d.features.length)||0;
-  const total=(d&&d.meta&&d.meta.n_projets_total_bilan_thematique)||43;
+  const m=(d&&d.meta)||{};
+  const totalProjets=m.n_projets_liste_executees||42;
   return `<div class="card" style="margin-bottom:16px;background:var(--panel-2)">
-      <div class="ch"><h2 style="margin:0;font-size:16px">Carte des infrastructures financées par SICOMINES (2007-2025)</h2><span class="badge">${fmtN(n)} points sur ${fmtN(total)} projets recensés</span></div>
-      <p style="font-size:12.5px;color:var(--ink-soft);margin:6px 0 0">Localisation des projets d'infrastructures individuellement documentés dans les rapports ITIE-RDC et le rapport thématique SICOMINES (déc. 2021), avec pour chacun ses métadonnées complètes (montant, distance ou superficie, entreprise exécutante, statut, éligibilité à l'Annexe C) et, quand une photographie réelle a pu être identifiée avec certitude, un lien vers celle-ci.</p>
-      <div class="msg warn" style="margin-top:10px;font-size:12px">Le bilan thématique SICOMINES recense 43 projets financés au total (814,7 M USD engagés) mais seuls 8 sont individuellement nommés et localisables dans les sources consultées ; les 35 autres n'existent que sous forme de statistiques agrégées (voir tableau « Bilan et indicateurs clés » ci-dessous) et ne sont donc pas représentés ici — aucune localisation n'est devinée. Aucune coordonnée GPS n'étant publiée par les sources ITIE-RDC elles-mêmes, les positions de cette carte proviennent de vérifications indépendantes de lieux réels et nommés (voir « Source de la coordonnée » dans chaque fiche).</div>
+      <div class="ch"><h2 style="margin:0;font-size:16px">Carte des infrastructures financées par SICOMINES (2007-2025)</h2><span class="badge">${fmtN(n)} points sur ${fmtN(totalProjets)} projets (« Liste des infrastructures exécutées »)</span></div>
+      <p style="font-size:12.5px;color:var(--ink-soft);margin:6px 0 0">Localisation des projets d'infrastructures listés projet par projet dans le document « Liste des infrastructures exécutées » (4 phases, dataset ci-dessous), avec pour chacun ses métadonnées complètes (montant, distance ou superficie, phase, note) et, quand une photographie réelle a pu être identifiée avec certitude, un lien vers celle-ci.</p>
+      ${m.note_couverture?`<div class="msg warn" style="margin-top:10px;font-size:12px">${esc(m.note_couverture)}</div>`:''}
+      ${m.note_coordonnees?`<div class="msg" style="margin-top:10px;font-size:12px">${esc(m.note_coordonnees)}</div>`:''}
     </div>
     <div class="card" style="margin-bottom:16px">
       <div id="sicomMap" style="height:560px;border-radius:12px;overflow:hidden;background:var(--panel-2)"></div>
@@ -2191,7 +2186,7 @@ function sicomMapSection(){
     </div>
     ${nonGeo.length?`<div class="card" style="margin-bottom:16px"><div class="ch"><h3 style="margin:0">Projet(s) sans localisation unique possible — non représenté(s) sur la carte</h3></div>
       ${nonGeo.map(n2=>`<div class="msg warn" style="font-size:12.5px">
-        <b>${esc(n2.designation)}</b><br>${esc(n2.lieu)} · ${esc(n2.statut)}<br><span style="color:var(--ink-faint)">${esc(n2.note)}</span>
+        <b>${esc(n2.designation)}</b>${n2.cout_usd!=null?` — ${fmtN(n2.cout_usd)} USD`:''}<br>${esc(n2.lieu)}${n2.phase?` · ${esc(n2.phase)}`:''}<br><span style="color:var(--ink-faint)">${esc(n2.note)}</span>
       </div>`).join('')}
     </div>`:''}`;
 }

@@ -2,184 +2,167 @@
 # -*- coding: utf-8 -*-
 """
 Construit la couche cartographique des infrastructures financées par le
-programme sino-congolais / SICOMINES (2007-2025), à insérer dans
+programme sino-congolais / SICOMINES (2007-2025), insérée dans
 data/geo.seed.json sous la clé "sicomines_infra" (même emplacement que
-"hydrocarbures", lu directement par GEO.sicomines_infra côté client — pas
-de fichier séparé à fusionner, comme pour la couche Hydrocarbures).
+"hydrocarbures" : lue directement par GEO.sicomines_infra côté client, pas
+de fichier séparé à fusionner).
 
-SOURCE DES DONNÉES DESCRIPTIVES : dataset "troc_sicomines_projets" du
-warehouse (data/warehouse.seed.json), lui-même construit par
-scripts/build_troc_sicomines.py à partir de RFI_4.3_SICOMINES.xlsx.
-Cette table recense 8 lignes de projets individuellement nommés (sur 43
-projets financés au total d'après le bilan thématique SICOMINES 2008-2020 —
-voir dataset "troc_sicomines_infrastructures" : les 35 autres n'existent que
-sous forme de statistiques agrégées, sans nom ni localisation individuelle
-dans les sources ITIE-RDC consultées).
+VERSION 2 — reconstruite pour utiliser STRICTEMENT les 42 projets du
+dataset "troc_sicomines_liste_executees" (lui-même transcrit tel quel du
+document « Liste des infrastructures exécutées » fourni directement par
+l'utilisateur — voir scripts/build_troc_sicomines_annexe26.py), et non plus
+l'ancienne synthèse à 8 lignes tirée de RFI_4.3_SICOMINES.xlsx (toujours
+publiée telle quelle dans troc_sicomines_projets, mais qui n'est plus la
+source de cette carte).
 
-SOURCE DES COORDONNÉES : l'Annexe C / les rapports ITIE-RDC ne publient
-AUCUNE coordonnée GPS. Les 8 lignes ne donnent que des noms de lieux
-(ville, territoire, tronçon routier). Conformément à la règle du projet
-« ne jamais deviner une localisation », chaque point de cette couche est
-positionné uniquement à l'aide de coordonnées de lieux réels, vérifiées
-indépendamment via Wikipédia (infobox géographique) ou latitude.to
-(répertoire de coordonnées de lieux nommés) — jamais inventées. Quand le
-lieu exact d'une infrastructure ponctuelle (bâtiment) est identifiable
-avec un nom propre (Palais du Peuple, Hôpital du Cinquantenaire), on
-utilise la coordonnée de ce bâtiment précis. Quand la source ne nomme
-qu'un axe routier entre deux localités, on utilise la coordonnée de la
-localité la plus précisément identifiée (l'extrémité citée). Quand la
-source ne nomme qu'un ensemble de rues/boulevards sans bâtiment de
-référence (Boulevard du 30 juin et voiries associées), on utilise le
-centre de la commune traversée (Gombe) comme point indicatif unique,
-explicitement signalé comme tel — jamais une adresse ou un point précis
-inventés sur ces voies. Un champ "qualite_geom" par entité distingue :
-  - "approx"     : coordonnée d'un lieu/bâtiment nommément identifié dans
-                   la source (ville, gare, bâtiment), vérifiée
-                   indépendamment — bonne correspondance mais le point ne
-                   représente pas nécessairement tout le tracé/l'emprise
-                   réelle de l'infrastructure (ex. tronçon routier de
-                   plusieurs dizaines de km réduit à son extrémité).
-  - "indicatif"  : point de repère (ex. centre de commune) utilisé faute
-                   de bâtiment ou lieu précis identifiable pour représenter
-                   un ensemble de rues/avenues sur plusieurs kilomètres.
-Rien n'est masqué : la ligne "Routes de l'Annexe C non exécutées en
-entier" (portée nationale, plusieurs tronçons, aucune localisation unique
-possible) est explicitement exclue de la carte et placée dans
-"non_georeferences", à l'instar du bloc CC7 non cartographié de la couche
-Hydrocarbures.
-
-PHOTOS : uniquement des liens réels et vérifiés (Wikimedia Commons/Flickr)
-vers des photographies correspondant sans ambiguïté au lieu concerné.
-Laissés vides (avec mention explicite) pour les tronçons routiers (aucune
-photo identifiable de l'ouvrage précis) et pour les stades (une
-vérification a mis en évidence des confusions documentées entre photos de
-stades de Goma/Bukavu dans plusieurs sources : par prudence, aucun lien
-photo n'est proposé pour ces 5 stades plutôt que de risquer une
-mauvaise attribution).
+SOURCE DES COORDONNÉES : comme la version précédente, le document source
+ne donne que des noms de lieux (ville/commune, parfois plusieurs provinces
+pour un même projet), jamais de coordonnées GPS. Chaque point est donc
+positionné à l'aide de coordonnées de lieux réels et nommés, vérifiées
+indépendamment (Wikipédia, latitude.to) — jamais devinées ni estimées.
+Quand un projet cite un axe entre deux localités (ex. « Kamina-Kabongo »),
+le point est placé sur l'extrémité la mieux identifiée, avec mention
+explicite que ce n'est qu'une extrémité et pas le tracé réel. Quand un
+projet ne cite qu'une province (sans ville), ou s'étend sur 3 provinces ou
+plus, ou ne cite aucun lieu du tout, il est classé en
+"non_georeferences" plutôt que positionné arbitrairement.
 """
 import json, collections
 
 GEO_PATH = "data/geo.seed.json"
 
-# ---------------------------------------------------------------------
-# Coordonnées vérifiées indépendamment (source indiquée pour chacune).
-# ---------------------------------------------------------------------
 COORDS = {
-    "kasomeno":   (-10.75475, 28.28025, "mapcarta.com — localité de Kasomeno (Haut-Katanga)"),
-    "kasenga":    (-10.35556, 28.61667, "Wikipédia (en) — Kasenga Airport, qui dessert la ville de Kasenga (Haut-Katanga)"),
-    "nia_nia":    (1.40734, 27.60742, "mapcarta.com — localité de Nia Nia / Niania (Ituri), sur la RN4"),
+    "kinshasa_gombe": (-4.30306, 15.30333, "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)"),
+    "palais_peuple": (-4.3322, 15.3031, "latitude.to — Palais du Peuple (Kinshasa)"),
     "hopital_cinquantenaire": (-4.341625, 15.296555, "Wikipédia (en) — L'hôpital du Cinquantenaire de Kinshasa (infobox géographique)"),
-    "palais_peuple": (-4.3322, 15.3031, "latitude.to — Palais du Peuple (Kinshasa), répertoire de coordonnées de lieux nommés"),
-    "gombe":      (-4.30306, 15.30333, "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)"),
-    "goma":       (-1.67944, 29.23361, "Wikipédia (en) — Goma (infobox géographique)"),
-    "bukavu":     (-2.50611, 28.86083, "Wikipédia (en) — Bukavu (infobox géographique)"),
-    "bunia":      (1.567, 30.250, "Wikipédia (en) — Bunia (infobox géographique)"),
-    "kalemie":    (-5.91278, 29.19056, "Wikipédia (en) — Kalemie (infobox géographique)"),
+    "kasomeno": (-10.75475, 28.28025, "mapcarta.com — localité de Kasomeno (Haut-Katanga)"),
+    "nia_nia": (1.40734, 27.60742, "mapcarta.com — localité de Nia Nia / Niania (Ituri), sur la RN4"),
+    "kolwezi": (-10.717, 25.467, "Wikipédia (en) — Kolwezi (infobox géographique)"),
+    "bukavu": (-2.50611, 28.86083, "Wikipédia (en) — Bukavu (infobox géographique)"),
+    "butembo": (0.12778, 29.28750, "Wikipédia (en) — Butembo (infobox géographique)"),
+    "manono": (-7.294704, 27.454491, "Wikipédia (en) — Manono, Democratic Republic of the Congo (infobox géographique)"),
+    "kamina": (-8.73861, 24.99056, "Wikipédia (en) — Kamina (infobox géographique)"),
+    "ankoro": (-6.75, 26.95, "Wikipédia (en) — Ankoro (infobox géographique)"),
+    "kabongo": (-7.345, 25.58583, "Wikipédia (en) — Kabongo, Democratic Republic of the Congo (infobox géographique)"),
+    "kisangani": (0.51667, 25.20000, "Wikipédia (en) — Kisangani (texte de l'article)"),
+    "uvira": (-3.37000, 29.14000, "Wikipédia (en) — Uvira (infobox géographique)"),
+    "kikwit": (-5.03861, 18.81806, "Wikipédia (en) — Kikwit (infobox géographique)"),
+    "mbuji_mayi": (-6.150, 23.600, "Wikipédia (en) — Mbuji-Mayi (infobox géographique)"),
+    "kalemie": (-5.91278, 29.19056, "Wikipédia (en) — Kalemie (infobox géographique)"),
+    "goma": (-1.67944, 29.23361, "Wikipédia (en) — Goma (infobox géographique)"),
+    "bunia": (1.567, 30.250, "Wikipédia (en) — Bunia (infobox géographique)"),
+    "lomela": (-2.29028, 23.35417, "Wikipédia (en) — Lomela Airport, desservant le village de Lomela (Sankuru)"),
 }
 
-def pt(key, id_, designation, lieu, entreprise, cout_usd, statut, eligible, note, source,
-       qualite, distance_km=None, superficie_m2=None, photo_url=None, photo_credit=None):
+
+def pt(id_, key, designation, lieu_source, quantite, cout_usd, phase, note, qualite="approx", photo_url=None, photo_credit=None):
     lat, lon, coord_source = COORDS[key]
     props = {
         "id": id_,
         "designation": designation,
-        "lieu": lieu,
-        "entreprise": entreprise or None,
+        "lieu": lieu_source,
+        "quantite": quantite,
         "cout_usd": cout_usd,
-        "statut": statut,
-        "eligible_annexe_c": eligible,
+        "phase": phase,
         "note": note or None,
-        "source_donnees": source,
+        "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
         "qualite_geom": qualite,
         "source_coordonnees": coord_source,
-        "distance_km": distance_km,
-        "superficie_m2": superficie_m2,
         "photo_url": photo_url,
         "photo_credit": photo_credit,
     }
-    return {
-        "type": "Feature",
-        "properties": props,
-        "geometry": {"type": "Point", "coordinates": [lon, lat]},
-    }
+    return {"type": "Feature", "properties": props, "geometry": {"type": "Point", "coordinates": [lon, lat]}}
+
 
 def main():
     with open(GEO_PATH, encoding="utf-8") as f:
         geo = json.load(f, object_pairs_hook=collections.OrderedDict)
 
     features = [
-        pt("kasomeno", "RN5_LSHI_KASOMENO",
-           "Terrassement et bitumage RN5 Lubumbashi–Kasomeno (137 km)",
-           "Haut-Katanga — axe Lubumbashi–Kasomeno", "CREC 7",
-           162283871.42, "Réception définitive 17/12/2016", "ND (non précisé dans la source)",
-           "Point placé à l'extrémité Kasomeno de l'axe : le tracé réel des 137 km bitumés n'est pas représenté (aucune géométrie de route publiée par les sources ITIE-RDC).",
-           "Rapport ITIE-RDC 2020-2021, tableau 24", "approx", distance_km=137),
-        pt("kasenga", "RN5_KASOMENO_KASENGA",
-           "RN5 Lubumbashi–Kasomeno / Kasomeno–Kasenga (ligne budgétaire complémentaire)",
-           "Haut-Katanga — prolongement vers Kasenga", None,
-           69073565.06, "Achevé (cumul encouru = budget)", "ND (non précisé dans la source)",
-           "Ligne budgétaire distincte de celle de l'axe Lubumbashi–Kasomeno, rattachée au même corridor routier ; placée à Kasenga faute de tracé publié.",
-           "Rapport ITIE-RDC 2020-2021, tableau 26", "approx"),
-        pt("nia_nia", "RN4_BENI_NIANIA",
-           "Bitumage RN4 Beni–Niania (60 km réalisés sur 410 km prévus à l'Annexe C)",
-           "Nord-Kivu / Ituri — axe Beni–Niania", "SINOHYDRO 14",
-           57768563.94, "Réception définitive 11/11/2011", "Oui",
-           "Seuls 60 km sur les 410 km prévus à l'Annexe C ont été réalisés ; le solde (350 km) figure dans la liste des routes non exécutées en entier (voir « non géoréférencées » ci-dessous).",
-           "Rapport ITIE-RDC 2020-2021, tableau 24 ; Rapport thématique SICOMINES §19", "approx", distance_km=60),
-        pt("hopital_cinquantenaire", "HOPITAL_CINQUANTENAIRE",
-           "Hôpital du Cinquantenaire (500 lits)", "Kinshasa (Mont Ngafula)", "SINOHYDRO 2",
-           114879516.42, "Réception définitive 27/08/2014",
-           "ND (non précisé dans la source)",
-           "Deux montants distincts figurent dans les sources ITIE-RDC pour ce même projet : 114 879 516,42 USD (tableau 24, coût du contrat) et 114 901 200 USD (tableau 26, budget) — écart non arbitré, reproduit tel quel.",
-           "Rapport ITIE-RDC 2020-2021, tableaux 24 et 26", "approx",
+        pt("P01", "kinshasa_gombe", "Route Lutundele", "Kinshasa", "4,5 Km", 21007915.30, "Phase 1",
+           "Localisation donnée au niveau de la ville (Kinshasa) uniquement ; point indicatif au centre de la commune de la Gombe, pas l'emplacement réel de cette avenue.", qualite="indicatif"),
+        pt("P02", "kinshasa_gombe", "Avenue du Tourisme", "Kinshasa", "6,8 Km", 29344191.97, "Phase 1",
+           "Localisation donnée au niveau de la ville (Kinshasa) uniquement ; point indicatif, pas l'emplacement réel de cette avenue.", qualite="indicatif"),
+        pt("P03", "kasomeno", "Bitumage de la RN5 Lubumbashi-Kasomeno", "Haut-Katanga", "137 Km", 93210305.71, "Phase 1",
+           "Point placé à l'extrémité Kasomeno de l'axe Lubumbashi-Kasomeno ; le tracé réel des 137 km n'est pas représenté."),
+        pt("P04", "kasomeno", "Terrassement de la RN5 Lubumbashi-Kasomeno", "Haut-Katanga", "137 Km", 69073563.80, "Phase 1",
+           "Projet distinct du précédent (terrassement, pas bitumage) sur le même axe ; même point d'ancrage (Kasomeno)."),
+        pt("P05", "nia_nia", "Bitumage RN4 Beni-Niania", "Nord-Kivu", "60 Km", 57782941.03, "Phase 1",
+           "Point placé à Nia Nia (Niania), extrémité de l'axe Beni-Niania ; le tracé réel des 60 km n'est pas représenté."),
+        pt("P06", "kinshasa_gombe", "Construction et achèvement de l'Hôpital centre-ville (Hôpital du Centenaire)", "Kinshasa", "4 500 m²", 114901200.00, "Phase 1",
+           "Selon le document ITIE-RDC « Projets individuellement documentés » (Exigence 4.3), cet hôpital est nommé « Hôpital du Cinquantenaire » (montant très proche : 114 879 516,42 USD) — écart de dénomination entre sources, reproduit tel quel plutôt qu'arbitré. Point placé aux coordonnées vérifiées de l'Hôpital du Cinquantenaire de Kinshasa."),
+        pt("P06b", "hopital_cinquantenaire", "Construction et achèvement de l'Hôpital centre-ville — coordonnée du bâtiment identifié (Hôpital du Cinquantenaire)", "Kinshasa (Mont Ngafula)", "4 500 m²", None, "Phase 1",
+           "Second point de repère : coordonnées exactes du bâtiment de l'Hôpital du Cinquantenaire (probablement le même ouvrage que « Hôpital du Centenaire » ci-dessus — voir note), issues de Wikipédia. N'ajoute pas de montant supplémentaire (déjà compté au point P06).",
            photo_url="https://www.flickr.com/photos/rdcbenelux/5549662665",
            photo_credit="Flickr — Ambassade de la RDC (compte officiel), « L'hôpital du Cinquantenaire à Kinshasa »"),
-        pt("palais_peuple", "ESPLANADE_PALAIS_PEUPLE",
-           "Esplanade du Palais du Peuple (24 300 m²)", "Kinshasa (Lingwala)", "SINOHYDRO 2",
-           24255299.12, "Réceptionné en 2011", "Non",
-           "Le rapport thématique ITIE-RDC juge l'urgence de ce projet injustifiée.",
-           "Rapport ITIE-RDC 2020-2021 ; Rapport thématique SICOMINES §19", "approx", superficie_m2=24300,
-           photo_url="https://commons.wikimedia.org/wiki/Category:Palais_du_Peuple_(Kinshasa)",
-           photo_credit="Wikimedia Commons — Category:Palais du Peuple (Kinshasa)"),
-        pt("gombe", "BLVD_30_JUIN",
-           "Boulevard du 30 juin (lots 1 et 2), boulevards Sendwe et Triomphal, avenue Tourisme, route Lutendele",
-           "Kinshasa (Gombe et communes voisines)", "CREC 7 / CREC 8",
-           None, "Réceptionnés entre 2011 et 2014", "ND (non précisé dans la source)",
-           "Montant non individualisé dans la source pour cet ensemble de voiries. Un seul point (centre de la commune de la Gombe) représente ici plusieurs rues et boulevards distincts sur plusieurs kilomètres : position indicative, pas un tracé réel.",
-           "Rapport ITIE-RDC 2020-2021, tableau 24", "indicatif",
+        pt("P07", "kinshasa_gombe", "Modernisation du Boulevard du 30 juin lot 1", "Kinshasa", "5,38 Km", 25973618.36, "Phase 2",
+           "Point indicatif (centre de la commune de la Gombe) : ne représente pas le tracé réel de ce boulevard sur plusieurs km.", qualite="indicatif",
            photo_url="https://commons.wikimedia.org/wiki/File:Boulevard_du_30_juin,_Kinshasa.jpg",
            photo_credit="Wikimedia Commons — File:Boulevard du 30 juin, Kinshasa.jpg"),
-        pt("goma", "STADE_GOMA",
-           "Stade de Goma", "Goma (Nord-Kivu)", None,
-           None, "En cours/achevé (coût unitaire déclaré : 9,3 à 10 M USD)", "Non",
-           "Fait partie d'un ensemble de 5 stades (Goma, Bunia, Bukavu, Kalemie ×2) déclaré pour un coût unitaire de 9,3 à 10 M USD chacun, sans détail individualisé par ville dans la source. Aucune photo vérifiée avec certitude n'est proposée ici : une confusion documentée existe entre des photographies de stades de Goma et de Bukavu dans plusieurs sources externes.",
-           "Rapport ITIE-RDC 2020-2021, tableau 26 ; Rapport thématique SICOMINES §20", "approx"),
-        pt("bunia", "STADE_BUNIA",
-           "Stade de Bunia", "Bunia (Ituri)", None,
-           None, "En cours/achevé (coût unitaire déclaré : 9,3 à 10 M USD)", "Non",
-           "Fait partie du même ensemble de 5 stades que ci-dessus (voir Goma). Aucune photo vérifiée proposée pour la même raison de prudence.",
-           "Rapport ITIE-RDC 2020-2021, tableau 26 ; Rapport thématique SICOMINES §20", "approx"),
-        pt("bukavu", "STADE_BUKAVU",
-           "Stade de Bukavu", "Bukavu (Sud-Kivu)", None,
-           None, "En cours/achevé (coût unitaire déclaré : 9,3 à 10 M USD)", "Non",
-           "Fait partie du même ensemble de 5 stades que ci-dessus (voir Goma). Aucune photo vérifiée proposée pour la même raison de prudence.",
-           "Rapport ITIE-RDC 2020-2021, tableau 26 ; Rapport thématique SICOMINES §20", "approx"),
-        pt("kalemie", "STADE_KALEMIE_X2",
-           "Stades de Kalemie (2 stades)", "Kalemie (Tanganyika)", None,
-           None, "En cours/achevés (coût unitaire déclaré : 9,3 à 10 M USD chacun)", "Non",
-           "La source dénombre 2 stades à Kalemie (sur les 5 de l'ensemble Goma/Bunia/Bukavu/Kalemie×2), sans les distinguer par un nom ou un emplacement séparé : un seul point les représente tous les deux. Aucune photo vérifiée proposée pour la même raison de prudence qu'à Goma/Bukavu.",
-           "Rapport ITIE-RDC 2020-2021, tableau 26 ; Rapport thématique SICOMINES §20", "approx"),
+        pt("P08", "kinshasa_gombe", "Modernisation du Boulevard du 30 juin lot 2", "Kinshasa", "2,5 Km", 19341204.19, "Phase 2",
+           "Point indicatif (centre de la commune de la Gombe) : ne représente pas le tracé réel de ce boulevard.", qualite="indicatif"),
+        pt("P09", "kinshasa_gombe", "Modernisation du Boulevard Sendwe et Triomphal", "Kinshasa", "3,67 Km", 35894638.24, "Phase 2",
+           "Point indicatif (centre de la commune de la Gombe) : ne représente pas le tracé réel de ces boulevards.", qualite="indicatif"),
+        pt("P10", "palais_peuple", "Aménagement et construction de l'Esplanade du Palais du Peuple", "Kinshasa", "40 500 m²", 24255229.10, "Phase 2",
+           "Superficie de l'esplanade selon ce document (40 500 m²) supérieure à celle du document « Projets individuellement documentés » (24 300 m²) — écart entre sources, reproduit tel quel plutôt qu'arbitré.",
+           photo_url="https://commons.wikimedia.org/wiki/Category:Palais_du_Peuple_(Kinshasa)",
+           photo_credit="Wikimedia Commons — Category:Palais du Peuple (Kinshasa)"),
+        pt("P11", "kisangani", "Fournitures des Groupes électrogènes", "Kisangani", "19", 5667740.00, "Phase 2", None),
+        pt("P12", "kisangani", "Installation d'une unité des préfabriqués", "Kisangani", "1", 7492260.00, "Phase 2", None),
+        pt("P14", "bukavu", "Modernisation de la RN5 Bukavu-Kamanyola", "Sud-Kivu", "5 Km", 13000000.00, "Phase 3",
+           "Point placé à Bukavu, extrémité identifiée de l'axe ; Kamanyola (l'autre extrémité) n'a pas été vérifié indépendamment."),
+        pt("P15", "butembo", "Traversée de Butembo", "Nord-Kivu", "8 Km", 11000000.00, "Phase 3", None),
+        pt("P16", "kolwezi", "Réhabilitation et modernisation de la voirie de Kolwezi (actions sociales Quartier Harmonie)", "Lualaba", "4,657 Km", 6000000.00, "Phase 3", None),
+        pt("P17", "goma", "Réhabilitation de la voirie Bunagana-Rutshuru-Goma", "Nord-Kivu", "15 Km", 10000000.00, "Phase 3",
+           "Point placé à Goma, extrémité identifiée de l'axe ; Bunagana et Rutshuru n'ont pas été vérifiés indépendamment."),
+        pt("P18", "uvira", "Modernisation de la voirie d'Uvira (Phase 1)", "Sud-Kivu", "2,64 Km", 5000000.00, "Phase 3", None),
+        pt("P19", "uvira", "Modernisation de la voirie d'Uvira (Phase 2)", "Sud-Kivu", "5,5 Km", 5000000.00, "Phase 3", None),
+        pt("P21", "kinshasa_gombe", "Modernisation de l'avenue Nzolana (Phase 1)", "Kinshasa", "1,4 Km", 15000000.00, "Phase 3",
+           "Point indicatif (centre de la commune de la Gombe) : ne représente pas l'emplacement réel de cette avenue.", qualite="indicatif"),
+        pt("P22", "kinshasa_gombe", "Renforcement des Boulevards Sendwe et Triomphal", "Kinshasa", "3,67 Km", 5000000.00, "Phase 3",
+           "Point indicatif (centre de la commune de la Gombe).", qualite="indicatif"),
+        pt("P23", "kamina", "Ouverture de la route Kamina-Kabongo", "Haut-Lomami", "230 Km", 6000000.00, "Phase 3",
+           "Point placé à Kamina, une extrémité de l'axe ; Kabongo (l'autre extrémité) est également vérifié (voir Kabongo-Dianda-Mukwende) mais n'est pas repris ici pour éviter un doublon."),
+        pt("P24", "kabongo", "Ouverture de la route Kabongo-Dianda-Mukwende", "Haut-Lomami", "350 Km", 5000000.00, "Phase 3",
+           "Point placé à Kabongo, extrémité identifiée de l'axe ; Dianda et Mukwende n'ont pas été vérifiés indépendamment."),
+        pt("P25", "bunia", "Construction d'un stade à Bunia", "Ituri", "1", 9940215.63, "Phase 3",
+           "Une confusion documentée existe entre des photographies de stades de cette région : par prudence, aucun lien photo n'est proposé."),
+        pt("P26", "mbuji_mayi", "Réhabilitation de la route revêtue Mbujimayi-Mwenditu", "Kasaï-Oriental", "16,62 Km", 15000000.00, "Phase 3",
+           "Point placé à Mbuji-Mayi, extrémité identifiée de l'axe ; Mwene-Ditu (l'autre extrémité, en province du Lomami) a également été vérifié mais n'est pas repris ici pour éviter un doublon."),
+        pt("P27", "kikwit", "Réhabilitation de la route Kikwit-Idiofa", "Kwilu", "6,35 Km", 10000000.00, "Phase 3",
+           "Point placé à Kikwit, extrémité identifiée de l'axe ; Idiofa (l'autre extrémité) n'est pas repris ici pour éviter un doublon."),
+        pt("P28", "kamina", "Construction d'une unité de captage et de traitement d'eau de Kamina (Phase 1)", "Haut-Lomami", "1", 9999897.77, "Phase 3", None),
+        pt("P29", "goma", "Construction d'un stade à Goma", "Nord-Kivu", "1", 9996332.43, "Phase 3",
+           "Une confusion documentée existe entre des photographies de stades de Goma et de Bukavu dans plusieurs sources externes : par prudence, aucun lien photo n'est proposé."),
+        pt("P30", "bukavu", "Construction d'un stade à Bukavu", "Sud-Kivu", "1", 10000000.00, "Phase 3",
+           "Même prudence que pour le stade de Goma : aucun lien photo proposé (confusion documentée entre stades de la région)."),
+        pt("P31", "kalemie", "Construction d'un nouveau stade à Kalemie", "Tanganyika", "1", 10000000.00, "Phase 3",
+           "Même prudence que pour les stades de Goma/Bukavu : aucun lien photo proposé."),
+        pt("P32", "kalemie", "Réhabilitation et modernisation de la voirie de Kalemie", "Tanganyika", "3 Km", 10000000.00, "Phase 3", None),
+        pt("P33", "kalemie", "Réhabilitation et modernisation de la voirie de Kalemie Phase 1", "Tanganyika", "1,6 Km", 5000000.00, "Phase 3", None),
+        pt("P35", "ankoro", "Réhabilitation de la route Kitanda-Ankoro (70 Km)", "Tanganyika", "70 Km", 5000000.00, "Phase 3",
+           "Point placé à Ankoro, extrémité identifiée de l'axe ; Kitanda (petite localité, l'autre extrémité) n'a pas pu être vérifiée indépendamment."),
+        pt("P36", "ankoro", "Réhabilitation de la route en terre Ankoro-Manono (115 Km)", "Tanganyika", "115 Km", 7500000.00, "Phase 3",
+           "Point placé à Ankoro ; Manono (l'autre extrémité) est également vérifié (voir voirie de Manono) mais n'est pas repris ici pour éviter un doublon."),
+        pt("P37", "manono", "Réhabilitation et modernisation de la voirie de Manono", "Tanganyika", "3,838 Km", 5000000.00, "Phase 3", None),
+        pt("P38", "kalemie", "Construction de la Bretelle Stade de Kalemie-Boulevard Lumumba", "Tanganyika", "1,76 Km", 5333019.45, "Phase 3", None),
+        pt("P39", "lomela", "Construction du pont Lomela et de ses composantes sociales", "Sankuru", "1", 5000000.00, "Phase 4",
+           "Coordonnée reprise de l'aérodrome de Lomela, qui dessert le village de Lomela — aucune coordonnée du pont lui-même n'est publiée."),
+        pt("P40", "kolwezi", "Bitumage de 14 Km de route Kanina-Musonoi-Kapata", "Lualaba", "12,934 Km", 9500000.00, "Phase 4",
+           "Localisation précisée « dans la ville de Kolwezi » par l'Annexe 26 ; point placé au centre de Kolwezi."),
+        pt("P41", "kolwezi", "Sondage et découverture des Zones d'exploitation artisanale à Kolwezi", "Lualaba", "1", 2500000.00, "Phase 4", None),
+        pt("P42", "kalemie", "Construction d'un nouveau stade à Kalemie (Phase 2)", "Tanganyika", "1", 6128606.22, "Phase 4",
+           "Même prudence que pour les autres stades de la région : aucun lien photo proposé."),
+        pt("P43", "kalemie", "Réhabilitation et modernisation de la voirie de Kalemie (Phase 2)", "Tanganyika", "12,5 Km", 26871393.78, "Phase 4", None),
     ]
-
-    non_geo = [{
-        "id": "ANNEXE_C_ROUTES_NON_EXECUTEES",
-        "designation": "Routes de l'Annexe C non exécutées en entier",
-        "lieu": "National (Beni–Niania 410 km ; Mbujimayi–Mweneditu 135 km ; Bukavu–Kamanyola 55 km ; Bunagana–Rutshuru–Goma 100 km)",
-        "statut": "Partiellement exécutées, objectif de désenclavement non atteint",
-        "eligible_annexe_c": "Oui",
-        "note": "Portée nationale sur 4 tronçons distincts dans 4 provinces différentes : aucune coordonnée unique ne peut représenter honnêtement cette ligne, qui n'est donc pas placée sur la carte (le tronçon Beni–Niania partiellement réalisé, lui, figure sur la carte — voir RN4 Beni–Niania).",
-        "source": "Rapport thématique SICOMINES §19",
-    }]
+    non_geo = [
+        {"id": "P13", "designation": "Réhabilitation et modernisation de la route Lwambo-Mitwaba-Manono-Kalemie", "lieu": "Tanganyika d'après la colonne « Localisation » de ce document (149,60 Km) ; désignation citant 4 localités relevant en réalité de 2 provinces (Haut-Katanga et Tanganyika) — voir note", "cout_usd": 30000000.00, "phase": "Phase 3",
+         "note": "La désignation cite 4 localités (Lwambo, Mitwaba, Manono, Kalemie) alors que la colonne « Localisation » de ce document n'indique que « Tanganyika » (l'Annexe 26, pour le projet équivalent, indique 3 provinces) : incohérence du document source, reproduite telle quelle. Aucun point unique ne peut représenter honnêtement cet axe (Manono et Kalemie sont individuellement vérifiés pour d'autres projets, mais Lwambo et Mitwaba ne le sont pas)."},
+        {"id": "P20", "designation": "Fourniture des poteaux solaires", "lieu": "Kinshasa (province, aucune commune précisée)", "cout_usd": 11000000.00, "phase": "Phase 2",
+         "note": "Localisation donnée au niveau de la province seulement, sans ville ni commune."},
+        {"id": "P34", "designation": "Acquisition de poteaux solaires", "lieu": "Tanganyika (province, aucune ville précisée)", "cout_usd": 10000000.00, "phase": "Phase 3",
+         "note": "Localisation donnée au niveau de la province seulement, sans ville."},
+    ]
 
     geo["sicomines_infra"] = collections.OrderedDict([
         ("type", "FeatureCollection"),
@@ -188,14 +171,14 @@ def main():
         ("non_georeferences", non_geo),
         ("meta", collections.OrderedDict([
             ("periode", "2007–2025"),
-            ("n_projets_individuellement_documentes", len(features)),
-            ("n_projets_total_bilan_thematique", 43),
-            ("note_couverture", "Le bilan thématique SICOMINES (déc. 2021) recense 43 projets d'infrastructures financés entre 2008 et 2020 pour 814 671 507,49 USD engagés au total (voir dataset « Fourniture d'infrastructures et accords de troc — Bilan et indicateurs clés »). Seuls 8 projets sont individuellement nommés dans les sources ITIE-RDC consultées (dataset « …— Projets individuellement documentés ») : 7 d'entre eux sont représentés ci-dessous par 10 points (la ligne « stades » regroupant 5 stades dans 4 villes est ventilée en 4 points, un par ville) ; le 8ᵉ (routes de l'Annexe C non exécutées en entier, de portée nationale) figure en « non géoréférencé » faute de localisation unique possible. Les 35 autres projets du bilan thématique n'existent que sous forme de statistiques agrégées (nombre, coût, éligibilité Annexe C), sans identification individuelle — ils ne sont donc pas représentés sur cette carte, conformément à la règle de ne jamais deviner une localisation."),
-            ("note_coordonnees", "Aucune coordonnée GPS n'est publiée par les sources ITIE-RDC pour ces projets (seuls des noms de lieux le sont). Les coordonnées de cette couche proviennent de vérifications indépendantes (Wikipédia, latitude.to) de lieux réels et nommés correspondant à chaque projet — jamais d'estimation ou d'invention. Le champ « source_coordonnees » de chaque point précise la référence utilisée."),
-            ("sources", collections.OrderedDict([
-                ("R2020_2021", "Rapport ITIE-RDC 2020-2021 (tableaux 24 et 26)"),
-                ("THEM2021", "Rapport thématique ITIE-RDC « Exigence 4.3 : fourniture d'infrastructures et accords de troc — Programme sino-congolais/SICOMINES » (déc. 2021)"),
-            ])),
+            ("n_points_carte", len(features)),
+            ("n_projets_liste_executees", 42),
+            ("montant_total_liste_executees_usd", 814671507.49),
+            ("n_projets_annexe26_apcsc", 77),
+            ("montant_total_annexe26_usd", 1208871210.7771),
+            ("note_couverture", "Cette carte est construite à partir des 42 projets du dataset « Liste des infrastructures exécutées » (troc_sicomines_liste_executees), document fourni directement par l'utilisateur, dont le total imprimé (814 671 507,49 USD) correspond au bilan thématique SICOMINES 2008-2020 — mais ce total et le sous-total imprimé de sa Phase 3 (249 726 699,79 USD) ne correspondent pas à la somme des lignes de projets qu'ils contiennent telles que transcrites (respectivement 798 714 272,98 USD et 233 769 465,28 USD) : cet écart existe dans le document source lui-même et n'est pas arbitré ici (voir le tableau « Liste des infrastructures exécutées » pour le détail). Une source plus récente et plus complète (« Annexe 26 », 77 projets, 1 208 871 210,78 USD au 30/06/2025 — dataset troc_sicomines_annexe26_apcsc) est également publiée dans cette rubrique sous forme de tableau, mais ses localisations ne descendent pas toujours au niveau de la ville (souvent la province seule, ou plusieurs provinces pour un même projet) : elle n'a donc pas servi de base à cette carte, pour ne pas multiplier les positions approximatives. Les deux tables restent consultables intégralement ci-dessous."),
+            ("note_coordonnees", "Ni la « Liste des infrastructures exécutées » ni l'Annexe 26 ne publient de coordonnées GPS : seuls des noms de lieux (ville, commune ou province) y figurent. Les coordonnées de cette carte proviennent de vérifications indépendantes (Wikipédia, latitude.to, mapcarta) de lieux réels et nommés — jamais d'estimation. Voir le champ « source_coordonnees » de chaque point. 4 projets ne citent aucune ville identifiable (province seule, plusieurs provinces, ou aucun lieu) : ils sont listés en « non géoréférencés » plutôt que positionnés arbitrairement."),
+            ("note_ecarts", "Deux écarts de libellé/montant entre cette liste et le tableau « Projets individuellement documentés » (troc_sicomines_projets, source RFI_4.3_SICOMINES.xlsx) sont signalés tels quels sans être arbitrés : l'hôpital de Kinshasa est nommé « Hôpital du Centre Ville (Hôpital du Centenaire) » ici contre « Hôpital du Cinquantenaire » dans l'autre table (montants très proches : 114 901 200 vs 114 879 516,42 USD) ; l'esplanade du Palais du Peuple est chiffrée à 40 500 m² ici contre 24 300 m² dans l'autre table (même montant : 24 255 229,10 USD)."),
         ])),
     ])
 
@@ -203,6 +186,7 @@ def main():
         json.dump(geo, f, ensure_ascii=False, indent=1)
 
     print(f"OK — {len(features)} points ajoutés, {len(non_geo)} entité(s) non géoréférencée(s).")
+
 
 if __name__ == "__main__":
     main()
