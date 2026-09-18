@@ -2724,7 +2724,7 @@ function exVisibleColIdx(name){
 }
 
 const THEME_NAV_ICONS={cadre_licences:'⚖',propriete:'◉',entreprises_publiques:'🏛',production_export:'⛏',
-  paiements_recettes:'💰',reconciliation:'⇄',transferts_infra:'⇩',depenses_sociales:'❤',contribution_eco:'📈',rapports:'▦'};
+  paiements_recettes:'💰',troc_sicomines:'⇌',reconciliation:'⇄',transferts_infra:'⇩',depenses_sociales:'❤',contribution_eco:'📈',rapports:'▦'};
 const MODULES={
   overview:{t:"Vue d'ensemble",f:mOverview,d:drawOverview},
   geo:{t:"Géographie",f:mGeo,d:drawGeo},
@@ -2750,9 +2750,25 @@ Object.keys(THEME_INFO).forEach(k=>{if(k==='technique')return;
 // à tous MAIS ne listent, hors connexion administrateur, que les tables
 // publiques ; aucune donnée n'est supprimée, seulement rangée par thème —
 // toujours « ne rien cacher, toutes ces données sont publiques ».
+// L'API renvoie theme_info avec ses clés triées alphabétiquement (Flask
+// jsonify), pas dans l'ordre numérique des Exigences ITIE : on impose donc
+// explicitement cet ordre pour le menu (au lieu de Object.keys() brut), afin
+// que la rubrique 4.3 apparaisse bien entre 4.1 (Paiements/recettes) et 4.6
+// (Transferts infranationaux) plutôt qu'en toute fin de liste alphabétique.
+// Tout thème absent de cette liste (nouveau thème ajouté sans mise à jour
+// ici) est simplement ajouté à la fin, dans l'ordre où l'API le renvoie.
+const THEME_ORDER=['cadre_licences','propriete','entreprises_publiques','production_export',
+  'paiements_recettes','troc_sicomines','reconciliation','transferts_infra','depenses_sociales',
+  'contribution_eco','rapports'];
+function orderedThemeKeys(){
+  const all=Object.keys(THEME_INFO).filter(k=>k!=='technique');
+  const known=THEME_ORDER.filter(k=>all.includes(k));
+  const rest=all.filter(k=>!THEME_ORDER.includes(k));
+  return known.concat(rest);
+}
 const NAV=[
   {g:"Vue d'ensemble",items:[['overview','◧',"Vue d'ensemble"],['geo','◈','Géographie'],['mining','⛏','Titres miniers'],['hydro','🛢','Hydrocarbures']]},
-  {g:'Par thème ITIE',items:Object.keys(THEME_INFO).filter(k=>k!=='technique').map(k=>[k,THEME_NAV_ICONS[k]||'▪',(THEME_INFO[k]||{}).label||k])},
+  {g:'Par thème ITIE',items:orderedThemeKeys().map(k=>[k,THEME_NAV_ICONS[k]||'▪',(THEME_INFO[k]||{}).label||k])},
   {g:'Données complètes',items:[['viz','◫','Visualisations'],['explorer','▤','Explorateur'],['model','✳','Modèle de données'],['dict','▥','Dictionnaire'],['qualite','✓','Qualité des données']]},
   {g:'',items:[['reports','▦','Rapports'],['about','ⓘ','À propos']]},
 ];
