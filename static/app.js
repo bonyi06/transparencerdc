@@ -349,11 +349,13 @@ function mTheme(theme){
   const names=tablesInTheme(theme).filter(n=>!(theme==='depenses_sociales'&&(n===CAHIERS_ENT||n===CAHIERS_PROJ))&&!(theme==='cadre_licences'&&n===CONTRATS_DS));
   const cahiers=theme==='depenses_sociales'?cahiersSection():'';
   const contrats=theme==='cadre_licences'?contratsSection():'';
+  const sicomMap=theme==='troc_sicomines'?sicomMapSection():'';
   return `<div class="phead"><div class="eyebrow">${esc(info.eiti||'')}</div><h1>${esc(info.label)}</h1><p>${esc(info.desc)}</p></div>
-    ${names.length?names.map(themeCard).join(''):(cahiers||contrats?'':'<div class="empty" style="padding:20px">Aucun tableau public dans cette rubrique pour le moment.</div>')}
+    ${sicomMap}
+    ${names.length?names.map(themeCard).join(''):(cahiers||contrats||sicomMap?'':'<div class="empty" style="padding:20px">Aucun tableau public dans cette rubrique pour le moment.</div>')}
     ${contrats}${cahiers}`;
 }
-function bindThemePage(){$$('#app [data-gotable]').forEach(b=>b.onclick=()=>goExplorerTable(b.dataset.gotable));bindCahiers();bindContrats();}
+function bindThemePage(){$$('#app [data-gotable]').forEach(b=>b.onclick=()=>goExplorerTable(b.dataset.gotable));bindCahiers();bindContrats();bindSicomMap();}
 
 
 /* ===== Référentiels canoniques (provinces / entreprises / flux / entités
@@ -2080,6 +2082,120 @@ function drawHydro(){
     $$('[data-hview]').forEach(b=>b.classList.toggle('on',b===btn));
   };});
 }
+
+/* ===== Carte des infrastructures financées par SICOMINES (Exigence ITIE 4.3) =====
+   Embarquée dans la rubrique « Fourniture d'infrastructures et accords de
+   troc (SICOMINES) », sur le même modèle que la carte Hydrocarbures
+   (drawHydro/hydroRenderLayers/hydroPopupHtml) : Leaflet + fond OpenStreetMap,
+   géométries lues directement dans GEO (clé `sicomines_infra`, servie par
+   /api/geo — voir data/geo.seed.json, construite par
+   scripts/build_troc_sicomines_map.py), aucune géométrie séparée à charger.
+   Comme pour Hydrocarbures, chaque point porte un indicateur de qualité de
+   géoréférencement, et l'entité qui ne peut pas être représentée de façon
+   honnête sur la carte (routes de l'Annexe C non exécutées en entier, portée
+   nationale sur 4 tronçons) est listée explicitement sous la carte plutôt que
+   masquée ou positionnée arbitrairement — aucune coordonnée n'est publiée par
+   les sources ITIE-RDC elles-mêmes pour ces projets : celles utilisées ici
+   proviennent de vérifications indépendantes de lieux réels et nommés (voir
+   le champ « Source de la coordonnée » de chaque fiche et l'encart
+   méthodologique au-dessus de la carte). */
+function sicomInfraData(){return (GEO&&GEO.sicomines_infra)||null;}
+const SICOM_QUAL_LABEL={approx:"Approximative (lieu nommé identifié dans la source, vérifié indépendamment)",indicatif:"Indicative (point de repère, aucun lieu précis identifiable dans la source)"};
+let sicomMapObj=null, sicomLayerGroup=null;
+function openSicomSourceModal(){
+  const body=$('#srcModalBody');if(!body)return;
+  const d=sicomInfraData();const m=(d&&d.meta)||{};
+  const src=m.sources||{};
+  body.innerHTML=`
+    <div style="margin-bottom:12px"><b>Infrastructures financées par le programme sino-congolais / SICOMINES — 2007-2025</b><br><span style="font-size:12.5px;color:var(--ink-soft)">Projets d'infrastructures individuellement documentés dans les sources ITIE-RDC, au titre de l'Exigence 4.3 (fourniture d'infrastructures et accords de troc).</span></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 16px;font-size:12.5px;margin-bottom:12px">
+      <div><b>Points cartographiés</b><br>${d?fmtN(d.features.length):'—'} (sur ${fmtN(m.n_projets_total_bilan_thematique||43)} projets recensés au total)</div>
+      <div><b>Période</b><br>${esc(m.periode||'2007–2025')}</div>
+      <div><b>Entité(s) non cartographiée(s)</b><br>${fmtN((d&&d.non_georeferences||[]).length)}</div>
+    </div>
+    <div style="font-size:12.5px;margin-bottom:12px">
+      <b>Sources</b><br>
+      ${src.R2020_2021?`R2020_2021 — ${esc(src.R2020_2021)}<br>`:''}
+      ${src.THEM2021?`THEM2021 — ${esc(src.THEM2021)}`:''}
+    </div>
+    ${m.note_couverture?`<div class="msg warn" style="font-size:12px;margin-bottom:8px">${esc(m.note_couverture)}</div>`:''}
+    ${m.note_coordonnees?`<div class="msg" style="font-size:12px">${esc(m.note_coordonnees)}</div>`:''}
+  `;
+  showModal('srcModal');
+}
+window.openSicomSourceModal=openSicomSourceModal;
+function sicomPopupHtml(p){
+  const row=(k,v)=>(v!==null&&v!==undefined&&v!=='')?`<div style="margin-bottom:4px"><b>${esc(k)}</b> — ${esc(v)}</div>`:'';
+  let html=`<div style="font-size:12.5px;max-width:300px">
+    ${row('Désignation',p.designation)}
+    ${row('Lieu',p.lieu)}
+    ${row('Entreprise / exécutant',p.entreprise)}
+    ${row('Coût',p.cout_usd!=null?`${fmtN(p.cout_usd)} USD (${fmtUSD(p.cout_usd)})`:'Non individualisé dans la source')}
+    ${row('Distance',p.distance_km?`${p.distance_km} km`:null)}
+    ${row('Superficie',p.superficie_m2?`${fmtN(p.superficie_m2)} m²`:null)}
+    ${row('Statut',p.statut)}
+    ${row('Éligible Annexe C',p.eligible_annexe_c)}
+    ${row('Note',p.note)}
+    ${row('Source des données',p.source_donnees)}
+    ${row('Qualité du géoréférencement',SICOM_QUAL_LABEL[p.qualite_geom]||p.qualite_geom)}
+    ${row('Source de la coordonnée',p.source_coordonnees)}
+  </div>`;
+  if(p.photo_url){
+    html+=`<div style="font-size:12px;margin-top:6px;padding-top:6px;border-top:1px dashed var(--line)">
+      <a href="${esc(p.photo_url)}" target="_blank" rel="noopener noreferrer">↗ Voir une photo réelle vérifiée</a>${p.photo_credit?` <span style="color:var(--ink-faint)">(${esc(p.photo_credit)})</span>`:''}
+    </div>`;
+  } else {
+    html+=`<div style="font-size:11.5px;color:var(--ink-faint);margin-top:6px;padding-top:6px;border-top:1px dashed var(--line)">Aucune photo vérifiée avec certitude disponible pour ce point.</div>`;
+  }
+  return html;
+}
+function sicomRenderLayer(){
+  if(!sicomMapObj)return;
+  const d=sicomInfraData();if(!d)return;
+  if(sicomLayerGroup)sicomMapObj.removeLayer(sicomLayerGroup);
+  sicomLayerGroup=L.geoJSON(d,{
+    pointToLayer:(f,latlng)=>L.circleMarker(latlng,{radius:8,color:'#8a4b1f',weight:2,fillColor:'#c47f0a',fillOpacity:.75}),
+    onEachFeature:(f,layer)=>layer.bindPopup(sicomPopupHtml(f.properties)),
+  }).addTo(sicomMapObj);
+}
+function drawSicomMap(){
+  const host=$('#sicomMap');if(!host)return;
+  if(sicomMapObj){try{sicomMapObj.remove();}catch(e){}sicomMapObj=null;sicomLayerGroup=null;}
+  const d=sicomInfraData();
+  if(!d){host.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-soft);font-size:13px">Couche non disponible.</div>';return;}
+  sicomMapObj=L.map('sicomMap',{preferCanvas:true,attributionControl:false}).setView([-3.5,24],5);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:''}).addTo(sicomMapObj);
+  sicomRenderLayer();
+  if(d.features&&d.features.length){
+    const b=L.geoJSON(d).getBounds();
+    if(b.isValid())sicomMapObj.fitBounds(b.pad(0.6));
+  }
+}
+function sicomMapSection(){
+  const d=sicomInfraData();
+  const nonGeo=(d&&d.non_georeferences)||[];
+  const n=(d&&d.features.length)||0;
+  const total=(d&&d.meta&&d.meta.n_projets_total_bilan_thematique)||43;
+  return `<div class="card" style="margin-bottom:16px;background:var(--panel-2)">
+      <div class="ch"><h2 style="margin:0;font-size:16px">Carte des infrastructures financées par SICOMINES (2007-2025)</h2><span class="badge">${fmtN(n)} points sur ${fmtN(total)} projets recensés</span></div>
+      <p style="font-size:12.5px;color:var(--ink-soft);margin:6px 0 0">Localisation des projets d'infrastructures individuellement documentés dans les rapports ITIE-RDC et le rapport thématique SICOMINES (déc. 2021), avec pour chacun ses métadonnées complètes (montant, distance ou superficie, entreprise exécutante, statut, éligibilité à l'Annexe C) et, quand une photographie réelle a pu être identifiée avec certitude, un lien vers celle-ci.</p>
+      <div class="msg warn" style="margin-top:10px;font-size:12px">Le bilan thématique SICOMINES recense 43 projets financés au total (814,7 M USD engagés) mais seuls 8 sont individuellement nommés et localisables dans les sources consultées ; les 35 autres n'existent que sous forme de statistiques agrégées (voir tableau « Bilan et indicateurs clés » ci-dessous) et ne sont donc pas représentés ici — aucune localisation n'est devinée. Aucune coordonnée GPS n'étant publiée par les sources ITIE-RDC elles-mêmes, les positions de cette carte proviennent de vérifications indépendantes de lieux réels et nommés (voir « Source de la coordonnée » dans chaque fiche).</div>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div id="sicomMap" style="height:560px;border-radius:12px;overflow:hidden;background:var(--panel-2)"></div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:12px;font-size:11.5px;color:var(--ink-soft)">
+        <span>Qualité du géoréférencement : ${Object.entries(SICOM_QUAL_LABEL).map(([k,l])=>`<b>${k}</b> = ${esc(l)}`).join(' · ')}</span>
+        <span class="grow"></span>
+        <button type="button" class="srclink" onclick="openSicomSourceModal()">ⓘ Source &amp; traçabilité de cette couche</button>
+      </div>
+    </div>
+    ${nonGeo.length?`<div class="card" style="margin-bottom:16px"><div class="ch"><h3 style="margin:0">Projet(s) sans localisation unique possible — non représenté(s) sur la carte</h3></div>
+      ${nonGeo.map(n2=>`<div class="msg warn" style="font-size:12.5px">
+        <b>${esc(n2.designation)}</b><br>${esc(n2.lieu)} · ${esc(n2.statut)}<br><span style="color:var(--ink-faint)">${esc(n2.note)}</span>
+      </div>`).join('')}
+    </div>`:''}`;
+}
+function bindSicomMap(){if($('#sicomMap'))drawSicomMap();}
 
 /* Géographie — vraie carte choroplèthe interactive (SVG auto-suffisant) */
 let mapInd='recettes', mapYear=null, mapLevels=new Set(['province','territoire','etd']), mapSel=null, mapEvo=false, mapSelPt=null, mapFs=false, mapEscBound=false;

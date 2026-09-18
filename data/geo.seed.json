@@ -56000,5 +56000,303 @@
    "projection_superficies": "Africa Albers Equal Area (ESRI:102022)",
    "note_qualite": "Les polygones du Graben Albertine, prolongés jusqu'à la frontière lacustre faute de description complète dans les annexes, dépassent nettement les superficies déclarées ; les blocs de la Cuvette Centrale (8, 23, 24) ont des limites provisoires ; le bloc CC7 (Blocs 7 et 9) n'a pas de coordonnées publiées et n'apparaît donc pas sur la carte (voir liste des entités non cartographiées)."
   }
+ },
+ "sicomines_infra": {
+  "type": "FeatureCollection",
+  "name": "infrastructures_sicomines_2007_2025",
+  "features": [
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "RN5_LSHI_KASOMENO",
+     "designation": "Terrassement et bitumage RN5 Lubumbashi–Kasomeno (137 km)",
+     "lieu": "Haut-Katanga — axe Lubumbashi–Kasomeno",
+     "entreprise": "CREC 7",
+     "cout_usd": 162283871.42,
+     "statut": "Réception définitive 17/12/2016",
+     "eligible_annexe_c": "ND (non précisé dans la source)",
+     "note": "Point placé à l'extrémité Kasomeno de l'axe : le tracé réel des 137 km bitumés n'est pas représenté (aucune géométrie de route publiée par les sources ITIE-RDC).",
+     "source_donnees": "Rapport ITIE-RDC 2020-2021, tableau 24",
+     "qualite_geom": "approx",
+     "source_coordonnees": "mapcarta.com — localité de Kasomeno (Haut-Katanga)",
+     "distance_km": 137,
+     "superficie_m2": null,
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      28.28025,
+      -10.75475
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "RN5_KASOMENO_KASENGA",
+     "designation": "RN5 Lubumbashi–Kasomeno / Kasomeno–Kasenga (ligne budgétaire complémentaire)",
+     "lieu": "Haut-Katanga — prolongement vers Kasenga",
+     "entreprise": null,
+     "cout_usd": 69073565.06,
+     "statut": "Achevé (cumul encouru = budget)",
+     "eligible_annexe_c": "ND (non précisé dans la source)",
+     "note": "Ligne budgétaire distincte de celle de l'axe Lubumbashi–Kasomeno, rattachée au même corridor routier ; placée à Kasenga faute de tracé publié.",
+     "source_donnees": "Rapport ITIE-RDC 2020-2021, tableau 26",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Kasenga Airport, qui dessert la ville de Kasenga (Haut-Katanga)",
+     "distance_km": null,
+     "superficie_m2": null,
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      28.61667,
+      -10.35556
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "RN4_BENI_NIANIA",
+     "designation": "Bitumage RN4 Beni–Niania (60 km réalisés sur 410 km prévus à l'Annexe C)",
+     "lieu": "Nord-Kivu / Ituri — axe Beni–Niania",
+     "entreprise": "SINOHYDRO 14",
+     "cout_usd": 57768563.94,
+     "statut": "Réception définitive 11/11/2011",
+     "eligible_annexe_c": "Oui",
+     "note": "Seuls 60 km sur les 410 km prévus à l'Annexe C ont été réalisés ; le solde (350 km) figure dans la liste des routes non exécutées en entier (voir « non géoréférencées » ci-dessous).",
+     "source_donnees": "Rapport ITIE-RDC 2020-2021, tableau 24 ; Rapport thématique SICOMINES §19",
+     "qualite_geom": "approx",
+     "source_coordonnees": "mapcarta.com — localité de Nia Nia / Niania (Ituri), sur la RN4",
+     "distance_km": 60,
+     "superficie_m2": null,
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      27.60742,
+      1.40734
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "HOPITAL_CINQUANTENAIRE",
+     "designation": "Hôpital du Cinquantenaire (500 lits)",
+     "lieu": "Kinshasa (Mont Ngafula)",
+     "entreprise": "SINOHYDRO 2",
+     "cout_usd": 114879516.42,
+     "statut": "Réception définitive 27/08/2014",
+     "eligible_annexe_c": "ND (non précisé dans la source)",
+     "note": "Deux montants distincts figurent dans les sources ITIE-RDC pour ce même projet : 114 879 516,42 USD (tableau 24, coût du contrat) et 114 901 200 USD (tableau 26, budget) — écart non arbitré, reproduit tel quel.",
+     "source_donnees": "Rapport ITIE-RDC 2020-2021, tableaux 24 et 26",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — L'hôpital du Cinquantenaire de Kinshasa (infobox géographique)",
+     "distance_km": null,
+     "superficie_m2": null,
+     "photo_url": "https://www.flickr.com/photos/rdcbenelux/5549662665",
+     "photo_credit": "Flickr — Ambassade de la RDC (compte officiel), « L'hôpital du Cinquantenaire à Kinshasa »"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      15.296555,
+      -4.341625
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "ESPLANADE_PALAIS_PEUPLE",
+     "designation": "Esplanade du Palais du Peuple (24 300 m²)",
+     "lieu": "Kinshasa (Lingwala)",
+     "entreprise": "SINOHYDRO 2",
+     "cout_usd": 24255299.12,
+     "statut": "Réceptionné en 2011",
+     "eligible_annexe_c": "Non",
+     "note": "Le rapport thématique ITIE-RDC juge l'urgence de ce projet injustifiée.",
+     "source_donnees": "Rapport ITIE-RDC 2020-2021 ; Rapport thématique SICOMINES §19",
+     "qualite_geom": "approx",
+     "source_coordonnees": "latitude.to — Palais du Peuple (Kinshasa), répertoire de coordonnées de lieux nommés",
+     "distance_km": null,
+     "superficie_m2": 24300,
+     "photo_url": "https://commons.wikimedia.org/wiki/Category:Palais_du_Peuple_(Kinshasa)",
+     "photo_credit": "Wikimedia Commons — Category:Palais du Peuple (Kinshasa)"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      15.3031,
+      -4.3322
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "BLVD_30_JUIN",
+     "designation": "Boulevard du 30 juin (lots 1 et 2), boulevards Sendwe et Triomphal, avenue Tourisme, route Lutendele",
+     "lieu": "Kinshasa (Gombe et communes voisines)",
+     "entreprise": "CREC 7 / CREC 8",
+     "cout_usd": null,
+     "statut": "Réceptionnés entre 2011 et 2014",
+     "eligible_annexe_c": "ND (non précisé dans la source)",
+     "note": "Montant non individualisé dans la source pour cet ensemble de voiries. Un seul point (centre de la commune de la Gombe) représente ici plusieurs rues et boulevards distincts sur plusieurs kilomètres : position indicative, pas un tracé réel.",
+     "source_donnees": "Rapport ITIE-RDC 2020-2021, tableau 24",
+     "qualite_geom": "indicatif",
+     "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
+     "distance_km": null,
+     "superficie_m2": null,
+     "photo_url": "https://commons.wikimedia.org/wiki/File:Boulevard_du_30_juin,_Kinshasa.jpg",
+     "photo_credit": "Wikimedia Commons — File:Boulevard du 30 juin, Kinshasa.jpg"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      15.30333,
+      -4.30306
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "STADE_GOMA",
+     "designation": "Stade de Goma",
+     "lieu": "Goma (Nord-Kivu)",
+     "entreprise": null,
+     "cout_usd": null,
+     "statut": "En cours/achevé (coût unitaire déclaré : 9,3 à 10 M USD)",
+     "eligible_annexe_c": "Non",
+     "note": "Fait partie d'un ensemble de 5 stades (Goma, Bunia, Bukavu, Kalemie ×2) déclaré pour un coût unitaire de 9,3 à 10 M USD chacun, sans détail individualisé par ville dans la source. Aucune photo vérifiée avec certitude n'est proposée ici : une confusion documentée existe entre des photographies de stades de Goma et de Bukavu dans plusieurs sources externes.",
+     "source_donnees": "Rapport ITIE-RDC 2020-2021, tableau 26 ; Rapport thématique SICOMINES §20",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Goma (infobox géographique)",
+     "distance_km": null,
+     "superficie_m2": null,
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      29.23361,
+      -1.67944
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "STADE_BUNIA",
+     "designation": "Stade de Bunia",
+     "lieu": "Bunia (Ituri)",
+     "entreprise": null,
+     "cout_usd": null,
+     "statut": "En cours/achevé (coût unitaire déclaré : 9,3 à 10 M USD)",
+     "eligible_annexe_c": "Non",
+     "note": "Fait partie du même ensemble de 5 stades que ci-dessus (voir Goma). Aucune photo vérifiée proposée pour la même raison de prudence.",
+     "source_donnees": "Rapport ITIE-RDC 2020-2021, tableau 26 ; Rapport thématique SICOMINES §20",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Bunia (infobox géographique)",
+     "distance_km": null,
+     "superficie_m2": null,
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      30.25,
+      1.567
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "STADE_BUKAVU",
+     "designation": "Stade de Bukavu",
+     "lieu": "Bukavu (Sud-Kivu)",
+     "entreprise": null,
+     "cout_usd": null,
+     "statut": "En cours/achevé (coût unitaire déclaré : 9,3 à 10 M USD)",
+     "eligible_annexe_c": "Non",
+     "note": "Fait partie du même ensemble de 5 stades que ci-dessus (voir Goma). Aucune photo vérifiée proposée pour la même raison de prudence.",
+     "source_donnees": "Rapport ITIE-RDC 2020-2021, tableau 26 ; Rapport thématique SICOMINES §20",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Bukavu (infobox géographique)",
+     "distance_km": null,
+     "superficie_m2": null,
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      28.86083,
+      -2.50611
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "STADE_KALEMIE_X2",
+     "designation": "Stades de Kalemie (2 stades)",
+     "lieu": "Kalemie (Tanganyika)",
+     "entreprise": null,
+     "cout_usd": null,
+     "statut": "En cours/achevés (coût unitaire déclaré : 9,3 à 10 M USD chacun)",
+     "eligible_annexe_c": "Non",
+     "note": "La source dénombre 2 stades à Kalemie (sur les 5 de l'ensemble Goma/Bunia/Bukavu/Kalemie×2), sans les distinguer par un nom ou un emplacement séparé : un seul point les représente tous les deux. Aucune photo vérifiée proposée pour la même raison de prudence qu'à Goma/Bukavu.",
+     "source_donnees": "Rapport ITIE-RDC 2020-2021, tableau 26 ; Rapport thématique SICOMINES §20",
+     "qualite_geom": "approx",
+     "source_coordonnees": "Wikipédia (en) — Kalemie (infobox géographique)",
+     "distance_km": null,
+     "superficie_m2": null,
+     "photo_url": null,
+     "photo_credit": null
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      29.19056,
+      -5.91278
+     ]
+    }
+   }
+  ],
+  "non_georeferences": [
+   {
+    "id": "ANNEXE_C_ROUTES_NON_EXECUTEES",
+    "designation": "Routes de l'Annexe C non exécutées en entier",
+    "lieu": "National (Beni–Niania 410 km ; Mbujimayi–Mweneditu 135 km ; Bukavu–Kamanyola 55 km ; Bunagana–Rutshuru–Goma 100 km)",
+    "statut": "Partiellement exécutées, objectif de désenclavement non atteint",
+    "eligible_annexe_c": "Oui",
+    "note": "Portée nationale sur 4 tronçons distincts dans 4 provinces différentes : aucune coordonnée unique ne peut représenter honnêtement cette ligne, qui n'est donc pas placée sur la carte (le tronçon Beni–Niania partiellement réalisé, lui, figure sur la carte — voir RN4 Beni–Niania).",
+    "source": "Rapport thématique SICOMINES §19"
+   }
+  ],
+  "meta": {
+   "periode": "2007–2025",
+   "n_projets_individuellement_documentes": 10,
+   "n_projets_total_bilan_thematique": 43,
+   "note_couverture": "Le bilan thématique SICOMINES (déc. 2021) recense 43 projets d'infrastructures financés entre 2008 et 2020 pour 814 671 507,49 USD engagés au total (voir dataset « Fourniture d'infrastructures et accords de troc — Bilan et indicateurs clés »). Seuls 8 projets sont individuellement nommés dans les sources ITIE-RDC consultées (dataset « …— Projets individuellement documentés ») : 7 d'entre eux sont représentés ci-dessous par 10 points (la ligne « stades » regroupant 5 stades dans 4 villes est ventilée en 4 points, un par ville) ; le 8ᵉ (routes de l'Annexe C non exécutées en entier, de portée nationale) figure en « non géoréférencé » faute de localisation unique possible. Les 35 autres projets du bilan thématique n'existent que sous forme de statistiques agrégées (nombre, coût, éligibilité Annexe C), sans identification individuelle — ils ne sont donc pas représentés sur cette carte, conformément à la règle de ne jamais deviner une localisation.",
+   "note_coordonnees": "Aucune coordonnée GPS n'est publiée par les sources ITIE-RDC pour ces projets (seuls des noms de lieux le sont). Les coordonnées de cette couche proviennent de vérifications indépendantes (Wikipédia, latitude.to) de lieux réels et nommés correspondant à chaque projet — jamais d'estimation ou d'invention. Le champ « source_coordonnees » de chaque point précise la référence utilisée.",
+   "sources": {
+    "R2020_2021": "Rapport ITIE-RDC 2020-2021 (tableaux 24 et 26)",
+    "THEM2021": "Rapport thématique ITIE-RDC « Exigence 4.3 : fourniture d'infrastructures et accords de troc — Programme sino-congolais/SICOMINES » (déc. 2021)"
+   }
+  }
  }
 }
