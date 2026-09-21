@@ -169,7 +169,30 @@ def sync_database(warehouse: dict, content: dict, logo: str, geo: dict | None) -
 
     sc = SiteContent.singleton()
     site_content = content.get("content", {})
-    sc.content = {k: v for k, v in site_content.items() if k != "reports"}
+    new_content = {k: v for k, v in site_content.items() if k != "reports"}
+    # Secrets configurés uniquement en production (jamais présents dans le
+    # fichier data/content.seed.json, qui est versionné dans git et ne doit
+    # donc jamais contenir de clé secrète) : si le seed local n'a pas de
+    # valeur pour l'un de ces champs, on conserve celle déjà en base plutôt
+    # que de l'écraser par une chaîne vide. Sans cette précaution, chaque
+    # `python import_data.py` effacerait silencieusement la clé API Google
+    # Drive saisie via le panneau d'administration (incident constaté et
+    # corrigé le 2026-09-21 : la page Rapports affichait alors "Liste des
+    # rapports temporairement indisponible.").
+    existing_integrations = (sc.content or {}).get("integrations", {}) or {}
+    new_integrations = dict(new_content.get("integrations", {}) or {})
+    for secret_field in ("gdrive_api_key",):
+        if not (new_integrations.get(secret_field) or "").strip():
+            existing_value = (existing_integrations.get(secret_field) or "").strip()
+            if existing_value:
+                new_integrations[secret_field] = existing_value
+                print(
+                    f"  (integrations.{secret_field} absent du seed : valeur de "
+                    f"production conservée)"
+                )
+    if new_integrations:
+        new_content["integrations"] = new_integrations
+    sc.content = new_content
     sc.reports = site_content.get("reports", [])
     sc.version += 1
     db.session.add(sc)
