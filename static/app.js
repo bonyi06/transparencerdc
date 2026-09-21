@@ -81,7 +81,7 @@ function metaStrip(name){
   const row=(k,v)=>v?`<div><b>${esc(k)}</b><br>${esc(v)}</div>`:'';
   return `<div class="metastrip" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 16px;font-size:11.5px;color:var(--ink-soft);background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0 14px">
     ${row('Période',m.periode)}${row('Unité',m.unite)}${row('Devise',m.devise)}${row('Périmètre',m.perimetre)}${row('Désagrégation',m.desagregation)}${row('Source',m.source)}
-  </div>${m.qualite?`<div class="msg warn" style="margin-bottom:12px"><b>Statut qualité :</b> ${esc(m.qualite)}</div>`:''}
+  </div>${(editing&&m.qualite)?`<div class="msg warn" style="margin-bottom:12px"><b>Statut qualité (visible en mode administrateur uniquement) :</b> ${esc(m.qualite)}</div>`:''}
   <div style="margin:-8px 0 12px"><button type="button" class="srclink" data-srctable="${esc(name)}">ⓘ Source &amp; traçabilité de ce tableau</button></div>`;
 }
 // Transforme les URL en texte brut d'un champ `source`/`méthodologie` en
@@ -105,7 +105,7 @@ function openSourceModal(tableName){
     </div>
     ${m&&m.source?`<div style="font-size:12.5px;margin-bottom:12px"><b>Source</b><br>${linkifySource(m.source)}</div>`:'<div class="msg warn" style="font-size:12px;margin-bottom:12px">Aucune source détaillée n\'a encore été renseignée pour ce tableau technique.</div>'}
     ${d.tech?`<div style="font-size:11px;color:var(--ink-faint);margin-bottom:12px"><b>Repère technique interne (provenance du fichier importé)</b><br><code>${esc(d.tech)}</code></div>`:''}
-    ${m&&m.qualite?`<div class="msg warn" style="font-size:12px">${esc(m.qualite)}</div>`:''}
+    ${(editing&&m&&m.qualite)?`<div class="msg warn" style="font-size:12px"><b>Note interne (mode administrateur) :</b> ${esc(m.qualite)}</div>`:''}
   `;
   showModal('srcModal');
 }
@@ -1933,7 +1933,7 @@ function openHydroSourceModal(){
       ${src.S2?`S2 — ${esc(src.S2)}<br>`:''}
       ${src.S3?`S3 — ${esc(src.S3)}`:''}
     </div>
-    ${m.note_qualite?`<div class="msg warn" style="font-size:12px">${esc(m.note_qualite)}</div>`:''}
+    ${(editing&&m.note_qualite)?`<div class="msg warn" style="font-size:12px"><b>Note interne (mode administrateur) :</b> ${esc(m.note_qualite)}</div>`:''}
   `;
   showModal('srcModal');
 }
@@ -2100,7 +2100,7 @@ function drawHydro(){
    le champ « Source de la coordonnée » de chaque fiche et l'encart
    méthodologique au-dessus de la carte). */
 function sicomInfraData(){return (GEO&&GEO.sicomines_infra)||null;}
-const SICOM_QUAL_LABEL={approx:"Approximative (lieu nommé identifié dans la source, vérifié indépendamment)",indicatif:"Indicative (point de repère, aucun lieu précis identifiable dans la source)"};
+const SICOM_QUAL_LABEL={approx:"Approximative (lieu nommé identifié dans la source, vérifié indépendamment)",indicatif:"Indicative (point de repère, aucun lieu précis identifiable dans la source)",province:"Provinciale (aucune ville précisée dans la source ; chef-lieu de la province utilisé par convention cartographique)"};
 let sicomMapObj=null, sicomLayerGroup=null;
 function openSicomSourceModal(){
   const body=$('#srcModalBody');if(!body)return;
@@ -2108,14 +2108,16 @@ function openSicomSourceModal(){
   body.innerHTML=`
     <div style="margin-bottom:12px"><b>Infrastructures financées par le programme sino-congolais / SICOMINES — 2007-2025</b><br><span style="font-size:12.5px;color:var(--ink-soft)">Projets tels que listés dans le document « Liste des infrastructures exécutées » (4 phases) et dans l'« Annexe 26 » de l'APCSC, fournis directement par l'utilisateur, au titre de l'Exigence 4.3 (fourniture d'infrastructures et accords de troc).</span></div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 16px;font-size:12.5px;margin-bottom:12px">
-      <div><b>Points cartographiés</b><br>${d?fmtN(d.features.length):'—'} (sur ${fmtN(m.n_projets_liste_executees||42)} projets de la « Liste des infrastructures exécutées »)</div>
+      <div><b>Projets cartographiés</b><br>${fmtN(m.n_projets_couverts_par_la_carte||42)} sur ${fmtN(m.n_projets_liste_executees||42)} (« Liste des infrastructures exécutées »)</div>
       <div><b>Période</b><br>${esc(m.periode||'2007–2025')}</div>
-      <div><b>Entité(s) non cartographiée(s)</b><br>${fmtN((d&&d.non_georeferences||[]).length)}</div>
+      <div><b>Points sur la carte</b><br>${d?fmtN(d.features.length):'—'}</div>
       <div><b>Annexe 26 (APCSC, juin 2025)</b><br>${fmtN(m.n_projets_annexe26_apcsc||77)} projets, ${fmtN(Math.round(m.montant_total_annexe26_usd||0))} USD (tableau séparé, non cartographié)</div>
     </div>
-    ${m.note_couverture?`<div class="msg warn" style="font-size:12px;margin-bottom:8px">${esc(m.note_couverture)}</div>`:''}
+    ${editing?`
+    ${m.note_couverture?`<div class="msg warn" style="font-size:12px;margin-bottom:8px"><b>Note interne (mode administrateur) :</b> ${esc(m.note_couverture)}</div>`:''}
     ${m.note_coordonnees?`<div class="msg" style="font-size:12px;margin-bottom:8px">${esc(m.note_coordonnees)}</div>`:''}
     ${m.note_ecarts?`<div class="msg" style="font-size:12px">${esc(m.note_ecarts)}</div>`:''}
+    `:''}
   `;
   showModal('srcModal');
 }
@@ -2129,16 +2131,14 @@ function sicomPopupHtml(p){
     ${row('Quantité',p.quantite)}
     ${row('Coût',p.cout_usd!=null?`${fmtN(p.cout_usd)} USD (${fmtUSD(p.cout_usd)})`:'Non individualisé dans la source')}
     ${row('Note',p.note)}
-    ${row('Source des données',p.source_donnees)}
-    ${row('Qualité du géoréférencement',SICOM_QUAL_LABEL[p.qualite_geom]||p.qualite_geom)}
-    ${row('Source de la coordonnée',p.source_coordonnees)}
+    ${editing?row('Source des données',p.source_donnees):''}
+    ${editing?row('Qualité du géoréférencement',SICOM_QUAL_LABEL[p.qualite_geom]||p.qualite_geom):''}
+    ${editing?row('Source de la coordonnée',p.source_coordonnees):''}
   </div>`;
   if(p.photo_url){
     html+=`<div style="font-size:12px;margin-top:6px;padding-top:6px;border-top:1px dashed var(--line)">
       <a href="${esc(p.photo_url)}" target="_blank" rel="noopener noreferrer">↗ Voir une photo réelle vérifiée</a>${p.photo_credit?` <span style="color:var(--ink-faint)">(${esc(p.photo_credit)})</span>`:''}
     </div>`;
-  } else {
-    html+=`<div style="font-size:11.5px;color:var(--ink-faint);margin-top:6px;padding-top:6px;border-top:1px dashed var(--line)">Aucune photo vérifiée avec certitude disponible pour ce point.</div>`;
   }
   return html;
 }
@@ -2170,21 +2170,24 @@ function sicomMapSection(){
   const n=(d&&d.features.length)||0;
   const m=(d&&d.meta)||{};
   const totalProjets=m.n_projets_liste_executees||42;
+  const projetsCouverts=m.n_projets_couverts_par_la_carte||totalProjets;
   return `<div class="card" style="margin-bottom:16px;background:var(--panel-2)">
-      <div class="ch"><h2 style="margin:0;font-size:16px">Carte des infrastructures financées par SICOMINES (2007-2025)</h2><span class="badge">${fmtN(n)} points sur ${fmtN(totalProjets)} projets (« Liste des infrastructures exécutées »)</span></div>
+      <div class="ch"><h2 style="margin:0;font-size:16px">Carte des infrastructures financées par SICOMINES (2007-2025)</h2><span class="badge">${fmtN(projetsCouverts)} projets sur ${fmtN(totalProjets)} cartographiés (« Liste des infrastructures exécutées »)</span></div>
       <p style="font-size:12.5px;color:var(--ink-soft);margin:6px 0 0">Localisation des projets d'infrastructures listés projet par projet dans le document « Liste des infrastructures exécutées » (4 phases, dataset ci-dessous), avec pour chacun ses métadonnées complètes (montant, distance ou superficie, phase, note) et, quand une photographie réelle a pu être identifiée avec certitude, un lien vers celle-ci.</p>
-      ${m.note_couverture?`<div class="msg warn" style="margin-top:10px;font-size:12px">${esc(m.note_couverture)}</div>`:''}
+      ${editing?`
+      ${m.note_couverture?`<div class="msg warn" style="margin-top:10px;font-size:12px"><b>Note interne (mode administrateur) :</b> ${esc(m.note_couverture)}</div>`:''}
       ${m.note_coordonnees?`<div class="msg" style="margin-top:10px;font-size:12px">${esc(m.note_coordonnees)}</div>`:''}
+      `:''}
     </div>
     <div class="card" style="margin-bottom:16px">
       <div id="sicomMap" style="height:560px;border-radius:12px;overflow:hidden;background:var(--panel-2)"></div>
       <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:12px;font-size:11.5px;color:var(--ink-soft)">
-        <span>Qualité du géoréférencement : ${Object.entries(SICOM_QUAL_LABEL).map(([k,l])=>`<b>${k}</b> = ${esc(l)}`).join(' · ')}</span>
+        ${editing?`<span>Qualité du géoréférencement : ${Object.entries(SICOM_QUAL_LABEL).map(([k,l])=>`<b>${k}</b> = ${esc(l)}`).join(' · ')}</span>`:''}
         <span class="grow"></span>
         <button type="button" class="srclink" onclick="openSicomSourceModal()">ⓘ Source &amp; traçabilité de cette couche</button>
       </div>
     </div>
-    ${nonGeo.length?`<div class="card" style="margin-bottom:16px"><div class="ch"><h3 style="margin:0">Projet(s) sans localisation unique possible — non représenté(s) sur la carte</h3></div>
+    ${(editing&&nonGeo.length)?`<div class="card" style="margin-bottom:16px"><div class="ch"><h3 style="margin:0">Projet(s) sans localisation unique possible — non représenté(s) sur la carte (mode administrateur)</h3></div>
       ${nonGeo.map(n2=>`<div class="msg warn" style="font-size:12.5px">
         <b>${esc(n2.designation)}</b>${n2.cout_usd!=null?` — ${fmtN(n2.cout_usd)} USD`:''}<br>${esc(n2.lieu)}${n2.phase?` · ${esc(n2.phase)}`:''}<br><span style="color:var(--ink-faint)">${esc(n2.note)}</span>
       </div>`).join('')}
