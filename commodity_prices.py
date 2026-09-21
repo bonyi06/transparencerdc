@@ -36,6 +36,7 @@ partir d'une hypothèse.
 """
 from __future__ import annotations
 
+import re
 from datetime import date as date_cls
 from datetime import datetime, timezone
 
@@ -85,20 +86,34 @@ def _get_api_key() -> str:
     return (integrations.get("commodity_api_key") or "").strip()
 
 
-def _fetch_from_provider() -> tuple[dict | None, str | None]:
-    """Interroge MetalpriceAPI. Ne renvoie jamais de valeur reconstituée :
-    soit les cours réellement renvoyés par le fournisseur, soit None avec un
-    message d'erreur explicite."""
-    key = _get_api_key()
-    if not key:
-        return None, (
-            "Aucune clé API MetalpriceAPI n'est configurée "
-            "(mode administrateur > Vue d'ensemble > Bande des cours)."
-        )
+# Constat réel (relevé de production du 21/09/2026, plan gratuit) :
+# MetalpriceAPI a renvoyé "XCU query requires a paid plan" dès que le cuivre
+# figure dans la requête — la documentation publique ne détaillait pas cette
+# restriction. Contrairement à ce qu'on aurait pu espérer, l'API rejette
+# ALORS LA REQUÊTE ENTIÈRE dès qu'un seul symbole demandé n'est pas couvert
+# par le plan souscrit (les métaux précieux classiques — or, argent, platine,
+# palladium — restent, eux, explicitement documentés comme inclus dans le
+# plan gratuit). Pour ne jamais perdre l'intégralité de la bande à cause d'un
+# seul symbole non couvert, la requête est donc scindée en deux groupes fixes
+# (2 appels/jour au lieu d'1, ce qui reste largement sous la limite de 100
+# requêtes/mois du plan gratuit) : les métaux précieux d'une part, les
+# métaux de base et l'énergie d'autre part. Si le second groupe échoue pour
+# la même raison, on le signale explicitement (voir PLAN_RESTRICTED) plutôt
+# que d'escamoter la bande entière — cohérent avec le principe « ne rien
+# cacher » du site.
+FREE_TIER_GROUP = ["XAU"]
+EXTENDED_GROUP = ["XCU", "XCO", "ZNC", "XSN", "XLI", "NI", "WTI", "BRENT"]
+
+PAID_PLAN_ERROR_RE = re.compile(r"([A-Z]{2,10})\s+query requires a paid plan", re.I)
+
+
+def _call_metalpriceapi(key: str, symbols: list[str]):
+    """Un seul appel HTTP. Renvoie (raw_rates_dict, None) ou (None, message
+    d'erreur explicite) — ne calcule ni n'invente jamais de valeur."""
     try:
         resp = requests.get(
             METALPRICEAPI_URL,
-            params={"api_key": key, "base": "USD", "currencies": ",".join(SYMBOL_CODES)},
+            params={"api_key": key, "base": "USD", "currencies": ",".join(symbols)},
             timeout=12,
         )
     except requests.RequestException as exc:
@@ -110,13 +125,14 @@ def _fetch_from_provider() -> tuple[dict | None, str | None]:
     if not payload.get("success"):
         err = payload.get("error") or {}
         info = err.get("info") or err.get("message") or str(err) or f"HTTP {resp.status_code}"
-        return None, f"MetalpriceAPI a renvoyé une erreur : {info}"
+        return None, info
+    return payload.get("rates") or {}, None
 
-    raw_rates = payload.get("rates") or {}
+
+def _extract_prices(raw_rates: dict, symbols: list[str]) -> tuple[dict, list[str]]:
     prices: dict[str, float] = {}
     missing: list[str] = []
-    for entry in SYMBOLS:
-        sym = entry["symbol"]
+    for sym in symbols:
         # MetalpriceAPI renvoie le prix direct sous la clé "USD<SYMBOLE>"
         # (ex: "USDXAU") et son inverse sous la clé "<SYMBOLE>" seule (voir
         # la documentation officielle). On ne calcule jamais un prix à
@@ -133,14 +149,64 @@ def _fetch_from_provider() -> tuple[dict | None, str | None]:
                 missing.append(sym)
         else:
             missing.append(sym)
+    return prices, missing
+
+
+def _fetch_from_provider() -> tuple[dict | None, str | None]:
+    """Interroge MetalpriceAPI en deux groupes (voir note ci-dessus). Ne
+    renvoie jamais de valeur reconstituée : soit les cours réellement
+    renvoyés par le fournisseur, soit None avec un message d'erreur
+    explicite. Un échec limité à un groupe (ex: plan gratuit ne couvrant pas
+    les métaux de base/l'énergie) n'empêche pas d'afficher l'autre groupe."""
+    key = _get_api_key()
+    if not key:
+        return None, (
+            "Aucune clé API MetalpriceAPI n'est configurée "
+            "(mode administrateur > Vue d'ensemble > Bande des cours)."
+        )
+
+    prices: dict[str, float] = {}
+    missing: list[str] = []
+    plan_restricted: list[str] = []
+    group_errors: list[str] = []
+
+    for group in (FREE_TIER_GROUP, EXTENDED_GROUP):
+        raw_rates, err = _call_metalpriceapi(key, group)
+        if raw_rates is not None:
+            p, m = _extract_prices(raw_rates, group)
+            prices.update(p)
+            missing.extend(m)
+            continue
+        m = PAID_PLAN_ERROR_RE.search(err or "")
+        if m:
+            # Le message nomme un symbole précis (« XCU query requires a
+            # paid plan »), mais l'API a rejeté tout le groupe dès ce
+            # premier symbole non couvert plutôt que de traiter les autres
+            # un par un ; on ne sait donc pas, sans plan payant pour
+            # vérifier, si les AUTRES symboles du groupe le seraient aussi.
+            # On le signale honnêtement pour le groupe entier plutôt que de
+            # prétendre le savoir symbole par symbole.
+            plan_restricted.extend(group)
+        else:
+            group_errors.append(err or "erreur inconnue")
 
     if not prices:
-        return None, (
-            "MetalpriceAPI a répondu sans qu'aucun des symboles attendus ne "
-            "soit reconnu (offre souscrite trop limitée, ou format de "
-            "réponse inattendu) : " + str(raw_rates)[:300]
-        )
-    return {"prices": prices, "missing": missing}, None
+        if plan_restricted and not group_errors:
+            return None, (
+                "MetalpriceAPI a indiqué que les symboles suivants "
+                "nécessitent un plan payant sur votre compte : "
+                + ", ".join(plan_restricted) + "."
+            )
+        return None, "MetalpriceAPI a renvoyé une erreur : " + "; ".join(group_errors or ["réponse vide"])
+
+    missing.extend(plan_restricted)
+    result = {"prices": prices, "missing": missing, "plan_restricted": plan_restricted}
+    if group_errors:
+        # Un groupe a échoué pour une raison AUTRE que la restriction de
+        # plan : on affiche quand même ce qui a pu être obtenu, mais on ne
+        # tait pas l'incident (repris dans last_error côté cache/serialize).
+        result["partial_error"] = "; ".join(group_errors)
+    return result, None
 
 
 def get_prices(force: bool = False) -> CommodityPriceCache:
@@ -160,10 +226,15 @@ def get_prices(force: bool = False) -> CommodityPriceCache:
         cache.date = today
         cache.rates = result["prices"]
         cache.missing_symbols = result["missing"]
+        cache.plan_restricted = result.get("plan_restricted") or []
         cache.provider = "metalpriceapi"
         cache.fetched_at = datetime.now(timezone.utc)
-        cache.last_error = None
-        cache.last_error_at = None
+        # Un succès partiel (ex: métaux précieux obtenus mais groupe
+        # métaux de base/énergie en échec pour une autre raison qu'une
+        # restriction de plan déjà répertoriée ci-dessus) reste visible en
+        # mode administrateur plutôt que d'être tu.
+        cache.last_error = result.get("partial_error")
+        cache.last_error_at = datetime.now(timezone.utc) if result.get("partial_error") else None
     else:
         cache.last_error = err
         cache.last_error_at = datetime.now(timezone.utc)
@@ -173,6 +244,7 @@ def get_prices(force: bool = False) -> CommodityPriceCache:
 
 
 def serialize_prices(cache: CommodityPriceCache) -> dict:
+    plan_restricted = set(cache.plan_restricted or [])
     items = []
     for entry in SYMBOLS:
         sym = entry["symbol"]
@@ -192,8 +264,10 @@ def serialize_prices(cache: CommodityPriceCache) -> dict:
                 "price": price,
                 "change_pct": change_pct,
                 "available": price is not None,
+                "plan_restricted": sym in plan_restricted,
             }
         )
+    plan_restricted_labels = [e["label"] for e in SYMBOLS if e["symbol"] in plan_restricted]
     return {
         "items": items,
         "date": cache.date,
@@ -202,6 +276,7 @@ def serialize_prices(cache: CommodityPriceCache) -> dict:
         "fetched_at": cache.fetched_at.isoformat() if cache.fetched_at else None,
         "prev_date": cache.prev_date,
         "missing_symbols": cache.missing_symbols or [],
+        "plan_restricted_labels": plan_restricted_labels,
         "error": cache.last_error,
         "error_at": cache.last_error_at.isoformat() if cache.last_error_at else None,
         "configured": bool(_get_api_key()),

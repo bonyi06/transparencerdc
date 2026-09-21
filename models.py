@@ -51,6 +51,16 @@ _ADDED_COLUMNS = {
     "warehouse_meta": [
         ("theme_info", "JSON"),
     ],
+    # commodity_price_cache existe déjà en production depuis un premier
+    # déploiement (commit a3f2246) sans cette colonne — ajoutée juste après
+    # coup pour distinguer un symbole simplement absent de la réponse d'un
+    # symbole explicitement refusé par le plan MetalpriceAPI souscrit (voir
+    # commodity_prices.py). Sans cette entrée, `db.create_all()` ne
+    # modifierait pas la table déjà créée et le premier relevé planterait
+    # ("no such column: commodity_price_cache.plan_restricted").
+    "commodity_price_cache": [
+        ("plan_restricted", "JSON"),
+    ],
 }
 
 
@@ -229,6 +239,7 @@ class CommodityPriceCache(db.Model):
     base = db.Column(db.String(8), default="USD")
     rates = db.Column(db.JSON, default=dict)  # {"XAU": 1856.9, ...} en USD
     missing_symbols = db.Column(db.JSON, default=list)
+    plan_restricted = db.Column(db.JSON, default=list)  # symboles refusés par le plan MetalpriceAPI souscrit
     prev_date = db.Column(db.String(10))
     prev_rates = db.Column(db.JSON, default=dict)
     provider = db.Column(db.String(64), default="metalpriceapi")

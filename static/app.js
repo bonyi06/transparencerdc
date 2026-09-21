@@ -1066,9 +1066,12 @@ function commodityTickerHtml(d){
     banner=`<div class="msg warn" style="margin:0 0 10px">Dernier relevé du ${esc(d.date||'—')} affiché (nouveau relevé du jour impossible${editing?(' : '+esc(d.error)):''}).</div>`;
   }
   const excludedNote=(d.excluded||[]).map(x=>`<b>${esc(x.label)}</b> : ${esc(x.reason)}`).join(' ');
-  const missing=(d.missing_symbols||[]).length;
+  const planLabels=d.plan_restricted_labels||[];
+  const planNote=planLabels.length?`<div style="font-size:11px;color:var(--ink-faint);margin-top:4px"><b>${esc(planLabels.join(', '))}</b> : nécessite${planLabels.length>1?'nt':''} un plan payant sur le compte MetalpriceAPI configuré (plan gratuit insuffisant pour ${planLabels.length>1?'ces matières':'cette matière'}).</div>`:'';
+  const otherMissing=d.items.filter(it=>!it.available&&!it.plan_restricted).length;
   return `${banner}${rows.length?`<div class="comm-ticker" role="marquee" aria-label="Cours des matières premières"><div class="comm-track">${track}</div><div class="comm-track" aria-hidden="true">${track}</div></div>`:''}
-    <div style="font-size:11px;color:var(--ink-faint);margin-top:8px">${dateNote}${missing?` · ${missing} matière(s) demandée(s) non couverte(s) par l'offre souscrite`:''}</div>
+    <div style="font-size:11px;color:var(--ink-faint);margin-top:8px">${dateNote}${otherMissing?` · ${otherMissing} matière(s) demandée(s) non couverte(s) par l'offre souscrite`:''}</div>
+    ${planNote}
     <div style="font-size:11px;color:var(--ink-faint);margin-top:4px">${excludedNote}</div>`;
 }
 async function loadCommodityTicker(){
