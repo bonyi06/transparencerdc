@@ -56,7 +56,7 @@ C.intros=Object.assign({
 // dans le dossier Drive officiel plutôt que dans une liste figée de liens).
 // La clé API doit être restreinte (referrer HTTP) au domaine du site, et le
 // dossier partagé en lecture seule "Toute personne disposant du lien".
-C.integrations=Object.assign({gdrive_folder_id:'14bSc8C68AloU3eIhYkpMENt_89dtizN6',gdrive_api_key:''},C.integrations||{});
+C.integrations=Object.assign({gdrive_folder_id:'14bSc8C68AloU3eIhYkpMENt_89dtizN6',gdrive_api_key:'',commodity_api_key:''},C.integrations||{});
 const DS=WH.datasets, AGG=WH.agg, O=WH.officiel2023, STATS=WH.stats;
 /* ===== Rubriques publiques alignées sur la Norme ITIE 2023 (sept. 2026) =====
    Chaque table de l'entrepôt porte désormais une métadonnée `meta` (thème,
@@ -1028,9 +1028,84 @@ function revenueLevelBreakdown(){
   }
   return [...map.entries()].map(([label,value])=>({label,value})).sort((a,b)=>b.value-a.value);
 }
+/* ===== Bande des cours des matières premières (temps réel, MetalpriceAPI) =====
+   Relevée côté serveur une fois par jour (voir commodity_prices.py) — la clé
+   API n'est jamais transmise au navigateur (voir /api/content côté serveur).
+   En cas d'échec ou d'absence de clé, le message d'erreur exact est affiché
+   plutôt que masqué ou remplacé par une valeur inventée (« ne rien cacher »).
+   Le diamant, sans cours de marché coté standardisé, est explicitement
+   signalé comme absent plutôt que silencieusement omis. */
+let commodityTicker={status:'idle',data:null};
+function fmtCommodityPrice(n){return (n==null||isNaN(n))?'—':n.toLocaleString('fr-FR',{maximumFractionDigits:n<10?3:2});}
+function commodityTickerSection(){
+  const cfg=C.integrations||{};
+  const adminBox=editing?`<div class="card" style="margin-bottom:14px">
+    <h3 style="margin-bottom:8px">Bande des cours — source MetalpriceAPI</h3>
+    <p style="font-size:12.5px;color:var(--ink-soft);margin-bottom:10px">Le London Metal Exchange (LME) ne propose pas d'API publique gratuite (abonnement payant requis). Les cours ci-dessous proviennent de <a href="https://metalpriceapi.com" target="_blank" rel="noopener">MetalpriceAPI</a> (plan gratuit possible : 100 requêtes/mois, un relevé quotidien en consomme environ 30/mois), qui reprend les cours du LME/COMEX/NYMEX pour les métaux et de l'ICE/NYMEX pour le pétrole. Le diamant n'a pas de cours de marché coté standardisé (indices Rapaport/IDEX payants et non unifiés) et n'est donc pas inclus — voir la note affichée publiquement sous la bande.</p>
+    <div style="font-size:13px;margin-bottom:10px">Clé API MetalpriceAPI : <b data-edit="integrations.commodity_api_key" style="word-break:break-all">${esc(cfg.commodity_api_key||'')}</b></div>
+    <button class="btn" type="button" id="commRefreshBtn">🔄 Rafraîchir maintenant</button>
+    <span id="commRefreshMsg" style="font-size:12px;color:var(--ink-soft);margin-left:10px"></span>
+  </div>`:'';
+  return `${adminBox}<div class="card" style="margin-bottom:20px;padding:0;overflow:hidden" id="commTickerCard"><div id="commTickerBody" style="padding:14px 20px"><div class="empty" style="padding:0">Chargement des cours des matières premières…</div></div></div>`;
+}
+function commodityTickerHtml(d){
+  if(!d)return '<div class="empty" style="padding:0">Cours indisponibles.</div>';
+  const rows=d.items.filter(it=>it.available);
+  const track=rows.map(it=>{
+    const chg=it.change_pct;
+    const chgHtml=(chg==null)?'':`<span style="margin-left:6px;font-weight:700;color:${chg>0?'var(--green)':(chg<0?'var(--red)':'var(--ink-soft)')}">${chg>0?'▲':(chg<0?'▼':'—')} ${fmtPct(Math.abs(chg)/100)}</span>`;
+    return `<span class="comm-item"><b>${esc(it.label)}</b> ${fmtCommodityPrice(it.price)} USD/${esc(it.unit)}${chgHtml}</span>`;
+  }).join('<span class="comm-sep">·</span>');
+  const dateNote=d.date?`Cours du ${esc(d.date)}${d.prev_date?(' (variation vs '+esc(d.prev_date)+')'):''} — source : MetalpriceAPI`:'';
+  let banner='';
+  if(!d.configured){
+    banner=`<div class="msg warn" style="margin:0 0 10px">Bande des cours non configurée${editing?' — renseignez une clé API MetalpriceAPI ci-dessus.':'.'}</div>`;
+  }else if(d.error&&!rows.length){
+    banner=`<div class="msg warn" style="margin:0 0 10px">Cours des matières premières indisponibles pour le moment${editing?(' : '+esc(d.error)):''}.</div>`;
+  }else if(d.error){
+    banner=`<div class="msg warn" style="margin:0 0 10px">Dernier relevé du ${esc(d.date||'—')} affiché (nouveau relevé du jour impossible${editing?(' : '+esc(d.error)):''}).</div>`;
+  }
+  const excludedNote=(d.excluded||[]).map(x=>`<b>${esc(x.label)}</b> : ${esc(x.reason)}`).join(' ');
+  const missing=(d.missing_symbols||[]).length;
+  return `${banner}${rows.length?`<div class="comm-ticker" role="marquee" aria-label="Cours des matières premières"><div class="comm-track">${track}</div><div class="comm-track" aria-hidden="true">${track}</div></div>`:''}
+    <div style="font-size:11px;color:var(--ink-faint);margin-top:8px">${dateNote}${missing?` · ${missing} matière(s) demandée(s) non couverte(s) par l'offre souscrite`:''}</div>
+    <div style="font-size:11px;color:var(--ink-faint);margin-top:4px">${excludedNote}</div>`;
+}
+async function loadCommodityTicker(){
+  commodityTicker={status:'loading',data:commodityTicker.data};
+  try{
+    const d=await getJSON('/api/commodity-prices'); // le rafraîchissement forcé passe par un POST (voir bouton admin, drawCommodityTicker)
+    commodityTicker={status:'ready',data:d};
+  }catch(err){
+    commodityTicker={status:'error',data:commodityTicker.data,error:(err&&err.message)||String(err)};
+  }
+  const body=$('#commTickerBody');
+  if(body)body.innerHTML=commodityTicker.data?commodityTickerHtml(commodityTicker.data):`<div class="msg warn" style="margin:0">Impossible de charger les cours des matières premières${editing&&commodityTicker.error?(' : '+esc(commodityTicker.error)):''}.</div>`;
+}
+function drawCommodityTicker(){
+  loadCommodityTicker();
+  const btn=$('#commRefreshBtn');
+  if(btn)btn.onclick=async()=>{
+    const kEl=document.querySelector('[data-edit="integrations.commodity_api_key"]');
+    if(kEl)C.integrations.commodity_api_key=kEl.textContent.trim();
+    const msg=$('#commRefreshMsg');
+    if(msg)msg.textContent='Enregistrement de la clé et rafraîchissement…';
+    try{
+      await fetch('/api/content',{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:{integrations:{commodity_api_key:C.integrations.commodity_api_key}}})});
+      const r=await fetch('/api/commodity-prices/refresh',{method:'POST',credentials:'same-origin'});
+      const d=await r.json();
+      commodityTicker={status:'ready',data:d};
+      const body=$('#commTickerBody');if(body)body.innerHTML=commodityTickerHtml(d);
+      if(msg)msg.textContent=d.error?('Erreur : '+d.error):'Cours mis à jour.';
+    }catch(err){
+      if(msg)msg.textContent='Échec : '+((err&&err.message)||String(err));
+    }
+  };
+}
 function mOverview(){return `
   <div class="phead"><div class="eyebrow">Tableau de bord</div><h1>Vue d'ensemble</h1>
     <p data-edit="overview.intro">${esc(C.overview.intro)}</p></div>
+  ${commodityTickerSection()}
   ${kpiRow()}
   ${highlight()}
   <div class="grid2">
@@ -1043,6 +1118,7 @@ function mOverview(){return `
   </div>
   ${apercuBiSection()}`;}
 function drawOverview(){
+  drawCommodityTicker();
   cLine($('#ov1'),AGG.serie_etat.map(d=>({label:d.annee,value:d.etat,ese:d.ese})),true,css('--sky'),css('--red'),'value','ese');
   cDonut($('#ov2'),[{label:'Mines',value:O.mines},{label:'Hydrocarbures',value:O.petrole}]);
   cBar($('#ov3'),AGG.top2023.map(d=>({label:d.nom,value:d.etat})),css('--sky'),true);

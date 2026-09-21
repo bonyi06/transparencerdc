@@ -124,6 +124,17 @@ body.editing td[contenteditable]:focus{outline:2px solid var(--sky);background:v
 .card .sub{font-size:12px;color:var(--ink-soft);margin-bottom:12px}
 .card .badge{font-size:10.5px;font-weight:700;color:var(--sky);background:var(--sel);padding:3px 9px;border-radius:999px}
 .chart{width:100%;overflow-x:auto}
+/* Bande des cours des matières premières (Vue d'ensemble) : défilement
+   horizontal continu — deux copies identiques du contenu placées bout à
+   bout, la seconde masquée aux lecteurs d'écran (aria-hidden), animées en
+   boucle pour donner l'illusion d'un flux ininterrompu. */
+.comm-ticker{overflow:hidden;white-space:nowrap;position:relative;background:var(--panel-2,var(--sel));border-radius:10px}
+.comm-track{display:inline-block;padding:10px 0;animation:comm-scroll 40s linear infinite}
+.comm-ticker:hover .comm-track{animation-play-state:paused}
+@keyframes comm-scroll{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+.comm-item{display:inline-block;padding:0 22px;font-size:13px;color:var(--ink)}
+.comm-sep{display:inline-block;color:var(--ink-faint)}
+@media (prefers-reduced-motion: reduce){.comm-track{animation:none}.comm-ticker{overflow-x:auto}}
 .srcnote{font-size:11px;color:var(--ink-faint);margin-top:8px}
 .srcnote code{font-family:"IBM Plex Mono";font-size:10.5px}
 svg.c{display:block;max-width:100%}

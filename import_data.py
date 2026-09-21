@@ -181,7 +181,7 @@ def sync_database(warehouse: dict, content: dict, logo: str, geo: dict | None) -
     # rapports temporairement indisponible.").
     existing_integrations = (sc.content or {}).get("integrations", {}) or {}
     new_integrations = dict(new_content.get("integrations", {}) or {})
-    for secret_field in ("gdrive_api_key",):
+    for secret_field in ("gdrive_api_key", "commodity_api_key"):
         if not (new_integrations.get(secret_field) or "").strip():
             existing_value = (existing_integrations.get(secret_field) or "").strip()
             if existing_value:

@@ -29,6 +29,8 @@ import click
 from flask import Flask, abort, jsonify, render_template, request, session
 from flask_compress import Compress
 
+from commodity_prices import get_prices as get_commodity_prices
+from commodity_prices import serialize_prices as serialize_commodity_prices
 from config import Config
 from models import (
     AdminUser,
@@ -417,6 +419,20 @@ def register_routes(app: Flask) -> None:
         sc = SiteContent.singleton()
         content = dict(sc.content or {})
         content["reports"] = sc.reports or []
+        if current_admin() is None:
+            # La clé API Google Drive (integrations.gdrive_api_key) est
+            # volontairement publique : elle est restreinte par domaine
+            # (referrer HTTP) et appelée directement depuis le navigateur du
+            # visiteur (voir mReports()/gdriveCrawl()). La clé MetalpriceAPI
+            # (integrations.commodity_api_key), elle, est un abonnement payé
+            # à quota et n'est PAS restreinte par domaine : l'exposer à tout
+            # visiteur permettrait à n'importe qui de la récupérer et
+            # d'épuiser le quota. Elle n'est donc jamais utilisée côté
+            # navigateur (voir commodity_prices.py, appelé uniquement depuis
+            # le serveur) et retirée ici pour un visiteur non authentifié.
+            integrations = dict(content.get("integrations", {}) or {})
+            integrations.pop("commodity_api_key", None)
+            content["integrations"] = integrations
         return jsonify({"content": content, "version": sc.version})
 
     @app.put("/api/content")
@@ -504,6 +520,32 @@ def register_routes(app: Flask) -> None:
         resp = jsonify(data)  # None si la couche n'a pas (encore) été importée
         resp.headers["Cache-Control"] = "public, max-age=300"
         return resp
+
+    # ------------------------------------------------------------------ #
+    # Cours des matières premières (bande de la Vue d'ensemble)
+    # ------------------------------------------------------------------ #
+    @app.get("/api/commodity-prices")
+    def commodity_prices_route():
+        """Cours du jour (cuivre, cobalt, or, zinc, étain, lithium, nickel,
+        pétrole WTI/Brent), relevés au plus une fois par jour auprès de
+        MetalpriceAPI et mis en cache (voir commodity_prices.py). En cas
+        d'échec, la dernière valeur connue est renvoyée avec un message
+        d'erreur explicite plutôt qu'une valeur reconstituée."""
+        cache = get_commodity_prices()
+        resp = jsonify(serialize_commodity_prices(cache))
+        resp.headers["Cache-Control"] = "public, max-age=1800"
+        return resp
+
+    @app.post("/api/commodity-prices/refresh")
+    @login_required
+    def commodity_prices_refresh():
+        """Force un relevé immédiat (bouton « Rafraîchir maintenant » en
+        mode administrateur), utile pour tester une clé API qui vient
+        d'être renseignée sans attendre le lendemain."""
+        cache = get_commodity_prices(force=True)
+        data = serialize_commodity_prices(cache)
+        log_audit("commodity_prices.refresh", detail=data.get("error") or "ok")
+        return jsonify(data)
 
     # ------------------------------------------------------------------ #
     # Santé (utile pour les sondes de déploiement / load balancer)

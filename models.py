@@ -213,6 +213,39 @@ class GeoLayer(db.Model):
         return obj
 
 
+class CommodityPriceCache(db.Model):
+    """Cache des cours des matières premières (bande de la Vue d'ensemble).
+
+    Un seul relevé par jour est effectué (voir commodity_prices.py), pour
+    rester dans les limites du plan gratuit du fournisseur (MetalpriceAPI) ;
+    cette table conserve le relevé du jour et celui de la veille (pour
+    calculer une variation), ainsi que la dernière erreur rencontrée le cas
+    échéant — jamais une valeur reconstituée à la place d'un échec."""
+
+    __tablename__ = "commodity_price_cache"
+
+    id = db.Column(db.Integer, primary_key=True, default=1)
+    date = db.Column(db.String(10))  # AAAA-MM-JJ du dernier relevé réussi
+    base = db.Column(db.String(8), default="USD")
+    rates = db.Column(db.JSON, default=dict)  # {"XAU": 1856.9, ...} en USD
+    missing_symbols = db.Column(db.JSON, default=list)
+    prev_date = db.Column(db.String(10))
+    prev_rates = db.Column(db.JSON, default=dict)
+    provider = db.Column(db.String(64), default="metalpriceapi")
+    fetched_at = db.Column(db.DateTime)
+    last_error = db.Column(db.Text)
+    last_error_at = db.Column(db.DateTime)
+
+    @staticmethod
+    def singleton() -> "CommodityPriceCache":
+        obj = CommodityPriceCache.query.get(1)
+        if obj is None:
+            obj = CommodityPriceCache(id=1, rates={}, missing_symbols=[], prev_rates={})
+            db.session.add(obj)
+            db.session.commit()
+        return obj
+
+
 class AdminUser(db.Model):
     """Comptes administrateur nominatifs autorisés à éditer le contenu
     public. Chaque compte a un rôle :
