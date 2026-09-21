@@ -584,6 +584,7 @@ function fmtUSD(n){if(n==null||isNaN(n))return '—';const a=Math.abs(n);
   if(a>=1e6)return (n/1e6).toFixed(a>=1e8?0:1).replace('.',',')+' M$';
   if(a>=1e3)return Math.round(n/1e3)+' k$';return String(Math.round(n));}
 const fmtN=n=>(typeof n==='number'?n:Number(n)).toLocaleString('fr-FR');
+const fmtPct=n=>(n==null||isNaN(n))?'—':(n*100).toLocaleString('fr-FR',{maximumFractionDigits:1})+' %';
 // Jetons utilisés dans les rapports source pour indiquer une valeur non
 // communiquée, sans objet ou non applicable — distincts d'un véritable zéro
 // déclaré. Affichés de façon lisible plutôt que tels quels (ex. "N/c" brut)
@@ -884,6 +885,86 @@ function highlight(){return `<div class="hl">
     <div class="m"><div class="n">${fmtN(O.petrole_bbl)}</div><div class="t">Pétrole (bbl)</div></div>
   </div></div>`;}
 
+/* ===== Analyse transversale (BI) — enrichit la Vue d'ensemble à partir des
+   classeurs "Base_BI_Rapports_ITIE_RDC_2007-2023" et "Analyse_BI_ITIE_RDC"
+   fournis directement par l'utilisateur (2026-09-21) : synthèse 2023,
+   série longue 2007-2023, affectation des revenus, facteurs de variation,
+   prix internationaux et registre des risques stratégiques. Les tables
+   "Agences"/"Top entreprises"/"Flux" de ces classeurs n'ont volontairement
+   pas été reprises ici : elles dérivent des mêmes données déjà publiées à
+   un niveau plus fin ailleurs dans l'entrepôt (ent_revenus_entite,
+   ent_revenus_entreprise, fait_reconciliation_flux). */
+function synthKpiMap(){const d=DS.apercu_synthese_bi;if(!d)return null;const m={};d.rows.forEach(r=>m[r[0]]=r[1]);return m;}
+function synthNotes(){const d=DS.apercu_synthese_bi;const q=(d&&d.meta&&d.meta.qualite)||'';
+  const m=q.match(/Constats principaux\s*:\s*([\s\S]*?)\s*\|\|\s*Actions prioritaires\s*:\s*([\s\S]*)/);
+  return m?{constats:m[1],actions:m[2]}:{constats:'',actions:''};}
+function apercuBiSection(){
+  const k=synthKpiMap();if(!k)return '';
+  const notes=synthNotes();
+  const actionsList=(notes.actions||'').split(/\n+/).map(s=>s.replace(/^\d+\.\s*/,'').trim()).filter(Boolean);
+  return `<div class="phead" style="margin-top:8px"><div class="eyebrow">Analyse transversale</div><h2 style="margin:0">Synthèse BI ${esc(k['Revenus extractifs 2023']!=null?'2023':'')}</h2>
+    <p style="font-size:12.5px;color:var(--ink-soft);margin-top:4px">Indicateurs, série longue 2007-2023, affectation des revenus, facteurs de variation et registre des risques — analyse fournie directement par l'utilisateur à partir des 17 rapports ITIE-RDC et de 9 études thématiques. <button type="button" class="srclink" onclick="openSourceModal('apercu_synthese_bi')">ⓘ Source &amp; traçabilité</button></p></div>
+  <div class="kpis">
+    <div class="kpi"><div class="v">${fmtUSD(k['Revenus extractifs 2023'])}</div><div class="l">Revenus extractifs 2023</div></div>
+    <div class="kpi"><div class="v" style="color:${k['Variation 2023 contre 2022']<0?'var(--red)':'var(--teal)'}">${fmtPct(k['Variation 2023 contre 2022'])}</div><div class="l">Variation 2023 / 2022</div></div>
+    <div class="kpi"><div class="v">${fmtPct(k['Part minière 2023'])}</div><div class="l">Part minière 2023</div></div>
+    <div class="kpi"><div class="v">${fmtPct(k['Part budgétaire 2023'])}</div><div class="l">Part budgétaire 2023</div></div>
+    <div class="kpi"><div class="v">${fmtPct(k['Part infranationale 2023'])}</div><div class="l">Part infranationale 2023</div></div>
+    <div class="kpi"><div class="v">${fmtPct(k['TCAM 2018 à 2023'])}</div><div class="l">TCAM 2018-2023</div></div>
+  </div>
+  ${notes.constats?`<div class="card" style="margin:14px 0"><div class="ch"><h3 style="margin:0">Constats principaux</h3></div><p style="font-size:13px;line-height:1.55">${esc(notes.constats)}</p>
+    ${actionsList.length?`<h4 style="margin:12px 0 6px;font-size:13px">Actions prioritaires</h4><ol style="margin:0;padding-left:20px;font-size:13px;line-height:1.6">${actionsList.map(a=>`<li>${esc(a)}</li>`).join('')}</ol>`:''}
+  </div>`:''}
+  <div class="grid2">
+    <div class="card"><div class="ch"><h3>Revenus extractifs — série longue 2007-2023</h3><span class="badge">Total vs minier</span></div><div class="sub">USD courants · 17 exercices, sources hétérogènes (voir note)</div><div class="chart" id="ovBiSerie"></div><div class="srcnote">Source : table <code>apercu_serie_annuelle_2007_2023</code> — <button type="button" class="srclink" onclick="openSourceModal('apercu_serie_annuelle_2007_2023')">avertissements de comparabilité</button></div></div>
+    <div class="card"><div class="ch"><h3>Affectation des revenus 2023</h3><span class="badge">Par bénéficiaire</span></div><div class="sub">USD · comparé à 2022 dans le tableau ci-dessous</div><div class="chart" id="ovBiAffect"></div><div class="srcnote">Source : table <code>apercu_affectation_revenus_2022_2023</code></div></div>
+  </div>
+  <div class="grid2">
+    <div class="card"><div class="ch"><h3 style="margin:0">Facteurs de variation 2022 → 2023</h3></div><div id="ovBiFacteurs"></div><div class="srcnote">Source : table <code>apercu_facteurs_variation_2023</code></div></div>
+    <div class="card"><div class="ch"><h3 style="margin:0">Prix internationaux des matières premières</h3></div><div id="ovBiPrix"></div><div class="srcnote">Source : table <code>apercu_prix_internationaux</code></div></div>
+  </div>
+  <div class="card" style="margin-bottom:16px"><div class="ch"><h3 style="margin:0">Registre des risques stratégiques</h3></div><div id="ovBiRisques"></div><div class="srcnote">Source : table <code>apercu_risques_strategiques</code> — évaluation qualitative propre à l'utilisateur, non un score officiel du Comité Exécutif ITIE-RDC.</div></div>
+  <p style="font-size:12.5px;color:var(--ink-soft);margin:-6px 0 20px">Voir aussi, dans <a href="#" onclick="goExplorerTable('apercu_rapports_thematiques');return false">l'Explorateur</a> : les 9 études thématiques transversales résumées intégralement (SICOMINES, propriété effective, divulgation des contrats, redevance minière, entreprises publiques, modélisation fiscale, mainstreaming ITIE…), le <a href="#" onclick="goExplorerTable('apercu_dictionnaire_kpi');return false">dictionnaire des indicateurs</a> et l'<a href="#" onclick="goExplorerTable('apercu_sources_analyse_bi');return false">inventaire des sources documentaires</a>.</p>`;
+}
+function drawApercuBi(){
+  const serie=DS.apercu_serie_annuelle_2007_2023;
+  if(serie){
+    const data=serie.rows.filter(r=>typeof r[0]==='number').map(r=>({label:r[0],value:r[1],minier:r[2]}));
+    const host=$('#ovBiSerie');if(host)cLine(host,data,true,css('--sky'),css('--violet'),'value','minier');
+  }
+  const aff=DS.apercu_affectation_revenus_2022_2023;
+  if(aff){
+    const rows2023=aff.rows.filter(r=>r[0]&&r[0]!=='Total').map(r=>({label:r[0],value:Number(r[2])||0}));
+    const host=$('#ovBiAffect');if(host)cBar(host,rows2023,css('--teal'),true);
+  }
+  const fac=DS.apercu_facteurs_variation_2023;
+  const facHost=$('#ovBiFacteurs');
+  if(fac&&facHost){
+    facHost.innerHTML=`<div class="gridwrap"><table class="dg"><thead><tr><th>Flux</th><th>2022</th><th>2023</th><th>Variation</th><th>Interprétation</th></tr></thead><tbody>
+      ${fac.rows.map(r=>`<tr><td>${esc(r[0])}</td><td class="num">${fmtUSD(r[1])}</td><td class="num">${fmtUSD(r[2])}</td><td class="num" style="color:${r[3]<0?'var(--red)':'var(--teal)'}">${fmtUSD(r[3])}</td><td>${esc(r[4])}</td></tr>`).join('')}
+    </tbody></table></div>`;
+  }
+  const prix=DS.apercu_prix_internationaux;
+  const prixHost=$('#ovBiPrix');
+  if(prix&&prixHost){
+    const byProd=new Map();
+    prix.rows.forEach(r=>{const key=r[1]+' ('+r[2]+')';if(!byProd.has(key))byProd.set(key,{});byProd.get(key)[r[0]]=r[3];});
+    const years=[...new Set(prix.rows.map(r=>r[0]))].sort();
+    prixHost.innerHTML=`<div class="gridwrap"><table class="dg"><thead><tr><th>Produit</th>${years.map(y=>`<th>${y}</th>`).join('')}</tr></thead><tbody>
+      ${[...byProd.entries()].map(([prod,vals])=>`<tr><td>${esc(prod)}</td>${years.map(y=>`<td class="num">${vals[y]!=null?fmtN(vals[y]):'—'}</td>`).join('')}</tr>`).join('')}
+    </tbody></table></div>`;
+  }
+  const risq=DS.apercu_risques_strategiques;
+  const risqHost=$('#ovBiRisques');
+  if(risq&&risqHost){
+    const niveauColor={'Critique':'var(--red)','Élevé':'#c47f0a','Significatif':'var(--sky)'};
+    const rows=risq.rows.slice().sort((a,b)=>(b[3]||0)-(a[3]||0));
+    risqHost.innerHTML=`<div class="gridwrap"><table class="dg"><thead><tr><th>Risque</th><th>Score</th><th>Niveau</th><th>Éléments observés</th><th>Réponse proposée</th></tr></thead><tbody>
+      ${rows.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td class="num">${fmtN(r[3])}</td><td><span style="color:${niveauColor[r[4]]||'inherit'};font-weight:600">${esc(r[4])}</span></td><td style="font-size:12px">${esc(r[5])}</td><td style="font-size:12px">${esc(r[6])}</td></tr>`).join('')}
+    </tbody></table></div>`;
+  }
+}
+
 /* ===== MODULES ===== */
 // Répartition des recettes extractives par régie percevante nationale
 // (DGI, DGRAD, DGDA, CAMI, SGH, OCC...) et par niveau (National / Provincial
@@ -959,7 +1040,8 @@ function mOverview(){return `
     <div class="card"><div class="ch"><h3>Dépenses sociales par exercice</h3><span class="badge">${AGG.social&&AGG.social.length?AGG.social[0].annee+'–'+AGG.social[AGG.social.length-1].annee:''}</span></div><div class="sub">Total annuel, USD</div><div class="chart" id="ov4" aria-label="${esc('Dépenses sociales par exercice, total annuel en USD')}"></div><div class="srcnote">Source : table <code>ent_depenses_sociales</code></div></div>
     <div class="card"><div class="ch"><h3>Recettes par régie nationale</h3><span class="badge">Toutes années</span></div><div class="sub">DGI, DGRAD, DGDA, CAMI… — cumul, USD</div><div class="chart" id="ov5" aria-label="${esc('Recettes par régie nationale, cumul toutes années en USD')}"></div><div class="srcnote">Source : table <code>ent_revenus_entite</code></div></div>
     <div class="card"><div class="ch"><h3>Recettes par niveau de perception</h3><span class="badge">National vs infranational</span></div><div class="sub">Régies nationales, provinciales, ETD, entreprises publiques</div><div class="chart" id="ov6" aria-label="${esc('Recettes par niveau de perception, national vs infranational')}"></div><div class="srcnote">Source : table <code>ent_revenus_entite</code></div></div>
-  </div>`;}
+  </div>
+  ${apercuBiSection()}`;}
 function drawOverview(){
   cLine($('#ov1'),AGG.serie_etat.map(d=>({label:d.annee,value:d.etat,ese:d.ese})),true,css('--sky'),css('--red'),'value','ese');
   cDonut($('#ov2'),[{label:'Mines',value:O.mines},{label:'Hydrocarbures',value:O.petrole}]);
@@ -967,6 +1049,7 @@ function drawOverview(){
   cBar($('#ov4'),AGG.social.map(d=>({label:String(d.annee),value:d.montant})),css('--red'),false);
   cBar($('#ov5'),nationalRegieTop(10),css('--teal'),true);
   cDonut($('#ov6'),revenueLevelBreakdown());
+  drawApercuBi();
 }
 
 /* Explorer */
