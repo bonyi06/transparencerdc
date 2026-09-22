@@ -1036,7 +1036,32 @@ function revenueLevelBreakdown(){
    Le diamant, sans cours de marché coté standardisé, est explicitement
    signalé comme absent plutôt que silencieusement omis. */
 let commodityTicker={status:'idle',data:null};
+// État local d'édition des matières saisies manuellement (coltan, tungstène...
+// — voir la carte admin ci-dessous). null = pas encore initialisé depuis
+// C.manual_commodities ; initialisé une seule fois par ensureManualCommodities()
+// pour ne pas écraser une saisie en cours à chaque re-rendu du ticker.
+let manualCommodities=null;
 function fmtCommodityPrice(n){return (n==null||isNaN(n))?'—':n.toLocaleString('fr-FR',{maximumFractionDigits:n<10?3:2});}
+function ensureManualCommodities(){
+  if(manualCommodities===null)manualCommodities=(C.manual_commodities||[]).map(m=>({...m}));
+  return manualCommodities;
+}
+function manualCommoditiesEditorHtml(){
+  const list=ensureManualCommodities();
+  const rows=list.map((m,i)=>`
+    <div class="mc-row" style="display:grid;grid-template-columns:1.3fr 0.9fr 1fr 1.3fr 1fr auto;gap:6px;margin-bottom:6px;align-items:center">
+      <input type="text" placeholder="Libellé (ex: Coltan)" value="${esc(m.label||'')}" data-mc-i="${i}" data-mc-f="label" style="padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel-2);color:var(--ink);font-size:12.5px">
+      <input type="number" step="any" placeholder="Prix" value="${m.price!=null?m.price:''}" data-mc-i="${i}" data-mc-f="price" style="padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel-2);color:var(--ink);font-size:12.5px">
+      <input type="text" placeholder="Unité (ex: USD/kg)" value="${esc(m.unit||'')}" data-mc-i="${i}" data-mc-f="unit" style="padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel-2);color:var(--ink);font-size:12.5px">
+      <input type="text" placeholder="Source (ex: Fastmarkets)" value="${esc(m.source||'')}" data-mc-i="${i}" data-mc-f="source" style="padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel-2);color:var(--ink);font-size:12.5px">
+      <input type="date" value="${esc(m.date||'')}" data-mc-i="${i}" data-mc-f="date" style="padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel-2);color:var(--ink);font-size:12.5px">
+      <button type="button" class="icon-btn" data-mc-del="${i}" title="Supprimer cette matière">✕</button>
+    </div>`).join('');
+  return `<div id="mcEditor"><div id="mcRows">${rows||'<div style="font-size:12.5px;color:var(--ink-soft);margin-bottom:6px">Aucune matière saisie manuellement pour l\'instant.</div>'}</div>
+    <button class="btn" type="button" id="mcAddBtn">+ Ajouter une matière</button>
+    <button class="btn" type="button" id="mcSaveBtn" style="margin-left:8px">Enregistrer ces matières</button>
+    <span id="mcMsg" style="font-size:12px;color:var(--ink-soft);margin-left:10px"></span></div>`;
+}
 function commodityTickerSection(){
   const cfg=C.integrations||{};
   const adminBox=editing?`<div class="card" style="margin-bottom:14px">
@@ -1045,33 +1070,51 @@ function commodityTickerSection(){
     <div style="font-size:13px;margin-bottom:10px">Clé API MetalpriceAPI : <b data-edit="integrations.commodity_api_key" style="word-break:break-all">${esc(cfg.commodity_api_key||'')}</b></div>
     <button class="btn" type="button" id="commRefreshBtn">🔄 Rafraîchir maintenant</button>
     <span id="commRefreshMsg" style="font-size:12px;color:var(--ink-soft);margin-left:10px"></span>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <h3 style="margin-bottom:8px">Matières saisies manuellement (coltan, tungstène…)</h3>
+    <p style="font-size:12.5px;color:var(--ink-soft);margin-bottom:10px">Ces matières n'ont pas de cours coté sur une bourse publique : leurs prix circulent via des rapports professionnels payants (Argus, Fastmarkets, ITSCI…). Saisissez ici la valeur que vous avez relevée dans l'un de ces rapports, avec sa source et sa date exactes — affichées telles quelles publiquement, à côté de la valeur.</p>
+    ${manualCommoditiesEditorHtml()}
   </div>`:'';
   return `${adminBox}<div class="card" style="margin-bottom:20px;padding:0;overflow:hidden" id="commTickerCard"><div id="commTickerBody" style="padding:14px 20px"><div class="empty" style="padding:0">Chargement des cours des matières premières…</div></div></div>`;
 }
 function commodityTickerHtml(d){
   if(!d)return '<div class="empty" style="padding:0">Cours indisponibles.</div>';
   const rows=d.items.filter(it=>it.available);
-  const track=rows.map(it=>{
+  const manualItems=d.manual_items||[];
+  const autoSpans=rows.map(it=>{
     const chg=it.change_pct;
     const chgHtml=(chg==null)?'':`<span style="margin-left:6px;font-weight:700;color:${chg>0?'var(--green)':(chg<0?'var(--red)':'var(--ink-soft)')}">${chg>0?'▲':(chg<0?'▼':'—')} ${fmtPct(Math.abs(chg)/100)}</span>`;
     return `<span class="comm-item"><b>${esc(it.label)}</b> ${fmtCommodityPrice(it.price)} USD/${esc(it.unit)}${chgHtml}</span>`;
-  }).join('<span class="comm-sep">·</span>');
+  });
+  // Les matières saisies manuellement (coltan, tungstène…) n'ont pas de
+  // provenance commune (contrairement au flux MetalpriceAPI) : chacune
+  // porte donc sa propre source et sa propre date directement dans son
+  // libellé, plutôt que de dépendre de la mention de source générale
+  // affichée sous la bande — cohérent avec « ne rien cacher ».
+  const manualSpans=manualItems.map(it=>{
+    const prov=[it.source,it.date].filter(Boolean).join(', ');
+    return `<span class="comm-item"><b>${esc(it.label)}</b> ${fmtCommodityPrice(it.price)} ${esc(it.unit)}${prov?` <span style="color:var(--ink-faint);font-weight:400">(${esc(prov)})</span>`:''}</span>`;
+  });
+  const track=[...autoSpans,...manualSpans].join('<span class="comm-sep">·</span>');
   let banner='';
   if(!d.configured){
     banner=`<div class="msg warn" style="margin:0 0 10px">Bande des cours non configurée${editing?' — renseignez une clé API MetalpriceAPI ci-dessus.':'.'}</div>`;
-  }else if(d.error&&!rows.length){
+  }else if(d.error&&!rows.length&&!manualItems.length){
     banner=`<div class="msg warn" style="margin:0 0 10px">Cours des matières premières indisponibles pour le moment${editing?(' : '+esc(d.error)):''}.</div>`;
   }else if(d.error){
     banner=`<div class="msg warn" style="margin:0 0 10px">Dernier relevé du ${esc(d.date||'—')} affiché (nouveau relevé du jour impossible${editing?(' : '+esc(d.error)):''}).</div>`;
   }
-  const ticker=rows.length?`<div class="comm-ticker" role="marquee" aria-label="Cours des matières premières"><div class="comm-track">${track}</div><div class="comm-track" aria-hidden="true">${track}</div></div>`:'';
+  const hasAny=rows.length||manualItems.length;
+  const ticker=hasAny?`<div class="comm-ticker" role="marquee" aria-label="Cours des matières premières"><div class="comm-track">${track}</div><div class="comm-track" aria-hidden="true">${track}</div></div>`:'';
   // Vue publique : une seule ligne de mention de source, volontairement
   // courte (choix éditorial du site — voir mode administrateur ci-dessous
   // pour le détail complet : date exacte du relevé, fournisseur, matières
   // non couvertes et pourquoi). Le détail n'est pas supprimé, seulement
   // déplacé, comme les autres notes de méthodologie du site.
   if(!editing){
-    return `${banner}${ticker}<div style="font-size:11px;color:var(--ink-faint);margin-top:8px">Source : marchés des matières premières.</div>`;
+    const publicDate=d.date?`Cours du ${esc(d.date)} — `:'';
+    return `${banner}${ticker}<div style="font-size:11px;color:var(--ink-faint);margin-top:8px">${publicDate}Source : marchés des matières premières.</div>`;
   }
   const dateNote=d.date?`Cours du ${esc(d.date)}${d.prev_date?(' (variation vs '+esc(d.prev_date)+')'):''} — source : MetalpriceAPI`:'';
   const excludedNote=(d.excluded||[]).map(x=>`<b>${esc(x.label)}</b> : ${esc(x.reason)}`).join(' ');
@@ -1111,6 +1154,54 @@ function drawCommodityTicker(){
       commodityTicker={status:'ready',data:d};
       const body=$('#commTickerBody');if(body)body.innerHTML=commodityTickerHtml(d);
       if(msg)msg.textContent=d.error?('Erreur : '+d.error):'Cours mis à jour.';
+    }catch(err){
+      if(msg)msg.textContent='Échec : '+((err&&err.message)||String(err));
+    }
+  };
+  bindManualCommoditiesEditor();
+}
+function renderManualCommoditiesRows(){
+  // Ré-affiche tout le bloc éditeur (lignes + boutons) d'un coup : plus
+  // simple et fiable qu'extraire un fragment par regex, et évite de laisser
+  // des gestionnaires d'événements orphelins sur d'anciens boutons.
+  const host=$('#mcEditor');
+  if(host)host.outerHTML=manualCommoditiesEditorHtml();
+  bindManualCommoditiesEditor();
+}
+function bindManualCommoditiesEditor(){
+  $$('[data-mc-i]').forEach(inp=>{
+    inp.oninput=()=>{
+      const i=Number(inp.getAttribute('data-mc-i')),f=inp.getAttribute('data-mc-f');
+      const list=ensureManualCommodities();
+      if(!list[i])return;
+      list[i][f]=inp.type==='number'?(inp.value===''?null:Number(inp.value)):inp.value;
+    };
+  });
+  $$('[data-mc-del]').forEach(btn=>{
+    btn.onclick=()=>{
+      const i=Number(btn.getAttribute('data-mc-del'));
+      ensureManualCommodities().splice(i,1);
+      renderManualCommoditiesRows();
+    };
+  });
+  const addBtn=$('#mcAddBtn');
+  if(addBtn)addBtn.onclick=()=>{
+    ensureManualCommodities().push({label:'',price:null,unit:'',source:'',date:''});
+    renderManualCommoditiesRows();
+  };
+  const saveBtn=$('#mcSaveBtn');
+  if(saveBtn)saveBtn.onclick=async()=>{
+    const msg=$('#mcMsg');
+    // Une matière sans libellé ou sans prix numérique n'est jamais envoyée
+    // à moitié remplie : elle est simplement ignorée côté serveur (voir
+    // app.py), donc on l'exclut déjà ici pour éviter toute confusion.
+    const clean=ensureManualCommodities().filter(m=>(m.label||'').trim()&&m.price!=null&&m.price!=='');
+    if(msg)msg.textContent='Enregistrement…';
+    try{
+      await fetch('/api/content',{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:{manual_commodities:clean}})});
+      C.manual_commodities=clean;
+      if(msg)msg.textContent='Enregistré.';
+      loadCommodityTicker();
     }catch(err){
       if(msg)msg.textContent='Échec : '+((err&&err.message)||String(err));
     }

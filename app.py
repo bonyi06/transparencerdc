@@ -530,9 +530,40 @@ def register_routes(app: Flask) -> None:
         pétrole WTI/Brent), relevés au plus une fois par jour auprès de
         MetalpriceAPI et mis en cache (voir commodity_prices.py). En cas
         d'échec, la dernière valeur connue est renvoyée avec un message
-        d'erreur explicite plutôt qu'une valeur reconstituée."""
+        d'erreur explicite plutôt qu'une valeur reconstituée. La réponse
+        inclut aussi les matières saisies manuellement par un administrateur
+        (ex: coltan, via un rapport Argus/Fastmarkets — aucune API publique
+        n'existe pour ces matières, voir content.manual_commodities)."""
         cache = get_commodity_prices()
-        resp = jsonify(serialize_commodity_prices(cache))
+        data = serialize_commodity_prices(cache)
+        sc = SiteContent.singleton()
+        manual = (sc.content or {}).get("manual_commodities") or []
+        manual_items = []
+        for m in manual:
+            if not isinstance(m, dict):
+                continue
+            label = (m.get("label") or "").strip()
+            price = m.get("price")
+            try:
+                price = float(price) if price not in (None, "") else None
+            except (TypeError, ValueError):
+                price = None
+            # Une matière sans libellé ou sans prix numérique valide n'est
+            # jamais affichée à moitié : elle est simplement ignorée plutôt
+            # que montrée avec un trou ou une valeur reconstituée.
+            if not label or price is None:
+                continue
+            manual_items.append(
+                {
+                    "label": label,
+                    "price": price,
+                    "unit": (m.get("unit") or "").strip() or "unité non précisée",
+                    "source": (m.get("source") or "").strip() or "source non précisée",
+                    "date": (m.get("date") or "").strip(),
+                }
+            )
+        data["manual_items"] = manual_items
+        resp = jsonify(data)
         resp.headers["Cache-Control"] = "public, max-age=1800"
         return resp
 
