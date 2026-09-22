@@ -503,8 +503,8 @@ def register_routes(app: Flask) -> None:
         site (voir chantier « performance du chargement initial » du README)."""
         gl = GeoLayer.singleton()
         geo = gl.geometry
-        if isinstance(geo, dict) and "mining_titles" in geo:
-            geo = {k: v for k, v in geo.items() if k != "mining_titles"}
+        if isinstance(geo, dict):
+            geo = {k: v for k, v in geo.items() if k not in ("mining_titles", "registres_miniers")}
         resp = jsonify(geo)  # None si aucune couche n'a encore été importée
         resp.headers["Cache-Control"] = "public, max-age=300"
         return resp
@@ -518,6 +518,22 @@ def register_routes(app: Flask) -> None:
         geo = gl.geometry or {}
         data = geo.get("mining_titles") if isinstance(geo, dict) else None
         resp = jsonify(data)  # None si la couche n'a pas (encore) été importée
+        resp.headers["Cache-Control"] = "public, max-age=300"
+        return resp
+
+    @app.get("/api/registres-miniers")
+    def get_registres_miniers():
+        """Registres complémentaires des droits miniers : octrois annuels, cessions,
+        amodiations, contrats d'options, permis d'exploitation octroi 2025 et
+        cession des parts de l'État — chargés à la demande par l'onglet
+        « Octrois, cessions et amodiations » de la page Titres miniers.
+        Répond à l'Exigence ITIE 2.2 (octrois et transferts de licences, y
+        compris ceux effectués par les entreprises d'État) et complète le
+        registre géospatial de l'Exigence 2.3 (voir /api/mining-titles)."""
+        gl = GeoLayer.singleton()
+        geo = gl.geometry or {}
+        data = geo.get("registres_miniers") if isinstance(geo, dict) else None
+        resp = jsonify(data)  # None si les registres n'ont pas (encore) été importés
         resp.headers["Cache-Control"] = "public, max-age=300"
         return resp
 

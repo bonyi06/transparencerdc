@@ -90,6 +90,18 @@ def load_from_seed_files() -> tuple[dict, dict, str, dict | None]:
     mining_titles_path = DATA_DIR / "mining_titles.seed.json"
     if geo is not None and mining_titles_path.exists():
         geo["mining_titles"] = json.loads(mining_titles_path.read_text(encoding="utf-8"))
+    # Registres complémentaires des droits miniers (octrois annuels, cessions,
+    # amodiations, contrats d'options, permis d'exploitation octroi 2025,
+    # cession des parts de l'État) — mêmes principes que mining_titles
+    # ci-dessus : fichier séparé (voir scripts/extract_registres_2022_2023.py),
+    # fusionné ici dans GEO sous la clé `registres_miniers`, lu directement
+    # par l'endpoint /api/registres-miniers. Ajoutés en réponse aux
+    # observations du Rapport de Validation ITIE sur l'Exigence 2.2 (octrois
+    # et transferts, y compris ceux des entreprises d'État) et l'Exigence 2.3
+    # (registre des licences) — voir la note "meta" dans le fichier lui-même.
+    registres_path = DATA_DIR / "registres_droits_miniers.seed.json"
+    if geo is not None and registres_path.exists():
+        geo["registres_miniers"] = json.loads(registres_path.read_text(encoding="utf-8"))
     return warehouse, content, logo, geo
 
 

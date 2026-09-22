@@ -1993,6 +1993,13 @@ let miningMapObj=null, miningLayerObj=null;
 let miningF={statut:'',groupe:'',substance:''};
 const MINING_STATUT_LABEL={'Actif':'Actif','Demande':'Demande en cours'};
 const MINING_COLOR={'Actif':'#1a7a3c','Demande':'#c47f0a'};
+// Onglet actif de la page Titres miniers : 'carte' (registre géospatial des
+// titres actifs, Exigence ITIE 2.3) ou 'registres' (octrois, cessions,
+// amodiations, contrats d'options, permis d'exploitation octroi 2025 et
+// cession des parts de l'État — Exigence ITIE 2.2). Voir REGISTRES ci-dessous.
+let miningTab='carte';
+let REGISTRES=null, registresLoading=false, registresErr=false;
+let registresSoeOnly=false;
 function miningSubstanceList(){
   if(!MINING)return [];
   const c=new Map();
@@ -2032,8 +2039,15 @@ function openMiningSourceModal(){
 window.openMiningSourceModal=openMiningSourceModal;
 function mMining(){
   return `<div class="phead"><div class="eyebrow">Territoire</div><h1>Titres miniers</h1>
-    <p>Permis d'exploitation actifs et demandes en cours sur l'ensemble du territoire, avec titulaire, statut, substances et superficie de chaque titre.</p></div>
-    <div class="card" style="margin-bottom:16px">
+    <p>Permis d'exploitation actifs et demandes en cours sur l'ensemble du territoire, avec titulaire, statut, substances et superficie de chaque titre. Registres complémentaires des octrois, cessions et amodiations, y compris ceux effectués par les entreprises d'État.</p></div>
+    <div class="ch" style="flex-wrap:wrap;gap:8px;margin-bottom:14px">
+      <button type="button" class="lchip ${miningTab==='carte'?'on':''}" data-mtab="carte">Carte des titres actifs (Exigence 2.3)</button>
+      <button type="button" class="lchip ${miningTab==='registres'?'on':''}" data-mtab="registres">Octrois, cessions et amodiations (Exigence 2.2)</button>
+    </div>
+    <div id="miningTabBody">${miningTab==='carte'?mMiningCarte():registresTabHtml()}</div>`;
+}
+function mMiningCarte(){
+  return `<div class="card" style="margin-bottom:16px">
       <div class="ch" style="flex-wrap:wrap;gap:10px 16px">
         <label style="font-size:12px;font-weight:700;color:var(--ink-soft);display:flex;flex-direction:column;gap:4px">Statut
           <select id="mnStatut" class="sel"><option value="">Tous statuts</option></select></label>
@@ -2052,6 +2066,97 @@ function mMining(){
         <button type="button" class="srclink" onclick="openMiningSourceModal()">ⓘ Source &amp; traçabilité de cette couche</button>
       </div>
     </div>`;
+}
+/* ===== Registres des octrois, cessions et amodiations (Exigence ITIE 2.2) =====
+   Complète la carte des titres actifs (Exigence 2.3, ci-dessus) avec les
+   registres du CAMI relatifs aux OCTROIS annuels de droits miniers, aux
+   CESSIONS (transferts), AMODIATIONS et CONTRATS D'OPTIONS, ainsi qu'aux
+   PERMIS D'EXPLOITATION octroyés en 2025 et à la CESSION DES PARTS DE
+   L'ÉTAT (10 %, art. 71 du Code minier). Ajoutés en réponse directe à
+   l'observation du Rapport de Validation ITIE (2022) : « le Rapport ITIE ne
+   précise pas si les entreprises d'État ont octroyé des amodiations ou
+   transféré des licences minières au cours de la période examinée » — d'où
+   le repère visuel et le filtre « entreprise d'État » ci-dessous, qui ne
+   sont qu'une mise en évidence de ce qui est déjà dans les registres CAMI
+   (ne rien cacher : aucune ligne n'est retirée, seulement signalée). */
+const REGISTRES_SOE_NOTE="Repérage des entreprises publiques du portefeuille minier de l'État notoirement connues comme telles dans les Rapports ITIE-RDC (GECAMINES, MIBA, SAKIMA, SOKIMO) — liste non exhaustive : l'absence de repère ne signifie pas qu'une société est privée, seulement que son statut n'a pas pu être établi avec certitude ici.";
+function registresTabHtml(){
+  if(registresErr)return `<div class="msg warn">Impossible de charger ces registres pour le moment. Rechargez la page pour réessayer.</div>`;
+  if(!REGISTRES)return `<div class="empty">Chargement des registres…</div>`;
+  const soeFilter=r=>!registresSoeOnly||r.entreprise_etat||r.entreprise_etat_cedant||r.entreprise_etat_amodiant;
+  const octrois=REGISTRES.octrois.filter(soeFilter);
+  const cessions=REGISTRES.cessions.filter(soeFilter);
+  const amodiations=REGISTRES.amodiations.filter(soeFilter);
+  const options=REGISTRES.options.filter(soeFilter);
+  const permis2025=REGISTRES.permis_exploitation_octroi_2025.filter(soeFilter);
+  return `
+    <div class="card" style="margin-bottom:16px">
+      <p style="font-size:12.5px;color:var(--ink-soft);margin-bottom:10px">${esc((REGISTRES.meta||{}).note||'')}</p>
+      <label style="display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600">
+        <input type="checkbox" id="mrSoeOnly" ${registresSoeOnly?'checked':''}> N'afficher que les opérations impliquant une entreprise d'État
+      </label>
+      <p style="font-size:11.5px;color:var(--ink-faint);margin-top:6px">${esc(REGISTRES_SOE_NOTE)}</p>
+    </div>
+    ${registresTableCard("Amodiations de droits miniers — 2023",
+      "Une entreprise (l'« amodiant ») confie l'exploitation d'un droit minier à une autre (l'« amodiataire ») sans en céder la propriété. C'est précisément ce registre qui manquait au dernier Rapport ITIE selon le Secrétariat international.",
+      amodiations,
+      [['annee','Année'],['amodiant','Amodiant'],['amodiataire','Amodiataire'],['nature','Nature'],['numero_droit','N° droit'],['type_amodiation','Type'],['date_signature_contrat','Signature contrat'],['date_inscription','Date inscription']],
+      'entreprise_etat_amodiant')}
+    ${registresTableCard("Cessions de droits miniers — 2022 et 2023",
+      "Transfert de propriété d'un droit minier d'un cédant à un cessionnaire.",
+      cessions,
+      [['annee','Année'],['cedant','Cédant'],['cessionnaire','Cessionnaire'],['nature','Nature'],['numero_droit','N° droit'],['type_cession','Type'],['date_signature_contrat','Signature contrat']],
+      'entreprise_etat_cedant')}
+    ${registresTableCard("Contrats d'options — 2023",
+      "Contrat par lequel le cédant s'engage à céder un droit minier à des conditions fixées à l'avance, avant la cession effective.",
+      options,
+      [['annee','Année'],['cedant','Cédant'],['cessionnaire','Cessionnaire'],['nature','Nature'],['numero_droit','N° droit'],['date_signature_contrat','Signature contrat']],
+      'entreprise_etat_cedant')}
+    ${registresTableCard("Octrois de droits miniers — 2022 et 2023",
+      "Tous les droits miniers octroyés au cours des deux exercices (permis de recherches, d'exploitation, autorisations d'exploitation de carrières, etc.).",
+      octrois,
+      [['annee','Année'],['titulaire','Titulaire'],['nature','Nature'],['numero_droit','N° droit'],['carres','Carrés'],['province','Province'],['date_octroi','Date octroi'],['date_expiration','Date expiration'],['statut','Statut']],
+      'entreprise_etat')}
+    ${registresTableCard("Permis d'exploitation octroyés — 2025",
+      "Registre le plus récent disponible, pour prolonger la transparence des octrois au-delà de la période couverte par la dernière Validation ITIE.",
+      permis2025,
+      [['titulaire','Titulaire'],['nature','Nature'],['numero_permis','N° permis'],['carres','Carrés'],['localisation','Localisation'],['date_octroi','Date octroi'],['date_expiration','Date expiration'],['statut','Statut']],
+      'entreprise_etat')}
+    <div class="card" style="margin-bottom:16px">
+      <h3 style="margin-bottom:6px">Cession des parts de l'État (10 %) — art. 71 du Code minier</h3>
+      <p style="font-size:12.5px;color:var(--ink-soft);margin-bottom:10px">Titulaires de permis d'exploitation en règle avec l'obligation légale de céder 10 % du capital social à l'État congolais.</p>
+      ${registresTable(REGISTRES.cession_parts_etat,[['titulaire','Titulaire'],['numero_rccm','N° RCCM'],['date_pv_age','Date PV AGE'],['date_extrait_rccm',"Date extrait RCCM"],['date_notification_min_portefeuille','Notification Min. Portefeuille']],null)}
+    </div>`;
+}
+function registresTableCard(title,note,rows,columns,soeKey){
+  return `<div class="card" style="margin-bottom:16px">
+    <h3 style="margin-bottom:6px">${esc(title)} <span class="badge">${fmtN(rows.length)}</span></h3>
+    <p style="font-size:12.5px;color:var(--ink-soft);margin-bottom:10px">${esc(note)}</p>
+    ${registresTable(rows,columns,soeKey)}
+  </div>`;
+}
+function registresTable(rows,columns,soeKey){
+  if(!rows.length)return `<div class="empty" style="padding:10px 0">Aucune ligne à afficher${registresSoeOnly?' pour ce filtre.':'.'}</div>`;
+  const head=columns.map(([,l])=>`<th scope="col">${esc(l)}</th>`).join('');
+  const body=rows.map(r=>{
+    const isSoe=soeKey&&r[soeKey];
+    const cells=columns.map(([k])=>`<td>${r[k]!=null?esc(String(r[k])):'—'}</td>`).join('');
+    return `<tr${isSoe?' style="background:rgba(196,127,10,.14)"':''}>${cells}${soeKey?`<td>${isSoe?'<span class="badge" style="background:#f5e6c8;color:#7a4f00;border-color:#e0c37e">Entreprise d’État</span>':''}</td>`:''}</tr>`;
+  }).join('');
+  return `<div class="gridwrap"><div class="gridscroll" style="max-height:420px"><table class="dg"><thead><tr>${head}${soeKey?'<th scope="col"></th>':''}</tr></thead><tbody>${body}</tbody></table></div></div>`;
+}
+function loadRegistresMiniers(){
+  if(REGISTRES||registresLoading)return;
+  registresLoading=true;
+  fetch('/api/registres-miniers').then(r=>r.json()).then(data=>{
+    registresLoading=false;
+    if(!data){registresErr=true;}else{REGISTRES=data;}
+    if(current==='mining'&&miningTab==='registres'){const host=$('#miningTabBody');if(host)host.innerHTML=registresTabHtml();bindRegistresMiniers();}
+  }).catch(()=>{registresLoading=false;registresErr=true;if(current==='mining'&&miningTab==='registres'){const host=$('#miningTabBody');if(host)host.innerHTML=registresTabHtml();}});
+}
+function bindRegistresMiniers(){
+  const cb=$('#mrSoeOnly');
+  if(cb)cb.onchange=()=>{registresSoeOnly=cb.checked;const host=$('#miningTabBody');if(host)host.innerHTML=registresTabHtml();bindRegistresMiniers();};
 }
 function miningPopupHtml(p){
   const row=(k,v)=>v?`<div style="margin-bottom:4px"><b>${esc(k)}</b> — ${esc(v)}</div>`:'';
@@ -2093,6 +2198,18 @@ function miningFillFilterOptions(){
   }
 }
 function drawMining(){
+  $$('[data-mtab]').forEach(btn=>{
+    btn.onclick=()=>{
+      miningTab=btn.dataset.mtab;
+      const app=$('#app');if(app)app.innerHTML=mMining();
+      drawMining();
+    };
+  });
+  if(miningTab==='registres'){
+    loadRegistresMiniers();
+    bindRegistresMiniers();
+    return;
+  }
   const host=$('#mnMap');if(!host)return;
   if(miningMapObj){try{miningMapObj.remove();}catch(e){}miningMapObj=null;miningLayerObj=null;}
   if(!MINING){
