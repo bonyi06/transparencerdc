@@ -1056,7 +1056,6 @@ function commodityTickerHtml(d){
     const chgHtml=(chg==null)?'':`<span style="margin-left:6px;font-weight:700;color:${chg>0?'var(--green)':(chg<0?'var(--red)':'var(--ink-soft)')}">${chg>0?'▲':(chg<0?'▼':'—')} ${fmtPct(Math.abs(chg)/100)}</span>`;
     return `<span class="comm-item"><b>${esc(it.label)}</b> ${fmtCommodityPrice(it.price)} USD/${esc(it.unit)}${chgHtml}</span>`;
   }).join('<span class="comm-sep">·</span>');
-  const dateNote=d.date?`Cours du ${esc(d.date)}${d.prev_date?(' (variation vs '+esc(d.prev_date)+')'):''} — source : MetalpriceAPI`:'';
   let banner='';
   if(!d.configured){
     banner=`<div class="msg warn" style="margin:0 0 10px">Bande des cours non configurée${editing?' — renseignez une clé API MetalpriceAPI ci-dessus.':'.'}</div>`;
@@ -1065,12 +1064,24 @@ function commodityTickerHtml(d){
   }else if(d.error){
     banner=`<div class="msg warn" style="margin:0 0 10px">Dernier relevé du ${esc(d.date||'—')} affiché (nouveau relevé du jour impossible${editing?(' : '+esc(d.error)):''}).</div>`;
   }
+  const ticker=rows.length?`<div class="comm-ticker" role="marquee" aria-label="Cours des matières premières"><div class="comm-track">${track}</div><div class="comm-track" aria-hidden="true">${track}</div></div>`:'';
+  // Vue publique : une seule ligne de mention de source, volontairement
+  // courte (choix éditorial du site — voir mode administrateur ci-dessous
+  // pour le détail complet : date exacte du relevé, fournisseur, matières
+  // non couvertes et pourquoi). Le détail n'est pas supprimé, seulement
+  // déplacé, comme les autres notes de méthodologie du site.
+  if(!editing){
+    return `${banner}${ticker}<div style="font-size:11px;color:var(--ink-faint);margin-top:8px">Source : marchés des matières premières.</div>`;
+  }
+  const dateNote=d.date?`Cours du ${esc(d.date)}${d.prev_date?(' (variation vs '+esc(d.prev_date)+')'):''} — source : MetalpriceAPI`:'';
   const excludedNote=(d.excluded||[]).map(x=>`<b>${esc(x.label)}</b> : ${esc(x.reason)}`).join(' ');
   const planLabels=d.plan_restricted_labels||[];
   const planNote=planLabels.length?`<div style="font-size:11px;color:var(--ink-faint);margin-top:4px"><b>${esc(planLabels.join(', '))}</b> : nécessite${planLabels.length>1?'nt':''} un plan payant sur le compte MetalpriceAPI configuré (plan gratuit insuffisant pour ${planLabels.length>1?'ces matières':'cette matière'}).</div>`:'';
   const otherMissing=d.items.filter(it=>!it.available&&!it.plan_restricted).length;
-  return `${banner}${rows.length?`<div class="comm-ticker" role="marquee" aria-label="Cours des matières premières"><div class="comm-track">${track}</div><div class="comm-track" aria-hidden="true">${track}</div></div>`:''}
-    <div style="font-size:11px;color:var(--ink-faint);margin-top:8px">${dateNote}${otherMissing?` · ${otherMissing} matière(s) demandée(s) non couverte(s) par l'offre souscrite`:''}</div>
+  const convertedNote=rows.some(it=>it.converted_from_once)?`<div style="font-size:11px;color:var(--ink-faint);margin-top:4px">Métaux de base convertis en USD/tonne depuis le cours par once troy publié par MetalpriceAPI (1 tonne = 32 150,75 onces troy, facteur exact) ; or et pétrole restent dans leur unité usuelle.</div>`:'';
+  return `${banner}${ticker}
+    <div style="font-size:11px;color:var(--ink-faint);margin-top:8px">${dateNote}${otherMissing?` · ${otherMissing} matière(s) demandée(s) non couverte(s) par l'offre souscrite`:''} — détail visible en mode administrateur uniquement</div>
+    ${convertedNote}
     ${planNote}
     <div style="font-size:11px;color:var(--ink-faint);margin-top:4px">${excludedNote}</div>`;
 }

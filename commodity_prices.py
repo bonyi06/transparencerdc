@@ -47,11 +47,15 @@ from models import CommodityPriceCache, SiteContent, db
 METALPRICEAPI_URL = "https://api.metalpriceapi.com/v1/latest"
 
 # Symboles demandés par l'utilisateur, dans l'ordre d'affichage souhaité.
-# Libellé et unité repris tels que documentés par MetalpriceAPI
-# (metalpriceapi.com/currencies) — affichés tels quels plutôt que reconvertis,
-# pour rester fidèles à ce que la source publie réellement (les métaux de
-# base y sont cotés à l'once, et non à la tonne comme l'affiche usuellement
-# le LME lui-même : voir la note affichée à côté de la bande côté public).
+# Libellé et unité NATIVE (celle réellement publiée par MetalpriceAPI, voir
+# metalpriceapi.com/currencies) : les métaux, précieux comme de base, y sont
+# tous cotés à l'once troy — contrairement à la convention usuelle du LME,
+# qui cote les métaux de base en USD/tonne. Pour rester lisible et
+# comparable à ce qui est habituellement cité (presse, LME), les métaux de
+# base ci-dessous sont reconvertis en USD/tonne avant affichage (voir
+# TROY_OUNCES_PER_TONNE plus bas) — une conversion d'unité exacte à partir
+# de la même valeur mesurée, jamais une nouvelle estimation. L'or et le
+# pétrole restent affichés dans leur unité usuelle (once troy, baril).
 SYMBOLS = [
     {"symbol": "XAU", "label": "Or", "unit": "once troy"},
     {"symbol": "XCU", "label": "Cuivre", "unit": "once"},
@@ -64,6 +68,14 @@ SYMBOLS = [
     {"symbol": "BRENT", "label": "Pétrole (Brent)", "unit": "baril"},
 ]
 SYMBOL_CODES = [s["symbol"] for s in SYMBOLS]
+
+# 1 tonne métrique = 1 000 000 g ; 1 once troy = 31,1034768 g (définition
+# internationale exacte, invariable) => 1 tonne = 1e6 / 31,1034768 onces
+# troy. Constante physique, pas une estimation.
+TROY_OUNCES_PER_TONNE = 1_000_000 / 31.1034768
+# Métaux de base habituellement cotés en USD/tonne (LME, presse spécialisée)
+# plutôt qu'à l'once — reconvertis pour l'affichage (voir note ci-dessus).
+TONNE_SYMBOLS = {"XCU", "XCO", "ZNC", "XSN", "XLI", "NI"}
 
 EXCLUDED = [
     {
@@ -250,6 +262,14 @@ def serialize_prices(cache: CommodityPriceCache) -> dict:
         sym = entry["symbol"]
         price = (cache.rates or {}).get(sym)
         prev_price = (cache.prev_rates or {}).get(sym) if cache.prev_rates else None
+        unit = entry["unit"]
+        converted = False
+        if price is not None and sym in TONNE_SYMBOLS:
+            price = price * TROY_OUNCES_PER_TONNE
+            if prev_price:
+                prev_price = prev_price * TROY_OUNCES_PER_TONNE
+            unit = "tonne"
+            converted = True
         change_pct = None
         if price is not None and prev_price:
             try:
@@ -260,11 +280,12 @@ def serialize_prices(cache: CommodityPriceCache) -> dict:
             {
                 "symbol": sym,
                 "label": entry["label"],
-                "unit": entry["unit"],
+                "unit": unit,
                 "price": price,
                 "change_pct": change_pct,
                 "available": price is not None,
                 "plan_restricted": sym in plan_restricted,
+                "converted_from_once": converted,
             }
         )
     plan_restricted_labels = [e["label"] for e in SYMBOLS if e["symbol"] in plan_restricted]
