@@ -94,7 +94,7 @@ function openSourceModal(tableName){
   const d=DS[tableName],m=tableMeta(tableName);
   const body=$('#srcModalBody');if(!d||!body)return;
   body.innerHTML=`
-    <div style="margin-bottom:12px"><b>${esc(d.label||tableName)}</b><br><span style="font-size:12.5px;color:var(--ink-soft)">${esc(d.desc||'')}</span></div>
+    <div style="margin-bottom:12px"><b>${esc(d.label||tableName)}</b>${(editing&&d.desc)?`<br><span style="font-size:12.5px;color:var(--ink-soft)">${esc(d.desc)}</span>`:''}</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 16px;font-size:12.5px;margin-bottom:12px">
       ${m&&m.periode?`<div><b>Période</b><br>${esc(m.periode)}</div>`:''}
       ${m&&m.perimetre?`<div><b>Périmètre</b><br>${esc(m.perimetre)}</div>`:''}
@@ -117,7 +117,7 @@ function themeCard(name){
   const rowN=d.rows.length;
   return `<div class="card" style="margin-bottom:16px">
     <div class="ch"><h3 style="margin:0">${esc(d.label||name)}</h3><span class="badge">${fmtN(rowN)} ligne${rowN>1?'s':''}</span></div>
-    <div class="sub" style="margin-bottom:2px">${esc(d.desc||'')}</div>
+    ${editing&&d.desc?`<div class="sub" style="margin-bottom:2px">${esc(d.desc)}</div>`:''}
     ${metaStrip(name)}
     <button class="btn primary" data-gotable="${esc(name)}">▤ Explorer ce tableau →</button>
   </div>`;
@@ -872,7 +872,7 @@ function kpiRow(){const K=C.kpi_labels;const items=[['exercices',STATS.nb_exerci
   const KPIDEF={exercices:"Exercices civils couverts par au moins un rapport (source : dim_exercice).",orgs:"Organisations du référentiel (source : dim_organisation).",flux:"Flux/taxes distincts (source : dim_flux).",rapports:"Rapports ITIE-RDC référencés.",recon:"Lignes de réconciliation portant au moins une mesure réelle.",social:"Lignes de dépenses sociales déclarées (source : fait_depense_sociale)."};
   return `<div class="kpis">`+items.map(([k,v])=>`<div class="kpi" title="${esc(KPIDEF[k]||'')}"><div class="v">${fmtN(v)}</div><div class="l" data-edit="kpi_labels.${k}">${esc(K[k])}</div></div>`).join('')+`</div>`;}
 function highlight(){return `<div class="hl">
-  <div class="htop"><h3>Recettes du secteur extractif — ${O._year||'2023'}</h3><span class="hbadge">${fmtN(O.entites)} entreprises du périmètre (minier + pétrolier)</span></div>
+  <div class="htop"><h3>Recettes du secteur extractif — ${O._year||'2023'}</h3></div>
   <div class="hg">
     <div class="hc y"><div class="big">${fmtUSD(O.total)}</div><div class="cap">Total revenus extractifs</div></div>
     <div class="hc"><div class="big">${fmtUSD(O.mines)}</div><div class="cap">Secteur minier</div></div>
@@ -903,7 +903,7 @@ function apercuBiSection(){
   const notes=synthNotes();
   const actionsList=(notes.actions||'').split(/\n+/).map(s=>s.replace(/^\d+\.\s*/,'').trim()).filter(Boolean);
   return `<div class="phead" style="margin-top:8px"><div class="eyebrow">Analyse transversale</div><h2 style="margin:0">Synthèse BI ${esc(k['Revenus extractifs 2023']!=null?'2023':'')}</h2>
-    <p style="font-size:12.5px;color:var(--ink-soft);margin-top:4px">Indicateurs, série longue 2007-2023, affectation des revenus, facteurs de variation et registre des risques — analyse fournie directement par l'utilisateur à partir des 17 rapports ITIE-RDC et de 9 études thématiques. <button type="button" class="srclink" onclick="openSourceModal('apercu_synthese_bi')">ⓘ Source &amp; traçabilité</button></p></div>
+    <p style="font-size:12.5px;color:var(--ink-soft);margin-top:4px">Indicateurs, série longue 2007-2023, affectation des revenus et facteurs de variation — analyse fournie directement par l'utilisateur à partir des 17 rapports ITIE-RDC et de 9 études thématiques. <button type="button" class="srclink" onclick="openSourceModal('apercu_synthese_bi')">ⓘ Source &amp; traçabilité</button></p></div>
   <div class="kpis">
     <div class="kpi"><div class="v">${fmtUSD(k['Revenus extractifs 2023'])}</div><div class="l">Revenus extractifs 2023</div></div>
     <div class="kpi"><div class="v" style="color:${k['Variation 2023 contre 2022']<0?'var(--red)':'var(--teal)'}">${fmtPct(k['Variation 2023 contre 2022'])}</div><div class="l">Variation 2023 / 2022</div></div>
@@ -912,7 +912,7 @@ function apercuBiSection(){
     <div class="kpi"><div class="v">${fmtPct(k['Part infranationale 2023'])}</div><div class="l">Part infranationale 2023</div></div>
     <div class="kpi"><div class="v">${fmtPct(k['TCAM 2018 à 2023'])}</div><div class="l">TCAM 2018-2023</div></div>
   </div>
-  ${notes.constats?`<div class="card" style="margin:14px 0"><div class="ch"><h3 style="margin:0">Constats principaux</h3></div><p style="font-size:13px;line-height:1.55">${esc(notes.constats)}</p>
+  ${(editing&&notes.constats)?`<div class="card" style="margin:14px 0"><div class="ch"><h3 style="margin:0">Constats principaux (visible en mode administrateur uniquement)</h3></div><p style="font-size:13px;line-height:1.55">${esc(notes.constats)}</p>
     ${actionsList.length?`<h4 style="margin:12px 0 6px;font-size:13px">Actions prioritaires</h4><ol style="margin:0;padding-left:20px;font-size:13px;line-height:1.6">${actionsList.map(a=>`<li>${esc(a)}</li>`).join('')}</ol>`:''}
   </div>`:''}
   <div class="grid2">
@@ -923,7 +923,6 @@ function apercuBiSection(){
     <div class="card"><div class="ch"><h3 style="margin:0">Facteurs de variation 2022 → 2023</h3></div><div id="ovBiFacteurs"></div><div class="srcnote">Source : table <code>apercu_facteurs_variation_2023</code></div></div>
     <div class="card"><div class="ch"><h3 style="margin:0">Prix internationaux des matières premières</h3></div><div id="ovBiPrix"></div><div class="srcnote">Source : table <code>apercu_prix_internationaux</code></div></div>
   </div>
-  <div class="card" style="margin-bottom:16px"><div class="ch"><h3 style="margin:0">Registre des risques stratégiques</h3></div><div id="ovBiRisques"></div><div class="srcnote">Source : table <code>apercu_risques_strategiques</code> — évaluation qualitative propre à l'utilisateur, non un score officiel du Comité Exécutif ITIE-RDC.</div></div>
   <p style="font-size:12.5px;color:var(--ink-soft);margin:-6px 0 20px">Voir aussi, dans <a href="#" onclick="goExplorerTable('apercu_rapports_thematiques');return false">l'Explorateur</a> : les 9 études thématiques transversales résumées intégralement (SICOMINES, propriété effective, divulgation des contrats, redevance minière, entreprises publiques, modélisation fiscale, mainstreaming ITIE…), le <a href="#" onclick="goExplorerTable('apercu_dictionnaire_kpi');return false">dictionnaire des indicateurs</a> et l'<a href="#" onclick="goExplorerTable('apercu_sources_analyse_bi');return false">inventaire des sources documentaires</a>.</p>`;
 }
 function drawApercuBi(){
@@ -952,15 +951,6 @@ function drawApercuBi(){
     const years=[...new Set(prix.rows.map(r=>r[0]))].sort();
     prixHost.innerHTML=`<div class="gridwrap"><table class="dg"><thead><tr><th>Produit</th>${years.map(y=>`<th>${y}</th>`).join('')}</tr></thead><tbody>
       ${[...byProd.entries()].map(([prod,vals])=>`<tr><td>${esc(prod)}</td>${years.map(y=>`<td class="num">${vals[y]!=null?fmtN(vals[y]):'—'}</td>`).join('')}</tr>`).join('')}
-    </tbody></table></div>`;
-  }
-  const risq=DS.apercu_risques_strategiques;
-  const risqHost=$('#ovBiRisques');
-  if(risq&&risqHost){
-    const niveauColor={'Critique':'var(--red)','Élevé':'#c47f0a','Significatif':'var(--sky)'};
-    const rows=risq.rows.slice().sort((a,b)=>(b[3]||0)-(a[3]||0));
-    risqHost.innerHTML=`<div class="gridwrap"><table class="dg"><thead><tr><th>Risque</th><th>Score</th><th>Niveau</th><th>Éléments observés</th><th>Réponse proposée</th></tr></thead><tbody>
-      ${rows.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td class="num">${fmtN(r[3])}</td><td><span style="color:${niveauColor[r[4]]||'inherit'};font-weight:600">${esc(r[4])}</span></td><td style="font-size:12px">${esc(r[5])}</td><td style="font-size:12px">${esc(r[6])}</td></tr>`).join('')}
     </tbody></table></div>`;
   }
 }
@@ -1332,7 +1322,7 @@ function renderExplorer(){
   host.innerHTML=`
     ${headerWarning}
     <div class="extoolbar">
-      <div class="desc">${esc(d.desc)}</div>
+      ${editing?`<div class="desc">${esc(d.desc)}</div>`:'<div class="desc"></div>'}
       <div class="exsearch"><span class="si" aria-hidden="true">⌕</span><input id="exQ" placeholder="Recherche plein-texte…" value="${esc(exState.q)}" aria-label="Recherche plein-texte dans le tableau"></div>
       <button class="btn ${exState.panel?'primary':''}" id="exToggle">⚙ Filtres par colonne${nActive?` (${nActive})`:''}</button>
       <button class="btn" id="exReset">Réinitialiser</button>
@@ -1470,6 +1460,25 @@ function exportCSV(name,rows){
   const csv=[d.cols.join(';')].concat(rows.map(r=>r.map(esc2).join(';'))).join('\n');
   saveFile(name+'.csv',csv);
 }
+// Téléchargement en « données ouvertes » (CSV + GeoJSON) pour les couches
+// géographiques qui, contrairement aux tables de l'entrepôt (déjà
+// exportables depuis l'Explorateur), ne passent pas par DS/exportCSV :
+// Titres miniers, registres CAMI et Hydrocarbures (retour utilisateur,
+// sept. 2026 : chacune de ces deux sections doit permettre le
+// téléchargement de ses données en format ouvert).
+function csvEscapeGeneric(v){v=v==null?'':String(v);if(/^[=+\-@\t\r]/.test(v))v="'"+v;return /[",;\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}
+function exportRowsCSV(filenameBase,rowsOfObjects){
+  if(!rowsOfObjects||!rowsOfObjects.length){alert('Aucune donnée à télécharger pour le moment.');return;}
+  const keys=[];rowsOfObjects.forEach(o=>Object.keys(o||{}).forEach(k=>{if(!keys.includes(k))keys.push(k);}));
+  const csv=[keys.join(';')].concat(rowsOfObjects.map(o=>keys.map(k=>csvEscapeGeneric(o[k])).join(';'))).join('\n');
+  saveFile(filenameBase+'.csv',csv);
+}
+function exportFeaturesOpenData(filenameBase,features){
+  if(!features||!features.length){alert('Aucune donnée à télécharger pour le moment.');return;}
+  exportRowsCSV(filenameBase,features.map(f=>f.properties||{}));
+  saveFile(filenameBase+'.geojson',JSON.stringify({type:'FeatureCollection',features},null,0));
+}
+window.exportFeaturesOpenData=exportFeaturesOpenData;window.exportRowsCSV=exportRowsCSV;
 
 /* Visualisations */
 let vizState={ds:'fait_reconciliation_entreprise',dim:'',measure:'',agg:'sum',type:'bar'};
@@ -1641,7 +1650,7 @@ function mModel(){
   const names=visibleTableNames().filter(k=>!k.startsWith('_'));
   const cards=names.map(k=>{const d=DS[k];const kind=datasetKind(k,d);
     return `<div class="tc"><div class="tct"><h4>${esc(d.label)}</h4><span class="tag ${kind}">${esc(KIND_LABELS[kind])}</span></div>
-    <div class="tn">${esc(k)} · ${fmtN(d.rows.length)} lignes · ${d.cols.length} colonnes</div><p>${esc(d.desc)}</p>
+    <div class="tn">${esc(k)} · ${fmtN(d.rows.length)} lignes · ${d.cols.length} colonnes</div>${editing?`<p>${esc(d.desc)}</p>`:''}
     <div class="open" data-openex="${k}">Explorer cette table →</div></div>`;}).join('');
   const nT=names.length,nR=names.reduce((a,k)=>a+DS[k].rows.length,0);
   return `<div class="phead"><div class="eyebrow">Architecture</div><h1>Modèle de données</h1><p data-edit="intros.model">${esc(C.intros.model)}</p><p>${fmtN(nR)} lignes réparties sur ${nT} tables${editing?' (y compris les tables techniques, visibles uniquement en mode administrateur)':''}.</p>
@@ -2057,6 +2066,7 @@ function mMiningCarte(){
           <select id="mnSubstance" class="sel"><option value="">Toutes substances</option></select></label>
         <span class="grow"></span>
         <span class="badge" id="mnCount">…</span>
+        <button type="button" class="btn" id="mnDownload">↓ Télécharger les données ouvertes</button>
       </div>
       <div id="mnMap" style="height:600px;border-radius:12px;overflow:hidden;margin-top:12px;background:var(--panel-2)"></div>
       <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:12px;font-size:12px;color:var(--ink-soft)">
@@ -2096,6 +2106,7 @@ function registresTabHtml(){
         <input type="checkbox" id="mrSoeOnly" ${registresSoeOnly?'checked':''}> N'afficher que les opérations impliquant une entreprise d'État
       </label>
       <p style="font-size:11.5px;color:var(--ink-faint);margin-top:6px">${esc(REGISTRES_SOE_NOTE)}</p>
+      <button type="button" class="btn" id="mrDownload" style="margin-top:8px">↓ Télécharger les registres (données ouvertes)</button>
     </div>
     ${registresTableCard("Amodiations de droits miniers — 2023",
       "Une entreprise (l'« amodiant ») confie l'exploitation d'un droit minier à une autre (l'« amodiataire ») sans en céder la propriété. C'est précisément ce registre qui manquait au dernier Rapport ITIE selon le Secrétariat international.",
@@ -2157,6 +2168,13 @@ function loadRegistresMiniers(){
 function bindRegistresMiniers(){
   const cb=$('#mrSoeOnly');
   if(cb)cb.onchange=()=>{registresSoeOnly=cb.checked;const host=$('#miningTabBody');if(host)host.innerHTML=registresTabHtml();bindRegistresMiniers();};
+  const dl=$('#mrDownload');
+  if(dl)dl.onclick=()=>{
+    if(!REGISTRES){alert('Registres pas encore chargés.');return;}
+    const tables=[['octrois','octrois_droits_miniers'],['cessions','cessions_droits_miniers'],['amodiations','amodiations_droits_miniers'],['options','contrats_options_miniers'],['permis_exploitation_octroi_2025','permis_exploitation_octroi_2025'],['cession_parts_etat','cession_parts_etat_10pct']];
+    tables.forEach(([key,name])=>{const rows=REGISTRES[key];if(rows&&rows.length)exportRowsCSV(name,rows);});
+    saveFile('registres_droits_miniers.json',JSON.stringify(REGISTRES,null,0));
+  };
 }
 function miningPopupHtml(p){
   const row=(k,v)=>v?`<div style="margin-bottom:4px"><b>${esc(k)}</b> — ${esc(v)}</div>`:'';
@@ -2233,6 +2251,7 @@ function drawMining(){
   miningRenderLayer();
   const bind=(id,key)=>{const el=$(id);if(el)el.onchange=e=>{miningF[key]=e.target.value;miningRenderLayer();};};
   bind('#mnStatut','statut');bind('#mnGroupe','groupe');bind('#mnSubstance','substance');
+  const dl=$('#mnDownload');if(dl)dl.onclick=()=>exportFeaturesOpenData('titres_miniers_actifs',miningFilteredFeatures());
 }
 
 /* ===== Hydrocarbures — carte interactive (Leaflet, couches multiples) =====
@@ -2342,6 +2361,7 @@ function mHydro(){
           <select id="hyMatiere" class="sel"><option value="">Toutes matières</option>${matieres.map(([v,c])=>`<option value="${esc(v)}">${esc(v)} (${c})</option>`).join('')}</select></label>
         <span class="grow"></span>
         <span class="badge" id="hyCount">…</span>
+        <button type="button" class="btn" id="hyDownload">↓ Télécharger les données ouvertes</button>
       </div>
       <div class="ch" style="flex-wrap:wrap;gap:6px 16px;margin-top:10px;font-size:12px;color:var(--ink-soft)">
         <span style="font-weight:700">Couches :</span>
@@ -2462,6 +2482,13 @@ function drawHydro(){
     hydroMapObj.setView(v.c,v.z);
     $$('[data-hview]').forEach(b=>b.classList.toggle('on',b===btn));
   };});
+  const dl=$('#hyDownload');
+  if(dl)dl.onclick=()=>{
+    const features=(d.blocs&&d.blocs.features)||[];
+    exportFeaturesOpenData('hydrocarbures_blocs_concessions',features);
+    const nonGeo=d.non_georeferences||[];
+    if(nonGeo.length)exportRowsCSV('hydrocarbures_sans_coordonnees',nonGeo);
+  };
 }
 
 /* ===== Carte des infrastructures financées par SICOMINES (Exigence ITIE 4.3) =====
