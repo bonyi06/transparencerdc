@@ -112,6 +112,200 @@ function openSourceModal(tableName){
 window.openSourceModal=openSourceModal;
 function goExplorerTable(name){exState.ds=name;exState.page=0;exState.filters={};exState.q='';go('explorer');}
 window.goExplorerTable=goExplorerTable;
+/* ===== Tableau de bord par thème (générique, toutes rubriques ITIE) =====
+   Retour utilisateur (sept. 2026) : « faire aussi des dashboards divers et
+   riches pour chaque thématique ». Plutôt que 13 dashboards codés en dur
+   (un par thème, à maintenir manuellement à chaque nouveau jeu de données —
+   exactement le travers que le système de tables génériques évite déjà
+   depuis les rubriques Dépenses sociales / Contribution économique / EMAPE),
+   ce dashboard est calculé automatiquement à partir des jeux de données déjà
+   publiés dans le thème, en réutilisant telles quelles les briques
+   existantes (aggregate(), cBar/cDonut/cLine, columnRole()) — donc aucune
+   modification n'est nécessaire ici lorsqu'un futur jeu de données est
+   ajouté à un thème existant.
+   Principe (cohérent avec « ne rien cacher, ne jamais deviner ») : on
+   n'affiche que des mesures et regroupements qui existent réellement dans
+   les données (colonnes numériques additionnables détectées par
+   columnRole()==='additive', dimensions détectées par
+   columnRole()==='dimension') ; si un thème n'offre aucune combinaison
+   mesure×dimension exploitable, le dashboard se réduit sobrement aux
+   indicateurs de volume (nombre de tableaux, nombre de lignes) plutôt que
+   d'inventer un graphique.
+*/
+// Colonne de mesure "la plus probable" d'un jeu de données : une colonne
+// numérique additionnable (jamais un identifiant, une année, un pourcentage
+// ou un numéro de page — cf. columnRole), en priorisant les intitulés qui
+// désignent explicitement un montant/volume déclaré.
+function bestMeasureCol(name,d){
+  const cands=d.cols.map((c,i)=>({c,i})).filter(o=>d.types[o.i]==='num'&&columnRole(name,o.c)==='additive');
+  if(!cands.length)return null;
+  // Priorité 1 : un montant (toujours dans une unité homogène — USD/CDF).
+  // Priorité 2, seulement à défaut : une quantité physique (tonnes, carats,
+  // barils, effectifs…), dont l'unité varie généralement selon le produit/la
+  // matière d'une ligne à l'autre (ex. ctx_production : sommer
+  // "Quantite_totale" toutes matières confondues mélangerait des tonnes de
+  // cuivre et des barils de pétrole, alors que "Valeur_totale" (USD) reste
+  // comparable) — on ne devine jamais qu'une quantité est comparable sans
+  // colonne de montant homogène pour trancher en priorité.
+  const value=cands.find(o=>/montant|recette|valeur|total d[ée]clar|d[ée]claration|budget|co[uû]t/i.test(o.c));
+  if(value)return value.c;
+  const count=cands.find(o=>/effectif|volume|superficie|quantit[ée]|production|exportation/i.test(o.c));
+  if(count)return count.c;
+  // Aucun intitulé explicite : plutôt que de prendre la première colonne
+  // numérique venue (souvent très incomplète dans les tables consolidées à
+  // plusieurs mesures — ex. fait_reconciliation_flux, où "societes_initial"
+  // est en tête de colonnes mais presque toujours vide), on retient celle la
+  // mieux renseignée (le moins de valeurs manquantes), plus représentative.
+  // Les colonnes d'écart/ajustement (différences signées, pouvant s'annuler
+  // ou masquer un montant brut plus lisible) ne sont retenues qu'en dernier
+  // recours, si aucune autre mesure additive n'existe.
+  const nonDelta=cands.filter(o=>!/[ée]cart|diff[ée]rence|ajustement/i.test(o.c));
+  const pool=nonDelta.length?nonDelta:cands;
+  let best=pool[0],bestFill=-1;
+  pool.forEach(o=>{let n=0;for(const r of d.rows){const v=r[o.i];if(v!=null&&v!=='')n++;}if(n>bestFill){bestFill=n;best=o;}});
+  return best.c;
+}
+// Colonne de dimension "la plus probable" (catégorie exploitable pour un
+// regroupement), en excluant la mesure déjà choisie.
+function bestDimCol(name,d,exclude){
+  const cands=d.cols.map((c,i)=>({c,i})).filter(o=>o.c!==exclude&&columnRole(name,o.c)==='dimension');
+  if(!cands.length)return null;
+  const pref=cands.find(o=>/entrepris|soci[ée]t[ée]|secteur|province|cat[ée]gorie|type|nature|fili[èe]re|min[ée]rai|produit|flux|r[ée]gie|percept|b[ée]n[ée]ficiaire|domaine|indicateur|tranche/i.test(o.c));
+  return (pref||cands[0]).c;
+}
+// Jeu de données "vue d'ensemble" d'un thème : une table à une seule ligne,
+// exclusivement composée d'indicateurs numériques déjà agrégés (convention
+// utilisée depuis les rubriques Dépenses sociales/Contribution économique :
+// ex. depenses_vue_ensemble_2022_2023, contrib_eco_vue_ensemble). Quand elle
+// existe, ses colonnes deviennent directement les tuiles KPI du thème —
+// plus riche et plus fidèle qu'un simple comptage générique de lignes.
+function themeVueEnsembleDataset(theme){
+  const names=tablesInTheme(theme).filter(isPublicTable);
+  return names.find(n=>{const d=DS[n];return /vue.{0,4}ensemble|_kpi\b/i.test(n)&&d.rows.length===1&&d.types.filter(t=>t==='num').length>=2;})||null;
+}
+function fmtKpiValue(col,v){
+  if(v==null||isNaN(v))return '—';
+  if(/\(usd\)|usd\b/i.test(col))return fmtUSD(v);
+  if(/%|pourcent/i.test(col))return v.toLocaleString('fr-FR',{maximumFractionDigits:1})+' %';
+  return fmtN(v);
+}
+function themeKpiTiles(theme){
+  const veName=themeVueEnsembleDataset(theme);
+  if(veName){
+    const d=DS[veName],row=d.rows[0];
+    const tiles=d.cols.map((c,i)=>d.types[i]==='num'?`<div class="kpi" title="${esc(d.label)}"><div class="v">${fmtKpiValue(c,row[i])}</div><div class="l">${esc(c)}</div></div>`:'').join('');
+    return `<div class="kpis">${tiles}</div>`;
+  }
+  const names=tablesInTheme(theme).filter(isPublicTable);
+  const totalRows=names.reduce((s,n)=>s+DS[n].rows.length,0);
+  return `<div class="kpis">
+    <div class="kpi"><div class="v">${fmtN(names.length)}</div><div class="l">Tableau${names.length>1?'x':''} public${names.length>1?'s':''}</div></div>
+    <div class="kpi"><div class="v">${fmtN(totalRows)}</div><div class="l">Ligne${totalRows>1?'s':''} déclarée${totalRows>1?'s':''} au total</div></div>
+  </div>`;
+}
+// Jeux de données du thème offrant une combinaison mesure×dimension
+// exploitable, triés par richesse décroissante (nombre de lignes source).
+// Regroupement sémantique grossier d'une colonne-dimension, utilisé pour
+// diversifier les graphiques d'un même thème : sans cela, la plupart des
+// tables d'un thème mettent en avant "l'entreprise" comme première
+// dimension utile, et deux graphiques "montant par entreprise" côte à côte
+// (même s'ils portent sur deux tables différentes) apportent moins qu'un
+// second angle de lecture (secteur, lieu, type, flux…).
+function dimBucket(col){
+  if(/entrepris|soci[ée]t[ée]|op[ée]rateur|titulaire|amodia/i.test(col))return 'entreprise';
+  if(/secteur|domaine|fili[èe]re|min[ée]rai|produit|mati[èe]re|ressource/i.test(col))return 'secteur';
+  if(/province|r[ée]gion|localisation|territoire|pays/i.test(col))return 'lieu';
+  if(/\btype\b|nature|cat[ée]gorie|statut/i.test(col))return 'type';
+  if(/flux|r[ée]gie|percept|b[ée]n[ée]ficiaire|maitre|ma[iî]tre/i.test(col))return 'flux';
+  if(/tranche|indicateur/i.test(col))return 'autre1';
+  return 'autre2';
+}
+// Certaines tables sont un registre d'indicateurs hétérogènes au format
+// long (ex. ent_titres_licences : colonnes Indicateur/Valeur, une ligne par
+// indicateur et par exercice — nombre d'entreprises, superficie, etc., dans
+// des unités différentes) plutôt qu'une vraie mesure homogène. Sommer leur
+// colonne "Valeur" en la regroupant par une dimension AUTRE que l'indicateur
+// lui-même mélangerait des unités incompatibles (ex. additionner un nombre
+// d'entreprises à une superficie) — un total sans signification qu'on
+// préfère ne pas afficher plutôt que de deviner qu'il est comparable
+// (« ne jamais deviner »). On l'détecte via la présence d'une colonne
+// "Indicateur" : si la dimension retenue n'est pas cette colonne, on
+// n'auto-graphique pas la table (elle reste bien sûr visible telle quelle
+// dans son propre tableau, plus bas sur la page).
+function indicatorCol(d){return d.cols.find(c=>/^indicateur\b/i.test(c))||null;}
+function themeChartCandidates(theme){
+  const names=tablesInTheme(theme).filter(isPublicTable);
+  const out=[];
+  names.forEach(name=>{
+    const d=DS[name];
+    if(d.rows.length<3)return; // table trop réduite pour un graphique (souvent une vue d'ensemble à 1 ligne, déjà traitée en KPI)
+    const measure=bestMeasureCol(name,d);if(!measure)return;
+    const dim=bestDimCol(name,d,measure);if(!dim)return;
+    const indCol=indicatorCol(d);if(indCol&&dim!==indCol)return;
+    let agg=aggregate(name,dim,measure,'sum').filter(a=>a.label&&a.value&&isPlausibleEntityLabel(a.label)&&!isRollupEntityLabel(a.label));
+    if(agg.length<2)return;
+    agg=agg.sort((a,b)=>b.value-a.value);
+    const total=agg.reduce((s,a)=>s+a.value,0);
+    if(agg.length>3&&total&&agg[0].value/total>0.95)return; // un seul groupe écrase tout le reste : peu lisible, souvent un artefact (agrégat/sous-total confondu avec une vraie catégorie)
+    out.push({name,label:d.label,dim,measure,bucket:dimBucket(dim),agg});
+  });
+  out.sort((a,b)=>DS[b.name].rows.length-DS[a.name].rows.length);
+  return out;
+}
+// Table du thème permettant une comparaison par exercice (Année/Exercice
+// avec au moins 2 valeurs distinctes) sur une mesure additionnable.
+function themeYearEvolution(theme){
+  const names=tablesInTheme(theme).filter(isPublicTable);
+  let best=null;
+  names.forEach(name=>{
+    const d=DS[name],yc=yearCol(name);if(!yc)return;
+    const measure=bestMeasureCol(name,d);if(!measure)return;
+    if(indicatorCol(d))return; // même garde-fou que themeChartCandidates : "Valeur" par exercice mélangerait des indicateurs hétérogènes
+    const yi=d.cols.indexOf(yc);
+    const years=new Set(d.rows.map(r=>yearVal(r[yi])).filter(Boolean));
+    if(years.size<2)return;
+    if(!best||d.rows.length>DS[best.name].rows.length)best={name,label:d.label,yc,measure};
+  });
+  return best;
+}
+// Sélection commune (HTML + dessin) des 2-3 graphiques d'un thème, pour ne
+// jamais laisser diverger la structure des cartes et leur contenu réel.
+function themeDashboardPicks(theme){
+  const cands=themeChartCandidates(theme);
+  const c1=cands[0]||null;
+  const c2=(c1&&(cands.find(c=>c.name!==c1.name&&c.bucket!==c1.bucket)||cands.find(c=>c.name!==c1.name)))||null;
+  let evo=themeYearEvolution(theme);
+  if(evo&&c1&&evo.name===c1.name&&evo.measure===c1.measure)evo=null; // éviterait de répéter exactement le graphique 1
+  return {c1,c2,evo};
+}
+function themeDashCard(id,title,badge,sourceName){
+  return `<div class="card"><div class="ch"><h3 style="margin:0">${esc(title)}</h3><span class="badge">${esc(badge)}</span></div>
+    <div class="chart" id="${id}" aria-label="${esc(title)}"></div>
+    <div class="srcnote">Source : table <code>${esc(sourceName)}</code> · <button type="button" class="srclink" onclick="openSourceModal('${esc(sourceName)}')">ⓘ source &amp; traçabilité</button></div></div>`;
+}
+function themeDashboardSection(theme){
+  if(theme==='technique')return '';
+  const {c1,c2,evo}=themeDashboardPicks(theme);
+  const cards=[];
+  if(c1)cards.push(themeDashCard('thd_c1',c1.label,`${c1.measure} par ${c1.dim}`,c1.name));
+  if(c2)cards.push(themeDashCard('thd_c2',c2.label,`${c2.measure} par ${c2.dim}`,c2.name));
+  if(evo)cards.push(themeDashCard('thd_evo',`Évolution — ${evo.label}`,`${evo.measure} par exercice`,evo.name));
+  const grid=cards.length<=1?cards.join(''):`<div class="${cards.length===2?'grid2':'grid3'}">${cards.join('')}</div>`;
+  return `${themeKpiTiles(theme)}${grid}`;
+}
+function drawThemeDashboard(theme){
+  if(theme==='technique')return;
+  const {c1,c2,evo}=themeDashboardPicks(theme);
+  if(c1){const h=$('#thd_c1');if(h)cBar(h,c1.agg,css('--sky'),c1.agg.length>6);}
+  if(c2){const h=$('#thd_c2');if(h){if(c2.agg.length<=7)cDonut(h,c2.agg);else cBar(h,c2.agg,css('--teal'),true);}}
+  if(evo){
+    const h=$('#thd_evo');
+    if(h){
+      const agg=aggregate(evo.name,evo.yc,evo.measure,'sum').map(a=>({label:yearVal(a.label),value:a.value})).filter(a=>a.label).sort((a,b)=>a.label-b.label);
+      if(agg.length>=4)cLine(h,agg,true,css('--amber'));else cBar(h,agg,css('--amber'),false);
+    }
+  }
+}
 function themeCard(name){
   const d=DS[name];if(!d)return '';
   const rowN=d.rows.length;
@@ -350,12 +544,14 @@ function mTheme(theme){
   const cahiers=theme==='depenses_sociales'?cahiersSection():'';
   const contrats=theme==='cadre_licences'?contratsSection():'';
   const sicomMap=theme==='troc_sicomines'?sicomMapSection():'';
+  const dashboard=themeDashboardSection(theme);
   return `<div class="phead"><div class="eyebrow">${esc(info.eiti||'')}</div><h1>${esc(info.label)}</h1><p>${esc(info.desc)}</p></div>
+    ${dashboard}
     ${sicomMap}
     ${names.length?names.map(themeCard).join(''):(cahiers||contrats||sicomMap?'':'<div class="empty" style="padding:20px">Aucun tableau public dans cette rubrique pour le moment.</div>')}
     ${contrats}${cahiers}`;
 }
-function bindThemePage(){$$('#app [data-gotable]').forEach(b=>b.onclick=()=>goExplorerTable(b.dataset.gotable));bindCahiers();bindContrats();bindSicomMap();}
+function bindThemePage(){$$('#app [data-gotable]').forEach(b=>b.onclick=()=>goExplorerTable(b.dataset.gotable));bindCahiers();bindContrats();bindSicomMap();drawThemeDashboard(current);}
 
 
 /* ===== Référentiels canoniques (provinces / entreprises / flux / entités
@@ -609,7 +805,7 @@ function yearCol(name){const cs=DS[name].cols;
   c=cs.find(x=>/ann[eé]e/i.test(x));return c||null;}
 function yearVal(v){if(v==null)return null;const m=String(v).match(/(19|20)\d{2}/);return m?+m[0]:null;}
 function isPct(col){return /pourcent|%|taux|pct|part/i.test(col);}
-function isIdCol(col){return /^(rid|id)$|_id$|identifi|code|numero|n°|register|iso\d|p[ée]rim[eè]tre|^num[eé]ro?\b/i.test(col);}
+function isIdCol(col){return /^(rid|id|n|ordre)$|_id$|identifi|code|numero|n°|register|iso\d|p[ée]rim[eè]tre|^num[eé]ro?\b|\bnif\b/i.test(col);}
 function isYearLikeCol(name,col){if(/^ann[eé]es?$|^exercice$/i.test(col))return true;const yc=yearCol(name);return !!yc&&yc===col;}
 // Colonnes contenant un numéro de page / renvoi de document source : jamais
 // additives (ex. « Page » dans les tables consolidées ent_revenus_*), même
@@ -968,7 +1164,7 @@ function drawApercuBi(){
 // "Total secteur minier"...) plutôt que de vraies régies : les inclure dans
 // un classement par entité créerait des doublons trompeurs (une régie et,
 // séparément, un total qui la recouvre déjà). On les exclut du classement.
-function isRollupEntityLabel(v){return /^(total|toutes)\b/i.test(String(v||'').trim());}
+function isRollupEntityLabel(v){return /^(total|toutes|sous.?total|ensemble des)\b/i.test(String(v||'').trim());}
 function nationalRegieTop(n){
   const d=DS.ent_revenus_entite;if(!d)return [];
   const ci=d.cols.indexOf('Entité perceptrice harmonisée'),ni=d.cols.indexOf('Niveau'),mi=d.cols.indexOf('Montant normalisé');
