@@ -56003,335 +56003,29 @@
  },
  "sicomines_infra": {
   "type": "FeatureCollection",
-  "name": "infrastructures_sicomines_2007_2025",
+  "name": "infrastructures_sicomines_tranches_2015_2025",
   "features": [
    {
     "type": "Feature",
     "properties": {
-     "id": "P01",
-     "designation": "Route Lutundele",
-     "lieu": "Kinshasa",
-     "quantite": "4,5 Km",
-     "cout_usd": 21007915.3,
-     "phase": "Phase 1",
-     "note": "Localisation donnée au niveau de la ville (Kinshasa) uniquement ; point indicatif au centre de la commune de la Gombe, pas l'emplacement réel de cette avenue.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "indicatif",
-     "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      15.30333,
-      -4.30306
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P02",
-     "designation": "Avenue du Tourisme",
-     "lieu": "Kinshasa",
-     "quantite": "6,8 Km",
-     "cout_usd": 29344191.97,
-     "phase": "Phase 1",
-     "note": "Localisation donnée au niveau de la ville (Kinshasa) uniquement ; point indicatif, pas l'emplacement réel de cette avenue.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "indicatif",
-     "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      15.30333,
-      -4.30306
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P03",
-     "designation": "Bitumage de la RN5 Lubumbashi-Kasomeno",
-     "lieu": "Haut-Katanga",
-     "quantite": "137 Km",
-     "cout_usd": 93210305.71,
-     "phase": "Phase 1",
-     "note": "Point placé à l'extrémité Kasomeno de l'axe Lubumbashi-Kasomeno ; le tracé réel des 137 km n'est pas représenté.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "mapcarta.com — localité de Kasomeno (Haut-Katanga)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      28.28025,
-      -10.75475
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P04",
-     "designation": "Terrassement de la RN5 Lubumbashi-Kasomeno",
-     "lieu": "Haut-Katanga",
-     "quantite": "137 Km",
-     "cout_usd": 69073563.8,
-     "phase": "Phase 1",
-     "note": "Point placé à l'extrémité Kasomeno de l'axe Lubumbashi-Kasomeno (travaux de terrassement) ; le tracé réel des 137 km n'est pas représenté.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "mapcarta.com — localité de Kasomeno (Haut-Katanga)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      28.28025,
-      -10.75475
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P05",
-     "designation": "Bitumage RN4 Beni-Niania",
-     "lieu": "Nord-Kivu",
-     "quantite": "60 Km",
-     "cout_usd": 57782941.03,
-     "phase": "Phase 1",
-     "note": "Point placé à Nia Nia (Niania), extrémité de l'axe Beni-Niania ; le tracé réel des 60 km n'est pas représenté.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "mapcarta.com — localité de Nia Nia / Niania (Ituri), sur la RN4",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      27.60742,
-      1.40734
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P06",
-     "designation": "Construction et achèvement de l'Hôpital centre-ville (Hôpital du Centenaire)",
-     "lieu": "Kinshasa",
-     "quantite": "4 500 m²",
-     "cout_usd": 114901200.0,
-     "phase": "Phase 1",
-     "note": "Selon le document ITIE-RDC « Projets individuellement documentés » (Exigence 4.3), cet hôpital est nommé « Hôpital du Cinquantenaire » (montant très proche : 114 879 516,42 USD) — écart de dénomination entre sources, reproduit tel quel plutôt qu'arbitré. Point placé aux coordonnées vérifiées de l'Hôpital du Cinquantenaire de Kinshasa.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      15.30333,
-      -4.30306
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P06b",
-     "designation": "Construction et achèvement de l'Hôpital centre-ville — coordonnée du bâtiment identifié (Hôpital du Cinquantenaire)",
-     "lieu": "Kinshasa (Mont Ngafula)",
-     "quantite": "4 500 m²",
-     "cout_usd": null,
-     "phase": "Phase 1",
-     "note": "Second point de repère : coordonnées exactes du bâtiment de l'Hôpital du Cinquantenaire (probablement le même ouvrage que « Hôpital du Centenaire » ci-dessus — voir note), issues de Wikipédia. N'ajoute pas de montant supplémentaire (déjà compté au point P06).",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — L'hôpital du Cinquantenaire de Kinshasa (infobox géographique)",
-     "photo_url": "https://www.flickr.com/photos/rdcbenelux/5549662665",
-     "photo_credit": "Flickr — Ambassade de la RDC (compte officiel), « L'hôpital du Cinquantenaire à Kinshasa »"
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      15.296555,
-      -4.341625
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P07",
-     "designation": "Modernisation du Boulevard du 30 juin lot 1",
-     "lieu": "Kinshasa",
-     "quantite": "5,38 Km",
-     "cout_usd": 25973618.36,
-     "phase": "Phase 2",
-     "note": "Point indicatif (centre de la commune de la Gombe) : ne représente pas le tracé réel de ce boulevard sur plusieurs km.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "indicatif",
-     "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
-     "photo_url": "https://commons.wikimedia.org/wiki/File:Boulevard_du_30_juin,_Kinshasa.jpg",
-     "photo_credit": "Wikimedia Commons — File:Boulevard du 30 juin, Kinshasa.jpg"
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      15.30333,
-      -4.30306
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P08",
-     "designation": "Modernisation du Boulevard du 30 juin lot 2",
-     "lieu": "Kinshasa",
-     "quantite": "2,5 Km",
-     "cout_usd": 19341204.19,
-     "phase": "Phase 2",
-     "note": "Point indicatif (centre de la commune de la Gombe) : ne représente pas le tracé réel de ce boulevard.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "indicatif",
-     "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      15.30333,
-      -4.30306
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P09",
-     "designation": "Modernisation du Boulevard Sendwe et Triomphal",
-     "lieu": "Kinshasa",
-     "quantite": "3,67 Km",
-     "cout_usd": 35894638.24,
-     "phase": "Phase 2",
-     "note": "Point indicatif (centre de la commune de la Gombe) : ne représente pas le tracé réel de ces boulevards.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "indicatif",
-     "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      15.30333,
-      -4.30306
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P10",
-     "designation": "Aménagement et construction de l'Esplanade du Palais du Peuple",
-     "lieu": "Kinshasa",
-     "quantite": "40 500 m²",
-     "cout_usd": 24255229.1,
-     "phase": "Phase 2",
-     "note": "Superficie de l'esplanade selon ce document (40 500 m²) supérieure à celle du document « Projets individuellement documentés » (24 300 m²) — écart entre sources, reproduit tel quel plutôt qu'arbitré.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "latitude.to — Palais du Peuple (Kinshasa)",
-     "photo_url": "https://commons.wikimedia.org/wiki/Category:Palais_du_Peuple_(Kinshasa)",
-     "photo_credit": "Wikimedia Commons — Category:Palais du Peuple (Kinshasa)"
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      15.3031,
-      -4.3322
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P11",
-     "designation": "Fournitures des Groupes électrogènes",
-     "lieu": "Kisangani",
-     "quantite": "19",
-     "cout_usd": 5667740.0,
-     "phase": "Phase 2",
-     "note": null,
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Kisangani (texte de l'article)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      25.2,
-      0.51667
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P12",
-     "designation": "Installation d'une unité des préfabriqués",
-     "lieu": "Kisangani",
-     "quantite": "1",
-     "cout_usd": 7492260.0,
-     "phase": "Phase 2",
-     "note": null,
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Kisangani (texte de l'article)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      25.2,
-      0.51667
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P14",
-     "designation": "Modernisation de la RN5 Bukavu-Kamanyola",
-     "lieu": "Sud-Kivu",
-     "quantite": "5 Km",
-     "cout_usd": 13000000.0,
-     "phase": "Phase 3",
-     "note": "Point placé à Bukavu, extrémité identifiée de l'axe ; Kamanyola (l'autre extrémité) n'a pas été vérifié indépendamment.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
+     "id": "T01",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 1,
+     "designation": "Asphaltage de la route Bukavu-Kamanyola (Phase 1)",
+     "localisation": "Sud-Kivu",
+     "cout_usd": 13000000,
+     "exec_2022_usd": 13000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 13000000,
+     "restant_usd": 0,
+     "unite": "Km",
+     "quantite_prevue": 5,
+     "quantite_realisee": 5,
+     "etat_avancement": null,
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
      "source_coordonnees": "Wikipédia (en) — Bukavu (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
+     "qualite_geom": "approx"
     },
     "geometry": {
      "type": "Point",
@@ -56344,18 +56038,54 @@
    {
     "type": "Feature",
     "properties": {
-     "id": "P15",
-     "designation": "Traversée de Butembo",
-     "lieu": "Nord-Kivu",
-     "quantite": "8 Km",
-     "cout_usd": 11000000.0,
-     "phase": "Phase 3",
-     "note": null,
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
+     "id": "T02",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 2,
+     "designation": "Contrat d'études et des travaux du projet de réhabilitation et de modernisation de la route Lwambo-Mitwana-Manono",
+     "localisation": "Haut Katanga, Lualaba, Haut Lomami et Tanganyika",
+     "cout_usd": 30000000,
+     "exec_2022_usd": 30000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 30000000,
+     "restant_usd": 0,
+     "unite": "Km",
+     "quantite_prevue": 149.6,
+     "quantite_realisee": 149.6,
+     "etat_avancement": null,
+     "observation_localisation": "Localisation précisée sur 4 provinces dans le document source ; point placé à Kalemie (Tanganyika), à titre indicatif — ne représente pas le tracé réel de cet axe.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Kalemie (infobox géographique)",
+     "qualite_geom": "indicatif"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      29.19056,
+      -5.91278
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T03",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 3,
+     "designation": "Contrat d'études et des travaux du projet de la modernisation de la traversée de Butembo",
+     "localisation": "Nord-Kivu",
+     "cout_usd": 11000000,
+     "exec_2022_usd": 11000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 11000000,
+     "restant_usd": 0,
+     "unite": "Km",
+     "quantite_prevue": 7.85,
+     "quantite_realisee": 7.85,
+     "etat_avancement": null,
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
      "source_coordonnees": "Wikipédia (en) — Butembo (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
+     "qualite_geom": "approx"
     },
     "geometry": {
      "type": "Point",
@@ -56368,18 +56098,24 @@
    {
     "type": "Feature",
     "properties": {
-     "id": "P16",
-     "designation": "Réhabilitation et modernisation de la voirie de Kolwezi (actions sociales Quartier Harmonie)",
-     "lieu": "Lualaba",
-     "quantite": "4,657 Km",
-     "cout_usd": 6000000.0,
-     "phase": "Phase 3",
-     "note": null,
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
+     "id": "T04",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 4,
+     "designation": "Projet d'accompagnement de la SICOMINES à Kolwezi",
+     "localisation": "Lualaba",
+     "cout_usd": 6000000,
+     "exec_2022_usd": 6000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 6000000,
+     "restant_usd": 0,
+     "unite": "Km",
+     "quantite_prevue": 4.66,
+     "quantite_realisee": 4.66,
+     "etat_avancement": null,
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
      "source_coordonnees": "Wikipédia (en) — Kolwezi (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
+     "qualite_geom": "approx"
     },
     "geometry": {
      "type": "Point",
@@ -56392,234 +56128,24 @@
    {
     "type": "Feature",
     "properties": {
-     "id": "P17",
-     "designation": "Réhabilitation de la voirie Bunagana-Rutshuru-Goma",
-     "lieu": "Nord-Kivu",
-     "quantite": "15 Km",
-     "cout_usd": 10000000.0,
-     "phase": "Phase 3",
-     "note": "Point placé à Goma, extrémité identifiée de l'axe ; Bunagana et Rutshuru n'ont pas été vérifiés indépendamment.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Goma (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      29.23361,
-      -1.67944
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P18",
-     "designation": "Modernisation de la voirie d'Uvira (Phase 1)",
-     "lieu": "Sud-Kivu",
-     "quantite": "2,64 Km",
-     "cout_usd": 5000000.0,
-     "phase": "Phase 3",
-     "note": null,
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Uvira (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      29.14,
-      -3.37
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P19",
-     "designation": "Modernisation de la voirie d'Uvira (Phase 2)",
-     "lieu": "Sud-Kivu",
-     "quantite": "5,5 Km",
-     "cout_usd": 5000000.0,
-     "phase": "Phase 3",
-     "note": null,
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Uvira (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      29.14,
-      -3.37
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P21",
-     "designation": "Modernisation de l'avenue Nzolana (Phase 1)",
-     "lieu": "Kinshasa",
-     "quantite": "1,4 Km",
-     "cout_usd": 15000000.0,
-     "phase": "Phase 3",
-     "note": "Point indicatif (centre de la commune de la Gombe) : ne représente pas l'emplacement réel de cette avenue.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "indicatif",
-     "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      15.30333,
-      -4.30306
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P22",
-     "designation": "Renforcement des Boulevards Sendwe et Triomphal",
-     "lieu": "Kinshasa",
-     "quantite": "3,67 Km",
-     "cout_usd": 5000000.0,
-     "phase": "Phase 3",
-     "note": "Point indicatif (centre de la commune de la Gombe).",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "indicatif",
-     "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      15.30333,
-      -4.30306
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P23",
-     "designation": "Ouverture de la route Kamina-Kabongo",
-     "lieu": "Haut-Lomami",
-     "quantite": "230 Km",
-     "cout_usd": 6000000.0,
-     "phase": "Phase 3",
-     "note": "Point placé à Kamina, une extrémité de l'axe ; le tracé réel des 230 km vers Kabongo n'est pas représenté.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Kamina (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      24.99056,
-      -8.73861
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P24",
-     "designation": "Ouverture de la route Kabongo-Dianda-Mukwende",
-     "lieu": "Haut-Lomami",
-     "quantite": "350 Km",
-     "cout_usd": 5000000.0,
-     "phase": "Phase 3",
-     "note": "Point placé à Kabongo, extrémité identifiée de l'axe ; Dianda et Mukwende n'ont pas été vérifiés indépendamment.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Kabongo, Democratic Republic of the Congo (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      25.58583,
-      -7.345
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P25",
-     "designation": "Construction d'un stade à Bunia",
-     "lieu": "Ituri",
-     "quantite": "1",
-     "cout_usd": 9940215.63,
-     "phase": "Phase 3",
-     "note": "Une confusion documentée existe entre des photographies de stades de cette région : par prudence, aucun lien photo n'est proposé.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Bunia (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      30.25,
-      1.567
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P26",
-     "designation": "Réhabilitation de la route revêtue Mbujimayi-Mwenditu",
-     "lieu": "Kasaï-Oriental",
-     "quantite": "16,62 Km",
-     "cout_usd": 15000000.0,
-     "phase": "Phase 3",
-     "note": "Point placé à Mbuji-Mayi, une extrémité de l'axe vers Mwene-Ditu (province du Lomami) ; le tracé réel n'est pas représenté.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Mbuji-Mayi (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      23.6,
-      -6.15
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P27",
-     "designation": "Réhabilitation de la route Kikwit-Idiofa",
-     "lieu": "Kwilu",
-     "quantite": "6,35 Km",
-     "cout_usd": 10000000.0,
-     "phase": "Phase 3",
-     "note": "Point placé à Kikwit, une extrémité de l'axe vers Idiofa ; le tracé réel n'est pas représenté.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
+     "id": "T05",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 5,
+     "designation": "Contrat d'études et des travaux du projet de réhabilitation et de modernisation de la route Kilwit-Idiofa (70km)",
+     "localisation": "Kwilu",
+     "cout_usd": 10000000,
+     "exec_2022_usd": 10000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 10000000,
+     "restant_usd": 0,
+     "unite": "Km",
+     "quantite_prevue": 6.3,
+     "quantite_realisee": 6.3,
+     "etat_avancement": null,
+     "observation_localisation": "Point placé à Kikwit, une extrémité de l'axe vers Idiofa ; le tracé réel n'est pas représenté.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
      "source_coordonnees": "Wikipédia (en) — Kikwit (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
+     "qualite_geom": "approx"
     },
     "geometry": {
      "type": "Point",
@@ -56632,42 +56158,144 @@
    {
     "type": "Feature",
     "properties": {
-     "id": "P28",
-     "designation": "Construction d'une unité de captage et de traitement d'eau de Kamina (Phase 1)",
-     "lieu": "Haut-Lomami",
-     "quantite": "1",
-     "cout_usd": 9999897.77,
-     "phase": "Phase 3",
-     "note": null,
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Kamina (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
+     "id": "T06",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 6,
+     "designation": "Contrat d'études et de travaux du projet de renforcement de la route revêtue Mbuji Mayi-Mwene Ditu",
+     "localisation": "Kasai Oriental, Lomami",
+     "cout_usd": 15000000,
+     "exec_2022_usd": 15000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 15000000,
+     "restant_usd": 0,
+     "unite": "Km",
+     "quantite_prevue": 16.22,
+     "quantite_realisee": 16.22,
+     "etat_avancement": null,
+     "observation_localisation": "Point placé à Mbuji-Mayi, une extrémité de l'axe vers Mwene-Ditu ; le tracé réel n'est pas représenté.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Mbuji-Mayi (infobox géographique)",
+     "qualite_geom": "approx"
     },
     "geometry": {
      "type": "Point",
      "coordinates": [
-      24.99056,
-      -8.73861
+      23.6,
+      -6.15
      ]
     }
    },
    {
     "type": "Feature",
     "properties": {
-     "id": "P29",
-     "designation": "Construction d'un stade à Goma",
-     "lieu": "Nord-Kivu",
-     "quantite": "1",
-     "cout_usd": 9996332.43,
-     "phase": "Phase 3",
-     "note": "Une confusion documentée existe entre des photographies de stades de Goma et de Bukavu dans plusieurs sources externes : par prudence, aucun lien photo n'est proposé.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
+     "id": "T07",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 7,
+     "designation": "Contrat d'études et des travaux du projet de réhabilitation et de modernisation de la voirie de Kalemie (Phase I)",
+     "localisation": "Tanganyika",
+     "cout_usd": 15000000,
+     "exec_2022_usd": 15000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 15000000,
+     "restant_usd": 0,
+     "unite": "Km",
+     "quantite_prevue": 4.6,
+     "quantite_realisee": 4.6,
+     "etat_avancement": null,
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Kalemie (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      29.19056,
+      -5.91278
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T08",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 8,
+     "designation": "Contrat d'études et des travaux du projet de réhabilitation et de modernisation de la voirie de Kalemie (Phase II)",
+     "localisation": "Tanganyika",
+     "cout_usd": 26871393.78,
+     "exec_2022_usd": 26871393.78,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 26871393.78,
+     "restant_usd": 0,
+     "unite": "Km",
+     "quantite_prevue": 7.57,
+     "quantite_realisee": 7.57,
+     "etat_avancement": null,
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Kalemie (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      29.19056,
+      -5.91278
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T09",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 9,
+     "designation": "Contrat d'études et de travaux du projet de construction d'un nouveau stade à Kalemie",
+     "localisation": "Tanganyika",
+     "cout_usd": 16128606.22,
+     "exec_2022_usd": 16128606.22,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 16128606.22,
+     "restant_usd": 0,
+     "unite": "Places",
+     "quantite_prevue": 15000,
+     "quantite_realisee": 15000,
+     "etat_avancement": null,
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Kalemie (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      29.19056,
+      -5.91278
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T10",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 10,
+     "designation": "Contrat d'études et de travaux de réhabilitation et modernisation de la route Bunagan-Rutshuru-Goma (100km)",
+     "localisation": "Nord-Kivu",
+     "cout_usd": 10000000,
+     "exec_2022_usd": 10000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 10000000,
+     "restant_usd": 0,
+     "unite": "Km",
+     "quantite_prevue": 11,
+     "quantite_realisee": 11,
+     "etat_avancement": null,
+     "observation_localisation": "Point placé à Goma, extrémité identifiée de l'axe.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
      "source_coordonnees": "Wikipédia (en) — Goma (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
+     "qualite_geom": "approx"
     },
     "geometry": {
      "type": "Point",
@@ -56680,162 +56308,84 @@
    {
     "type": "Feature",
     "properties": {
-     "id": "P30",
-     "designation": "Construction d'un stade à Bukavu",
-     "lieu": "Sud-Kivu",
-     "quantite": "1",
-     "cout_usd": 10000000.0,
-     "phase": "Phase 3",
-     "note": "Même prudence que pour le stade de Goma : aucun lien photo proposé (confusion documentée entre stades de la région).",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Bukavu (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
+     "id": "T11",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 11,
+     "designation": "Contrat d'études et de travaux du projet de stade de Goma",
+     "localisation": "Nord-Kivu",
+     "cout_usd": 10000000,
+     "exec_2022_usd": 10000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 10000000,
+     "restant_usd": 0,
+     "unite": "Places",
+     "quantite_prevue": 10000,
+     "quantite_realisee": 10000,
+     "etat_avancement": null,
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Goma (infobox géographique)",
+     "qualite_geom": "approx"
     },
     "geometry": {
      "type": "Point",
      "coordinates": [
-      28.86083,
-      -2.50611
+      29.23361,
+      -1.67944
      ]
     }
    },
    {
     "type": "Feature",
     "properties": {
-     "id": "P31",
-     "designation": "Construction d'un nouveau stade à Kalemie",
-     "lieu": "Tanganyika",
-     "quantite": "1",
-     "cout_usd": 10000000.0,
-     "phase": "Phase 3",
-     "note": "Même prudence que pour les stades de Goma/Bukavu : aucun lien photo proposé.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Kalemie (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
+     "id": "T12",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 12,
+     "designation": "Contrat d'études et de travaux du projet de stade de Bunia",
+     "localisation": "Ituri",
+     "cout_usd": 10000000,
+     "exec_2022_usd": 10000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 10000000,
+     "restant_usd": 0,
+     "unite": "Places",
+     "quantite_prevue": 10000,
+     "quantite_realisee": 10000,
+     "etat_avancement": null,
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Bunia (infobox géographique)",
+     "qualite_geom": "approx"
     },
     "geometry": {
      "type": "Point",
      "coordinates": [
-      29.19056,
-      -5.91278
+      30.25,
+      1.567
      ]
     }
    },
    {
     "type": "Feature",
     "properties": {
-     "id": "P32",
-     "designation": "Réhabilitation et modernisation de la voirie de Kalemie",
-     "lieu": "Tanganyika",
-     "quantite": "3 Km",
-     "cout_usd": 10000000.0,
-     "phase": "Phase 3",
-     "note": null,
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Kalemie (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      29.19056,
-      -5.91278
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P33",
-     "designation": "Réhabilitation et modernisation de la voirie de Kalemie Phase 1",
-     "lieu": "Tanganyika",
-     "quantite": "1,6 Km",
-     "cout_usd": 5000000.0,
-     "phase": "Phase 3",
-     "note": null,
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Kalemie (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      29.19056,
-      -5.91278
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P35",
-     "designation": "Réhabilitation de la route Kitanda-Ankoro (70 Km)",
-     "lieu": "Tanganyika",
-     "quantite": "70 Km",
-     "cout_usd": 5000000.0,
-     "phase": "Phase 3",
-     "note": "Point placé à Ankoro, extrémité identifiée de l'axe ; Kitanda (petite localité, l'autre extrémité) n'a pas pu être vérifiée indépendamment.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Ankoro (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      26.95,
-      -6.75
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P36",
-     "designation": "Réhabilitation de la route en terre Ankoro-Manono (115 Km)",
-     "lieu": "Tanganyika",
-     "quantite": "115 Km",
-     "cout_usd": 7500000.0,
-     "phase": "Phase 3",
-     "note": "Point placé à Ankoro, une extrémité de l'axe vers Manono ; le tracé réel des 115 km n'est pas représenté.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Ankoro (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      26.95,
-      -6.75
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P37",
-     "designation": "Réhabilitation et modernisation de la voirie de Manono",
-     "lieu": "Tanganyika",
-     "quantite": "3,838 Km",
-     "cout_usd": 5000000.0,
-     "phase": "Phase 3",
-     "note": null,
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
+     "id": "T13",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 13,
+     "designation": "Contrat d'études et des travaux du projet de réhabilitation et de modernisation de la voirie de Manono",
+     "localisation": "Tanganyika",
+     "cout_usd": 5000000,
+     "exec_2022_usd": 5000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 5000000,
+     "restant_usd": 0,
+     "unite": "Km",
+     "quantite_prevue": 3.84,
+     "quantite_realisee": 3.84,
+     "etat_avancement": null,
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
      "source_coordonnees": "Wikipédia (en) — Manono, Democratic Republic of the Congo (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
+     "qualite_geom": "approx"
     },
     "geometry": {
      "type": "Point",
@@ -56848,18 +56398,294 @@
    {
     "type": "Feature",
     "properties": {
-     "id": "P38",
-     "designation": "Construction de la Bretelle Stade de Kalemie-Boulevard Lumumba",
-     "lieu": "Tanganyika",
-     "quantite": "1,76 Km",
-     "cout_usd": 5333019.45,
-     "phase": "Phase 3",
-     "note": null,
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
+     "id": "T14",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 14,
+     "designation": "Contrat d'études et de travaux du projet de construction de l'unité de captage et de traitement de l'eau à Kamina dans la province du Katanga",
+     "localisation": "Haut Lomami",
+     "cout_usd": 10000000,
+     "exec_2022_usd": 10000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 10000000,
+     "restant_usd": 0,
+     "unite": "Production (m3)",
+     "quantite_prevue": 10000,
+     "quantite_realisee": 10000,
+     "etat_avancement": null,
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Kamina (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      24.99056,
+      -8.73861
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T15",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 15,
+     "designation": "Contrat d'études et des travaux du projet de réhabilitation et de modernisation de la route Kitanda-Ankoro (70km)",
+     "localisation": "Tanganyika",
+     "cout_usd": 5000000,
+     "exec_2022_usd": 5000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 5000000,
+     "restant_usd": 0,
+     "unite": "Km",
+     "quantite_prevue": 70,
+     "quantite_realisee": 70,
+     "etat_avancement": null,
+     "observation_localisation": "Point placé à Ankoro, extrémité identifiée de l'axe ; Kitanda n'a pas pu être vérifiée indépendamment.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Ankoro (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      26.95,
+      -6.75
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T16",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 16,
+     "designation": "Contrat d'études et des travaux du projet de réhabilitation et de modernisation de la route Ankoro-Manono",
+     "localisation": "Tanganyika",
+     "cout_usd": 7500000,
+     "exec_2022_usd": 7500000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 7500000,
+     "restant_usd": 0,
+     "unite": "Km",
+     "quantite_prevue": 115,
+     "quantite_realisee": 115,
+     "etat_avancement": null,
+     "observation_localisation": "Point placé à Ankoro, une extrémité de l'axe vers Manono.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Ankoro (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      26.95,
+      -6.75
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T17",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 17,
+     "designation": "Contrat d'études et des travaux du projet de réhabilitation et de modernisation de la route Kamina-Kabongo",
+     "localisation": "Haut Lomami",
+     "cout_usd": 6000000,
+     "exec_2022_usd": 6000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 6000000,
+     "restant_usd": 0,
+     "unite": "Km",
+     "quantite_prevue": 230,
+     "quantite_realisee": 230,
+     "etat_avancement": null,
+     "observation_localisation": "Point placé à Kamina, une extrémité de l'axe vers Kabongo.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Kamina (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      24.99056,
+      -8.73861
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T18",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 18,
+     "designation": "Contrat d'études et des travaux du projet de réhabilitation et de modernisation de la route Kabondo-Dienda-Mukwende",
+     "localisation": "Haut Lomami",
+     "cout_usd": 6000000,
+     "exec_2022_usd": 6000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 6000000,
+     "restant_usd": 0,
+     "unite": "Km",
+     "quantite_prevue": 350,
+     "quantite_realisee": 350,
+     "etat_avancement": null,
+     "observation_localisation": "Point placé à Kabongo, extrémité identifiée de l'axe.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Kabongo, Democratic Republic of the Congo (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      25.58583,
+      -7.345
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T19",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 19,
+     "designation": "Contrat d'études et des travaux du projet de réhabilitation et de modernisation de la voirie de Kisangani",
+     "localisation": "Tshopo",
+     "cout_usd": 15000000,
+     "exec_2022_usd": 15000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 15000000,
+     "restant_usd": 0,
+     "unite": "Km",
+     "quantite_prevue": 10.98,
+     "quantite_realisee": 10.98,
+     "etat_avancement": null,
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Kisangani (texte de l'article)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      25.2,
+      0.51667
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T20",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 20,
+     "designation": "Contrat d'études et des travaux du projet de réhabilitation et de modernisation de la voirie de Uvira (phase I)",
+     "localisation": "Sud-Kivu",
+     "cout_usd": 10000000,
+     "exec_2022_usd": 10000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 10000000,
+     "restant_usd": 0,
+     "unite": "Km",
+     "quantite_prevue": 2.3,
+     "quantite_realisee": 2.3,
+     "etat_avancement": null,
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Uvira (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      29.14,
+      -3.37
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T21",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 21,
+     "designation": "Contrat d'études et des travaux du projet de réhabilitation et de modernisation de la voirie de Uvira (phase II)",
+     "localisation": "Sud-Kivu",
+     "cout_usd": 5000000,
+     "exec_2022_usd": 5000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 5000000,
+     "restant_usd": 0,
+     "unite": "Km",
+     "quantite_prevue": 2.3,
+     "quantite_realisee": 2.3,
+     "etat_avancement": null,
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Uvira (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      29.14,
+      -3.37
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T22",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 22,
+     "designation": "Contrat d'études et de travaux du projet du stade de Bukavu (Phase I)",
+     "localisation": "Sud-Kivu",
+     "cout_usd": 10000000,
+     "exec_2022_usd": 9266944.33,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 9433134.91,
+     "restant_usd": 566865.09,
+     "unite": "Places",
+     "quantite_prevue": 10000,
+     "quantite_realisee": 10000,
+     "etat_avancement": null,
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Bukavu (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      28.86083,
+      -2.50611
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T23",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 23,
+     "designation": "Contrat d'études et de fourniture et d'installation de poteaux solaires",
+     "localisation": "Tanganyika",
+     "cout_usd": 10000000,
+     "exec_2022_usd": 10000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 10000000,
+     "restant_usd": 0,
+     "unite": null,
+     "quantite_prevue": null,
+     "quantite_realisee": null,
+     "etat_avancement": null,
+     "observation_localisation": "Localisation précisée uniquement au niveau de la province (Tanganyika) ; point placé à Kalemie, chef-lieu, à titre indicatif.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
      "source_coordonnees": "Wikipédia (en) — Kalemie (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
+     "qualite_geom": "province"
     },
     "geometry": {
      "type": "Point",
@@ -56872,162 +56698,24 @@
    {
     "type": "Feature",
     "properties": {
-     "id": "P39",
-     "designation": "Construction du pont Lomela et de ses composantes sociales",
-     "lieu": "Sankuru",
-     "quantite": "1",
-     "cout_usd": 5000000.0,
-     "phase": "Phase 4",
-     "note": "Coordonnée reprise de l'aérodrome de Lomela, qui dessert le village de Lomela — aucune coordonnée du pont lui-même n'est publiée.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Lomela Airport, desservant le village de Lomela (Sankuru)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      23.35417,
-      -2.29028
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P40",
-     "designation": "Bitumage de 14 Km de route Kanina-Musonoi-Kapata",
-     "lieu": "Lualaba",
-     "quantite": "12,934 Km",
-     "cout_usd": 9500000.0,
-     "phase": "Phase 4",
-     "note": "Localisation précisée « dans la ville de Kolwezi » par l'Annexe 26 ; point placé au centre de Kolwezi.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Kolwezi (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      25.467,
-      -10.717
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P41",
-     "designation": "Sondage et découverture des Zones d'exploitation artisanale à Kolwezi",
-     "lieu": "Lualaba",
-     "quantite": "1",
-     "cout_usd": 2500000.0,
-     "phase": "Phase 4",
-     "note": null,
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Kolwezi (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      25.467,
-      -10.717
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P42",
-     "designation": "Construction d'un nouveau stade à Kalemie (Phase 2)",
-     "lieu": "Tanganyika",
-     "quantite": "1",
-     "cout_usd": 6128606.22,
-     "phase": "Phase 4",
-     "note": "Même prudence que pour les autres stades de la région : aucun lien photo proposé.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Kalemie (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      29.19056,
-      -5.91278
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P43",
-     "designation": "Réhabilitation et modernisation de la voirie de Kalemie (Phase 2)",
-     "lieu": "Tanganyika",
-     "quantite": "12,5 Km",
-     "cout_usd": 26871393.78,
-     "phase": "Phase 4",
-     "note": null,
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "approx",
-     "source_coordonnees": "Wikipédia (en) — Kalemie (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      29.19056,
-      -5.91278
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P13",
-     "designation": "Réhabilitation et modernisation de la route Lwambo-Mitwaba-Manono-Kalemie",
-     "lieu": "Tanganyika",
-     "quantite": "149,60 Km",
-     "cout_usd": 30000000.0,
-     "phase": "Phase 3",
-     "note": "Localisation précisée uniquement au niveau de la province (Tanganyika) dans ce document ; point placé à Kalemie, chef-lieu de la province, à titre indicatif — ne représente pas le tracé réel de cet axe reliant Lwambo, Mitwaba, Manono et Kalemie.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "province",
-     "source_coordonnees": "Wikipédia (en) — Kalemie (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
-    },
-    "geometry": {
-     "type": "Point",
-     "coordinates": [
-      29.19056,
-      -5.91278
-     ]
-    }
-   },
-   {
-    "type": "Feature",
-    "properties": {
-     "id": "P20",
-     "designation": "Fourniture des poteaux solaires",
-     "lieu": "Kinshasa",
-     "quantite": null,
-     "cout_usd": 11000000.0,
-     "phase": "Phase 2",
-     "note": "Localisation précisée uniquement au niveau de la ville-province (Kinshasa) dans ce document ; point indicatif au centre de la commune de la Gombe.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "province",
+     "id": "T24",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 24,
+     "designation": "Contrat d'études et de travaux de réhabilitation de l'avenue Nzolana (Phase I)",
+     "localisation": "Kinshasa",
+     "cout_usd": 15000000,
+     "exec_2022_usd": 15000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 15000000,
+     "restant_usd": 0,
+     "unite": "Km",
+     "quantite_prevue": 1.4,
+     "quantite_realisee": 1.4,
+     "etat_avancement": null,
+     "observation_localisation": "Localisation donnée au niveau de la ville (Kinshasa) uniquement ; point indicatif.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
      "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
+     "qualite_geom": "indicatif"
     },
     "geometry": {
      "type": "Point",
@@ -57040,18 +56728,54 @@
    {
     "type": "Feature",
     "properties": {
-     "id": "P34",
-     "designation": "Acquisition de poteaux solaires",
-     "lieu": "Tanganyika",
-     "quantite": null,
-     "cout_usd": 10000000.0,
-     "phase": "Phase 3",
-     "note": "Localisation précisée uniquement au niveau de la province (Tanganyika) dans ce document ; point placé à Kalemie, chef-lieu de la province, à titre indicatif.",
-     "source_donnees": "Liste des infrastructures exécutées (document fourni par l'utilisateur), dataset troc_sicomines_liste_executees",
-     "qualite_geom": "province",
+     "id": "T25",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 25,
+     "designation": "Travaux de renforcement des boulevards triomphal et Sendwe à Kinshasa",
+     "localisation": "Kinshasa",
+     "cout_usd": 5000000,
+     "exec_2022_usd": 5000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 5000000,
+     "restant_usd": 0,
+     "unite": "Km",
+     "quantite_prevue": 3.67,
+     "quantite_realisee": 3.67,
+     "etat_avancement": null,
+     "observation_localisation": "Point indicatif (ville de Kinshasa uniquement).",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
+     "qualite_geom": "indicatif"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      15.30333,
+      -4.30306
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T26",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 26,
+     "designation": "Projet de construction de la bretelle reliant le boulevard Lumumba au stade de Kalemie",
+     "localisation": "Tanganyika",
+     "cout_usd": 5500000,
+     "exec_2022_usd": 5500000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 5500000,
+     "restant_usd": 0,
+     "unite": "Km",
+     "quantite_prevue": 2.7,
+     "quantite_realisee": 2.7,
+     "etat_avancement": null,
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
      "source_coordonnees": "Wikipédia (en) — Kalemie (infobox géographique)",
-     "photo_url": null,
-     "photo_credit": null
+     "qualite_geom": "approx"
     },
     "geometry": {
      "type": "Point",
@@ -57060,20 +56784,1622 @@
       -5.91278
      ]
     }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T27",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 27,
+     "designation": "Bitumage de 14km de la route entre Kanina-Musunoi-Kapata dans la ville de Kolwezi",
+     "localisation": "Lualaba",
+     "cout_usd": 9500000,
+     "exec_2022_usd": 9500000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 9500000,
+     "restant_usd": 0,
+     "unite": "Km",
+     "quantite_prevue": 14,
+     "quantite_realisee": 14,
+     "etat_avancement": null,
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Kolwezi (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      25.467,
+      -10.717
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T28",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 28,
+     "designation": "Projet de sondage et de découverte des zones d'exploitation artisanale dans la province de Lualaba",
+     "localisation": "Lualaba",
+     "cout_usd": 2500000,
+     "exec_2022_usd": 1384644.65,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 1384644.65,
+     "restant_usd": 1115355.35,
+     "unite": null,
+     "quantite_prevue": 0,
+     "quantite_realisee": 0,
+     "etat_avancement": null,
+     "observation_localisation": "Localisation précisée uniquement au niveau de la province (Lualaba) ; point placé à Kolwezi, chef-lieu, à titre indicatif.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Kolwezi (infobox géographique)",
+     "qualite_geom": "province"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      25.467,
+      -10.717
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T29",
+     "tranche": "Budget 2015-2018 (305 millions USD)",
+     "ordre": 29,
+     "designation": "Projet de construction du pont LOMELA et ses composantes sociales d'accompagnement",
+     "localisation": "Sankuru",
+     "cout_usd": 5000000,
+     "exec_2022_usd": 5000000,
+     "exec_2023_usd": 0,
+     "exec_cumul_usd": 5000000,
+     "restant_usd": 0,
+     "unite": "Mètres",
+     "quantite_prevue": 90,
+     "quantite_realisee": 90,
+     "etat_avancement": null,
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Lomela Airport, desservant le village de Lomela (Sankuru)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      23.35417,
+      -2.29028
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T30",
+     "tranche": "Budget 2022 (150 millions USD)",
+     "ordre": 1,
+     "designation": "Réhabilitation de l'Avenue Nzolana phase 2 et indemnisation des riverains",
+     "localisation": "Kinshasa",
+     "cout_usd": 25474411.96,
+     "exec_2022_usd": 5624306.98,
+     "exec_2023_usd": 23096289.97,
+     "exec_cumul_usd": 24836908.22,
+     "restant_usd": 637503.74,
+     "unite": "Km",
+     "quantite_prevue": 7.12,
+     "quantite_realisee": 7.12,
+     "etat_avancement": "Démarrage travaux : 21 octobre 2022 ; Réception provisoire : 21 mai 2024.",
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      15.30333,
+      -4.30306
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T31",
+     "tranche": "Budget 2022 (150 millions USD)",
+     "ordre": 2,
+     "designation": "Construction du stade de Bukavu phase 2",
+     "localisation": "Sud-Kivu",
+     "cout_usd": 3654086.98,
+     "exec_2022_usd": 259028.26,
+     "exec_2023_usd": 836007.07,
+     "exec_cumul_usd": 3083771.95,
+     "restant_usd": 570315.03,
+     "unite": "Places",
+     "quantite_prevue": 10000,
+     "quantite_realisee": 10000,
+     "etat_avancement": "Démarrage travaux (1ère phase) : décembre 2017 ; Reprise travaux (2e phase) : 21 août 2023 ; travaux en arrêt.",
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Bukavu (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      28.86083,
+      -2.50611
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T32",
+     "tranche": "Budget 2022 (150 millions USD)",
+     "ordre": 3,
+     "designation": "Construction d'un stade de 10 000 places à Katanga",
+     "localisation": "Kasai Oriental",
+     "cout_usd": 4000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 520000,
+     "restant_usd": 3480000,
+     "unite": "Places",
+     "quantite_prevue": 10000,
+     "quantite_realisee": 0,
+     "etat_avancement": "Signature contrat : 18 juillet 2024 ; travaux en cours.",
+     "observation_localisation": "Écart entre la désignation (« à Katanga ») et la colonne Localisation du document (« Kasai Oriental »), reproduit tel quel ; point placé à Mbuji-Mayi, chef-lieu du Kasaï-Oriental.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Mbuji-Mayi (infobox géographique)",
+     "qualite_geom": "province"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      23.6,
+      -6.15
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T33",
+     "tranche": "Budget 2022 (150 millions USD)",
+     "ordre": 4,
+     "designation": "Construction du stade de Bunia (voies d'accès + finalisation des travaux)",
+     "localisation": "Ituri",
+     "cout_usd": 3000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 1465317.77,
+     "restant_usd": 1534685.23,
+     "unite": "Km",
+     "quantite_prevue": 2.7,
+     "quantite_realisee": 0,
+     "etat_avancement": "Signature contrat : 18 juillet 2024 ; travaux en cours.",
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Bunia (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      30.25,
+      1.567
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T34",
+     "tranche": "Budget 2022 (150 millions USD)",
+     "ordre": 5,
+     "designation": "Réhabilitation bâtiment 4 de l'ESP Bukavu",
+     "localisation": "Sud-Kivu",
+     "cout_usd": 417392.21,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 54260.99,
+     "restant_usd": 363131.22,
+     "unite": null,
+     "quantite_prevue": 0,
+     "quantite_realisee": 0,
+     "etat_avancement": "Signature contrat : 24 novembre 2023 ; travaux non démarrés.",
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Bukavu (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      28.86083,
+      -2.50611
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T35",
+     "tranche": "Budget 2022 (150 millions USD)",
+     "ordre": 6,
+     "designation": "Réhabilitation de l'université de Mbandaka et équipement",
+     "localisation": "Equateur",
+     "cout_usd": 2120000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 275600,
+     "restant_usd": 1844400,
+     "unite": null,
+     "quantite_prevue": 0,
+     "quantite_realisee": 0,
+     "etat_avancement": "Signature contrat : 18 juillet 2024 ; travaux en cours.",
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "latitude.to — Mbandaka",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      18.2603,
+      0.0487
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T36",
+     "tranche": "Budget 2022 (150 millions USD)",
+     "ordre": 7,
+     "designation": "Fourniture et installation poteaux solaires Av. Kitutu",
+     "localisation": "Tanganyika",
+     "cout_usd": 787136,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 787136,
+     "restant_usd": 0,
+     "unite": null,
+     "quantite_prevue": 0,
+     "quantite_realisee": 0,
+     "etat_avancement": "Signature contrat : 24 novembre 2023 ; projet clôturé.",
+     "observation_localisation": "Localisation précisée uniquement au niveau de la province (Tanganyika) ; point placé à Kalemie, chef-lieu.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Kalemie (infobox géographique)",
+     "qualite_geom": "province"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      29.19056,
+      -5.91278
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T37",
+     "tranche": "Budget 2022 (150 millions USD)",
+     "ordre": 8,
+     "designation": "Réhabilitation de l'aérodrome de Tshikapa (piste et aérogare) phase I",
+     "localisation": "Kasai",
+     "cout_usd": 3197566.26,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 415683.62,
+     "restant_usd": 2781882.64,
+     "unite": null,
+     "quantite_prevue": 0,
+     "quantite_realisee": 0,
+     "etat_avancement": "Signature contrat : 18 juillet 2024 ; travaux non démarrés.",
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Tshikapa (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      20.8,
+      -6.417
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T38",
+     "tranche": "Budget 2022 (150 millions USD)",
+     "ordre": 9,
+     "designation": "Usine de captage et de traitement d'eau potable de Kamina phase II",
+     "localisation": "Haut Lomami",
+     "cout_usd": 3901207.42,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 857828.8,
+     "restant_usd": 3043378.62,
+     "unite": "Production (m3)",
+     "quantite_prevue": 10000,
+     "quantite_realisee": 10000,
+     "etat_avancement": "Démarrage travaux : juillet 2024 ; travaux en cours.",
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Kamina (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      24.99056,
+      -8.73861
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T39",
+     "tranche": "Budget 2022 (150 millions USD)",
+     "ordre": 10,
+     "designation": "Réhabilitation route Kaniama-Kamina RN1",
+     "localisation": "Haut Lomami",
+     "cout_usd": 5352108.15,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 1995567.58,
+     "restant_usd": 3356540.57,
+     "unite": "Km",
+     "quantite_prevue": 195,
+     "quantite_realisee": 0,
+     "etat_avancement": "Démarrage travaux : août 2024 ; travaux en cours.",
+     "observation_localisation": "Point placé à Kamina, une extrémité de l'axe vers Kaniama.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Kamina (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      24.99056,
+      -8.73861
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T40",
+     "tranche": "Budget 2022 (150 millions USD)",
+     "ordre": 11,
+     "designation": "Réhabilitation route Kamina-Luena RN1",
+     "localisation": "Haut Lomami",
+     "cout_usd": 4720833.85,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 2094181.21,
+     "restant_usd": 2626652.64,
+     "unite": "Km",
+     "quantite_prevue": 172,
+     "quantite_realisee": 0,
+     "etat_avancement": "Démarrage travaux : août 2024 ; travaux en cours.",
+     "observation_localisation": "Point placé à Kamina, une extrémité de l'axe vers Luena.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Kamina (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      24.99056,
+      -8.73861
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T41",
+     "tranche": "Budget 2022 (150 millions USD)",
+     "ordre": 12,
+     "designation": "Réhabilitation de la RN20, tronçon allant du croisement de la RN1 et Idiofa phases 2 et 3",
+     "localisation": "Kwilu",
+     "cout_usd": 3510000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": 558004.58,
+     "exec_cumul_usd": 3453989.24,
+     "restant_usd": 56010.76,
+     "unite": "Km",
+     "quantite_prevue": 2.23,
+     "quantite_realisee": 2.28,
+     "etat_avancement": "Phase 2 : démarrage travaux 27 octobre 2023, réception définitive 7 juin 2025. Phase 3 : démarrage travaux 6 juillet 2024, réception provisoire 10 juin 2025.",
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Idiofa Airport, desservant la ville d'Idiofa (Kwilu)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      19.58056,
+      -4.97083
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T42",
+     "tranche": "Budget 2022 (150 millions USD)",
+     "ordre": 13,
+     "designation": "Réhabilitation de la route Mbuji Mayi-Mwene Ditu phase 1 et 2",
+     "localisation": "Kasai oriental et Lomami",
+     "cout_usd": 23322145.43,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": 9533928.44,
+     "exec_cumul_usd": 22015984.49,
+     "restant_usd": 1306160.94,
+     "unite": "Km",
+     "quantite_prevue": 135,
+     "quantite_realisee": 0,
+     "etat_avancement": "Démarrage travaux : 29 juin 2023 ; réception provisoire : 19 août 2025.",
+     "observation_localisation": "Point placé à Mbuji-Mayi, une extrémité de l'axe vers Mwene-Ditu.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Mbuji-Mayi (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      23.6,
+      -6.15
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T43",
+     "tranche": "Budget 2022 (150 millions USD)",
+     "ordre": 14,
+     "designation": "Réhabilitation de la route Bukavu-Nyangezi-Kamanyola phase 2",
+     "localisation": "Sud-Kivu",
+     "cout_usd": 31120435,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": 8646239.26,
+     "exec_cumul_usd": 23222678.64,
+     "restant_usd": 7897756.36,
+     "unite": "Km",
+     "quantite_prevue": 55,
+     "quantite_realisee": 20,
+     "etat_avancement": "Démarrage travaux : 6 septembre 2023 ; travaux en arrêt.",
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Bukavu (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      28.86083,
+      -2.50611
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T45",
+     "tranche": "Budget 2022 (150 millions USD)",
+     "ordre": 16,
+     "designation": "Réhabilitation RN25 Isiro-Poko et de la route Bafwasende-Bomili-Babeyro",
+     "localisation": "Haut-Uele",
+     "cout_usd": 7392558.85,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 961032.66,
+     "restant_usd": 6431526.19,
+     "unite": "Km",
+     "quantite_prevue": 90,
+     "quantite_realisee": 0,
+     "etat_avancement": "Signature contrat : 24 novembre 2023 ; travaux en cours.",
+     "observation_localisation": "Point placé à Isiro, extrémité identifiée de l'axe vers Poko ; Bafwasende, Bomili et Babeyro n'ont pas été vérifiés indépendamment.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Isiro (infobox géographique) ; recoupé avec geodatos.net (2,77391 / 27,61603)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      27.617,
+      2.767
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T46",
+     "tranche": "Budget 2022 (150 millions USD)",
+     "ordre": 17,
+     "designation": "Réhabilitation de la route Manterne-Tshela-Singingi",
+     "localisation": "Kongo Central",
+     "cout_usd": 7986113.74,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": 1735864.83,
+     "exec_cumul_usd": 7756001.93,
+     "restant_usd": 230111.81,
+     "unite": "Km",
+     "quantite_prevue": 118,
+     "quantite_realisee": 0,
+     "etat_avancement": "Démarrage travaux : 15 juillet 2023 ; réception provisoire : 13 janvier 2025.",
+     "observation_localisation": "Localisation précisée uniquement au niveau de la province (Kongo Central) ; point placé à Matadi, chef-lieu, à titre indicatif — ne représente pas le tracé réel de cet axe.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "latitude.to — Matadi (chef-lieu du Kongo Central)",
+     "qualite_geom": "province"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      13.4833,
+      -5.8167
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T47",
+     "tranche": "Budget 2022 (150 millions USD)",
+     "ordre": 18,
+     "designation": "Réhabilitation de la route Lusambo-Lac Mukamba",
+     "localisation": "Kasai central et Sankuru",
+     "cout_usd": 5162905,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 2065792.28,
+     "restant_usd": 3097112.72,
+     "unite": "Km",
+     "quantite_prevue": 128,
+     "quantite_realisee": 0,
+     "etat_avancement": "Signature contrat : 24 novembre 2023 ; travaux en cours.",
+     "observation_localisation": "Point placé à Lusambo, une extrémité de l'axe vers le Lac Mukamba.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "latitude.to — Lusambo (Sankuru)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      23.4333,
+      -4.9667
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T48",
+     "tranche": "Budget 2022 (150 millions USD)",
+     "ordre": 19,
+     "designation": "Réhabilitation et modernisation de l'hôpital général de Kikwit",
+     "localisation": "Sankuru",
+     "cout_usd": 3000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 2688344.07,
+     "restant_usd": 311655.93,
+     "unite": null,
+     "quantite_prevue": 0,
+     "quantite_realisee": 0,
+     "etat_avancement": "Démarrage travaux : 12 juin 2024 ; travaux en cours.",
+     "observation_localisation": "Écart entre la désignation (« hôpital général de Kikwit », ville du Kwilu) et la colonne Localisation du document (« Sankuru »), reproduit tel quel ; point placé à Kikwit conformément à la désignation.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Kikwit (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      18.81806,
+      -5.03861
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T49",
+     "tranche": "Budget 2022 (150 millions USD)",
+     "ordre": 20,
+     "designation": "Modernisation de l'aérodrome de Lodja",
+     "localisation": "Sankuru",
+     "cout_usd": 2000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 727832.45,
+     "restant_usd": 1272167.55,
+     "unite": null,
+     "quantite_prevue": 0,
+     "quantite_realisee": 0,
+     "etat_avancement": "Signature contrat : 10 juin 2024 ; travaux en cours.",
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "latitude.to — Lodja (Sankuru)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      23.6005,
+      -3.5211
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T51",
+     "tranche": "Budget 2022 (150 millions USD)",
+     "ordre": 22,
+     "designation": "Travaux de réparation du Pont Lubuye (remboursement)",
+     "localisation": "Tanganyika",
+     "cout_usd": 941316.65,
+     "exec_2022_usd": null,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 941316.65,
+     "restant_usd": 0,
+     "unite": null,
+     "quantite_prevue": 0,
+     "quantite_realisee": 0,
+     "etat_avancement": "Projet clôturé.",
+     "observation_localisation": "Localisation précisée uniquement au niveau de la province (Tanganyika) ; point placé à Kalemie, chef-lieu — ce pont dessert le boulevard Lumumba à Kalemie (voir le projet de bretelle correspondant, tranche 2015-2018).",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Kalemie (infobox géographique)",
+     "qualite_geom": "province"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      29.19056,
+      -5.91278
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T52",
+     "tranche": "Budget 2024 (324 millions USD)",
+     "ordre": 1,
+     "designation": "Construction des rocades Sud-est et Sud-ouest de Kinshasa",
+     "localisation": "Rocade sud-ouest",
+     "cout_usd": 60000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 55245223.19,
+     "restant_usd": 4754776.81,
+     "unite": "Km",
+     "quantite_prevue": 63,
+     "quantite_realisee": 0,
+     "etat_avancement": "Démarrage travaux : août 2024 ; travaux en cours.",
+     "observation_localisation": "Point indicatif (ville de Kinshasa) ; ne représente pas le tracé réel des rocades.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
+     "qualite_geom": "indicatif"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      15.30333,
+      -4.30306
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T53",
+     "tranche": "Budget 2024 (324 millions USD)",
+     "ordre": 2,
+     "designation": "Construction de la route Kananga-Kalamba Mbuji",
+     "localisation": "Kasai central",
+     "cout_usd": 40000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 29538029.62,
+     "restant_usd": 10461970.38,
+     "unite": "Km",
+     "quantite_prevue": 230,
+     "quantite_realisee": 0,
+     "etat_avancement": "Travaux en cours.",
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Kananga (commune) (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      22.46972,
+      -5.90028
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T54",
+     "tranche": "Budget 2024 (324 millions USD)",
+     "ordre": 3,
+     "designation": "Construction de la route Mbuji Mayi - Nguba",
+     "localisation": "Mbuji Mayi- Nguba",
+     "cout_usd": 130000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 121471574.07,
+     "restant_usd": 8528425.93,
+     "unite": "Km",
+     "quantite_prevue": 853,
+     "quantite_realisee": 0,
+     "etat_avancement": "Travaux en cours.",
+     "observation_localisation": "Point placé à Mbuji-Mayi, une extrémité de l'axe vers Nguba.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Mbuji-Mayi (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      23.6,
+      -6.15
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T55",
+     "tranche": "Budget 2024 (324 millions USD)",
+     "ordre": 4,
+     "designation": "Construction de la route Bukavu-Kamanyola phase 3",
+     "localisation": "Sud-Kivu",
+     "cout_usd": 20000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 4202187.41,
+     "restant_usd": 15797812.59,
+     "unite": "Km",
+     "quantite_prevue": 55,
+     "quantite_realisee": 0,
+     "etat_avancement": "Travaux en arrêt.",
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Bukavu (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      28.86083,
+      -2.50611
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T56",
+     "tranche": "Budget 2024 (324 millions USD)",
+     "ordre": 5,
+     "designation": "Construction de la route Kamanyola-Uvira",
+     "localisation": "Sud-Kivu",
+     "cout_usd": 20000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 0,
+     "restant_usd": 20000000,
+     "unite": "Km",
+     "quantite_prevue": 74,
+     "quantite_realisee": 0,
+     "etat_avancement": "Procédure de contractualisation en cours (signature contrat).",
+     "observation_localisation": "Point placé à Uvira, une extrémité de l'axe vers Kamanyola.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Uvira (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      29.14,
+      -3.37
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T57",
+     "tranche": "Budget 2024 (324 millions USD)",
+     "ordre": 6,
+     "designation": "Construction de la route de la passion (Mbanza Ngungu-Nkamba, Kongo Centrale)",
+     "localisation": "Kongo Central",
+     "cout_usd": 19000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 0,
+     "restant_usd": 19000000,
+     "unite": "Km",
+     "quantite_prevue": 51,
+     "quantite_realisee": 0,
+     "etat_avancement": "Travaux en cours.",
+     "observation_localisation": "Point placé à Mbanza-Ngungu, une extrémité de l'axe vers Nkamba.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Mbanza-Ngungu (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      14.867,
+      -5.25
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T58",
+     "tranche": "Budget 2024 (324 millions USD)",
+     "ordre": 7,
+     "designation": "Construction de la route Manterne-Tshela-Singingi phase 2",
+     "localisation": "Kongo Central",
+     "cout_usd": 11000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 10443325.58,
+     "restant_usd": 556674.42,
+     "unite": "Km",
+     "quantite_prevue": 118,
+     "quantite_realisee": 0,
+     "etat_avancement": "Travaux en cours.",
+     "observation_localisation": "Localisation précisée uniquement au niveau de la province (Kongo Central) ; point placé à Matadi, chef-lieu, à titre indicatif.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "latitude.to — Matadi (chef-lieu du Kongo Central)",
+     "qualite_geom": "province"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      13.4833,
+      -5.8167
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T63",
+     "tranche": "Budget 2024 (Tranche de 300 millions USD)",
+     "ordre": 2,
+     "designation": "Construction de la route Manterne-Tshela-Singini",
+     "localisation": "Kongo Central",
+     "cout_usd": 30000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 17453132.73,
+     "restant_usd": 12546867.27,
+     "unite": null,
+     "quantite_prevue": null,
+     "quantite_realisee": null,
+     "etat_avancement": "Travaux en cours.",
+     "observation_localisation": "Même convention que les autres lignes « Manterne-Tshela-Singingi » (Kongo Central, localisation province uniquement) ; point placé à Matadi, chef-lieu.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "latitude.to — Matadi (chef-lieu du Kongo Central)",
+     "qualite_geom": "province"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      13.4833,
+      -5.8167
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T64",
+     "tranche": "Budget 2024 (Tranche de 300 millions USD)",
+     "ordre": 3,
+     "designation": "Construction de la route Buta-Isiro-Poko",
+     "localisation": "Haut uele",
+     "cout_usd": 30000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 6900000,
+     "restant_usd": 23100000,
+     "unite": null,
+     "quantite_prevue": null,
+     "quantite_realisee": null,
+     "etat_avancement": "Signature contrat : 24 novembre 2023 ; travaux en cours.",
+     "observation_localisation": "Point placé à Buta, une extrémité de l'axe vers Isiro et Poko ; l'autre extrémité (Isiro) est également représentée par un point distinct au titre d'un autre projet de cette même tranche budgétaire.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Buta, Democratic Republic of the Congo (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      24.733,
+      2.8
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T65",
+     "tranche": "Budget 2024 (Tranche de 300 millions USD)",
+     "ordre": 4,
+     "designation": "Construction de la route Lac Munkamba-Lusambo",
+     "localisation": "Kasai central et Lusambo",
+     "cout_usd": 30000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 7493982.56,
+     "restant_usd": 22506017.44,
+     "unite": null,
+     "quantite_prevue": null,
+     "quantite_realisee": null,
+     "etat_avancement": "Travaux en cours.",
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "latitude.to — Lusambo (Sankuru)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      23.4333,
+      -4.9667
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T66",
+     "tranche": "Budget 2024 (Tranche de 300 millions USD)",
+     "ordre": 5,
+     "designation": "Construction de la route Ingudi-Idiofa",
+     "localisation": "Kwilu",
+     "cout_usd": 25000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 13752664.94,
+     "restant_usd": 11247335.06,
+     "unite": null,
+     "quantite_prevue": null,
+     "quantite_realisee": null,
+     "etat_avancement": "Travaux en cours.",
+     "observation_localisation": "Point placé à Idiofa, une extrémité de l'axe vers Ingudi.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Idiofa Airport, desservant la ville d'Idiofa (Kwilu)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      19.58056,
+      -4.97083
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T67",
+     "tranche": "Budget 2024 (Tranche de 300 millions USD)",
+     "ordre": 6,
+     "designation": "Modernisation de l'hôpital général de Kikwit",
+     "localisation": "Kwilu",
+     "cout_usd": 10000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 2300000,
+     "restant_usd": 7700000,
+     "unite": null,
+     "quantite_prevue": null,
+     "quantite_realisee": null,
+     "etat_avancement": "Démarrage travaux : 12 juin 2025 ; travaux en cours.",
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Kikwit (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      18.81806,
+      -5.03861
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T68",
+     "tranche": "Budget 2024 (Tranche de 300 millions USD)",
+     "ordre": 7,
+     "designation": "Construction de l'université de Mbandaka et équipement",
+     "localisation": "Equateur",
+     "cout_usd": 18000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 4140000,
+     "restant_usd": 13860000,
+     "unite": null,
+     "quantite_prevue": null,
+     "quantite_realisee": null,
+     "etat_avancement": "Travaux en cours.",
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "latitude.to — Mbandaka",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      18.2603,
+      0.0487
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T69",
+     "tranche": "Budget 2024 (Tranche de 300 millions USD)",
+     "ordre": 8,
+     "designation": "Réhabilitation de l'aérodrome et l'aérogare de Tshikapa",
+     "localisation": "Kasai",
+     "cout_usd": 20000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 4600000,
+     "restant_usd": 15400000,
+     "unite": null,
+     "quantite_prevue": null,
+     "quantite_realisee": null,
+     "etat_avancement": "Signature contrat : 18 juillet 2024 ; travaux non démarrés.",
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Tshikapa (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      20.8,
+      -6.417
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T70",
+     "tranche": "Budget 2024 (Tranche de 300 millions USD)",
+     "ordre": 9,
+     "designation": "Construction de l'aérodrome de Lodja",
+     "localisation": "Sankuru",
+     "cout_usd": 10000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 2300000,
+     "restant_usd": 7700000,
+     "unite": null,
+     "quantite_prevue": null,
+     "quantite_realisee": null,
+     "etat_avancement": "Travaux en cours.",
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "latitude.to — Lodja (Sankuru)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      23.6005,
+      -3.5211
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T71",
+     "tranche": "Budget 2024 (Tranche de 300 millions USD)",
+     "ordre": 10,
+     "designation": "Viabilisation et aménagement de Lumumba-ville",
+     "localisation": "Sankuru",
+     "cout_usd": 10000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 2300000,
+     "restant_usd": 7700000,
+     "unite": null,
+     "quantite_prevue": null,
+     "quantite_realisee": null,
+     "etat_avancement": "Travaux en cours.",
+     "observation_localisation": "Cette ligne situe le projet en province du Sankuru, cohérent avec le lieu « Lumumbaville » identifié indépendamment (voir note sur la ligne homonyme de la tranche « Budget 2022 », qui le situait au Tanganyika).",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Lumumbaville, ville nouvelle en construction dans la province du Sankuru",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      24.551472,
+      -4.07475
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T72",
+     "tranche": "Budget 2024 (Tranche de 300 millions USD)",
+     "ordre": 11,
+     "designation": "Construction du stade de Kananga",
+     "localisation": "Kasai central",
+     "cout_usd": 10000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 2300000,
+     "restant_usd": 7700000,
+     "unite": null,
+     "quantite_prevue": null,
+     "quantite_realisee": null,
+     "etat_avancement": "Travaux en cours.",
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Kananga (commune) (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      22.46972,
+      -5.90028
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T73",
+     "tranche": "Budget 2024 (Tranche de 300 millions USD)",
+     "ordre": 12,
+     "designation": "Construction d'un stade à Idiofa",
+     "localisation": "Kwilu",
+     "cout_usd": 10000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 3634980.085,
+     "restant_usd": 6365019.915,
+     "unite": null,
+     "quantite_prevue": null,
+     "quantite_realisee": null,
+     "etat_avancement": "Travaux en cours.",
+     "observation_localisation": null,
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Idiofa Airport, desservant la ville d'Idiofa (Kwilu)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      19.58056,
+      -4.97083
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T75",
+     "tranche": "Budget 2024 (Tranche de 300 millions USD)",
+     "ordre": 14,
+     "designation": "Infrastructures sociales dans la province du Kongo central : réfection écoles (Mbanza Boma et Kisantu) et hôpital de Kimpese",
+     "localisation": "Kongo Central",
+     "cout_usd": 5000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 1150000,
+     "restant_usd": 3850000,
+     "unite": null,
+     "quantite_prevue": null,
+     "quantite_realisee": null,
+     "etat_avancement": "Procédure de contractualisation en cours (signature contrat).",
+     "observation_localisation": "Projet couvrant plusieurs sites (écoles de Mbanza Boma et Kisantu, hôpital de Kimpese) ; point placé à Kimpese, seul des trois sites explicitement nommé et vérifiable indépendamment.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "latitude.to — Kimpese (Kongo Central)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      14.4333,
+      -5.55
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T76",
+     "tranche": "Budget 2024 (Tranche de 300 millions USD)",
+     "ordre": 15,
+     "designation": "Provision pour expropriation des riverains des rocades de Kinshasa",
+     "localisation": "Kinshasa",
+     "cout_usd": 17000000,
+     "exec_2022_usd": 0,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 9942760.71,
+     "restant_usd": 7057239.29,
+     "unite": null,
+     "quantite_prevue": null,
+     "quantite_realisee": null,
+     "etat_avancement": "Expropriations en cours.",
+     "observation_localisation": "Point indicatif (ville de Kinshasa).",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
+     "qualite_geom": "indicatif"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      15.30333,
+      -4.30306
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T78",
+     "tranche": "Budget 2025 (Tranche de 324 millions USD)",
+     "ordre": 1,
+     "designation": "Construction des Rocades Sud-est et Sud-ouest de Kinshasa",
+     "localisation": "Rocade sud-ouest",
+     "cout_usd": 80000000,
+     "exec_2022_usd": null,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 35196974.75,
+     "restant_usd": 44803025.25,
+     "unite": "km",
+     "quantite_prevue": 63,
+     "quantite_realisee": null,
+     "etat_avancement": "Démarrage travaux : août 2024 ; travaux en cours.",
+     "observation_localisation": "Tranche supplémentaire du même projet que dans « Budget 2024 (324 M USD) » ci-dessus ; point indicatif (ville de Kinshasa).",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — commune de la Gombe, Kinshasa (infobox géographique)",
+     "qualite_geom": "indicatif"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      15.30333,
+      -4.30306
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T79",
+     "tranche": "Budget 2025 (Tranche de 324 millions USD)",
+     "ordre": 2,
+     "designation": "Construction de la route Kananga-Kalamba Mbuji",
+     "localisation": "Kasai central",
+     "cout_usd": 45000000,
+     "exec_2022_usd": null,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 27034657.61,
+     "restant_usd": 17965342.39,
+     "unite": "km",
+     "quantite_prevue": 230,
+     "quantite_realisee": null,
+     "etat_avancement": "Démarrage travaux : 10 août 2024 ; travaux en cours.",
+     "observation_localisation": "Tranche supplémentaire du même projet que dans « Budget 2024 (324 M USD) » ci-dessus.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Kananga (commune) (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      22.46972,
+      -5.90028
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T80",
+     "tranche": "Budget 2025 (Tranche de 324 millions USD)",
+     "ordre": 3,
+     "designation": "Construction de la route Mbuji Mayi - Nguba",
+     "localisation": null,
+     "cout_usd": 140000000,
+     "exec_2022_usd": null,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 32200000,
+     "restant_usd": 107800000,
+     "unite": "Km",
+     "quantite_prevue": 853,
+     "quantite_realisee": null,
+     "etat_avancement": "Travaux en cours.",
+     "observation_localisation": "Tranche supplémentaire du même projet que dans « Budget 2024 (324 M USD) » ci-dessus.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Mbuji-Mayi (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      23.6,
+      -6.15
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T81",
+     "tranche": "Budget 2025 (Tranche de 324 millions USD)",
+     "ordre": 4,
+     "designation": "Construction de la route Bukavu-Kamanyola phase 3",
+     "localisation": "Sud-Kivu",
+     "cout_usd": 24000000,
+     "exec_2022_usd": null,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 0,
+     "restant_usd": 24000000,
+     "unite": "Km",
+     "quantite_prevue": 55,
+     "quantite_realisee": null,
+     "etat_avancement": "Travaux en cours.",
+     "observation_localisation": "Tranche supplémentaire du même projet que dans « Budget 2024 (324 M USD) » ci-dessus.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "Wikipédia (en) — Bukavu (infobox géographique)",
+     "qualite_geom": "approx"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      28.86083,
+      -2.50611
+     ]
+    }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+     "id": "T82",
+     "tranche": "Budget 2025 (Tranche de 324 millions USD)",
+     "ordre": 5,
+     "designation": "Construction de la route Manterne-Tshela-Singini Phase 2",
+     "localisation": "Kango Central",
+     "cout_usd": 20000000,
+     "exec_2022_usd": null,
+     "exec_2023_usd": null,
+     "exec_cumul_usd": 5150977.16,
+     "restant_usd": 14849022.84,
+     "unite": "Km",
+     "quantite_prevue": 118,
+     "quantite_realisee": null,
+     "etat_avancement": "Travaux en cours.",
+     "observation_localisation": "Localisation précisée uniquement au niveau de la province (Kongo Central) ; point placé à Matadi, chef-lieu.",
+     "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
+     "source_coordonnees": "latitude.to — Matadi (chef-lieu du Kongo Central)",
+     "qualite_geom": "province"
+    },
+    "geometry": {
+     "type": "Point",
+     "coordinates": [
+      13.4833,
+      -5.8167
+     ]
+    }
    }
   ],
-  "non_georeferences": [],
+  "non_georeferences": [
+   {
+    "id": "T44",
+    "tranche": "Budget 2022 (150 millions USD)",
+    "ordre": 15,
+    "designation": "Réhabilitation de la route Mwene Ditu-Kanyama phase 1",
+    "localisation": "Lomami et Haut Lomami",
+    "cout_usd": 7439782.5,
+    "exec_2022_usd": 0,
+    "exec_2023_usd": null,
+    "exec_cumul_usd": 6513255.97,
+    "restant_usd": 926526.53,
+    "unite": "Km",
+    "quantite_prevue": 130,
+    "quantite_realisee": 0,
+    "etat_avancement": "Démarrage travaux : 15 mars 2024 ; travaux en cours.",
+    "observation_localisation": "Mwene-Ditu et Kanyama ne disposent pas de coordonnée vérifiée indépendamment dans le cadre de ce travail ; non représenté sur la carte plutôt que rapproché d'une autre ville de la province.",
+    "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)"
+   },
+   {
+    "id": "T50",
+    "tranche": "Budget 2022 (150 millions USD)",
+    "ordre": 21,
+    "designation": "Viabilisation de Lumumba-ville",
+    "localisation": "Tanganyika",
+    "cout_usd": 1500000,
+    "exec_2022_usd": 0,
+    "exec_2023_usd": null,
+    "exec_cumul_usd": 195000,
+    "restant_usd": 1305000,
+    "unite": null,
+    "quantite_prevue": 0,
+    "quantite_realisee": 0,
+    "etat_avancement": "Signature contrat : 10 juin 2024 ; travaux en cours.",
+    "observation_localisation": "Le document source situe ce projet dans la province du Tanganyika ; or le seul lieu identifiable nommé « Lumumbaville » se trouve dans la province du Sankuru (voir la ligne « Viabilisation et aménagement de Lumumba-ville » de la tranche « Budget 2024, 300 M USD », où la province indiquée est cette fois Sankuru). Cette divergence entre les deux tranches du même document n'est pas arbitrée ; ce projet n'est donc pas placé sur la carte.",
+    "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)"
+   },
+   {
+    "id": "T59",
+    "tranche": "Budget 2024 (324 millions USD)",
+    "ordre": 8,
+    "designation": "Acquisition de satellite",
+    "localisation": null,
+    "cout_usd": 10000000,
+    "exec_2022_usd": 0,
+    "exec_2023_usd": null,
+    "exec_cumul_usd": 0,
+    "restant_usd": 10000000,
+    "unite": null,
+    "quantite_prevue": 0,
+    "quantite_realisee": 0,
+    "etat_avancement": null,
+    "observation_localisation": "Aucune localisation physique déclarée dans le document source (acquisition d'équipement, non un chantier localisé).",
+    "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)"
+   },
+   {
+    "id": "T60",
+    "tranche": "Budget 2024 (324 millions USD)",
+    "ordre": 9,
+    "designation": "Frais de prestations sur consultant pour la réalisation des études hydrauliques de Kalemie et Uvira",
+    "localisation": null,
+    "cout_usd": 1500000,
+    "exec_2022_usd": 0,
+    "exec_2023_usd": null,
+    "exec_cumul_usd": 0,
+    "restant_usd": 1500000,
+    "unite": null,
+    "quantite_prevue": 0,
+    "quantite_realisee": 0,
+    "etat_avancement": null,
+    "observation_localisation": "Contrat de prestations intellectuelles (études), sans chantier localisé déclaré dans le document source.",
+    "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)"
+   },
+   {
+    "id": "T61",
+    "tranche": "Budget 2024 (324 millions USD)",
+    "ordre": 10,
+    "designation": "Frais de gestion du programme (APCSC)",
+    "localisation": null,
+    "cout_usd": 12500000,
+    "exec_2022_usd": 0,
+    "exec_2023_usd": null,
+    "exec_cumul_usd": 0,
+    "restant_usd": 12500000,
+    "unite": null,
+    "quantite_prevue": 0,
+    "quantite_realisee": 0,
+    "etat_avancement": null,
+    "observation_localisation": "Frais de gestion administrative du programme, sans localisation physique.",
+    "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)"
+   },
+   {
+    "id": "T62",
+    "tranche": "Budget 2024 (Tranche de 300 millions USD)",
+    "ordre": 1,
+    "designation": "Construction de la route reliant le port de Ndomba au village de Bena Kazadi",
+    "localisation": "Kasai oriental",
+    "cout_usd": 30000000,
+    "exec_2022_usd": 0,
+    "exec_2023_usd": null,
+    "exec_cumul_usd": 8594066.34,
+    "restant_usd": 21405933.66,
+    "unite": null,
+    "quantite_prevue": null,
+    "quantite_realisee": null,
+    "etat_avancement": "Démarrage travaux 20 septembre 2025 ; travaux en cours.",
+    "observation_localisation": "Le port de Ndomba est signalé par la presse congolaise (ACGT, Radio Okapi, mediacongo.net) comme situé près de Kabeya-Kamwanga (Kasaï-Oriental), mais aucune coordonnée de ce port ni du village de Bena Kazadi n'a pu être vérifiée avec un niveau de certitude suffisant pour ce travail ; non placé sur la carte plutôt qu'estimé.",
+    "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)"
+   },
+   {
+    "id": "T74",
+    "tranche": "Budget 2024 (Tranche de 300 millions USD)",
+    "ordre": 13,
+    "designation": "Solde pour acquisition d'un satellite",
+    "localisation": null,
+    "cout_usd": 20000000,
+    "exec_2022_usd": 0,
+    "exec_2023_usd": null,
+    "exec_cumul_usd": 0,
+    "restant_usd": 20000000,
+    "unite": null,
+    "quantite_prevue": null,
+    "quantite_realisee": null,
+    "etat_avancement": null,
+    "observation_localisation": "Aucune localisation physique déclarée.",
+    "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)"
+   },
+   {
+    "id": "T77",
+    "tranche": "Budget 2024 (Tranche de 300 millions USD)",
+    "ordre": 16,
+    "designation": "Études pour les projets à mettre en œuvre dans les prochaines tranches",
+    "localisation": null,
+    "cout_usd": 25000000,
+    "exec_2022_usd": 0,
+    "exec_2023_usd": null,
+    "exec_cumul_usd": 0,
+    "restant_usd": 25000000,
+    "unite": null,
+    "quantite_prevue": null,
+    "quantite_realisee": null,
+    "etat_avancement": null,
+    "observation_localisation": "Aucune localisation physique déclarée (études préalables à de futurs projets).",
+    "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)"
+   },
+   {
+    "id": "T83",
+    "tranche": "Budget 2025 (Tranche de 324 millions USD)",
+    "ordre": 6,
+    "designation": "Frais de gestion du programme (APCSC)",
+    "localisation": null,
+    "cout_usd": 15000000,
+    "exec_2022_usd": null,
+    "exec_2023_usd": null,
+    "exec_cumul_usd": 0,
+    "restant_usd": 15000000,
+    "unite": "Km",
+    "quantite_prevue": null,
+    "quantite_realisee": null,
+    "etat_avancement": null,
+    "observation_localisation": "Frais de gestion administrative du programme, sans localisation physique. L'unité « Km » imprimée dans le document source pour cette ligne est manifestement une erreur de saisie du fichier ; reproduite telle quelle.",
+    "source_donnees": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)"
+   }
+  ],
   "meta": {
-   "periode": "2007–2025",
-   "n_points_carte": 44,
-   "n_projets_liste_executees": 42,
-   "n_projets_couverts_par_la_carte": 42,
-   "montant_total_liste_executees_usd": 814671507.49,
+   "periode": "2015-2025",
+   "n_points_carte": 74,
+   "n_projets_tranches": 83,
+   "n_non_georeferences": 9,
+   "source": "« Données sicomines.xlsx » (3 feuilles), fourni directement par l'utilisateur (2026-09-24), au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc)",
    "n_projets_annexe26_apcsc": 77,
    "montant_total_annexe26_usd": 1208871210.7771,
-   "note_couverture": "[Note interne, mode administrateur] Cette carte est construite à partir des 42 projets du dataset « Liste des infrastructures exécutées » (troc_sicomines_liste_executees), document fourni directement par l'utilisateur, dont le total imprimé (814 671 507,49 USD) correspond au bilan thématique SICOMINES 2008-2020 — mais ce total et le sous-total imprimé de sa Phase 3 (249 726 699,79 USD) ne correspondent pas à la somme des lignes de projets qu'ils contiennent telles que transcrites (respectivement 798 714 272,98 USD et 233 769 465,28 USD) : cet écart existe dans le document source lui-même et n'est pas arbitré ici (voir le tableau « Liste des infrastructures exécutées » pour le détail). Une source plus récente et plus complète (« Annexe 26 », 77 projets, 1 208 871 210,78 USD au 30/06/2025 — dataset troc_sicomines_annexe26_apcsc) est également publiée dans cette rubrique sous forme de tableau, mais ses localisations ne descendent pas toujours au niveau de la ville (souvent la province seule, ou plusieurs provinces pour un même projet) : elle n'a donc pas servi de base à cette carte, pour ne pas multiplier les positions approximatives. Les deux tables restent consultables intégralement ci-dessous.",
-   "note_coordonnees": "Ni la « Liste des infrastructures exécutées » ni l'Annexe 26 ne publient de coordonnées GPS : seuls des noms de lieux (ville, commune ou province) y figurent. Les coordonnées de cette carte proviennent de vérifications indépendantes (Wikipédia, latitude.to, mapcarta) de lieux réels et nommés — jamais d'estimation. Voir le champ « source_coordonnees » de chaque point. Les 42 projets sont tous représentés ; 3 d'entre eux ne citent qu'une province (sans ville) dans ce document et sont positionnés au chef-lieu de cette province (qualite_geom=\"province\") plutôt qu'exclus.",
-   "note_ecarts": "[Note interne, mode administrateur] Deux écarts de libellé/montant entre cette liste et le tableau « Projets individuellement documentés » (troc_sicomines_projets, source RFI_4.3_SICOMINES.xlsx) sont signalés tels quels sans être arbitrés : l'hôpital de Kinshasa est nommé « Hôpital du Centre Ville (Hôpital du Centenaire) » ici contre « Hôpital du Cinquantenaire » dans l'autre table (montants très proches : 114 901 200 vs 114 879 516,42 USD) ; l'esplanade du Palais du Peuple est chiffrée à 40 500 m² ici contre 24 300 m² dans l'autre table (même montant : 24 255 229,10 USD)."
+   "note_couverture": "[Note interne, mode administrateur] Carte reconstruite le 2026-09-24 à partir des 83 projets de la feuille « Feuil1 » du fichier « Données sicomines.xlsx » (5 tranches budgétaires 2015-2025), en remplacement de la précédente source cartographique (troc_sicomines_liste_executees, 48 lignes, 4 « Phases ») — cette dernière reste publiée intégralement dans l'Explorateur mais n'alimente plus la carte. Le détail complet d'exécution de chaque projet (coût, exécuté 2022/2023/cumul, restant, quantités, état d'avancement) est repris dans les propriétés de chaque point ET dans le jeu de données troc_sicomines_tranches_budgetaires_2015_2025 (Explorateur). La table de réconciliation ACGT/APCSC (troc_sicomines_reconciliation_acgt_apcsc) et la table Annexe 26/APCSC (troc_sicomines_annexe26_apcsc, inchangée) restent consultables séparément ci-dessous, sur la même page.",
+   "note_coordonnees": "Le document source ne publie que des noms de lieux (ville, commune ou province), jamais de coordonnées GPS. Chaque point utilise une coordonnée de lieu réel et nommé, vérifiée indépendamment (Wikipédia, latitude.to, geodatos.net — voir le champ « source_coordonnees » de chaque point). Sur les 83 projets, ceux dont la localisation ne cite qu'une province sont placés à son chef-lieu (qualite_geom=\"province\") ; ceux dont le nom de lieu ne peut être vérifié avec certitude, ou qui ne citent aucune localisation physique, sont listés explicitement dans « non_georeferences » plutôt que placés arbitrairement."
   }
  }
 }

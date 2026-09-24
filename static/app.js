@@ -2513,18 +2513,18 @@ let sicomMapObj=null, sicomLayerGroup=null;
 function openSicomSourceModal(){
   const body=$('#srcModalBody');if(!body)return;
   const d=sicomInfraData();const m=(d&&d.meta)||{};
+  const nGeo=d?d.features.length:0, nNonGeo=(d&&d.non_georeferences&&d.non_georeferences.length)||0;
   body.innerHTML=`
-    <div style="margin-bottom:12px"><b>Infrastructures financées par le programme sino-congolais / SICOMINES — 2007-2025</b><br><span style="font-size:12.5px;color:var(--ink-soft)">Projets tels que listés dans le document « Liste des infrastructures exécutées » (4 phases) et dans l'« Annexe 26 » de l'APCSC, fournis directement par l'utilisateur, au titre de l'Exigence 4.3 (fourniture d'infrastructures et accords de troc).</span></div>
+    <div style="margin-bottom:12px"><b>Infrastructures financées par le programme sino-congolais / SICOMINES — 2015-2025</b><br><span style="font-size:12.5px;color:var(--ink-soft)">Projets tels que listés, tranche budgétaire par tranche budgétaire, dans le fichier « Données sicomines.xlsx » (feuille « Feuil1 »), fourni directement par l'utilisateur, au titre de l'Exigence ITIE 4.3 (fourniture d'infrastructures et accords de troc).</span></div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 16px;font-size:12.5px;margin-bottom:12px">
-      <div><b>Projets cartographiés</b><br>${fmtN(m.n_projets_couverts_par_la_carte||42)} sur ${fmtN(m.n_projets_liste_executees||42)} (« Liste des infrastructures exécutées »)</div>
-      <div><b>Période</b><br>${esc(m.periode||'2007–2025')}</div>
-      <div><b>Points sur la carte</b><br>${d?fmtN(d.features.length):'—'}</div>
+      <div><b>Projets cartographiés</b><br>${fmtN(nGeo)} sur ${fmtN(m.n_projets_tranches||(nGeo+nNonGeo))} (5 tranches budgétaires, 2015-2025)</div>
+      <div><b>Période</b><br>${esc(m.periode||'2015–2025')}</div>
+      <div><b>Non géoréférencés</b><br>${fmtN(nNonGeo)} projet(s) — voir liste ci-dessous</div>
       <div><b>Annexe 26 (APCSC, juin 2025)</b><br>${fmtN(m.n_projets_annexe26_apcsc||77)} projets, ${fmtN(Math.round(m.montant_total_annexe26_usd||0))} USD (tableau séparé, non cartographié)</div>
     </div>
     ${editing?`
     ${m.note_couverture?`<div class="msg warn" style="font-size:12px;margin-bottom:8px"><b>Note interne (mode administrateur) :</b> ${esc(m.note_couverture)}</div>`:''}
     ${m.note_coordonnees?`<div class="msg" style="font-size:12px;margin-bottom:8px">${esc(m.note_coordonnees)}</div>`:''}
-    ${m.note_ecarts?`<div class="msg" style="font-size:12px">${esc(m.note_ecarts)}</div>`:''}
     `:''}
   `;
   showModal('srcModal');
@@ -2532,13 +2532,20 @@ function openSicomSourceModal(){
 window.openSicomSourceModal=openSicomSourceModal;
 function sicomPopupHtml(p){
   const row=(k,v)=>(v!==null&&v!==undefined&&v!=='')?`<div style="margin-bottom:4px"><b>${esc(k)}</b> — ${esc(v)}</div>`:'';
-  let html=`<div style="font-size:12.5px;max-width:300px">
+  const rowUSD=(k,v)=>(v!==null&&v!==undefined)?`<div style="margin-bottom:4px"><b>${esc(k)}</b> — ${fmtN(v)} USD</div>`:'';
+  let html=`<div style="font-size:12.5px;max-width:320px;max-height:340px;overflow:auto">
     ${row('Désignation',p.designation)}
-    ${row('Lieu',p.lieu)}
-    ${row('Phase',p.phase)}
-    ${row('Quantité',p.quantite)}
-    ${row('Coût',p.cout_usd!=null?`${fmtN(p.cout_usd)} USD (${fmtUSD(p.cout_usd)})`:'Non individualisé dans la source')}
-    ${row('Note',p.note)}
+    ${row('Tranche budgétaire',p.tranche)}
+    ${row('Localisation (déclarée)',p.localisation)}
+    ${rowUSD('Coût du projet',p.cout_usd)}
+    ${rowUSD('Exécuté — cumul 2022',p.exec_2022_usd)}
+    ${rowUSD('Exécuté — cumul 2023',p.exec_2023_usd)}
+    ${rowUSD('Exécuté — cumul à ce jour',p.exec_cumul_usd)}
+    ${rowUSD('Restant',p.restant_usd)}
+    ${row('Quantité prévue',p.quantite_prevue!=null&&p.unite?`${p.quantite_prevue} ${p.unite}`:p.quantite_prevue)}
+    ${row('Quantité réalisée',p.quantite_realisee!=null&&p.unite?`${p.quantite_realisee} ${p.unite}`:p.quantite_realisee)}
+    ${row("État d'avancement",p.etat_avancement)}
+    ${row('Observation (localisation)',p.observation_localisation)}
     ${editing?row('Source des données',p.source_donnees):''}
     ${editing?row('Qualité du géoréférencement',SICOM_QUAL_LABEL[p.qualite_geom]||p.qualite_geom):''}
     ${editing?row('Source de la coordonnée',p.source_coordonnees):''}
@@ -2577,11 +2584,10 @@ function sicomMapSection(){
   const nonGeo=(d&&d.non_georeferences)||[];
   const n=(d&&d.features.length)||0;
   const m=(d&&d.meta)||{};
-  const totalProjets=m.n_projets_liste_executees||42;
-  const projetsCouverts=m.n_projets_couverts_par_la_carte||totalProjets;
+  const totalProjets=m.n_projets_tranches||(n+nonGeo.length);
   return `<div class="card" style="margin-bottom:16px;background:var(--panel-2)">
-      <div class="ch"><h2 style="margin:0;font-size:16px">Carte des infrastructures financées par SICOMINES (2007-2025)</h2><span class="badge">${fmtN(projetsCouverts)} projets sur ${fmtN(totalProjets)} cartographiés (« Liste des infrastructures exécutées »)</span></div>
-      <p style="font-size:12.5px;color:var(--ink-soft);margin:6px 0 0">Localisation des projets d'infrastructures listés projet par projet dans le document « Liste des infrastructures exécutées » (4 phases, dataset ci-dessous), avec pour chacun ses métadonnées complètes (montant, distance ou superficie, phase, note) et, quand une photographie réelle a pu être identifiée avec certitude, un lien vers celle-ci.</p>
+      <div class="ch"><h2 style="margin:0;font-size:16px">Carte des infrastructures financées par SICOMINES (2015-2025)</h2><span class="badge">${fmtN(n)} projets sur ${fmtN(totalProjets)} cartographiés (5 tranches budgétaires)</span></div>
+      <p style="font-size:12.5px;color:var(--ink-soft);margin:6px 0 0">Localisation des projets d'infrastructures listés projet par projet, tranche budgétaire par tranche budgétaire (2015-2018, 2022, deux tranches 2024, 2025 — dataset ci-dessous), avec pour chacun l'ensemble de ses données financières et physiques (coût, exécution cumulée 2022/2023/à ce jour, reste à exécuter, quantités prévues/réalisées, état d'avancement) et, quand une photographie réelle a pu être identifiée avec certitude, un lien vers celle-ci.</p>
       ${editing?`
       ${m.note_couverture?`<div class="msg warn" style="margin-top:10px;font-size:12px"><b>Note interne (mode administrateur) :</b> ${esc(m.note_couverture)}</div>`:''}
       ${m.note_coordonnees?`<div class="msg" style="margin-top:10px;font-size:12px">${esc(m.note_coordonnees)}</div>`:''}
@@ -2595,9 +2601,10 @@ function sicomMapSection(){
         <button type="button" class="srclink" onclick="openSicomSourceModal()">ⓘ Source &amp; traçabilité de cette couche</button>
       </div>
     </div>
-    ${(editing&&nonGeo.length)?`<div class="card" style="margin-bottom:16px"><div class="ch"><h3 style="margin:0">Projet(s) sans localisation unique possible — non représenté(s) sur la carte (mode administrateur)</h3></div>
+    ${nonGeo.length?`<div class="card" style="margin-bottom:16px"><div class="ch"><h3 style="margin:0">Projet(s) sans localisation vérifiable — non représenté(s) sur la carte</h3><span class="badge">${fmtN(nonGeo.length)}</span></div>
+      <p style="font-size:12px;color:var(--ink-soft);margin:6px 0 10px">Ces projets figurent bien dans les données (et dans le dataset « ${esc(m.name||'')||'tranches budgétaires'} » ci-dessous), mais aucun lieu nommé ne peut être rattaché avec certitude à une coordonnée vérifiée indépendamment ; conformément à la règle du site, aucune coordonnée n'est devinée ou approximée pour ces projets.</p>
       ${nonGeo.map(n2=>`<div class="msg warn" style="font-size:12.5px">
-        <b>${esc(n2.designation)}</b>${n2.cout_usd!=null?` — ${fmtN(n2.cout_usd)} USD`:''}<br>${esc(n2.lieu)}${n2.phase?` · ${esc(n2.phase)}`:''}<br><span style="color:var(--ink-faint)">${esc(n2.note)}</span>
+        <b>${esc(n2.designation)}</b>${n2.cout_usd!=null?` — ${fmtN(n2.cout_usd)} USD`:''}<br>${esc(n2.localisation||'')}${n2.tranche?` · ${esc(n2.tranche)}`:''}<br><span style="color:var(--ink-faint)">${esc(n2.observation_localisation||'')}</span>
       </div>`).join('')}
     </div>`:''}`;
 }
