@@ -3253,7 +3253,7 @@ function exVisibleColIdx(name){
 }
 
 const THEME_NAV_ICONS={cadre_licences:'⚖',propriete:'◉',entreprises_publiques:'🏛',production_export:'⛏',
-  paiements_recettes:'💰',troc_sicomines:'⇌',reconciliation:'⇄',transferts_infra:'⇩',depenses_sociales:'❤',contribution_eco:'📈',rapports:'▦'};
+  paiements_recettes:'💰',troc_sicomines:'⇌',reconciliation:'⇄',transferts_infra:'⇩',declaration_par_projet:'🧩',depenses_sociales:'❤',contribution_eco:'📈',rapports:'▦'};
 const MODULES={
   overview:{t:"Vue d'ensemble",f:mOverview,d:drawOverview},
   geo:{t:"Géographie",f:mGeo,d:drawGeo},
@@ -3287,8 +3287,8 @@ Object.keys(THEME_INFO).forEach(k=>{if(k==='technique')return;
 // Tout thème absent de cette liste (nouveau thème ajouté sans mise à jour
 // ici) est simplement ajouté à la fin, dans l'ordre où l'API le renvoie.
 const THEME_ORDER=['cadre_licences','propriete','entreprises_publiques','production_export',
-  'paiements_recettes','troc_sicomines','reconciliation','transferts_infra','depenses_sociales',
-  'contribution_eco','rapports'];
+  'paiements_recettes','troc_sicomines','reconciliation','transferts_infra','declaration_par_projet',
+  'depenses_sociales','contribution_eco','rapports'];
 function orderedThemeKeys(){
   const all=Object.keys(THEME_INFO).filter(k=>k!=='technique');
   const known=THEME_ORDER.filter(k=>all.includes(k));
