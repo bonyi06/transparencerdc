@@ -290,8 +290,15 @@ function themeDashCard(id,title,badge,sourceName){
     <div class="chart" id="${id}" aria-label="${esc(title)}"></div>
     <div class="srcnote">Source : table <code>${esc(sourceName)}</code> · <button type="button" class="srclink" onclick="openSourceModal('${esc(sourceName)}')">ⓘ source &amp; traçabilité</button></div></div>`;
 }
+// Thèmes retirés de ce dashboard automatique à la demande de l'utilisateur
+// (retour, sept. 2026) : les graphiques générés (SICOMINES/APCSC par tranche
+// budgétaire, Recommandations/Synthèse par exigence) jugés peu lisibles ou
+// redondants pour ces trois rubriques précises ; les tableaux sources restent
+// intégralement consultables plus bas sur chaque page, rien n'est supprimé
+// dans les données elles-mêmes.
+const THEME_DASHBOARD_DISABLED=new Set(['propriete','troc_sicomines','rapports']);
 function themeDashboardSection(theme){
-  if(theme==='technique')return '';
+  if(theme==='technique'||THEME_DASHBOARD_DISABLED.has(theme))return '';
   const {c1,c2,evo}=themeDashboardPicks(theme);
   const cards=[];
   if(c1)cards.push(themeDashCard('thd_c1',c1.label,`${c1.measure} par ${c1.dim}`,c1.name));
@@ -301,7 +308,7 @@ function themeDashboardSection(theme){
   return `${themeKpiTiles(theme)}${grid}`;
 }
 function drawThemeDashboard(theme){
-  if(theme==='technique')return;
+  if(theme==='technique'||THEME_DASHBOARD_DISABLED.has(theme))return;
   const {c1,c2,evo}=themeDashboardPicks(theme);
   if(c1){const h=$('#thd_c1');if(h)cBar(h,c1.agg,css('--sky'),c1.agg.length>6);}
   if(c2){const h=$('#thd_c2');if(h){if(c2.agg.length<=7)cDonut(h,c2.agg);else cBar(h,c2.agg,css('--teal'),true);}}
@@ -2805,10 +2812,9 @@ function sicomMapSection(){
       </div>
     </div>
     ${nonGeo.length?`<div class="card" style="margin-bottom:16px"><div class="ch"><h3 style="margin:0">Projet(s) sans localisation vérifiable — non représenté(s) sur la carte</h3><span class="badge">${fmtN(nonGeo.length)}</span></div>
-      <p style="font-size:12px;color:var(--ink-soft);margin:6px 0 10px">Ces projets figurent bien dans les données (et dans le dataset « ${esc(m.name||'')||'tranches budgétaires'} » ci-dessous), mais aucun lieu nommé ne peut être rattaché avec certitude à une coordonnée vérifiée indépendamment ; conformément à la règle du site, aucune coordonnée n'est devinée ou approximée pour ces projets.</p>
-      ${nonGeo.map(n2=>`<div class="msg warn" style="font-size:12.5px">
-        <b>${esc(n2.designation)}</b>${n2.cout_usd!=null?` — ${fmtN(n2.cout_usd)} USD`:''}<br>${esc(n2.localisation||'')}${n2.tranche?` · ${esc(n2.tranche)}`:''}<br><span style="color:var(--ink-faint)">${esc(n2.observation_localisation||'')}</span>
-      </div>`).join('')}
+      <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px">${nonGeo.map(n2=>`<div style="font-size:12.5px;padding:6px 0;border-bottom:1px solid var(--line)">
+        <b>${esc(n2.designation)}</b>${n2.cout_usd!=null?` — ${fmtUSD(n2.cout_usd)}`:''}
+      </div>`).join('')}</div>
     </div>`:''}`;
 }
 function bindSicomMap(){if($('#sicomMap'))drawSicomMap();}
