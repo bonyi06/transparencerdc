@@ -136,8 +136,15 @@ window.goExplorerTable=goExplorerTable;
 // numérique additionnable (jamais un identifiant, une année, un pourcentage
 // ou un numéro de page — cf. columnRole), en priorisant les intitulés qui
 // désignent explicitement un montant/volume déclaré.
+// Métadonnées techniques d'un document (taille du fichier, nombre de pages…)
+// : jamais une mesure d'intérêt public, même quand la colonne est numérique
+// et « additive » au sens de columnRole (ex. apercu_sources_analyse_bi,
+// colonne "Taille octets" : sommer/répartir des octets de fichiers PDF/Word
+// n'a rien à faire dans un tableau de bord public — retour utilisateur,
+// sept. 2026, sur le thème Rapports).
+function isFileMetaCol(col){return /taille.*octet|taille.*fichier|\bbytes?\b|poids.*fichier|nombre.*pages?\b/i.test(col);}
 function bestMeasureCol(name,d){
-  const cands=d.cols.map((c,i)=>({c,i})).filter(o=>d.types[o.i]==='num'&&columnRole(name,o.c)==='additive');
+  const cands=d.cols.map((c,i)=>({c,i})).filter(o=>d.types[o.i]==='num'&&columnRole(name,o.c)==='additive'&&!isFileMetaCol(o.c));
   if(!cands.length)return null;
   // Priorité 1 : un montant (toujours dans une unité homogène — USD/CDF).
   // Priorité 2, seulement à défaut : une quantité physique (tonnes, carats,
