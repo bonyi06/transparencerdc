@@ -320,6 +320,165 @@ function drawThemeDashboard(theme){
     }
   }
 }
+/* ===== Propriété effective — tableau de bord dédié (Exigence ITIE 2.5) =====
+   Retour utilisateur (sept. 2026) : « faire des dashboards sur la propriété
+   effective et les bénéficiaires effectifs mieux que ou comme ceux faits
+   dans le Global Energy Ownership Tracker (Global Energy Monitor) ». À la
+   différence du dashboard générique par thème (voir plus haut,
+   THEME_DASHBOARD_DISABLED — retiré de cette rubrique car peu pertinent sur
+   des colonnes génériques), cette section est écrite spécifiquement pour la
+   structure de ctx_propriete (table canonique fusionnant les registres 2013-
+   2023, 1128 lignes) : elle met en avant ce qui fait la valeur d'un registre
+   de bénéficiaires effectifs — la répartition par nationalité, la couverture
+   dans le temps, les personnes politiquement exposées (PPE) déclarées, et le
+   « réseau de contrôle » (un même bénéficiaire effectif apparaissant dans
+   plusieurs sociétés), à l'image de l'outil « Portfolio Explorer » du Global
+   Energy Ownership Tracker — mais construite exclusivement à partir des
+   déclarations réellement publiées dans les Rapports ITIE-RDC : aucune
+   donnée externe, aucune estimation, aucun nom deviné. Les identifiants
+   personnels (contact, date de naissance, n° d'identification national) ont
+   déjà été retirés à l'import (voir Qualité des données) : cette section ne
+   republie que ce que l'ITIE-RDC a elle-même rendu public. */
+const PROPRIETE_DS='ctx_propriete';
+// Jetons qui ne désignent aucune personne ou société identifiée (à ne pas
+// compter comme une entité réelle dans les KPI et le réseau de contrôle) —
+// plus large qu'isPlausibleEntityLabel() car spécifique aux formulaires de
+// déclaration du bénéficiaire effectif (« Autres », « Non communiqué »...).
+function isPlausibleBeneficiaire(v){
+  if(!isPlausibleEntityLabel(v))return false;
+  return !/^(autres?|non[- ]?communiqu[ée]e?|non renseign[ée]e?|na)$/i.test(String(v).trim());
+}
+function proprieteCtx(){
+  const d=DS[PROPRIETE_DS];if(!d)return null;
+  const ci=c=>d.cols.indexOf(c);
+  return {d,i:{annee:ci('Année'),societe:ci('SOCIETE'),benef:ci('BENEFICIAIRE'),nat:ci('Nationalité'),
+    pays:ci('Pays'),ppe:ci('PPE'),fonction:ci('FONCTION'),actions:ci("Nombre d'actions"),
+    pctAction:ci("Pourcentage d'action"),pctVoteD:ci('Pourcentage de vote direct'),pctVoteI:ci('Pourcentage de vote indirect')}};
+}
+// Regroupement léger des variantes de nationalité (casse, accents, tirets,
+// synonymes pays/adjectif — ex. « CHINE »/« CHINOISE »/« China » sont la même
+// nationalité) : contrairement aux référentiels canoniques (entreprise, flux,
+// entité perceptrice, province — voir CANON_LOOKUP), il n'existe pas de table
+// de correspondance officielle pour la nationalité des personnes physiques ;
+// on regroupe donc par clé normalisée (normKey) et on affiche, pour chaque
+// groupe, la graphie la plus fréquemment déclarée — jamais une valeur
+// « corrigée » ou traduite qui ne serait pas elle-même une graphie réellement
+// utilisée dans les déclarations sources.
+function proprieteNationaliteAgg(){
+  const c=proprieteCtx();if(!c)return [];
+  const groups=new Map(); // normKey -> Map(rawLabel -> count)
+  c.d.rows.forEach(r=>{
+    const raw=r[c.i.nat];if(!isPlausibleEntityLabel(raw))return;
+    const key=normKey(raw);
+    if(!groups.has(key))groups.set(key,new Map());
+    const m=groups.get(key);m.set(raw,(m.get(raw)||0)+1);
+  });
+  const out=[];
+  groups.forEach(m=>{
+    let total=0,bestLabel=null,bestCount=-1;
+    m.forEach((n,label)=>{total+=n;if(n>bestCount){bestCount=n;bestLabel=label;}});
+    out.push({label:bestLabel,value:total});
+  });
+  return out.sort((a,b)=>b.value-a.value);
+}
+function proprieteAnneeAgg(){
+  const c=proprieteCtx();if(!c)return [];
+  const m=new Map();
+  c.d.rows.forEach(r=>{const y=r[c.i.annee];if(!y)return;m.set(y,(m.get(y)||0)+1);});
+  return [...m.entries()].map(([label,value])=>({label,value})).sort((a,b)=>a.label-b.label);
+}
+// Bénéficiaires effectifs liés à ≥2 sociétés déclarantes distinctes (réseau
+// de contrôle) — à l'image du « Portfolio Explorer » du Global Energy
+// Ownership Tracker (portefeuille d'actifs détenus par un même propriétaire),
+// mais restreint aux sociétés et exercices effectivement déclarés à l'ITIE-
+// RDC. Le regroupement se fait sur le nom brut du bénéficiaire (aucun
+// identifiant unique n'existe dans la source) : deux graphies différentes
+// d'une même personne ne seront donc pas fusionnées ici, par prudence — on ne
+// devine jamais qu'il s'agit de la même personne sans certitude.
+function proprieteReseau(){
+  const c=proprieteCtx();if(!c)return [];
+  const m=new Map(); // benef -> [{societe,annee,pct}]
+  c.d.rows.forEach(r=>{
+    const benef=r[c.i.benef],societe=r[c.i.societe];
+    if(!isPlausibleBeneficiaire(benef)||!isPlausibleEntityLabel(societe))return;
+    if(!m.has(benef))m.set(benef,[]);
+    m.get(benef).push({societe:canonicalize('entreprise',societe),annee:r[c.i.annee],
+      pct:r[c.i.pctAction],nat:r[c.i.nat]});
+  });
+  const out=[];
+  m.forEach((liste,benef)=>{
+    const societes=new Set(liste.map(x=>x.societe));
+    if(societes.size>=2)out.push({benef,societes:[...societes],liste});
+  });
+  return out.sort((a,b)=>b.societes.length-a.societes.length);
+}
+function propriétePpeListe(){
+  const c=proprieteCtx();if(!c)return [];
+  return c.d.rows.filter(r=>String(r[c.i.ppe]||'').trim().toUpperCase()==='OUI').map(r=>({
+    benef:r[c.i.benef],societe:canonicalize('entreprise',r[c.i.societe]),annee:r[c.i.annee],
+    fonction:r[c.i.fonction],nat:r[c.i.nat],pct:r[c.i.pctAction]}));
+}
+let proprieteReseauQ='';
+function proprieteDashboardSection(){
+  const c=proprieteCtx();if(!c)return '';
+  const d=c.d;
+  const societes=new Set(),benefs=new Set();
+  d.rows.forEach(r=>{
+    if(isPlausibleEntityLabel(r[c.i.societe]))societes.add(canonicalize('entreprise',r[c.i.societe]));
+    if(isPlausibleBeneficiaire(r[c.i.benef]))benefs.add(r[c.i.benef]);
+  });
+  const ppeListe=propriétePpeListe();
+  const reseau=proprieteReseau();
+  const annees=proprieteAnneeAgg();
+  const kpis=`<div class="kpis">
+    <div class="kpi"><div class="v">${fmtN(societes.size)}</div><div class="l">Sociétés avec déclaration de propriété effective</div></div>
+    <div class="kpi"><div class="v">${fmtN(benefs.size)}</div><div class="l">Bénéficiaires effectifs identifiés</div></div>
+    <div class="kpi"><div class="v">${fmtN(ppeListe.length)}</div><div class="l">Personnes politiquement exposées (PPE) déclarées</div></div>
+    <div class="kpi"><div class="v">${fmtN(reseau.length)}</div><div class="l">Bénéficiaires liés à ≥ 2 sociétés (réseau de contrôle)</div></div>
+    <div class="kpi"><div class="v">${annees.length?annees[0].label+'–'+annees[annees.length-1].label:'—'}</div><div class="l">Période couverte</div></div>
+  </div>`;
+  const charts=`<div class="grid2">
+    <div class="card"><div class="ch"><h3 style="margin:0">Bénéficiaires effectifs par nationalité déclarée</h3><span class="badge">Variantes de graphie regroupées</span></div>
+      <div class="chart" id="propNat" aria-label="Répartition des bénéficiaires effectifs par nationalité déclarée"></div>
+      <div class="srcnote">Source : table <code>${esc(PROPRIETE_DS)}</code> · <button type="button" class="srclink" onclick="openSourceModal('${esc(PROPRIETE_DS)}')">ⓘ source &amp; traçabilité</button></div></div>
+    <div class="card"><div class="ch"><h3 style="margin:0">Déclarations de propriété effective par exercice</h3><span class="badge">Couverture dans le temps</span></div>
+      <div class="chart" id="propAnnee" aria-label="Nombre de déclarations de propriété effective par exercice"></div>
+      <div class="srcnote">Source : table <code>${esc(PROPRIETE_DS)}</code> · <button type="button" class="srclink" onclick="openSourceModal('${esc(PROPRIETE_DS)}')">ⓘ source &amp; traçabilité</button></div></div>
+  </div>`;
+  const ppeCard=`<div class="card" style="margin-top:16px"><div class="ch"><h3 style="margin:0">Personnes politiquement exposées (PPE) déclarées</h3><span class="badge">${fmtN(ppeListe.length)}</span></div>
+    <p style="font-size:12.5px;color:var(--ink-soft);margin:6px 0 10px">Bénéficiaires effectifs pour lesquels l'entreprise déclarante a coché « Personne Politiquement Exposée » dans son formulaire de déclaration (fonction publique actuelle ou passée). Norme ITIE, Exigence 2.5.</p>
+    ${ppeListe.length?`<div class="gridwrap"><div class="gridscroll"><table class="dg"><thead><tr><th scope="col">Bénéficiaire</th><th scope="col">Société</th><th scope="col">Fonction déclarée</th><th scope="col">Exercice</th><th scope="col">Nationalité</th><th scope="col">% actions</th></tr></thead><tbody>
+      ${ppeListe.map(p=>`<tr><td>${esc(p.benef)}</td><td>${esc(p.societe)}</td><td>${esc(p.fonction||'—')}</td><td class="num">${esc(p.annee||'—')}</td><td>${esc(p.nat||'—')}</td><td class="num">${p.pct!=null?p.pct+' %':'—'}</td></tr>`).join('')}
+    </tbody></table></div></div>`:'<div class="empty" style="padding:10px">Aucune personne politiquement exposée n\'est déclarée dans les registres publiés à ce jour.</div>'}
+  </div>`;
+  const reseauCard=`<div class="card" style="margin-top:16px"><div class="ch"><h3 style="margin:0">Réseau de contrôle — bénéficiaires liés à plusieurs sociétés</h3><span class="badge">${fmtN(reseau.length)}</span></div>
+    <p style="font-size:12.5px;color:var(--ink-soft);margin:6px 0 10px">Un même nom de bénéficiaire effectif apparaissant dans les déclarations de plusieurs sociétés distinctes — à l'image d'un « portefeuille » de participations. Regroupement sur le nom brut déclaré (aucun identifiant unique de personne n'existe dans la source) : deux graphies différentes d'une même personne ne sont pas fusionnées ici.</p>
+    <div class="exsearch" style="margin-bottom:10px"><span class="si" aria-hidden="true">⌕</span><input id="propReseauQ" placeholder="Rechercher un bénéficiaire ou une société…" value="${esc(proprieteReseauQ)}" aria-label="Rechercher dans le réseau de contrôle"></div>
+    <div id="propReseauList" style="display:flex;flex-direction:column;gap:6px"></div>
+  </div>`;
+  return `${kpis}${charts}${ppeCard}${reseauCard}`;
+}
+function renderProprieteReseau(){
+  const host=$('#propReseauList');if(!host)return;
+  const q=stripAccents(proprieteReseauQ).toLowerCase();
+  let reseau=proprieteReseau();
+  if(q)reseau=reseau.filter(r=>stripAccents(r.benef).toLowerCase().includes(q)||r.societes.some(s=>stripAccents(s).toLowerCase().includes(q)));
+  if(!reseau.length){host.innerHTML='<div class="empty" style="padding:10px">Aucun résultat.</div>';return;}
+  host.innerHTML=reseau.slice(0,60).map(r=>`<details class="srcdetails">
+    <summary><b>${esc(r.benef)}</b> <span class="badge">${fmtN(r.societes.length)} sociétés</span></summary>
+    <div style="font-size:12.5px;color:var(--ink-soft);margin-top:6px;display:flex;flex-direction:column;gap:4px">
+      ${r.liste.map(x=>`<div>${esc(x.societe)}${x.annee?` — exercice ${esc(x.annee)}`:''}${x.pct!=null?` — ${esc(x.pct)} % des actions`:''}</div>`).join('')}
+    </div></details>`).join('')+(reseau.length>60?`<div class="sub" style="margin-top:6px">${fmtN(reseau.length-60)} autre(s) bénéficiaire(s) non affiché(s) — affinez la recherche.</div>`:'');
+}
+function drawProprieteDashboard(){
+  if(!$('#propNat'))return;
+  cDonut($('#propNat'),proprieteNationaliteAgg().slice(0,12));
+  const annees=proprieteAnneeAgg();
+  if(annees.length>=4)cLine($('#propAnnee'),annees,true,css('--violet'));else cBar($('#propAnnee'),annees,css('--violet'),false);
+  renderProprieteReseau();
+  const inp=$('#propReseauQ');
+  if(inp)inp.oninput=e=>{proprieteReseauQ=e.target.value;renderProprieteReseau();const el=$('#propReseauQ');if(el){el.focus();el.setSelectionRange(e.target.value.length,e.target.value.length);}};
+}
 function themeCard(name){
   const d=DS[name];if(!d)return '';
   const rowN=d.rows.length;
@@ -559,13 +718,15 @@ function mTheme(theme){
   const contrats=theme==='cadre_licences'?contratsSection():'';
   const sicomMap=theme==='troc_sicomines'?sicomMapSection():'';
   const dashboard=themeDashboardSection(theme);
+  const propriete=theme==='propriete'?proprieteDashboardSection():'';
   return `<div class="phead"><div class="eyebrow">${esc(info.eiti||'')}</div><h1>${esc(info.label)}</h1><p>${esc(info.desc)}</p></div>
     ${dashboard}
+    ${propriete}
     ${sicomMap}
     ${names.length?names.map(themeCard).join(''):(cahiers||contrats||sicomMap?'':'<div class="empty" style="padding:20px">Aucun tableau public dans cette rubrique pour le moment.</div>')}
     ${contrats}${cahiers}`;
 }
-function bindThemePage(){$$('#app [data-gotable]').forEach(b=>b.onclick=()=>goExplorerTable(b.dataset.gotable));bindCahiers();bindContrats();bindSicomMap();drawThemeDashboard(current);}
+function bindThemePage(){$$('#app [data-gotable]').forEach(b=>b.onclick=()=>goExplorerTable(b.dataset.gotable));bindCahiers();bindContrats();bindSicomMap();drawThemeDashboard(current);if(current==='propriete')drawProprieteDashboard();}
 
 
 /* ===== Référentiels canoniques (provinces / entreprises / flux / entités
