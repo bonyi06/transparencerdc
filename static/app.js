@@ -113,41 +113,36 @@ window.openSourceModal=openSourceModal;
 function goExplorerTable(name){exState.ds=name;exState.page=0;exState.filters={};exState.q='';go('explorer');}
 window.goExplorerTable=goExplorerTable;
 
-/* ===== Carte « Land Cover » (occupation du sol) — vue alternative =====
-   Retour utilisateur (sept. 2026) : reproduire le procédé de la vidéo
-   fournie (classification Esri Sentinel-2 10m Land Cover 2020 + relief
-   ombré à partir d'un MNT + graphiques + mise en page professionnelle),
-   PAS un simple lien d'aide externe — ajoutée comme second onglet sur
-   chacune des 4 cartes du site (Titres miniers, Hydrocarbures, Géographie,
-   SICOMINES), en plus de la carte interactive existante.
-   Deuxième retour utilisateur (sept. 2026) : cette vue doit être une
-   VRAIE carte dynamique/interactive (zoom, déplacement), pas une image
-   figée. La couche « Occupation du sol » interroge donc en direct, depuis
-   le navigateur du visiteur, le service public Esri/Impact Observatory
-   (ArcGIS ImageServer « exportImage ») : l'image affichée est recalculée
-   à chaque déplacement/zoom sur l'emprise réellement visible — exactement
-   le principe d'un SIG en ligne. Un clic sur la carte interroge le même
+/* ===== Couche « Land Cover » (occupation du sol) — superposée aux cartes =====
+   Historique : v1 = simple lien d'aide externe (rejeté) ; v2 = onglet
+   séparé avec image statique (rejeté, pas interactif) ; v3 = onglet séparé
+   avec carte Leaflet dynamique (rejeté : coupait l'accès aux titres,
+   contrats, blocs, etc. le temps de la consulter).
+   v4 (retour utilisateur, sept. 2026) : « ces cartes doivent être liées à
+   toutes les informations et afficher tout ce qu'affichent les autres
+   cartes (titres, contrats, bassins, détails, métadonnées, etc.), données
+   aux endroits exacts ». La couche est donc désormais une couche
+   ACTIVABLE/DÉSACTIVABLE À L'INTÉRIEUR de chaque carte interactive
+   existante (Titres miniers, Hydrocarbures, SICOMINES, Géographie) — une
+   seule carte, un seul jeu de couches — plutôt qu'une vue séparée : tous
+   les titres/blocs/projets/provinces restent affichés, cliquables, avec
+   leurs popups/filtres/métadonnées habituels, par-dessus l'occupation du
+   sol, aux coordonnées exactes.
+   Fonctionnement technique : l'image « Occupation du sol » est demandée en
+   direct, depuis le navigateur du visiteur, au service public
+   Esri/Impact Observatory (ArcGIS ImageServer « exportImage ») — recalculée
+   à chaque déplacement/zoom sur l'emprise visible, comme un SIG en ligne.
+   Elle est posée dans un panneau Leaflet dédié (zIndex entre le fond de
+   carte et les couches vectorielles) afin de toujours rester SOUS les
+   titres/blocs/points existants, qui restent donc cliquables normalement.
+   Un clic sur une zone vide (sans titre/bloc en dessous) interroge le même
    service (opération « identify ») pour afficher la classe au point
-   cliqué. Cet appel se fait de navigateur à navigateur (pas via le
+   cliqué. Ces appels se font de navigateur à navigateur (pas via le
    serveur Render) : aucune donnée du site n'y transite, et le résultat ne
    dépend pas des restrictions réseau du serveur d'hébergement.
    La version imprimée hors ligne (relief ombré + graphiques + mise en
    page, voir scripts/build_landcover_map.py, données Esri + Copernicus
-   DEM) reste proposée en téléchargement sous la carte, en complément —
-   rien n'est supprimé, seulement rendu interactif en plus. */
-let landCoverView={mining:false,hydro:false,geo:false,sicom:false};
-function toggleLandCoverView(key){
-  landCoverView[key]=!landCoverView[key];
-  try{
-    const app=$('#app');
-    if(app&&MODULES[current])app.innerHTML=MODULES[current].f();
-    MODULES[current].d();
-  }catch(e){}
-}
-window.toggleLandCoverView=toggleLandCoverView;
-function landCoverToggleBtn(key){
-  return `<button type="button" class="btn" onclick="toggleLandCoverView('${key}')">${landCoverView[key]?'← Revenir à la carte interactive':'🌍 Carte Land Cover (occupation du sol)'}</button>`;
-}
+   DEM) reste proposée en téléchargement à côté de la case à cocher. */
 // Légende officielle vérifiée empiriquement (voir scripts/build_landcover_map.py
 // pour l'historique complet de la correction) — les codes 3 et 6 n'existent pas.
 const LULC_CLASSES_JS={
@@ -163,88 +158,91 @@ const LULC_CLASSES_JS={
 };
 const LC_SERVICE_URL='https://ic.imagery1.arcgis.com/arcgis/rest/services/Sentinel2_10m_LandCover/ImageServer';
 const LC_TIME_2020=Date.UTC(2020,0,1)+','+Date.UTC(2020,11,31,23,59,59);
-let landCoverMapObj=null,landCoverOverlay=null,landCoverStats=null,landCoverStatsLoading=false;
+// État persistant (survit aux re-rendus/navigations) : coché ou non, par carte.
+let landCoverOn={mining:false,hydro:false,geo:false,sicom:false};
+// Instance de couche active par carte (recréée à chaque (re)construction de
+// la carte Leaflet correspondante, car celle-ci est détruite/recréée par
+// les fonctions drawXxx() existantes à chaque navigation).
+let landCoverLayers={mining:null,hydro:null,geo:null,sicom:null};
 function landCoverLegendHtml(){
   return `<div style="display:flex;flex-direction:column;gap:3px">${Object.values(LULC_CLASSES_JS).map(c=>
     `<div style="display:flex;align-items:center;gap:6px;font-size:11px;white-space:nowrap"><span style="width:12px;height:12px;border-radius:2px;background:${c.color};display:inline-block;border:1px solid rgba(0,0,0,.15);flex-shrink:0"></span>${esc(c.label)}</div>`
   ).join('')}</div>`;
 }
-function landCoverUpdateOverlay(){
-  if(!landCoverMapObj)return;
-  const b=landCoverMapObj.getBounds();
-  const size=landCoverMapObj.getSize();
-  const w=Math.max(50,Math.round(size.x)),h=Math.max(50,Math.round(size.y));
-  const bbox=[b.getWest(),b.getSouth(),b.getEast(),b.getNorth()].join(',');
-  const url=`${LC_SERVICE_URL}/exportImage?bbox=${encodeURIComponent(bbox)}&bboxSR=4326&imageSR=4326&size=${w},${h}&format=png32&f=image&time=${LC_TIME_2020}&interpolation=RSP_NearestNeighbor`;
-  const prev=landCoverOverlay;
-  const st=$('#lcStatus');if(st)st.textContent='Chargement de la couche pour l\'emprise visible…';
-  const img=L.imageOverlay(url,b,{opacity:0.88,crossOrigin:true});
-  img.once('load',()=>{if(prev&&landCoverMapObj)landCoverMapObj.removeLayer(prev);if(st)st.textContent='Cliquez sur la carte pour connaître la classe au point sélectionné.';});
-  img.once('error',()=>{
-    try{if(landCoverMapObj)landCoverMapObj.removeLayer(img);}catch(e){}
-    if(st)st.textContent="La couche Esri Land Cover n'a pas pu être chargée pour cette emprise (service momentanément indisponible, ou appel bloqué par le réseau) — la version imprimable ci-dessous reste disponible.";
-  });
-  img.addTo(landCoverMapObj);
-  landCoverOverlay=img;
-}
-function landCoverIdentify(latlng){
-  const st=$('#lcStatus');if(!st)return;
-  st.textContent='Interrogation du pixel…';
-  const geometry=encodeURIComponent(JSON.stringify({x:latlng.lng,y:latlng.lat,spatialReference:{wkid:4326}}));
-  const url=`${LC_SERVICE_URL}/identify?geometry=${geometry}&geometryType=esriGeometryPoint&sr=4326&returnGeometry=false&f=json&time=${LC_TIME_2020}`;
-  fetch(url).then(r=>r.json()).then(data=>{
-    const raw=data&&data.value;
-    const val=(raw!==undefined&&raw!==null&&raw!=='NoData')?parseInt(raw,10):null;
-    const cls=(val!=null&&LULC_CLASSES_JS[val])?LULC_CLASSES_JS[val]:null;
-    st.textContent=cls?`Classe au point cliqué (${latlng.lat.toFixed(3)}, ${latlng.lng.toFixed(3)}) : ${cls.label} (code ${val}).`:'Aucune classe à cet endroit (hors emprise du service, ou pixel non classé).';
-  }).catch(()=>{st.textContent="Impossible d'interroger le service à cet endroit pour le moment (réseau).";});
-}
-function landCoverStatsHtml(){
-  if(!landCoverStats||!landCoverStats.stats_km2)return '<p style="font-size:12px;color:var(--ink-soft)">Statistiques de superficie non disponibles.</p>';
-  const rows=Object.entries(landCoverStats.stats_km2).sort((a,b)=>b[1]-a[1]);
-  const total=rows.reduce((s,[,v])=>s+v,0);
-  return `<div style="font-size:11.5px;font-weight:700;color:var(--ink-soft);margin-bottom:6px">Superficie par classe — ensemble du territoire (calcul hors ligne, voir version imprimable)</div>
-    <div style="display:flex;flex-direction:column;gap:4px">${rows.map(([label,km2])=>{
-      const pct=total?(km2/total*100):0;
-      return `<div style="display:flex;align-items:center;gap:8px;font-size:11.5px">
-        <span style="width:150px;flex-shrink:0">${esc(label)}</span>
-        <span style="flex:1;background:var(--panel-2);border-radius:3px;overflow:hidden;height:8px"><span style="display:block;height:100%;width:${pct.toFixed(1)}%;background:var(--sky)"></span></span>
-        <span style="width:75px;text-align:right;color:var(--ink-soft)">${pct.toFixed(1)}%</span>
-      </div>`;
-    }).join('')}</div>`;
-}
-function drawLandCoverMap(){
-  const host=$('#lcMap');if(!host)return;
-  if(landCoverMapObj){try{landCoverMapObj.remove();}catch(e){}landCoverMapObj=null;landCoverOverlay=null;}
-  landCoverMapObj=L.map('lcMap',{preferCanvas:true,attributionControl:false}).setView([-2.9,23.6],5);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'',opacity:0.35}).addTo(landCoverMapObj);
-  landCoverUpdateOverlay();
-  landCoverMapObj.on('moveend',landCoverUpdateOverlay);
-  landCoverMapObj.on('click',e=>landCoverIdentify(e.latlng));
-  if(!landCoverStats&&!landCoverStatsLoading){
-    landCoverStatsLoading=true;
-    fetch('/static/landcover_rdc_report.json').then(r=>r.json()).then(d=>{
-      landCoverStatsLoading=false;landCoverStats=d;
-      const el=$('#lcStatsPanel');if(el)el.innerHTML=landCoverStatsHtml();
-    }).catch(()=>{landCoverStatsLoading=false;});
+// Crée un gestionnaire de couche Land Cover pour UNE instance de carte
+// Leaflet donnée (miningMapObj, hydroMapObj, sicomMapObj ou geoMapObj) :
+// panneau dédié sous les couches vectorielles, rechargement au déplacement,
+// identification au clic (uniquement quand le clic n'a pas déjà été capté
+// par un titre/bloc/point superposé, ce qui reste le comportement normal
+// de Leaflet grâce au panneau plus bas).
+function createLandCoverLayer(mapObj,statusSel){
+  if(!mapObj.getPane('landcoverPane')){
+    mapObj.createPane('landcoverPane');
+    mapObj.getPane('landcoverPane').style.zIndex=350; // entre tilePane(200) et overlayPane(400)
+    mapObj.getPane('landcoverPane').style.pointerEvents='none'; // ne bloque jamais les clics sur les titres/blocs
   }
+  let overlay=null,active=false;
+  const setStatus=txt=>{const el=document.querySelector(statusSel);if(el)el.textContent=txt;};
+  function update(){
+    if(!active)return;
+    const b=mapObj.getBounds(),size=mapObj.getSize();
+    const w=Math.max(50,Math.round(size.x)),h=Math.max(50,Math.round(size.y));
+    const bbox=[b.getWest(),b.getSouth(),b.getEast(),b.getNorth()].join(',');
+    const url=`${LC_SERVICE_URL}/exportImage?bbox=${encodeURIComponent(bbox)}&bboxSR=4326&imageSR=4326&size=${w},${h}&format=png32&f=image&time=${LC_TIME_2020}&interpolation=RSP_NearestNeighbor`;
+    const prev=overlay;
+    setStatus('Chargement de la couche « occupation du sol » pour l\'emprise visible…');
+    const img=L.imageOverlay(url,b,{opacity:0.72,crossOrigin:true,pane:'landcoverPane'});
+    img.once('load',()=>{if(prev)try{mapObj.removeLayer(prev);}catch(e){}setStatus('Cliquez sur une zone sans titre/bloc pour connaître la classe d\'occupation du sol à cet endroit.');});
+    img.once('error',()=>{try{mapObj.removeLayer(img);}catch(e){}setStatus("La couche Esri Land Cover n'a pas pu être chargée pour cette emprise (service momentanément indisponible, ou appel bloqué par le réseau).");});
+    img.addTo(mapObj);
+    overlay=img;
+  }
+  function onMapClick(e){
+    setStatus('Interrogation du pixel…');
+    const geometry=encodeURIComponent(JSON.stringify({x:e.latlng.lng,y:e.latlng.lat,spatialReference:{wkid:4326}}));
+    const url=`${LC_SERVICE_URL}/identify?geometry=${geometry}&geometryType=esriGeometryPoint&sr=4326&returnGeometry=false&f=json&time=${LC_TIME_2020}`;
+    fetch(url).then(r=>r.json()).then(data=>{
+      const raw=data&&data.value;
+      const val=(raw!==undefined&&raw!==null&&raw!=='NoData')?parseInt(raw,10):null;
+      const cls=(val!=null&&LULC_CLASSES_JS[val])?LULC_CLASSES_JS[val]:null;
+      setStatus(cls?`Classe au point cliqué (${e.latlng.lat.toFixed(3)}, ${e.latlng.lng.toFixed(3)}) : ${cls.label} (code ${val}).`:'Aucune classe à cet endroit (hors emprise du service, ou pixel non classé).');
+    }).catch(()=>{setStatus("Impossible d'interroger le service à cet endroit pour le moment (réseau).");});
+  }
+  return {
+    enable(){if(active)return;active=true;mapObj.on('moveend',update);mapObj.on('click',onMapClick);update();},
+    disable(){active=false;mapObj.off('moveend',update);mapObj.off('click',onMapClick);if(overlay){try{mapObj.removeLayer(overlay);}catch(e){}overlay=null;}setStatus('');},
+    isActive(){return active;},
+  };
 }
-function landCoverPanel(){
-  return `<div class="card" style="margin-bottom:16px">
-      <div class="ch"><h3 style="margin:0">Occupation du sol — RDC (carte dynamique, 2020)</h3></div>
-      <p style="font-size:12.5px;color:var(--ink-soft);margin:6px 0 10px">Carte interactive : zoomez et déplacez-vous, l'image se recharge pour l'emprise visible en interrogeant en direct le service <b>Esri / Impact Observatory — Sentinel-2 10m Land Cover 2020</b>. Cliquez sur la carte pour connaître la classe au point sélectionné.</p>
-      <div style="position:relative">
-        <div id="lcMap" style="height:600px;border-radius:12px;overflow:hidden;background:var(--panel-2)"></div>
-        <div style="position:absolute;top:10px;right:10px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;box-shadow:0 2px 8px rgba(0,0,0,.18);z-index:1000;max-width:200px">${landCoverLegendHtml()}</div>
-      </div>
-      <div id="lcStatus" style="font-size:11.5px;color:var(--ink-soft);margin-top:8px;min-height:14px">Chargement de la couche…</div>
-      <div id="lcStatsPanel" style="margin-top:14px">${landCoverStats?landCoverStatsHtml():'<p style="font-size:12px;color:var(--ink-soft)">Chargement des statistiques de superficie…</p>'}</div>
-      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px;border-top:1px solid var(--line);padding-top:10px">
-        <a class="btn" href="/static/landcover_rdc.png" download>↓ Version imprimable (relief + graphiques, PNG haute résolution)</a>
-        <span class="grow"></span>
-        <span style="font-size:11px;color:var(--ink-faint)">Sources : Esri / Impact Observatory (couche dynamique) · Copernicus DEM, ESA (relief, version imprimable) · Traitement : TransparenceRDC</span>
-      </div>
-    </div>`;
+// HTML de la case à cocher + légende (repliable) + ligne de statut, à insérer
+// dans les contrôles existants de chaque carte (pas de carte séparée).
+function landCoverControlHtml(key){
+  return `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--ink-soft);cursor:pointer">
+        <input type="checkbox" data-lc-toggle="${key}" ${landCoverOn[key]?'checked':''} onchange="toggleLandCoverLayer('${key}')">
+        🌍 Occupation du sol (Esri, 2020)
+      </label>
+      <a class="srclink" href="/static/landcover_rdc.png" download>↓ version imprimable (relief + graphiques)</a>
+    </div>
+    <div data-lc-legend="${key}" style="display:${landCoverOn[key]?'flex':'none'};flex-wrap:wrap;gap:10px 16px;margin-top:8px;padding:8px 10px;background:var(--panel-2);border-radius:8px">${landCoverLegendHtml()}</div>
+    <div data-lc-status="${key}" style="font-size:11.5px;color:var(--ink-soft);margin-top:6px;min-height:14px">${landCoverOn[key]?'Chargement de la couche…':''}</div>`;
+}
+function toggleLandCoverLayer(key){
+  landCoverOn[key]=!landCoverOn[key];
+  const layer=landCoverLayers[key];
+  if(layer){if(landCoverOn[key])layer.enable();else layer.disable();}
+  const legend=document.querySelector(`[data-lc-legend="${key}"]`);
+  if(legend)legend.style.display=landCoverOn[key]?'flex':'none';
+  const status=document.querySelector(`[data-lc-status="${key}"]`);
+  if(status&&!landCoverOn[key])status.textContent='';
+}
+window.toggleLandCoverLayer=toggleLandCoverLayer;
+// Attache (ou réattache) la couche à une carte Leaflet fraîchement créée, et
+// la réactive automatiquement si elle était cochée avant la reconstruction
+// de la carte (navigation, changement de filtre régénérant le DOM, etc.).
+function attachLandCoverLayer(key,mapObj){
+  landCoverLayers[key]=createLandCoverLayer(mapObj,`[data-lc-status="${key}"]`);
+  if(landCoverOn[key])landCoverLayers[key].enable();
 }
 /* ===== Tableau de bord par thème (générique, toutes rubriques ITIE) =====
    Retour utilisateur (sept. 2026) : « faire aussi des dashboards divers et
@@ -2561,9 +2559,6 @@ function mMining(){
     <div id="miningTabBody">${miningTab==='carte'?mMiningCarte():registresTabHtml()}</div>`;
 }
 function mMiningCarte(){
-  if(landCoverView.mining){
-    return `<div class="ch" style="margin-bottom:10px">${landCoverToggleBtn('mining')}</div>${landCoverPanel()}`;
-  }
   return `<div class="card" style="margin-bottom:16px">
       <div class="ch" style="flex-wrap:wrap;gap:10px 16px">
         <label style="font-size:12px;font-weight:700;color:var(--ink-soft);display:flex;flex-direction:column;gap:4px">Statut
@@ -2581,9 +2576,9 @@ function mMiningCarte(){
         <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${MINING_COLOR.Actif};vertical-align:-2px;margin-right:5px"></span>Actif</span>
         <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${MINING_COLOR.Demande};vertical-align:-2px;margin-right:5px"></span>Demande en cours</span>
         <span class="grow"></span>
-        ${landCoverToggleBtn('mining')}
         <button type="button" class="srclink" onclick="openMiningSourceModal()">ⓘ Source &amp; traçabilité de cette couche</button>
       </div>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">${landCoverControlHtml('mining')}</div>
     </div>`;
 }
 /* ===== Registres des octrois, cessions et amodiations (Exigence ITIE 2.2) =====
@@ -2737,7 +2732,6 @@ function drawMining(){
     bindRegistresMiniers();
     return;
   }
-  if(landCoverView.mining){drawLandCoverMap();return;}
   const host=$('#mnMap');if(!host)return;
   if(miningMapObj){try{miningMapObj.remove();}catch(e){}miningMapObj=null;miningLayerObj=null;}
   if(!MINING){
@@ -2757,6 +2751,7 @@ function drawMining(){
   host.innerHTML='';
   miningMapObj=L.map('mnMap',{preferCanvas:true,attributionControl:false}).setView([-4.2,23.6],5);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:''}).addTo(miningMapObj);
+  attachLandCoverLayer('mining',miningMapObj);
   miningFillFilterOptions();
   miningRenderLayer();
   const bind=(id,key)=>{const el=$(id);if(el)el.onchange=e=>{miningF[key]=e.target.value;miningRenderLayer();};};
@@ -2852,11 +2847,6 @@ function mHydro(){
   const bassins=hydroBassinList(), matieres=hydroMatiereList();
   const d=hydroData();
   const nonGeo=(d&&d.non_georeferences)||[];
-  if(landCoverView.hydro){
-    return `<div class="phead"><div class="eyebrow">Territoire</div><h1>Hydrocarbures</h1>
-      <p>Portefeuille des blocs et concessions pétrolières/gazières de la RDC (exercice 2022) : concessions en production, blocs en exploration, entités reprises par l'État, blocs gaziers du lac Kivu et gazoduc de transit.</p></div>
-      <div class="ch" style="margin-bottom:10px">${landCoverToggleBtn('hydro')}</div>${landCoverPanel()}`;
-  }
   return `<div class="phead"><div class="eyebrow">Territoire</div><h1>Hydrocarbures</h1>
     <p>Portefeuille des blocs et concessions pétrolières/gazières de la RDC (exercice 2022) : concessions en production, blocs en exploration, entités reprises par l'État, blocs gaziers du lac Kivu et gazoduc de transit.</p></div>
     <div class="card" style="margin-bottom:16px">
@@ -2890,9 +2880,9 @@ function mHydro(){
       <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:12px;font-size:12px;color:var(--ink-soft)">
         ${Object.entries(HYDRO_STATUT_LABEL).filter(([k])=>k!=='autre').map(([k,l])=>`<span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${HYDRO_STATUT_COLOR[k]};vertical-align:-2px;margin-right:5px"></span>${esc(l)}</span>`).join('')}
         <span class="grow"></span>
-        ${landCoverToggleBtn('hydro')}
         <button type="button" class="srclink" onclick="openHydroSourceModal()">ⓘ Source &amp; traçabilité de cette couche</button>
       </div>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">${landCoverControlHtml('hydro')}</div>
     </div>
     <div style="font-size:11.5px;color:var(--ink-faint);margin:-8px 0 16px">Qualité du géoréférencement, par entité : ${Object.entries(HYDRO_QUAL_LABEL).map(([k,l])=>`<b>${k}</b> = ${esc(l)}`).join(' · ')}. Indiqué dans chaque fiche.</div>
     ${nonGeo.length?`<div class="card" style="margin-bottom:16px"><div class="ch"><h3 style="margin:0">Entité(s) sans coordonnées publiées — non représentée(s) sur la carte</h3></div>
@@ -2983,13 +2973,13 @@ function hydroRenderLayers(){
   }
 }
 function drawHydro(){
-  if(landCoverView.hydro){drawLandCoverMap();return;}
   const host=$('#hyMap');if(!host)return;
   if(hydroMapObj){try{hydroMapObj.remove();}catch(e){}hydroMapObj=null;hydroLayerGroups={};}
   const d=hydroData();
   if(!d){host.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-soft);font-size:13px">Couche non disponible.</div>';return;}
   hydroMapObj=L.map('hyMap',{preferCanvas:true,attributionControl:false}).setView(HYDRO_BASSIN_VIEWS.national.c,HYDRO_BASSIN_VIEWS.national.z);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:''}).addTo(hydroMapObj);
+  attachLandCoverLayer('hydro',hydroMapObj);
   hydroRenderLayers();
   const bind=(id,key)=>{const el=$(id);if(el)el.onchange=e=>{hydroF[key]=e.target.value;hydroRenderLayers();};};
   bind('#hyBassin','bassin');bind('#hyStatut','statut');bind('#hyMatiere','matiere');
@@ -3090,6 +3080,7 @@ function drawSicomMap(){
   if(!d){host.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-soft);font-size:13px">Couche non disponible.</div>';return;}
   sicomMapObj=L.map('sicomMap',{preferCanvas:true,attributionControl:false}).setView([-3.5,24],5);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:''}).addTo(sicomMapObj);
+  attachLandCoverLayer('sicom',sicomMapObj);
   sicomRenderLayer();
   if(d.features&&d.features.length){
     const b=L.geoJSON(d).getBounds();
@@ -3110,23 +3101,22 @@ function sicomMapSection(){
       ${m.note_coordonnees?`<div class="msg" style="margin-top:10px;font-size:12px">${esc(m.note_coordonnees)}</div>`:''}
       `:''}
     </div>
-    ${landCoverView.sicom?`<div class="ch" style="margin-bottom:10px">${landCoverToggleBtn('sicom')}</div>${landCoverPanel()}`:`
     <div class="card" style="margin-bottom:16px">
       <div id="sicomMap" style="height:560px;border-radius:12px;overflow:hidden;background:var(--panel-2)"></div>
       <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:12px;font-size:11.5px;color:var(--ink-soft)">
         ${editing?`<span>Qualité du géoréférencement : ${Object.entries(SICOM_QUAL_LABEL).map(([k,l])=>`<b>${k}</b> = ${esc(l)}`).join(' · ')}</span>`:''}
         <span class="grow"></span>
-        ${landCoverToggleBtn('sicom')}
         <button type="button" class="srclink" onclick="openSicomSourceModal()">ⓘ Source &amp; traçabilité de cette couche</button>
       </div>
-    </div>`}
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">${landCoverControlHtml('sicom')}</div>
+    </div>
     ${nonGeo.length?`<div class="card" style="margin-bottom:16px"><div class="ch"><h3 style="margin:0">Projet(s) sans localisation vérifiable — non représenté(s) sur la carte</h3><span class="badge">${fmtN(nonGeo.length)}</span></div>
       <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px">${nonGeo.map(n2=>`<div style="font-size:12.5px;padding:6px 0;border-bottom:1px solid var(--line)">
         <b>${esc(n2.designation)}</b>${n2.cout_usd!=null?` — ${fmtUSD(n2.cout_usd)}`:''}
       </div>`).join('')}</div>
     </div>`:''}`;
 }
-function bindSicomMap(){if(landCoverView.sicom){drawLandCoverMap();return;}if($('#sicomMap'))drawSicomMap();}
+function bindSicomMap(){if($('#sicomMap'))drawSicomMap();}
 
 /* Géographie — vraie carte choroplèthe interactive (SVG auto-suffisant) */
 let mapInd='recettes', mapYear=null, mapLevels=new Set(['province','territoire','etd']), mapSel=null, mapEvo=false, mapSelPt=null, mapFs=false, mapEscBound=false;
@@ -3202,11 +3192,8 @@ function mGeo(){
       <p style="font-size:12.5px;color:var(--ink-soft);margin-top:6px"><b>Paiements infranationaux (Exigence 4.6)</b> : paiements <b>directs</b> des entreprises aux entités locales — régies provinciales (DRP), ETD (secteurs, chefferies, communes) et dotations OS DOT (0,3 %). Distincts des <b>Transferts infranationaux (Exigence 5.2)</b> : recettes perçues au niveau central puis rétrocédées aux provinces/ETD — et des dépenses sociales/environnementales (section 6.1).</p>
       <p style="font-size:12.5px;color:var(--ink-soft);margin-top:6px"><b>Couches « Cahiers de charge — Haut-Katanga &amp; Lualaba, 2020-2024 »</b> : 54 cahiers des charges de responsabilité sociétale (Code minier révisé de 2018), dont 41 au Haut-Katanga dépouillés document par document (dossier « Cahiers des charges Haut-Katanga », 118,0 M USD, 474 projets, recoupés avec les récapitulatifs administratifs de mai/juin 2022) et 13 au Lualaba inventoriés à partir du résumé administratif de juin 2022 (58,2 M USD sur 12 chiffrés, SICOMINES non chiffrée, granularité moindre : budget par entreprise uniquement). Les entreprises du Haut-Katanga sont géolocalisées au centroïde de leur territoire déclaré (position approximative, faute de coordonnées précises des sites communautaires) ; celles du Lualaba, dont le territoire n'est pas précisé dans la source, sont recensées dans le total provincial et listées sous la carte plutôt que positionnées arbitrairement. À ne pas confondre avec les couches « Cahiers de charge (nb, statut CPI) » et « (dépenses sociales, $) », qui viennent des annexes officielles des Rapports ITIE (2022-2023) et comptent les <i>cahiers</i> par statut d'approbation à l'échelle nationale (base différente). Tableaux bruts : <a href="#" onclick="goExplorerTable('geo_cahiers_hklu_entreprises');return false">synthèse par entreprise</a> · <a href="#" onclick="goExplorerTable('geo_cahiers_hklu_projets');return false">détail des projets</a>.</p>
     </details></div>
-    ${hasGeo&&landCoverView.geo?`<div class="card" style="margin-bottom:18px">
-      <div class="ch" style="flex-wrap:wrap;gap:10px"><h3 id="mapTitle">Carte</h3>${landCoverToggleBtn('geo')}</div>
-    </div>${landCoverPanel()}`:''}
-    ${hasGeo&&!landCoverView.geo?`<div class="card" style="margin-bottom:18px">
-      <div class="ch" style="flex-wrap:wrap;gap:10px"><h3 id="mapTitle">Carte</h3>${landCoverToggleBtn('geo')}</div>
+    ${hasGeo?`<div class="card" style="margin-bottom:18px">
+      <div class="ch" style="flex-wrap:wrap;gap:10px"><h3 id="mapTitle">Carte</h3></div>
       <div class="ch" style="flex-wrap:wrap;gap:8px;margin-bottom:6px">
         <span style="font-size:12px;font-weight:700;color:var(--ink-soft)">Vue :</span>
         ${GEO_REGIONS.map(r=>`<button type="button" class="lchip ${r.key==='national'?'on':''}" data-gview="${r.key}">${esc(r.label)}</button>`).join('')}
@@ -3234,6 +3221,7 @@ function mGeo(){
             <span id="mapLegend"></span>
             <span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center">Molette : zoom · glisser : déplacer <button class="btn" id="mapZoomOut" style="padding:4px 11px;font-size:14px;line-height:1" aria-label="Dézoomer la carte" title="Dézoomer">−</button><button class="btn" id="mapZoomIn" style="padding:4px 11px;font-size:14px;line-height:1" aria-label="Zoomer la carte" title="Zoomer">+</button><button class="btn" id="mapReset" style="padding:4px 10px">Réinitialiser</button><button class="btn" id="mapFull" style="padding:4px 10px" aria-label="Afficher la carte en plein écran" title="Afficher la carte en plein écran">⛶ Plein écran</button></span>
           </div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">${landCoverControlHtml('geo')}</div>
         </div>
         <div id="mapPanel"></div>
       </div>
@@ -3298,6 +3286,7 @@ function drawMap(){
   if(!geoMapObj){
     geoMapObj=L.map('mapHost',{preferCanvas:true,attributionControl:false}).setView([-2.9,23.6],5);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:''}).addTo(geoMapObj);
+    attachLandCoverLayer('geo',geoMapObj);
   }
   [geoProvLayerGroup,geoTerrLayerGroup,geoEtdLayerGroup].forEach(lg=>{if(lg)geoMapObj.removeLayer(lg);});
   geoProvLayers={};
@@ -3577,7 +3566,6 @@ function bindCahDetail(){
   inp.oninput=e=>{cahDetailQ=e.target.value;renderCahDetailList();const el=$('#cahDetailQ');if(el){el.focus();el.setSelectionRange(e.target.value.length,e.target.value.length);}};
 }
 function drawGeo(){
-  if(landCoverView.geo){drawLandCoverMap();return;}
   drawMap();
   if(isCahiersItieDetail())bindCahDetail();
   const nrHost=$('#geoNatRegie');
