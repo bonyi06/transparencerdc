@@ -112,6 +112,50 @@ function openSourceModal(tableName){
 window.openSourceModal=openSourceModal;
 function goExplorerTable(name){exState.ds=name;exState.page=0;exState.filters={};exState.q='';go('explorer');}
 window.goExplorerTable=goExplorerTable;
+/* ===== « Comment faire une carte comme celle-ci » (aide méthodologique) =====
+   Retour utilisateur (sept. 2026) : ajouter, sur chaque carte du site, un
+   lien d'aide expliquant comment reproduire ce type de carte avec des outils
+   SIG de bureau (ArcMap/QGIS) et Excel — méthode générale de cartographie
+   professionnelle (fond ombré/hillshade à partir d'un MNT, classes colorées,
+   graphiques exportés en image, mise en page finale), transmise telle quelle
+   par l'utilisateur. Il ne s'agit pas d'un mode d'emploi de CE site (nos
+   cartes sont interactives, pas des exports statiques) mais d'un guide
+   externe generic pour quiconque veut produire une carte imprimée du même
+   style à partir de ses propres données — affiché identique sur toutes les
+   cartes plutôt que ré-écrit par carte, pour rester fidèle au texte fourni. */
+const HOWTO_MAP_STEPS=[
+  {t:"Suivez ce tutoriel jusqu'à 15:29",d:'Vidéo pas-à-pas pour construire la carte de base (classification de l’occupation du sol, mise en forme) sous ArcMap.',url:'https://lnkd.in/ezwhkpJM'},
+  {t:'Exportez votre carte',d:"Dans un dossier que vous pourrez retrouver facilement. Elle sera exportée sous forme de couche raster."},
+  {t:'Téléchargez les données MNT (SRTM DEM)',d:'Pour votre zone d’étude, puis ajoutez-les dans QGIS comme couche raster.',url:'https://lnkd.in/es_HcrXe'},
+  {t:'Dans QGIS, ajoutez la couche raster exportée à l’étape 2.'},
+  {t:'Nommez cette couche raster',d:'Clic droit → « Propriétés ». Renommez les classes d’occupation du sol dans le même ordre que dans ArcMap, et donnez à chaque classe sa couleur.'},
+  {t:'Ouvrez la table d’attributs raster',d:'Clic droit sur la couche → « Table d’attributs raster ».'},
+  {t:'Copiez ces données dans Excel',d:'Construisez un graphique en barres et un graphique circulaire, avec les mêmes couleurs que celles définies à l’étape 5.'},
+  {t:'Enregistrez chaque graphique comme image',d:'Clic droit sur chaque graphique → « Enregistrer sous image », dans un dossier que vous pourrez retrouver.'},
+  {t:'Ajoutez les autres couches vectorielles utiles',d:'Provinces, territoires, etc. (facultatif).'},
+  {t:'Calculez l’ombrage du relief (Hillshade)',d:'« Boîte à outils de traitement » → rechercher « Hillshade » → sélectionner « Hillshade » sous « GDAL ».'},
+  {t:'Lancez l’outil',d:'En couche d’entrée, choisissez la couche MNT ajoutée à l’étape 3, puis cliquez sur « Exécuter ».'},
+  {t:'Réglez le rendu de la couche Hillshade',d:'Clic droit → « Propriétés ». Sous « Rendu de la bande », dégradé de couleurs : « Noir à blanc ».'},
+  {t:'Mode de fusion',d:'Sous « Rendu de la couche », choisissez « Multiplier ».'},
+  {t:'Luminosité',d:'Sous « Rendu de la couche », donnez une valeur de 100 ou 110, puis « Appliquer » et « OK ».'},
+  {t:'Créez la mise en page finale',d:'« Projet » (coin supérieur gauche) → « Nouvelle mise en page ». Donnez-lui un nom.'},
+  {t:'Ajoutez un tableau fixe',d:'Reportez-y les valeurs Excel de l’étape 7, dans le même esprit que la carte à reproduire.'},
+  {t:'Ajoutez vos graphiques',d:'Ceux enregistrés en image à l’étape 8.'},
+  {t:'Complétez la mise en page',d:'Titre, légende, échelle, source… jusqu’à un rendu professionnel.'},
+];
+function howToMapModalBody(){
+  return `<p style="font-size:12.5px;color:var(--ink-soft);margin-top:-4px">Méthode générale pour produire une carte imprimée de ce style (fond ombré à partir d'un modèle numérique de terrain, classes colorées, graphiques en encart) avec <b>ArcMap</b>, <b>QGIS</b> et un peu d'<b>Excel</b> — transmise par l'équipe ITIE-RDC, applicable à vos propres données. Les cartes interactives de ce site restent consultables directement en ligne : ce guide s'adresse à qui veut produire un export statique du même style.</p>
+    <ol style="margin:10px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:9px;font-size:12.5px">
+      ${HOWTO_MAP_STEPS.map(s=>`<li><b>${esc(s.t)}</b>${s.d?`<br><span style="color:var(--ink-soft)">${esc(s.d)}</span>`:''}${s.url?` — <a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.url)}</a>`:''}</li>`).join('')}
+    </ol>`;
+}
+function openHowToMapModal(){
+  const body=$('#howToMapModalBody');if(!body)return;
+  body.innerHTML=howToMapModalBody();
+  showModal('howToMapModal');
+}
+window.openHowToMapModal=openHowToMapModal;
+function howToMapBtn(){return `<button type="button" class="srclink" onclick="openHowToMapModal()">🖈 Comment faire une carte comme celle-ci</button>`;}
 /* ===== Tableau de bord par thème (générique, toutes rubriques ITIE) =====
    Retour utilisateur (sept. 2026) : « faire aussi des dashboards divers et
    riches pour chaque thématique ». Plutôt que 13 dashboards codés en dur
@@ -2444,6 +2488,7 @@ function mMiningCarte(){
         <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${MINING_COLOR.Actif};vertical-align:-2px;margin-right:5px"></span>Actif</span>
         <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${MINING_COLOR.Demande};vertical-align:-2px;margin-right:5px"></span>Demande en cours</span>
         <span class="grow"></span>
+        ${howToMapBtn()}
         <button type="button" class="srclink" onclick="openMiningSourceModal()">ⓘ Source &amp; traçabilité de cette couche</button>
       </div>
     </div>`;
@@ -2746,6 +2791,7 @@ function mHydro(){
       <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:12px;font-size:12px;color:var(--ink-soft)">
         ${Object.entries(HYDRO_STATUT_LABEL).filter(([k])=>k!=='autre').map(([k,l])=>`<span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${HYDRO_STATUT_COLOR[k]};vertical-align:-2px;margin-right:5px"></span>${esc(l)}</span>`).join('')}
         <span class="grow"></span>
+        ${howToMapBtn()}
         <button type="button" class="srclink" onclick="openHydroSourceModal()">ⓘ Source &amp; traçabilité de cette couche</button>
       </div>
     </div>
@@ -2969,6 +3015,7 @@ function sicomMapSection(){
       <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:12px;font-size:11.5px;color:var(--ink-soft)">
         ${editing?`<span>Qualité du géoréférencement : ${Object.entries(SICOM_QUAL_LABEL).map(([k,l])=>`<b>${k}</b> = ${esc(l)}`).join(' · ')}</span>`:''}
         <span class="grow"></span>
+        ${howToMapBtn()}
         <button type="button" class="srclink" onclick="openSicomSourceModal()">ⓘ Source &amp; traçabilité de cette couche</button>
       </div>
     </div>
@@ -3081,6 +3128,7 @@ function mGeo(){
           <div id="geoNatBadge" style="display:none"></div>
           <div style="display:flex;gap:14px;align-items:center;margin-top:10px;font-size:11.5px;color:var(--ink-soft);flex-wrap:wrap">
             <span id="mapLegend"></span>
+            ${howToMapBtn()}
             <span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center">Molette : zoom · glisser : déplacer <button class="btn" id="mapZoomOut" style="padding:4px 11px;font-size:14px;line-height:1" aria-label="Dézoomer la carte" title="Dézoomer">−</button><button class="btn" id="mapZoomIn" style="padding:4px 11px;font-size:14px;line-height:1" aria-label="Zoomer la carte" title="Zoomer">+</button><button class="btn" id="mapReset" style="padding:4px 10px">Réinitialiser</button><button class="btn" id="mapFull" style="padding:4px 10px" aria-label="Afficher la carte en plein écran" title="Afficher la carte en plein écran">⛶ Plein écran</button></span>
           </div>
         </div>
@@ -3847,6 +3895,8 @@ $('#srcModal').onclick=e=>{if(e.target.id==='srcModal')hideModal('srcModal');};
 const srcGoReportsBtn=$('#srcGoReports');if(srcGoReportsBtn)srcGoReportsBtn.onclick=()=>{hideModal('srcModal');go('reports');};
 const crossDoneBtn=$('#crossDone');if(crossDoneBtn)crossDoneBtn.onclick=()=>hideModal('crossModal');
 $('#crossModal').onclick=e=>{if(e.target.id==='crossModal')hideModal('crossModal');};
+const howToMapDoneBtn=$('#howToMapDone');if(howToMapDoneBtn)howToMapDoneBtn.onclick=()=>hideModal('howToMapModal');
+const howToMapModalEl=$('#howToMapModal');if(howToMapModalEl)howToMapModalEl.onclick=e=>{if(e.target.id==='howToMapModal')hideModal('howToMapModal');};
 
 function applyTheme(t){if(t)document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('trdc-theme',t)}catch(e){}requestAnimationFrame(()=>{try{MODULES[current].d();}catch(e){}});}
 $('#themeBtn').onclick=()=>{const cur=document.documentElement.getAttribute('data-theme');const dark=cur?cur==='dark':matchMedia('(prefers-color-scheme:dark)').matches;applyTheme(dark?'light':'dark');};
