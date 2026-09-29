@@ -1,0 +1,65 @@
+{
+  "generated_year": 2020,
+  "sources": {
+    "land_cover": "Esri / Impact Observatory — Sentinel-2 10m Land Cover 2020",
+    "relief": "Copernicus DEM GLO-90 (ESA, résolution 90 m)"
+  },
+  "bbox": [
+    12.151,
+    -13.499,
+    31.327,
+    5.442
+  ],
+  "stats_km2": {
+    "Eau": {
+      "pixels": 52985,
+      "km2": 23521.0,
+      "color": "#419BDF"
+    },
+    "Arbres / forêt": {
+      "pixels": 4008737,
+      "km2": 1779552.6,
+      "color": "#397D49"
+    },
+    "Végétation inondée": {
+      "pixels": 20792,
+      "km2": 9230.0,
+      "color": "#7A87C6"
+    },
+    "Cultures": {
+      "pixels": 15120,
+      "km2": 6712.0,
+      "color": "#E49635"
+    },
+    "Zones bâties": {
+      "pixels": 15610,
+      "km2": 6929.6,
+      "color": "#C4281B"
+    },
+    "Sol nu": {
+      "pixels": 645,
+      "km2": 286.3,
+      "color": "#A59B8F"
+    },
+    "Neige / glace": {
+      "pixels": 1,
+      "km2": 0.4,
+      "color": "#A8EBFF"
+    },
+    "Nuages (non classé)": {
+      "pixels": 866,
+      "km2": 384.4,
+      "color": "#616161"
+    },
+    "Prairies / savane (rangeland)": {
+      "pixels": 1122595,
+      "km2": 498340.7,
+      "color": "#E3E2C3"
+    }
+  },
+  "errors": [
+    "Tuile DEM -12,12 inaccessible après 1 tentative(s) (https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_S12_00_E012_00_DEM/Copernicus_DSM_COG_30_S12_00_E012_00_DEM.tif) : HTTP response code: 404",
+    "Tuile DEM -11,12 inaccessible après 1 tentative(s) (https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_S11_00_E012_00_DEM/Copernicus_DSM_COG_30_S11_00_E012_00_DEM.tif) : HTTP response code: 404",
+    "Tuile DEM -9,12 inaccessible après 1 tentative(s) (https://copernicus-dem-90m.s3.amazonaws.com/Copernicus_DSM_COG_30_S09_00_E012_00_DEM/Copernicus_DSM_COG_30_S09_00_E012_00_DEM.tif) : HTTP response code: 404"
+  ]
+}
