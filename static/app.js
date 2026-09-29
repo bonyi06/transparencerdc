@@ -244,6 +244,65 @@ function attachLandCoverLayer(key,mapObj){
   landCoverLayers[key]=createLandCoverLayer(mapObj,`[data-lc-status="${key}"]`);
   if(landCoverOn[key])landCoverLayers[key].enable();
 }
+
+/* ===== Fond de carte satellite optionnel « Google Earth » =====
+   Retour utilisateur (sept. 2026) : améliorer les 4 cartes avec l'imagerie
+   Google Earth/Maps (clé API fournie, à restreindre par domaine côté
+   Google Cloud Console — voir config.py/index.html). Implémenté comme un
+   SÉLECTEUR DE FOND DE CARTE (Plan OpenStreetMap ↔ Satellite Google),
+   jamais comme remplacement forcé : OpenStreetMap reste le fond par défaut,
+   et toutes les couches existantes (titres, blocs, projets, provinces,
+   Land Cover) restent superposées à l'identique sur l'un ou l'autre fond.
+   Le fond satellite passe par le connecteur Leaflet.GoogleMutant, qui pilote
+   un véritable objet google.maps.Map en coulisses (seule façon conforme aux
+   conditions d'utilisation de Google d'afficher ses tuiles satellite dans
+   Leaflet) — voir templates/index.html pour le chargement des deux scripts
+   nécessaires (Google Maps JavaScript API + connecteur), absents si aucune
+   clé n'est configurée (le bouton « Satellite » reste alors simplement
+   masqué, rien n'est cassé). */
+let basemapMode={mining:'osm',hydro:'osm',geo:'osm',sicom:'osm'};
+let basemapLayers={mining:null,hydro:null,geo:null,sicom:null};
+function googleMapsAvailable(){return !!(window.google&&window.google.maps&&L.gridLayer&&L.gridLayer.googleMutant);}
+function createOsmLayer(){return L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:''});}
+function createSatelliteLayer(){return L.gridLayer.googleMutant({type:'satellite',maxZoom:20});}
+// Initialise le fond de carte d'une instance Leaflet fraîchement créée :
+// crée la couche OSM (toujours disponible) et, si le fond satellite était
+// sélectionné avant une reconstruction de la carte (navigation, changement
+// de filtre régénérant le DOM…), le réactive automatiquement.
+function initBasemap(key,mapObj){
+  const osm=createOsmLayer();
+  basemapLayers[key]={osm,sat:null};
+  if(basemapMode[key]==='sat'&&googleMapsAvailable()){
+    basemapLayers[key].sat=createSatelliteLayer();
+    basemapLayers[key].sat.addTo(mapObj);
+  }else{
+    basemapMode[key]='osm';
+    osm.addTo(mapObj);
+  }
+}
+function toggleBasemap(key,type,mapObj){
+  if(basemapMode[key]===type||!mapObj)return;
+  const layers=basemapLayers[key];if(!layers)return;
+  if(type==='sat'){
+    if(!googleMapsAvailable()){alert("Le fond satellite Google n'est pas disponible pour le moment (chargement en cours, ou clé API non configurée) — réessayez dans un instant.");return;}
+    if(!layers.sat)layers.sat=createSatelliteLayer();
+  }
+  const cur=layers[basemapMode[key]];
+  if(cur&&mapObj.hasLayer(cur))mapObj.removeLayer(cur);
+  layers[type].addTo(mapObj);
+  basemapMode[key]=type;
+  document.querySelectorAll(`[data-basemap="${key}"]`).forEach(b=>b.classList.toggle('on',b.dataset.basemapType===type));
+}
+function basemapControlHtml(key){
+  return `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft)">
+      <span style="font-weight:700">Fond de carte :</span>
+      <button type="button" class="lchip ${basemapMode[key]==='osm'?'on':''}" data-basemap="${key}" data-basemap-type="osm">Plan (OpenStreetMap)</button>
+      <button type="button" class="lchip ${basemapMode[key]==='sat'?'on':''}" data-basemap="${key}" data-basemap-type="sat">🛰 Satellite (Google)</button>
+    </div>`;
+}
+function bindBasemapButtons(key,mapObj){
+  document.querySelectorAll(`[data-basemap="${key}"]`).forEach(b=>{b.onclick=()=>toggleBasemap(key,b.dataset.basemapType,mapObj);});
+}
 /* ===== Tableau de bord par thème (générique, toutes rubriques ITIE) =====
    Retour utilisateur (sept. 2026) : « faire aussi des dashboards divers et
    riches pour chaque thématique ». Plutôt que 13 dashboards codés en dur
@@ -2578,7 +2637,7 @@ function mMiningCarte(){
         <span class="grow"></span>
         <button type="button" class="srclink" onclick="openMiningSourceModal()">ⓘ Source &amp; traçabilité de cette couche</button>
       </div>
-      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">${landCoverControlHtml('mining')}</div>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px">${basemapControlHtml('mining')}${landCoverControlHtml('mining')}</div>
     </div>`;
 }
 /* ===== Registres des octrois, cessions et amodiations (Exigence ITIE 2.2) =====
@@ -2750,7 +2809,8 @@ function drawMining(){
   if(miningErr){host.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-soft);font-size:13px">Impossible de charger cette couche pour le moment. Rechargez la page pour réessayer.</div>';return;}
   host.innerHTML='';
   miningMapObj=L.map('mnMap',{preferCanvas:true,attributionControl:false}).setView([-4.2,23.6],5);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:''}).addTo(miningMapObj);
+  initBasemap('mining',miningMapObj);
+  bindBasemapButtons('mining',miningMapObj);
   attachLandCoverLayer('mining',miningMapObj);
   miningFillFilterOptions();
   miningRenderLayer();
@@ -2882,7 +2942,7 @@ function mHydro(){
         <span class="grow"></span>
         <button type="button" class="srclink" onclick="openHydroSourceModal()">ⓘ Source &amp; traçabilité de cette couche</button>
       </div>
-      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">${landCoverControlHtml('hydro')}</div>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px">${basemapControlHtml('hydro')}${landCoverControlHtml('hydro')}</div>
     </div>
     <div style="font-size:11.5px;color:var(--ink-faint);margin:-8px 0 16px">Qualité du géoréférencement, par entité : ${Object.entries(HYDRO_QUAL_LABEL).map(([k,l])=>`<b>${k}</b> = ${esc(l)}`).join(' · ')}. Indiqué dans chaque fiche.</div>
     ${nonGeo.length?`<div class="card" style="margin-bottom:16px"><div class="ch"><h3 style="margin:0">Entité(s) sans coordonnées publiées — non représentée(s) sur la carte</h3></div>
@@ -2978,7 +3038,8 @@ function drawHydro(){
   const d=hydroData();
   if(!d){host.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-soft);font-size:13px">Couche non disponible.</div>';return;}
   hydroMapObj=L.map('hyMap',{preferCanvas:true,attributionControl:false}).setView(HYDRO_BASSIN_VIEWS.national.c,HYDRO_BASSIN_VIEWS.national.z);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:''}).addTo(hydroMapObj);
+  initBasemap('hydro',hydroMapObj);
+  bindBasemapButtons('hydro',hydroMapObj);
   attachLandCoverLayer('hydro',hydroMapObj);
   hydroRenderLayers();
   const bind=(id,key)=>{const el=$(id);if(el)el.onchange=e=>{hydroF[key]=e.target.value;hydroRenderLayers();};};
@@ -3079,7 +3140,8 @@ function drawSicomMap(){
   const d=sicomInfraData();
   if(!d){host.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-soft);font-size:13px">Couche non disponible.</div>';return;}
   sicomMapObj=L.map('sicomMap',{preferCanvas:true,attributionControl:false}).setView([-3.5,24],5);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:''}).addTo(sicomMapObj);
+  initBasemap('sicom',sicomMapObj);
+  bindBasemapButtons('sicom',sicomMapObj);
   attachLandCoverLayer('sicom',sicomMapObj);
   sicomRenderLayer();
   if(d.features&&d.features.length){
@@ -3108,7 +3170,7 @@ function sicomMapSection(){
         <span class="grow"></span>
         <button type="button" class="srclink" onclick="openSicomSourceModal()">ⓘ Source &amp; traçabilité de cette couche</button>
       </div>
-      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">${landCoverControlHtml('sicom')}</div>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px">${basemapControlHtml('sicom')}${landCoverControlHtml('sicom')}</div>
     </div>
     ${nonGeo.length?`<div class="card" style="margin-bottom:16px"><div class="ch"><h3 style="margin:0">Projet(s) sans localisation vérifiable — non représenté(s) sur la carte</h3><span class="badge">${fmtN(nonGeo.length)}</span></div>
       <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px">${nonGeo.map(n2=>`<div style="font-size:12.5px;padding:6px 0;border-bottom:1px solid var(--line)">
@@ -3221,7 +3283,7 @@ function mGeo(){
             <span id="mapLegend"></span>
             <span style="margin-left:auto;display:inline-flex;gap:6px;align-items:center">Molette : zoom · glisser : déplacer <button class="btn" id="mapZoomOut" style="padding:4px 11px;font-size:14px;line-height:1" aria-label="Dézoomer la carte" title="Dézoomer">−</button><button class="btn" id="mapZoomIn" style="padding:4px 11px;font-size:14px;line-height:1" aria-label="Zoomer la carte" title="Zoomer">+</button><button class="btn" id="mapReset" style="padding:4px 10px">Réinitialiser</button><button class="btn" id="mapFull" style="padding:4px 10px" aria-label="Afficher la carte en plein écran" title="Afficher la carte en plein écran">⛶ Plein écran</button></span>
           </div>
-          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">${landCoverControlHtml('geo')}</div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px">${basemapControlHtml('geo')}${landCoverControlHtml('geo')}</div>
         </div>
         <div id="mapPanel"></div>
       </div>
@@ -3285,9 +3347,10 @@ function drawMap(){
   if(geoMapObj&&!document.body.contains(geoMapObj.getContainer())){try{geoMapObj.remove();}catch(e){}geoMapObj=null;geoBaseBounds=null;}
   if(!geoMapObj){
     geoMapObj=L.map('mapHost',{preferCanvas:true,attributionControl:false}).setView([-2.9,23.6],5);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:''}).addTo(geoMapObj);
+    initBasemap('geo',geoMapObj);
     attachLandCoverLayer('geo',geoMapObj);
   }
+  bindBasemapButtons('geo',geoMapObj);
   [geoProvLayerGroup,geoTerrLayerGroup,geoEtdLayerGroup].forEach(lg=>{if(lg)geoMapObj.removeLayer(lg);});
   geoProvLayers={};
 

@@ -14,6 +14,19 @@
      (static/vendor/leaflet/, v1.9.4 officielle inchangée) plutôt que depuis
      un CDN externe, pour ne pas dépendre d'un service tiers. -->
 <link rel="stylesheet" href="{{ url_for('static', filename='vendor/leaflet/leaflet.css') }}">
+{% if google_maps_key %}
+<!-- Fond de carte satellite optionnel ("Google Earth") sur les 4 cartes
+     interactives — voir static/app.js, fonction attachBasemapSwitcher().
+     Le chargeur officiel Google Maps JavaScript API ne peut pas être servi
+     localement (c'est un point d'entrée vivant lié à la clé et au domaine),
+     contrairement à Leaflet. Le connecteur Leaflet.GoogleMutant (licence
+     libre "Beerware"), lui, est vendorisé comme Leaflet (voir
+     static/vendor/leaflet.gridlayer.googlemutant/). N'apparaît que si
+     GOOGLE_MAPS_API_KEY est définie côté serveur (voir config.py) ; sinon,
+     seul le fond OpenStreetMap existant est proposé, sans rien de cassé. -->
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_key }}&v=weekly" defer></script>
+<script src="{{ url_for('static', filename='vendor/leaflet.gridlayer.googlemutant/Leaflet.GoogleMutant.js') }}" defer></script>
+{% endif %}
 </head>
 <body>
 <a class="skip-link" href="#app">Aller au contenu principal</a>
@@ -92,12 +105,6 @@
   <h3 id="srcModalTitle">Source &amp; traçabilité</h3>
   <div id="srcModalBody"></div>
   <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap"><button class="btn" id="srcGoReports">▤ Voir les rapports &amp; méthodologie</button><button class="btn primary" id="srcDone">Fermer</button></div>
-</div></div>
-
-<div class="modal-bg" id="howToMapModal"><div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="howToMapModalTitle" tabindex="-1">
-  <h3 id="howToMapModalTitle">Comment faire une carte comme celle-ci</h3>
-  <div id="howToMapModalBody"></div>
-  <div style="display:flex;gap:10px;margin-top:14px"><button class="btn primary" id="howToMapDone">Fermer</button></div>
 </div></div>
 
 <div class="modal-bg" id="crossModal"><div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="crossModalTitle" tabindex="-1">

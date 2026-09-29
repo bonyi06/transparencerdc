@@ -168,12 +168,20 @@ def register_routes(app: Flask) -> None:
         # de toute façon la vraie protection, mais on évite d'exhiber
         # inutilement un point d'entrée public à un mot de passe).
         return render_template(
-            "index.html", show_admin_ui=bool(session.get("admin_id")), asset_v=app.config["ASSET_VERSION"]
+            "index.html",
+            show_admin_ui=bool(session.get("admin_id")),
+            asset_v=app.config["ASSET_VERSION"],
+            google_maps_key=app.config["GOOGLE_MAPS_API_KEY"],
         )
 
     @app.get(f"/{app.config['ADMIN_ENTRY_PATH']}")
     def admin_entry():
-        return render_template("index.html", show_admin_ui=True, asset_v=app.config["ASSET_VERSION"])
+        return render_template(
+            "index.html",
+            show_admin_ui=True,
+            asset_v=app.config["ASSET_VERSION"],
+            google_maps_key=app.config["GOOGLE_MAPS_API_KEY"],
+        )
 
     # ------------------------------------------------------------------ #
     # Authentification

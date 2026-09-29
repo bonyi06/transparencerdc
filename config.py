@@ -36,6 +36,18 @@ class Config:
     # valeur non devinable (voir README, section "Sécurité admin").
     ADMIN_ENTRY_PATH = os.environ.get("ADMIN_ENTRY_PATH", "gestion-admin")
 
+    # Clé API Google Maps JavaScript (fond de carte satellite "Google Earth"
+    # sur les 4 cartes interactives — bascule facultative, OpenStreetMap
+    # reste le fond par défaut). Une clé Maps JavaScript API est destinée à
+    # être visible côté navigateur (c'est le fonctionnement normal de cette
+    # API) : sa sécurité vient de la RESTREINDRE par domaine (référents HTTP)
+    # dans Google Cloud Console → Identifiants, pas de la garder secrète.
+    # Définie uniquement via la variable d'environnement GOOGLE_MAPS_API_KEY
+    # (Render → Environment) : jamais codée en dur ni commise dans le dépôt,
+    # pour pouvoir la faire tourner sans toucher au code si besoin. Si non
+    # définie, le bouton "Satellite (Google)" reste simplement invisible.
+    GOOGLE_MAPS_API_KEY = os.environ.get("GOOGLE_MAPS_API_KEY", "")
+
     # Cookies de session : True en production derrière HTTPS.
     SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "0") == "1"
     SESSION_COOKIE_HTTPONLY = True
